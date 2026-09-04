@@ -1,0 +1,5 @@
+import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
+
+export function AdministracionScreen() {
+  return <ContenedorPantalla titulo="Administración" />;
+}

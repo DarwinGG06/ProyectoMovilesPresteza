@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Footer } from '@/shared/components/footer';
 
@@ -11,14 +10,16 @@ type ContenedorPantallaProps = {
 
 export function ContenedorPantalla({ titulo, children }: ContenedorPantallaProps) {
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-crema">
       <ScrollView>
-        <View className="px-6 py-10">
-          <Text className="text-2xl font-bold text-texto">{titulo}</Text>
+        <View className="px-6 pb-12 pt-8">
+          <View className="mb-3 h-px w-12 bg-oro" />
+          <Text className="text-[11px] tracking-[3px] text-oro">PRESTEZA</Text>
+          <Text className="mt-1 text-4xl font-extrabold leading-tight text-marca-oscura">{titulo}</Text>
           {children}
         </View>
         <Footer />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Pressable, Text, View } from 'react-native';
+import { Animated, Platform, Pressable, Text, View } from 'react-native';
+
+const usarNativo = Platform.OS !== 'web';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/auth/AuthContext';
@@ -30,8 +32,8 @@ export function NavBar() {
 
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulso, { toValue: 1.15, duration: 700, useNativeDriver: true }),
-        Animated.timing(pulso, { toValue: 1, duration: 700, useNativeDriver: true }),
+        Animated.timing(pulso, { toValue: 1.15, duration: 700, useNativeDriver: usarNativo }),
+        Animated.timing(pulso, { toValue: 1, duration: 700, useNativeDriver: usarNativo }),
       ]),
     );
     loop.start();

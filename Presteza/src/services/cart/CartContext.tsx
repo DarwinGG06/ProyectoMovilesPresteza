@@ -12,6 +12,7 @@ type CartContextValue = {
   items: CartItem[];
   totalItems: number;
   totalPrice: number;
+  addItem: (producto: { id: string; productName: string; unitPrice: number }) => void;
   updateQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
@@ -30,6 +31,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
       items,
       totalItems,
       totalPrice,
+      addItem: (producto) => {
+        setItems((prev) => {
+          const existente = prev.find((item) => item.id === producto.id);
+          if (existente) {
+            const quantity = existente.quantity + 1;
+            return prev.map((item) =>
+              item.id === producto.id
+                ? { ...item, quantity, totalPrice: producto.unitPrice * quantity }
+                : item,
+            );
+          }
+
+          return [
+            ...prev,
+            {
+              id: producto.id,
+              productName: producto.productName,
+              quantity: 1,
+              totalPrice: producto.unitPrice,
+            },
+          ];
+        });
+      },
       updateQuantity: (id, quantity) => {
         if (quantity < 1) return;
         setItems((prev) =>

@@ -26,7 +26,7 @@ import { Controller, type Control, type FieldValues, type Path, type RegisterOpt
             <Text className="font-semibold">{label}</Text>
             <TextInput
               className={`rounded-lg border p-3 ${error ? 'border-red-600' : 'border-neutral-300'}`}
-              value={value}
+              value={value ?? ''}
               onChangeText={onChange}
               onBlur={onBlur}
               autoCapitalize="none"

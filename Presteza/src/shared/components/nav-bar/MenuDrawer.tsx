@@ -1,6 +1,8 @@
 import { type ComponentProps, useEffect, useRef } from 'react';
 import { Href, router } from 'expo-router';
-import { Animated, Modal, Pressable, Text, View } from 'react-native';
+import { Animated, Modal, Platform, Pressable, Text, View } from 'react-native';
+
+const usarNativo = Platform.OS !== 'web';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { IconoNav } from './IconoNav';
@@ -92,8 +94,8 @@ function EnlaceEditorial({
   useEffect(() => {
     if (visible) {
       Animated.parallel([
-        Animated.timing(opacity, { toValue: 1, duration: 420, delay, useNativeDriver: true }),
-        Animated.timing(translateX, { toValue: 0, duration: 420, delay, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 1, duration: 420, delay, useNativeDriver: usarNativo }),
+        Animated.timing(translateX, { toValue: 0, duration: 420, delay, useNativeDriver: usarNativo }),
       ]).start();
     } else {
       opacity.setValue(0);

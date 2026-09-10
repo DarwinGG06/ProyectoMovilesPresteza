@@ -39,6 +39,12 @@ export function loginApi(email: string, password: string) {
   return pedirApi<LoginRespuesta>('/auth/login', {
     method: 'POST',
     body: { email: email.trim().toLowerCase(), password },
+  }).catch((error) => {
+    const texto = error instanceof Error ? error.message : '';
+    if (/invalid credentials|incorrectos/i.test(texto)) {
+      throw new Error('Correo o contraseña incorrectos');
+    }
+    throw error;
   });
 }
 
@@ -54,7 +60,7 @@ export function registerApi(datos: RegistroDatos) {
     },
   }).catch((error) => {
     const texto = error instanceof Error ? error.message : '';
-    if (texto.toLowerCase().includes('already registered')) {
+    if (/already registered|ya está registrado/i.test(texto)) {
       throw new Error('Ese correo ya está registrado.');
     }
     throw error;

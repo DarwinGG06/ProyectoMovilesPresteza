@@ -54,7 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(decodificarToken(jwt));
           }
         } catch {
-          // La cuenta ya quedó en Mongo aunque el login automático falle.
         }
       },
       logout: () => {

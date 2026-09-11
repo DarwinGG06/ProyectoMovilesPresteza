@@ -16,6 +16,7 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (datos: RegistroDatos) => Promise<void>;
+  actualizarUsuario: (parcial: Partial<Usuario>) => void;
   logout: () => void;
 };
 
@@ -55,6 +56,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         } catch {
         }
+      },
+      actualizarUsuario: (parcial) => {
+        setUser((prev) => (prev ? { ...prev, ...parcial } : prev));
       },
       logout: () => {
         setUser(null);

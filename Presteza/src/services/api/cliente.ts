@@ -34,6 +34,10 @@ export async function pedirApi<T>(
     throw new Error(`No se pudo conectar con el servidor (${API_URL}). ¿Está corriendo el backend?`);
   }
 
+  if (respuesta.status === 204) {
+    return undefined as T;
+  }
+
   const data = await respuesta.json().catch(() => null);
 
   if (!respuesta.ok) {

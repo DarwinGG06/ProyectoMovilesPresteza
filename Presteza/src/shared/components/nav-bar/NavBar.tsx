@@ -56,6 +56,7 @@ export function NavBar() {
             <View className="ml-auto flex-row items-center gap-1.5 pr-1">
               <BotonIsla
                 icono="person-outline"
+                inicial={isAuthenticated && user?.name ? user.name.trim().charAt(0).toUpperCase() : undefined}
                 onPress={() => (isAuthenticated && user ? setUserOpen(true) : setLoginOpen(true))}
               />
               <View>
@@ -84,10 +85,12 @@ export function NavBar() {
 
 function BotonIsla({
   icono,
+  inicial,
   onPress,
   destacado = false,
 }: {
   icono: 'person-outline' | 'bag-handle-outline' | 'menu';
+  inicial?: string;
   onPress: () => void;
   destacado?: boolean;
 }) {
@@ -97,7 +100,11 @@ function BotonIsla({
       className={`h-10 w-10 items-center justify-center rounded-full ${
         destacado ? 'bg-oro' : 'border border-oro/40 bg-white/5'
       }`}>
-      <IconoNav name={icono} size={18} className={destacado ? 'text-marca-oscura' : 'text-oro'} />
+      {inicial ? (
+        <Text className={`text-[15px] font-semibold ${destacado ? 'text-marca-oscura' : 'text-oro'}`}>{inicial}</Text>
+      ) : (
+        <IconoNav name={icono} size={18} className={destacado ? 'text-marca-oscura' : 'text-oro'} />
+      )}
     </Pressable>
   );
 }

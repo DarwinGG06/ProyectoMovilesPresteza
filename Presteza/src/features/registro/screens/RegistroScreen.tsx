@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthContext';
+import { logError, logInfo } from '@/services/api/logger';
 import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
 
 import Field from '../../../../components/Field';
@@ -33,6 +34,7 @@ export function RegistroScreen() {
   const enviar = handleSubmit(async (datos) => {
     setError(null);
     setEnviando(true);
+    logInfo('ui', 'RegistroScreen enviar', { email: datos.email.trim().toLowerCase() });
     try {
       await register({
         complete_name: datos.complete_name,
@@ -40,9 +42,12 @@ export function RegistroScreen() {
         phone_number: datos.phone_number,
         password: datos.password,
       });
+      logInfo('ui', 'RegistroScreen OK, yendo a /perfil');
       router.push('/perfil');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo registrar.');
+      const mensaje = err instanceof Error ? err.message : 'No se pudo registrar.';
+      logError('ui', 'RegistroScreen error', { mensaje });
+      setError(mensaje);
     } finally {
       setEnviando(false);
     }

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 
-import { decodificarToken, loginApi, registerApi, type RegistroDatos } from './authApi';
+import { logError, logInfo } from '@/services/api/logger';
+
+import { decodificarToken, extraerJwt, loginApi, registerApi, type RegistroDatos } from './authApi';
 
 export type Usuario = {
   id: string;
@@ -36,31 +38,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           throw new Error('Por favor completa todos los campos');
         }
 
+        logInfo('auth', 'login iniciado', { email: email.trim().toLowerCase() });
         const respuesta = await loginApi(email, password);
-        const jwt = respuesta.user;
-        if (!jwt || typeof jwt !== 'string') {
+        const jwt = extraerJwt(respuesta);
+        if (!jwt) {
+          logError('auth', 'login sin JWT', { keys: Object.keys(respuesta ?? {}) });
           throw new Error('El servidor no devolvió un token válido');
         }
 
+        const usuario = decodificarToken(jwt);
         setToken(jwt);
-        setUser(decodificarToken(jwt));
+        setUser(usuario);
+        logInfo('auth', 'login OK', { id: usuario.id, email: usuario.email, role: usuario.role });
       },
       register: async (datos) => {
-        await registerApi(datos);
-        try {
-          const respuesta = await loginApi(datos.email, datos.password);
-          const jwt = respuesta.user;
-          if (jwt && typeof jwt === 'string') {
-            setToken(jwt);
-            setUser(decodificarToken(jwt));
-          }
-        } catch {
+        logInfo('auth', 'registro iniciado', { email: datos.email.trim().toLowerCase() });
+        const creado = await registerApi(datos);
+        logInfo('auth', 'registro OK, iniciando sesión', { userId: creado.userId });
+
+        const respuesta = await loginApi(datos.email, datos.password);
+        const jwt = extraerJwt(respuesta);
+        if (!jwt) {
+          logError('auth', 'cuenta creada pero login no devolvió JWT', {
+            keys: Object.keys(respuesta ?? {}),
+          });
+          throw new Error('Cuenta creada, pero el servidor no devolvió un token válido');
         }
+
+        const usuario = decodificarToken(jwt);
+        setToken(jwt);
+        setUser(usuario);
+        logInfo('auth', 'registro + login OK', { id: usuario.id, email: usuario.email });
       },
       actualizarUsuario: (parcial) => {
         setUser((prev) => (prev ? { ...prev, ...parcial } : prev));
       },
       logout: () => {
+        logInfo('auth', 'logout', { email: user?.email ?? null });
         setUser(null);
         setToken(null);
       },

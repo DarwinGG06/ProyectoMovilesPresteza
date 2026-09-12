@@ -106,9 +106,7 @@ export function AdministracionScreen() {
           {pestana === 'inventario' ? (
             <TabInventario token={admin.token} insumos={admin.insumos} setInsumos={admin.setInsumos} />
           ) : null}
-          {pestana === 'reservas' ? (
-            <TabReservas token={admin.token} reservas={admin.reservas} setReservas={admin.setReservas} />
-          ) : null}
+          {pestana === 'reservas' ? <TabReservas onCambio={admin.setReservas} /> : null}
           {pestana === 'adicionales' ? (
             <TabAdicionales token={admin.token} adicionales={admin.adicionales} setAdicionales={admin.setAdicionales} />
           ) : null}

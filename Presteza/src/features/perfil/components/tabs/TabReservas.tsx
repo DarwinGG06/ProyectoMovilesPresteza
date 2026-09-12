@@ -2,67 +2,21 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { useAviso } from '@/shared/components/aviso';
+import { useReservas } from '@/features/reservas/hooks/useReservas';
+import type { Reserva } from '@/features/reservas/types';
 
-import { actualizarReserva, eliminarReserva, idReserva } from '../../api/perfilApi';
-import type { Reserva, ReservaForm } from '../../types';
-import { formatFecha, textoEstadoReserva } from '../../utils';
+import { formatFecha } from '../../utils';
 import { AccionesFila, Comanda, EnlaceAccion, LineaCuenta } from '../elementos';
 import { FormularioReserva } from '../formularios/FormularioReserva';
 import { EstadoVacio, Mensaje, TarjetaPerfil } from '../TarjetaPerfil';
 
 type TabReservasProps = {
-  token: string;
-  reservas: Reserva[];
-  onCambio: (reservas: Reserva[]) => void;
+  onCambio?: (reservas: Reserva[]) => void;
 };
 
-export function TabReservas({ token, reservas, onCambio }: TabReservasProps) {
+export function TabReservas({ onCambio }: TabReservasProps) {
   const [editando, setEditando] = useState<Reserva | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const aviso = useAviso();
-
-  const sePuedeEditar = (reserva: Reserva) => reserva.status === 'pending' || reserva.status === 'confirmed';
-
-  const guardar = async (datos: ReservaForm) => {
-    if (!editando) return;
-    setError(null);
-    setGuardando(true);
-    try {
-      const actualizada = await actualizarReserva(idReserva(editando), token, {
-        date: datos.date,
-        time: datos.time,
-        numberOfPeople: Number(datos.numberOfPeople),
-        specialRequests: datos.specialRequests || undefined,
-      });
-      onCambio(reservas.map((item) => (idReserva(item) === idReserva(editando) ? actualizada : item)));
-      setEditando(null);
-      aviso.ok('Reserva editada', `La mesa ${editando.tableNumber} fue editada.`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo actualizar la reserva.');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const borrar = (reserva: Reserva) => {
-    aviso.confirmar({
-      sello: 'RESERVAS',
-      titulo: 'Eliminar reserva',
-      texto: `¿Eliminar la mesa ${reserva.tableNumber} del ${reserva.date} a las ${reserva.time}?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Reserva eliminada',
-        texto: `La mesa ${reserva.tableNumber} fue eliminada.`,
-      },
-      onConfirmar: async () => {
-        await eliminarReserva(idReserva(reserva), token);
-        onCambio(reservas.filter((item) => idReserva(item) !== idReserva(reserva)));
-      },
-    });
-  };
+  const reservas = useReservas({ alcance: 'mias', onCambio });
 
   return (
     <TarjetaPerfil
@@ -70,7 +24,7 @@ export function TabReservas({ token, reservas, onCambio }: TabReservasProps) {
       badge="RESERVAS"
       titulo="Tus mesas"
       accion={{ etiqueta: 'NUEVA', onPress: () => router.push('/reservas') }}>
-      {error ? <Mensaje texto={error} error /> : null}
+      {reservas.error ? <Mensaje texto={reservas.error} error /> : null}
 
       {editando ? (
         <Comanda>
@@ -82,15 +36,21 @@ export function TabReservas({ token, reservas, onCambio }: TabReservasProps) {
               numberOfPeople: String(editando.numberOfPeople),
               specialRequests: editando.specialRequests ?? '',
             }}
-            onCancelar={() => {
-              setEditando(null);
-              setError(null);
+            onCancelar={() => setEditando(null)}
+            onGuardar={async (datos) => {
+              const ok = await reservas.editar(editando, {
+                tableNumber: editando.tableNumber,
+                date: datos.date,
+                time: datos.time,
+                numberOfPeople: datos.numberOfPeople,
+                specialRequests: datos.specialRequests,
+              });
+              if (ok) setEditando(null);
             }}
-            onGuardar={guardar}
-            guardando={guardando}
+            guardando={reservas.guardando}
           />
         </Comanda>
-      ) : reservas.length === 0 ? (
+      ) : reservas.lista.length === 0 ? (
         <EstadoVacio
           icono="calendar-outline"
           titulo="No tienes reservas"
@@ -99,12 +59,12 @@ export function TabReservas({ token, reservas, onCambio }: TabReservasProps) {
         />
       ) : (
         <View>
-          {reservas.map((reserva, index) => (
+          {reservas.lista.map((reserva, index) => (
             <LineaCuenta
-              key={idReserva(reserva)}
+              key={reservas.idDe(reserva)}
               indice={index}
               titulo={`Mesa ${reserva.tableNumber}`}
-              sello={textoEstadoReserva(reserva.status).toUpperCase()}>
+              sello={reservas.textoEstado(reserva.status).toUpperCase()}>
               <Text className="mt-1 text-sm text-crema/70">
                 {reserva.date} · {reserva.time}
               </Text>
@@ -120,10 +80,10 @@ export function TabReservas({ token, reservas, onCambio }: TabReservasProps) {
               {reserva.status === 'cancelled' ? (
                 <Text className="mt-2 text-sm text-red-300">Esta reserva fue cancelada.</Text>
               ) : null}
-              {sePuedeEditar(reserva) ? (
+              {reservas.sePuedeEditar(reserva) ? (
                 <AccionesFila>
                   <EnlaceAccion etiqueta="EDITAR" onPress={() => setEditando(reserva)} />
-                  <EnlaceAccion etiqueta="ELIMINAR" onPress={() => borrar(reserva)} peligro />
+                  <EnlaceAccion etiqueta="ELIMINAR" onPress={() => reservas.eliminar(reserva)} peligro />
                 </AccionesFila>
               ) : null}
             </LineaCuenta>

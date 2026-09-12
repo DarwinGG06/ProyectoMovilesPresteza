@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { useAviso } from '@/shared/components/aviso';
 
 import { agregarTarjeta, eliminarTarjeta, marcarTarjetaPrincipal } from '../../api/perfilApi';
 import type { TarjetaForm, UsuarioPerfil } from '../../types';
@@ -18,6 +20,7 @@ export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps
   const [mostrarForm, setMostrarForm] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const aviso = useAviso();
 
   const guardar = async (datos: TarjetaForm) => {
     setError(null);
@@ -34,6 +37,7 @@ export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps
       });
       onActualizado(actualizado);
       setMostrarForm(false);
+      aviso.ok('Tarjeta creada', `${datos.name.trim()} fue agregada.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar la tarjeta.');
     } finally {
@@ -44,26 +48,27 @@ export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps
   const principal = async (index: number) => {
     try {
       onActualizado(await marcarTarjetaPrincipal(userId, token, index));
+      aviso.ok('Tarjeta principal', 'La tarjeta quedó como principal.');
     } catch (err) {
-      Alert.alert('Pago', err instanceof Error ? err.message : 'No se pudo marcar como principal.');
+      aviso.errorDe(err, 'No se pudo marcar como principal.', 'Pago');
     }
   };
 
   const borrar = (index: number, nombre: string) => {
-    Alert.alert('Eliminar tarjeta', `¿Quieres eliminar ${nombre}?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Eliminar',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            onActualizado(await eliminarTarjeta(userId, token, index));
-          } catch (err) {
-            Alert.alert('Error', err instanceof Error ? err.message : 'No se pudo eliminar.');
-          }
-        },
+    aviso.confirmar({
+      sello: 'PAGOS',
+      titulo: 'Eliminar tarjeta',
+      texto: `¿Quieres eliminar ${nombre}?`,
+      confirmar: 'ELIMINAR',
+      peligro: true,
+      exito: {
+        titulo: 'Tarjeta eliminada',
+        texto: `${nombre} fue eliminada.`,
       },
-    ]);
+      onConfirmar: async () => {
+        onActualizado(await eliminarTarjeta(userId, token, index));
+      },
+    });
   };
 
   return (

@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { useAviso } from '@/shared/components/aviso';
 
 import {
   actualizarDireccion,
@@ -23,6 +25,7 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
   const [indiceEdicion, setIndiceEdicion] = useState<number | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const aviso = useAviso();
 
   const cerrar = () => {
     setMostrarForm(false);
@@ -49,6 +52,10 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
           : await actualizarDireccion(userId, indiceEdicion, cuerpo);
       onActualizado(actualizado);
       cerrar();
+      aviso.ok(
+        indiceEdicion === null ? 'Dirección creada' : 'Dirección editada',
+        indiceEdicion === null ? `${cuerpo.name} fue agregada.` : `${cuerpo.name} fue editada.`,
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar la dirección.');
     } finally {
@@ -59,26 +66,27 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
   const principal = async (index: number) => {
     try {
       onActualizado(await marcarDireccionPrincipal(userId, index));
+      aviso.ok('Dirección principal', 'La dirección quedó como principal.');
     } catch (err) {
-      Alert.alert('Dirección', err instanceof Error ? err.message : 'No se pudo marcar como principal.');
+      aviso.errorDe(err, 'No se pudo marcar como principal.', 'Dirección');
     }
   };
 
   const borrar = (index: number, nombre: string) => {
-    Alert.alert('Eliminar dirección', `¿Quieres eliminar ${nombre}?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Eliminar',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            onActualizado(await eliminarDireccion(userId, index));
-          } catch (err) {
-            Alert.alert('Error', err instanceof Error ? err.message : 'No se pudo eliminar.');
-          }
-        },
+    aviso.confirmar({
+      sello: 'DIRECCIONES',
+      titulo: 'Eliminar dirección',
+      texto: `¿Quieres eliminar ${nombre}?`,
+      confirmar: 'ELIMINAR',
+      peligro: true,
+      exito: {
+        titulo: 'Dirección eliminada',
+        texto: `${nombre} fue eliminada.`,
       },
-    ]);
+      onConfirmar: async () => {
+        onActualizado(await eliminarDireccion(userId, index));
+      },
+    });
   };
 
   const valoresEdicion =

@@ -4,6 +4,7 @@ import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthContext';
 import { Footer } from '@/shared/components/footer';
+import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
 import { HeroPerfil } from '../components/HeroPerfil';
 import { InvitadoPerfil } from '../components/InvitadoPerfil';
@@ -37,7 +38,10 @@ export function PerfilScreen() {
   if (cargando && !perfil) {
     return (
       <View className="flex-1 items-center justify-center bg-marca-oscura">
-        <ActivityIndicator color="#d4af77" />
+        <SelloP size="lg" />
+        <View className="mt-6">
+          <ActivityIndicator color="#d4af77" />
+        </View>
         <Text className="mt-3 text-sm text-crema/70">Cargando tu mesa...</Text>
       </View>
     );

@@ -5,6 +5,8 @@ import { Animated, Modal, Platform, Pressable, Text, View } from 'react-native';
 const usarNativo = Platform.OS !== 'web';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuth } from '@/auth/AuthContext';
+
 import { IconoNav } from './IconoNav';
 import { SelloP } from './SelloP';
 
@@ -25,6 +27,11 @@ type MenuDrawerProps = {
 };
 
 export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
+  const { user } = useAuth();
+  const enlaces = user?.role === 'admin'
+    ? [...ENLACES, { etiqueta: 'Administración', ruta: '/administracion' as Href, icono: 'speedometer-outline' as NombreIcono, numero: '07' }]
+    : ENLACES;
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 bg-marca-oscura">
@@ -48,7 +55,7 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
           </View>
 
           <View className="px-4">
-            {ENLACES.map((enlace, index) => (
+            {enlaces.map((enlace, index) => (
               <EnlaceEditorial
                 key={enlace.etiqueta}
                 visible={visible}

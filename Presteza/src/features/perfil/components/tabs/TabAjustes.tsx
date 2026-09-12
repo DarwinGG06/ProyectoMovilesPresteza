@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
+
+import { useAviso } from '@/shared/components/aviso';
 
 import { actualizarPerfilApi } from '../../api/perfilApi';
 import type { ContrasenaForm, PerfilForm, UsuarioPerfil } from '../../types';
@@ -23,6 +25,7 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const aviso = useAviso();
 
   const guardarDatos = async (datos: PerfilForm) => {
     setError(null);
@@ -32,6 +35,7 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
       onActualizado(await actualizarPerfilApi(userId, datos));
       setEditando(false);
       setMensaje('Información actualizada.');
+      aviso.ok('Datos editados', 'Tu información fue editada.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar.');
     } finally {
@@ -47,6 +51,7 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
       await actualizarPerfilApi(userId, { password: datos.newPassword });
       setCambiandoClave(false);
       setMensaje('Contraseña actualizada.');
+      aviso.ok('Contraseña editada', 'Tu contraseña fue cambiada.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo cambiar la contraseña.');
     } finally {
@@ -55,16 +60,17 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
   };
 
   const cerrar = () => {
-    Alert.alert('Cerrar sesión', '¿Quieres salir de tu cuenta?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Cerrar sesión',
-        onPress: () => {
-          onCerrarSesion();
-          router.push('/');
-        },
+    aviso.confirmar({
+      sello: 'SESIÓN',
+      titulo: 'Cerrar sesión',
+      texto: '¿Quieres salir de tu cuenta?',
+      confirmar: 'SALIR',
+      peligro: true,
+      onConfirmar: () => {
+        onCerrarSesion();
+        router.push('/');
       },
-    ]);
+    });
   };
 
   return (

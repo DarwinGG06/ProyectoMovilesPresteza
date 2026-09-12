@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { useAviso } from '@/shared/components/aviso';
 
 import { actualizarReserva, eliminarReserva, idReserva } from '../../api/perfilApi';
 import type { Reserva, ReservaForm } from '../../types';
@@ -19,6 +21,7 @@ export function TabReservas({ token, reservas, onCambio }: TabReservasProps) {
   const [editando, setEditando] = useState<Reserva | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const aviso = useAviso();
 
   const sePuedeEditar = (reserva: Reserva) => reserva.status === 'pending' || reserva.status === 'confirmed';
 
@@ -35,6 +38,7 @@ export function TabReservas({ token, reservas, onCambio }: TabReservasProps) {
       });
       onCambio(reservas.map((item) => (idReserva(item) === idReserva(editando) ? actualizada : item)));
       setEditando(null);
+      aviso.ok('Reserva editada', `La mesa ${editando.tableNumber} fue editada.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo actualizar la reserva.');
     } finally {
@@ -43,25 +47,21 @@ export function TabReservas({ token, reservas, onCambio }: TabReservasProps) {
   };
 
   const borrar = (reserva: Reserva) => {
-    Alert.alert(
-      'Eliminar reserva',
-      `¿Eliminar la mesa ${reserva.tableNumber} del ${reserva.date} a las ${reserva.time}?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await eliminarReserva(idReserva(reserva), token);
-              onCambio(reservas.filter((item) => idReserva(item) !== idReserva(reserva)));
-            } catch (err) {
-              Alert.alert('Error', err instanceof Error ? err.message : 'No se pudo eliminar.');
-            }
-          },
-        },
-      ],
-    );
+    aviso.confirmar({
+      sello: 'RESERVAS',
+      titulo: 'Eliminar reserva',
+      texto: `¿Eliminar la mesa ${reserva.tableNumber} del ${reserva.date} a las ${reserva.time}?`,
+      confirmar: 'ELIMINAR',
+      peligro: true,
+      exito: {
+        titulo: 'Reserva eliminada',
+        texto: `La mesa ${reserva.tableNumber} fue eliminada.`,
+      },
+      onConfirmar: async () => {
+        await eliminarReserva(idReserva(reserva), token);
+        onCambio(reservas.filter((item) => idReserva(item) !== idReserva(reserva)));
+      },
+    });
   };
 
   return (

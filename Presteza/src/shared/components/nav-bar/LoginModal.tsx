@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthContext';
+import { logError, logInfo } from '@/services/api/logger';
 
 import Field from '../../../../components/Field';
 import { IconoNav } from './IconoNav';
@@ -34,12 +35,16 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
 
   const submit = handleSubmit(async (datos) => {
     setError(null);
+    logInfo('ui', 'LoginModal enviar', { email: datos.email.trim().toLowerCase() });
     try {
       await login(datos.email, datos.password);
+      logInfo('ui', 'LoginModal OK, yendo a /perfil');
       close();
       router.push('/perfil');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión.');
+      const mensaje = err instanceof Error ? err.message : 'Error al iniciar sesión.';
+      logError('ui', 'LoginModal error', { mensaje });
+      setError(mensaje);
     }
   });
 

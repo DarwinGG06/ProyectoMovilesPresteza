@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthContext';
-import { SelloP } from '@/shared/components/nav-bar/SelloP';
 import { InvitadoPerfil } from '@/features/perfil/components/InvitadoPerfil';
 import { Footer } from '@/shared/components/footer';
+import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
 import { HeroAdmin } from '@/features/administracion/components/HeroAdmin';
 import { PestanasAdmin } from '@/features/administracion/components/PestanasAdmin';
@@ -23,7 +23,7 @@ import { useAdmin } from '@/features/administracion/hooks/useAdmin';
 import type { PestanaAdmin } from '@/features/administracion/types';
 
 export function AdministracionScreen() {
-  const { isAuthenticated, user, logout, actualizarUsuario } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const admin = useAdmin();
   const [pestana, setPestana] = useState<PestanaAdmin>('dashboard');
 
@@ -85,46 +85,69 @@ export function AdministracionScreen() {
           ) : null}
           {pestana === 'productos' ? (
             <TabProductos
-              token={admin.token}
               productos={admin.productos}
-              setProductos={admin.setProductos}
               categorias={admin.categorias}
+              guardando={admin.guardando}
+              onGuardar={admin.guardarProducto}
+              onAlternar={admin.alternarProducto}
+              onEliminar={admin.eliminarProducto}
             />
           ) : null}
           {pestana === 'pedidos' ? (
             <TabPedidos
-              token={admin.token}
               pedidos={admin.pedidos}
-              setPedidos={admin.setPedidos}
               clientes={admin.clientes}
               productos={admin.productos}
+              guardando={admin.guardando}
+              onGuardar={admin.guardarPedido}
+              onCambiarEstado={admin.cambiarEstadoPedido}
+              onEliminar={admin.eliminarPedido}
             />
           ) : null}
           {pestana === 'categorias' ? (
-            <TabCategorias token={admin.token} categorias={admin.categorias} setCategorias={admin.setCategorias} />
+            <TabCategorias
+              categorias={admin.categorias}
+              guardando={admin.guardando}
+              onGuardar={admin.guardarCategoria}
+              onEliminar={admin.eliminarCategoria}
+            />
           ) : null}
           {pestana === 'inventario' ? (
-            <TabInventario token={admin.token} insumos={admin.insumos} setInsumos={admin.setInsumos} />
+            <TabInventario
+              insumos={admin.insumos}
+              guardando={admin.guardando}
+              onGuardar={admin.guardarInsumo}
+              onEliminar={admin.eliminarInsumo}
+            />
           ) : null}
           {pestana === 'reservas' ? <TabReservas onCambio={admin.setReservas} /> : null}
           {pestana === 'adicionales' ? (
-            <TabAdicionales token={admin.token} adicionales={admin.adicionales} setAdicionales={admin.setAdicionales} />
+            <TabAdicionales
+              adicionales={admin.adicionales}
+              guardando={admin.guardando}
+              onGuardar={admin.guardarAdicional}
+              onAlternar={admin.alternarAdicional}
+              onEliminar={admin.eliminarAdicional}
+            />
           ) : null}
           {pestana === 'mensajes' ? (
-            <TabMensajes token={admin.token} mensajes={admin.mensajes} setMensajes={admin.setMensajes} />
+            <TabMensajes
+              mensajes={admin.mensajes}
+              guardando={admin.guardando}
+              onGuardar={admin.guardarMensaje}
+              onEliminar={admin.eliminarMensaje}
+            />
           ) : null}
           {pestana === 'clientes' ? (
-            <TabClientes token={admin.token} clientes={admin.clientes} setClientes={admin.setClientes} />
+            <TabClientes
+              clientes={admin.clientes}
+              guardando={admin.guardando}
+              onGuardar={admin.guardarCliente}
+              onEliminar={admin.eliminarCliente}
+            />
           ) : null}
           {pestana === 'ajustes' ? (
-            <TabAjustes
-              user={user}
-              onActualizar={actualizarUsuario}
-              onCerrarSesion={() => {
-                logout();
-                router.push('/');
-              }}
-            />
+            <TabAjustes user={user} guardando={admin.guardando} onGuardar={admin.guardarAjustes} onSalir={admin.salir} />
           ) : null}
         </View>
         <Footer />

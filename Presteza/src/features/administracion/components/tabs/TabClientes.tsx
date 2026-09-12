@@ -1,11 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
-import { useAviso } from '@/shared/components/aviso';
 
-import { crearCliente, eliminarCliente } from '../../api/adminApi';
 import type { ClienteAdmin, ClienteForm } from '../../types';
 import { iniciales } from '../../utils';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -21,20 +19,19 @@ import {
 } from '../VistaCarta';
 
 type TabClientesProps = {
-  token: string;
   clientes: ClienteAdmin[];
-  setClientes: (clientes: ClienteAdmin[]) => void;
+  guardando?: boolean;
+  onGuardar: (datos: ClienteForm) => Promise<boolean>;
+  onEliminar: (cliente: ClienteAdmin) => void;
 };
 
-export function TabClientes({ token, clientes, setClientes }: TabClientesProps) {
+export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabClientesProps) {
   const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState<'all' | 'pedidos' | 'reservas'>('all');
   const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
   const [creando, setCreando] = useState(false);
   const [detalle, setDetalle] = useState<ClienteAdmin | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const aviso = useAviso();
 
   const lista = useMemo(() => {
     const texto = busqueda.trim().toLowerCase();
@@ -49,41 +46,12 @@ export function TabClientes({ token, clientes, setClientes }: TabClientesProps) 
     });
   }, [busqueda, clientes, filtro]);
 
-  const guardar = async (datos: ClienteForm) => {
-    setGuardando(true);
-    try {
-      const creado = await crearCliente({
-        name: datos.name.trim(),
-        email: datos.email.trim().toLowerCase(),
-        phone: datos.phone.trim(),
-        password: datos.password.trim(),
-      });
-      setClientes([creado, ...clientes]);
-      setCreando(false);
-      aviso.ok('Cliente creado', `${creado.name} ya está en la casa.`);
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo crear.', 'Cliente');
-    } finally {
-      setGuardando(false);
-    }
-  };
+  useEffect(() => {
+    if (detalle && !clientes.some((item) => item.id === detalle.id)) setDetalle(null);
+  }, [clientes, detalle]);
 
-  const borrar = (cliente: ClienteAdmin) => {
-    aviso.confirmar({
-      sello: 'CLIENTES',
-      titulo: 'Eliminar cliente',
-      texto: `¿Quitar a ${cliente.name || cliente.email} de la casa?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Cliente eliminado',
-        texto: `${cliente.name || cliente.email} fue eliminado.`,
-      },
-      onConfirmar: async () => {
-        await eliminarCliente(token, cliente.id);
-        setClientes(clientes.filter((item) => item.id !== cliente.id));
-      },
-    });
+  const guardar = async (datos: ClienteForm) => {
+    if (await onGuardar(datos)) setCreando(false);
   };
 
   return (
@@ -137,7 +105,7 @@ export function TabClientes({ token, clientes, setClientes }: TabClientesProps) 
                   ) : null}
                   <AccionesAdmin>
                     <EnlaceAdmin etiqueta="VER" onPress={() => setDetalle(cliente)} />
-                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(cliente)} />
+                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(cliente)} />
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla ancho={68} derecha>
@@ -172,7 +140,7 @@ export function TabClientes({ token, clientes, setClientes }: TabClientesProps) 
                 ) : null}
                 <AccionesAdmin>
                   <EnlaceAdmin etiqueta="VER" onPress={() => setDetalle(cliente)} />
-                  <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(cliente)} />
+                  <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(cliente)} />
                 </AccionesAdmin>
               </CajaCuadricula>
             ))}

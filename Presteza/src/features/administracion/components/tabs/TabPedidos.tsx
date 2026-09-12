@@ -1,11 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
-import { useAviso } from '@/shared/components/aviso';
 
-import { actualizarEstadoPedido, actualizarPedido, crearPedido, eliminarPedido } from '../../api/adminApi';
 import type { ClienteAdmin, PedidoAdmin, PedidoForm, ProductoAdmin } from '../../types';
 import { estadoPedidoBackend, formatoFechaHora, idDe, textoEstadoPedido } from '../../utils';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -37,11 +35,13 @@ const ESTADOS = [
 ] as const;
 
 type TabPedidosProps = {
-  token: string;
   pedidos: PedidoAdmin[];
-  setPedidos: (pedidos: PedidoAdmin[]) => void;
   clientes: ClienteAdmin[];
   productos: ProductoAdmin[];
+  guardando?: boolean;
+  onGuardar: (datos: PedidoForm, editando?: PedidoAdmin | null) => Promise<boolean>;
+  onCambiarEstado: (pedido: PedidoAdmin, status: string) => void;
+  onEliminar: (pedido: PedidoAdmin) => void;
 };
 
 function valoresDe(pedido?: PedidoAdmin, clienteId = ''): PedidoForm {
@@ -59,15 +59,21 @@ function valoresDe(pedido?: PedidoAdmin, clienteId = ''): PedidoForm {
   };
 }
 
-export function TabPedidos({ token, pedidos, setPedidos, clientes, productos }: TabPedidosProps) {
+export function TabPedidos({
+  pedidos,
+  clientes,
+  productos,
+  guardando,
+  onGuardar,
+  onCambiarEstado,
+  onEliminar,
+}: TabPedidosProps) {
   const [filtro, setFiltro] = useState<(typeof FILTROS)[number]['id']>('all');
   const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
   const [abierto, setAbierto] = useState(false);
   const [editando, setEditando] = useState<PedidoAdmin | null>(null);
   const [detalle, setDetalle] = useState<PedidoAdmin | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const aviso = useAviso();
 
   const lista = useMemo(() => {
     const ordenados = [...pedidos].sort(
@@ -84,107 +90,17 @@ export function TabPedidos({ token, pedidos, setPedidos, clientes, productos }: 
     });
   }, [filtro, pedidos]);
 
+  useEffect(() => {
+    if (detalle && !pedidos.some((item) => idDe(item) === idDe(detalle))) setDetalle(null);
+  }, [detalle, pedidos]);
+
   const abrir = (pedido?: PedidoAdmin) => {
     setEditando(pedido ?? null);
     setAbierto(true);
   };
 
   const guardar = async (datos: PedidoForm) => {
-    const cliente = clientes.find((item) => item.id === datos.userId);
-    if (!cliente) {
-      aviso.error('Pedido', 'Elige un cliente.');
-      return;
-    }
-    if (!datos.lineas.length) {
-      aviso.error('Pedido', 'Agrega al menos un plato.');
-      return;
-    }
-
-    const cuerpo = {
-      usuarioId: cliente.id,
-      user_name: cliente.name,
-      payment_method: datos.payment_method,
-      status: estadoPedidoBackend(datos.status),
-      products: datos.lineas.map((linea) => ({
-        dishId: linea.dishId,
-        name: linea.name,
-        quantity: linea.quantity,
-        unit_price: linea.unit_price,
-        description: linea.description || linea.name,
-      })),
-      total: datos.lineas.reduce((suma, linea) => suma + linea.unit_price * linea.quantity, 0),
-    };
-
-    setGuardando(true);
-    try {
-      if (editando) {
-        const actualizado = await actualizarPedido(token, idDe(editando), cuerpo);
-        setPedidos(pedidos.map((item) => (idDe(item) === idDe(editando) ? { ...item, ...actualizado, ...cuerpo, userId: cliente.id } : item)));
-        aviso.ok('Pedido editado', `El pedido de ${cliente.name} fue editado.`);
-      } else {
-        const creado = await crearPedido(token, cuerpo);
-        setPedidos([{ ...creado, ...cuerpo, userId: cliente.id }, ...pedidos]);
-        aviso.ok('Pedido creado', `El pedido de ${cliente.name} fue creado.`);
-      }
-      setAbierto(false);
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo guardar.', 'Pedido');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const cambiar = (pedido: PedidoAdmin, status: string) => {
-    const id = idDe(pedido);
-    const codigo = id.slice(-8).toUpperCase();
-    const estadoNuevo = textoEstadoPedido(status);
-    const estadoActual = textoEstadoPedido(pedido.status);
-    const esCancelar = status === 'cancelled';
-
-    if (estadoPedidoBackend(pedido.status) === estadoPedidoBackend(status)) {
-      aviso.ok('Pedido', `El pedido #${codigo} ya está ${estadoNuevo.toLowerCase()}.`);
-      return;
-    }
-
-    aviso.confirmar({
-      sello: 'PEDIDOS',
-      titulo: esCancelar ? 'Cancelar pedido' : 'Cambiar estado',
-      texto: esCancelar
-        ? `¿Quieres cancelar el pedido #${codigo}?`
-        : `¿Cambiar el pedido #${codigo} de ${estadoActual.toLowerCase()} a ${estadoNuevo.toLowerCase()}?`,
-      confirmar: esCancelar ? 'CANCELAR PEDIDO' : 'CAMBIAR',
-      peligro: esCancelar,
-      exito: {
-        titulo: esCancelar ? 'Pedido cancelado' : 'Estado cambiado',
-        texto: esCancelar
-          ? `El pedido #${codigo} fue cancelado.`
-          : `El pedido #${codigo} cambió a ${estadoNuevo.toLowerCase()}.`,
-      },
-      onConfirmar: async () => {
-        await actualizarEstadoPedido(token, id, status);
-        setPedidos(pedidos.map((item) => (idDe(item) === id ? { ...item, status } : item)));
-      },
-    });
-  };
-
-  const borrar = (pedido: PedidoAdmin) => {
-    const codigo = idDe(pedido).slice(-8).toUpperCase();
-    aviso.confirmar({
-      sello: 'PEDIDOS',
-      titulo: 'Eliminar pedido',
-      texto: `¿Borrar el pedido #${codigo}?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Pedido eliminado',
-        texto: `El pedido #${codigo} fue eliminado.`,
-      },
-      onConfirmar: async () => {
-        await eliminarPedido(token, idDe(pedido));
-        setPedidos(pedidos.filter((item) => idDe(item) !== idDe(pedido)));
-        if (detalle && idDe(detalle) === idDe(pedido)) setDetalle(null);
-      },
-    });
+    if (await onGuardar(datos, editando)) setAbierto(false);
   };
 
   const acciones = (pedido: PedidoAdmin) => (
@@ -196,10 +112,10 @@ export function TabPedidos({ token, pedidos, setPedidos, clientes, productos }: 
           key={estado.id}
           etiqueta={estado.etiqueta}
           peligro={estado.id === 'cancelled'}
-          onPress={() => cambiar(pedido, estado.id)}
+          onPress={() => onCambiarEstado(pedido, estado.id)}
         />
       ))}
-      <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(pedido)} />
+      <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(pedido)} />
     </AccionesAdmin>
   );
 
@@ -302,7 +218,7 @@ export function TabPedidos({ token, pedidos, setPedidos, clientes, productos }: 
             <Text className="text-lg text-marca">{formatCOP(detalle.total || 0)}</Text>
             <AccionesAdmin>
               <EnlaceAdmin etiqueta="EDITAR" onPress={() => { setDetalle(null); abrir(detalle); }} />
-              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(detalle)} />
+              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
             </AccionesAdmin>
           </View>
         ) : null}

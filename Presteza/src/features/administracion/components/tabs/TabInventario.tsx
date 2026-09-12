@@ -3,9 +3,7 @@ import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
-import { useAviso } from '@/shared/components/aviso';
 
-import { actualizarInsumo, crearInsumo, eliminarInsumo } from '../../api/adminApi';
 import type { InsumoAdmin, InsumoForm } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -24,19 +22,18 @@ import {
 const UMBRAL = 10;
 
 type TabInventarioProps = {
-  token: string;
   insumos: InsumoAdmin[];
-  setInsumos: (insumos: InsumoAdmin[]) => void;
+  guardando?: boolean;
+  onGuardar: (datos: InsumoForm, editando?: InsumoAdmin | null) => Promise<boolean>;
+  onEliminar: (insumo: InsumoAdmin) => void;
 };
 
-export function TabInventario({ token, insumos, setInsumos }: TabInventarioProps) {
+export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: TabInventarioProps) {
   const [filtro, setFiltro] = useState<'all' | 'low' | 'out'>('all');
   const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
   const [abierto, setAbierto] = useState(false);
   const [editando, setEditando] = useState<InsumoAdmin | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const aviso = useAviso();
 
   const lista = useMemo(() => {
     if (filtro === 'out') return insumos.filter((item) => item.quantity === 0);
@@ -51,46 +48,7 @@ export function TabInventario({ token, insumos, setInsumos }: TabInventarioProps
   };
 
   const guardar = async (datos: InsumoForm) => {
-    setGuardando(true);
-    try {
-      const cuerpo = {
-        name: datos.name.trim(),
-        description: datos.description.trim(),
-        unit_price: Number(datos.unit_price),
-        quantity: Number(datos.quantity),
-      };
-      if (editando) {
-        const actualizado = await actualizarInsumo(token, idDe(editando), cuerpo);
-        setInsumos(insumos.map((item) => (idDe(item) === idDe(editando) ? { ...item, ...actualizado, ...cuerpo } : item)));
-        aviso.ok('Insumo editado', `${cuerpo.name} fue editado.`);
-      } else {
-        setInsumos([await crearInsumo(token, cuerpo), ...insumos]);
-        aviso.ok('Insumo creado', `${cuerpo.name} ya está en la bodega.`);
-      }
-      setAbierto(false);
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo guardar.', 'Inventario');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const borrar = (insumo: InsumoAdmin) => {
-    aviso.confirmar({
-      sello: 'BODEGA',
-      titulo: 'Eliminar insumo',
-      texto: `¿Quitar ${insumo.name} del inventario?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Insumo eliminado',
-        texto: `${insumo.name} fue eliminado.`,
-      },
-      onConfirmar: async () => {
-        await eliminarInsumo(token, idDe(insumo));
-        setInsumos(insumos.filter((item) => idDe(item) !== idDe(insumo)));
-      },
-    });
+    if (await onGuardar(datos, editando)) setAbierto(false);
   };
 
   return (
@@ -136,7 +94,7 @@ export function TabInventario({ token, insumos, setInsumos }: TabInventarioProps
                   </Text>
                   <AccionesAdmin>
                     <EnlaceAdmin etiqueta="EDITAR" onPress={() => { setEditando(insumo); setAbierto(true); }} />
-                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(insumo)} />
+                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(insumo)} />
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla ancho={56} derecha>
@@ -163,7 +121,7 @@ export function TabInventario({ token, insumos, setInsumos }: TabInventarioProps
                     setEditando(insumo);
                     setAbierto(true);
                   }}
-                  onEliminar={() => borrar(insumo)}
+                  onEliminar={() => onEliminar(insumo)}
                 />
               </CajaCuadricula>
             ))}

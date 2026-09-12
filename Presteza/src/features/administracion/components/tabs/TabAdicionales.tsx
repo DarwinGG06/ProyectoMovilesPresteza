@@ -3,9 +3,7 @@ import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
-import { useAviso } from '@/shared/components/aviso';
 
-import { actualizarAdicional, crearAdicional, eliminarAdicional } from '../../api/adminApi';
 import type { AdicionalAdmin, AdicionalForm } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -22,19 +20,19 @@ import {
 } from '../VistaCarta';
 
 type TabAdicionalesProps = {
-  token: string;
   adicionales: AdicionalAdmin[];
-  setAdicionales: (adicionales: AdicionalAdmin[]) => void;
+  guardando?: boolean;
+  onGuardar: (datos: AdicionalForm, editando?: AdicionalAdmin | null) => Promise<boolean>;
+  onAlternar: (adicional: AdicionalAdmin) => void;
+  onEliminar: (adicional: AdicionalAdmin) => void;
 };
 
-export function TabAdicionales({ token, adicionales, setAdicionales }: TabAdicionalesProps) {
+export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, onEliminar }: TabAdicionalesProps) {
   const [filtro, setFiltro] = useState<'all' | 'on' | 'off'>('all');
   const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
   const [abierto, setAbierto] = useState(false);
   const [editando, setEditando] = useState<AdicionalAdmin | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const aviso = useAviso();
 
   const lista = useMemo(() => {
     if (filtro === 'on') return adicionales.filter((item) => item.available !== false);
@@ -43,59 +41,7 @@ export function TabAdicionales({ token, adicionales, setAdicionales }: TabAdicio
   }, [adicionales, filtro]);
 
   const guardar = async (datos: AdicionalForm) => {
-    setGuardando(true);
-    try {
-      const cuerpo = {
-        name: datos.name.trim(),
-        price: Number(datos.price),
-        available: editando?.available !== false,
-      };
-      if (editando) {
-        const actualizado = await actualizarAdicional(token, idDe(editando), cuerpo);
-        setAdicionales(adicionales.map((item) => (idDe(item) === idDe(editando) ? { ...item, ...actualizado, ...cuerpo } : item)));
-        aviso.ok('Adicional editado', `${cuerpo.name} fue editado.`);
-      } else {
-        setAdicionales([await crearAdicional(token, cuerpo), ...adicionales]);
-        aviso.ok('Adicional creado', `${cuerpo.name} ya está en los extras.`);
-      }
-      setAbierto(false);
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo guardar.', 'Adicional');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const alternar = async (adicional: AdicionalAdmin) => {
-    try {
-      const available = adicional.available === false;
-      await actualizarAdicional(token, idDe(adicional), { available });
-      setAdicionales(adicionales.map((item) => (idDe(item) === idDe(adicional) ? { ...item, available } : item)));
-      aviso.ok(
-        available ? 'Adicional activado' : 'Adicional oculto',
-        available ? `${adicional.name} volvió a estar disponible.` : `${adicional.name} quedó oculto.`,
-      );
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo actualizar.', 'Adicional');
-    }
-  };
-
-  const borrar = (adicional: AdicionalAdmin) => {
-    aviso.confirmar({
-      sello: 'EXTRAS',
-      titulo: 'Eliminar adicional',
-      texto: `¿Quitar ${adicional.name} de los extras?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Adicional eliminado',
-        texto: `${adicional.name} fue eliminado.`,
-      },
-      onConfirmar: async () => {
-        await eliminarAdicional(token, idDe(adicional));
-        setAdicionales(adicionales.filter((item) => idDe(item) !== idDe(adicional)));
-      },
-    });
+    if (await onGuardar(datos, editando)) setAbierto(false);
   };
 
   return (
@@ -140,9 +86,9 @@ export function TabAdicionales({ token, adicionales, setAdicionales }: TabAdicio
                     <EnlaceAdmin etiqueta="EDITAR" onPress={() => { setEditando(adicional); setAbierto(true); }} />
                     <EnlaceAdmin
                       etiqueta={adicional.available === false ? 'ACTIVAR' : 'OCULTAR'}
-                      onPress={() => void alternar(adicional)}
+                      onPress={() => onAlternar(adicional)}
                     />
-                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(adicional)} />
+                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(adicional)} />
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla ancho={78}>
@@ -172,8 +118,8 @@ export function TabAdicionales({ token, adicionales, setAdicionales }: TabAdicio
                     setEditando(adicional);
                     setAbierto(true);
                   }}
-                  onAlternar={() => void alternar(adicional)}
-                  onEliminar={() => borrar(adicional)}
+                  onAlternar={() => onAlternar(adicional)}
+                  onEliminar={() => onEliminar(adicional)}
                   etiquetaAlternar={adicional.available === false ? 'ACTIVAR' : 'OCULTAR'}
                 />
               </CajaCuadricula>

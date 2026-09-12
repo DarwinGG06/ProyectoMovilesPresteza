@@ -1,143 +1,153 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { useAuth } from '@/auth/AuthContext';
-
-import {
-  listarAdicionales,
-  listarCategorias,
-  listarInsumos,
-  listarMensajes,
-  listarPedidos,
-  listarProductos,
-  listarReservas,
-  listarUsuarios,
-} from '../api/adminApi';
-import type {
-  AdicionalAdmin,
-  CategoriaAdmin,
-  ClienteAdmin,
-  InsumoAdmin,
-  MensajeAdmin,
-  PedidoAdmin,
-  ProductoAdmin,
-  ReservaAdmin,
-} from '../types';
-import { calcularStats } from '../utils';
+import type { PedidoAdmin, PedidoForm } from '../types';
+import { calcularStats, enriquecerClientes, idDe } from '../utils';
+import { useSesionAdmin } from './adminComun';
+import { useAdminAdicionales } from './useAdminAdicionales';
+import { useAdminAjustes } from './useAdminAjustes';
+import { useAdminCategorias } from './useAdminCategorias';
+import { useAdminClientes } from './useAdminClientes';
+import { useAdminInsumos } from './useAdminInsumos';
+import { useAdminMensajes } from './useAdminMensajes';
+import { useAdminPedidos } from './useAdminPedidos';
+import { useAdminProductos } from './useAdminProductos';
+import { useAdminReservasLista } from './useAdminReservasLista';
 
 export function useAdmin() {
-  const { user, token, logout } = useAuth();
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [pedidos, setPedidos] = useState<PedidoAdmin[]>([]);
-  const [reservas, setReservas] = useState<ReservaAdmin[]>([]);
-  const [productos, setProductos] = useState<ProductoAdmin[]>([]);
-  const [categorias, setCategorias] = useState<CategoriaAdmin[]>([]);
-  const [insumos, setInsumos] = useState<InsumoAdmin[]>([]);
-  const [adicionales, setAdicionales] = useState<AdicionalAdmin[]>([]);
-  const [mensajes, setMensajes] = useState<MensajeAdmin[]>([]);
-  const [usuarios, setUsuarios] = useState<ClienteAdmin[]>([]);
+  const { user, token } = useSesionAdmin();
+  const productos = useAdminProductos();
+  const categorias = useAdminCategorias();
+  const insumos = useAdminInsumos();
+  const adicionales = useAdminAdicionales();
+  const pedidos = useAdminPedidos();
+  const mensajes = useAdminMensajes();
+  const usuarios = useAdminClientes();
+  const reservas = useAdminReservasLista();
+  const ajustes = useAdminAjustes();
 
-  const recargar = useCallback(async () => {
-    if (!token) return;
-    setError(null);
-    setCargando(true);
-    try {
-      const [listaPedidos, listaReservas, listaProductos, listaCategorias, listaInsumos, listaAdicionales, listaMensajes, listaUsuarios] =
-        await Promise.all([
-          listarPedidos(token),
-          listarReservas(token),
-          listarProductos(token),
-          listarCategorias(token),
-          listarInsumos(token),
-          listarAdicionales(token),
-          listarMensajes(token),
-          listarUsuarios(token),
-        ]);
-
-      setPedidos(listaPedidos);
-      setReservas(listaReservas);
-      setProductos(listaProductos);
-      setCategorias(listaCategorias);
-      setInsumos(listaInsumos);
-      setAdicionales(listaAdicionales);
-      setMensajes(listaMensajes);
-      setUsuarios(listaUsuarios);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo cargar la casa.');
-    } finally {
-      setCargando(false);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    recargar();
-  }, [recargar]);
-
-  const clientes = useMemo<ClienteAdmin[]>(() => {
-    const deServidor = usuarios.filter((usuario) => usuario.role !== 'admin');
-
-    return deServidor.map((cliente) => {
-      const susPedidos = pedidos.filter(
-        (pedido) =>
-          (pedido.userId && pedido.userId === cliente.id) ||
-          (pedido.user_name && (pedido.user_name === cliente.name || pedido.user_name === cliente.email)),
-      );
-      const susReservas = reservas.filter(
-        (reserva) =>
-          (cliente.email && reserva.userEmail === cliente.email) ||
-          (cliente.name && reserva.userName === cliente.name),
-      );
-
-      return {
-        ...cliente,
-        totalOrders: susPedidos.length,
-        totalReservations: susReservas.length,
-        totalSpent: susPedidos.reduce((suma, pedido) => suma + (Number(pedido.total) || 0), 0),
-      };
-    });
-  }, [pedidos, reservas, usuarios]);
+  const clientes = useMemo(
+    () => enriquecerClientes(usuarios.usuarios, pedidos.pedidos, reservas.reservas),
+    [pedidos.pedidos, reservas.reservas, usuarios.usuarios],
+  );
 
   const stats = useMemo(
     () =>
       calcularStats({
-        pedidos,
-        productos,
-        reservas,
-        mensajes,
+        pedidos: pedidos.pedidos,
+        productos: productos.productos,
+        reservas: reservas.reservas,
+        mensajes: mensajes.mensajes,
         clientes,
-        categorias,
-        insumos,
-        adicionales,
+        categorias: categorias.categorias,
+        insumos: insumos.insumos,
+        adicionales: adicionales.adicionales,
       }),
-    [adicionales, categorias, clientes, insumos, mensajes, pedidos, productos, reservas],
+    [
+      adicionales.adicionales,
+      categorias.categorias,
+      clientes,
+      insumos.insumos,
+      mensajes.mensajes,
+      pedidos.pedidos,
+      productos.productos,
+      reservas.reservas,
+    ],
   );
+
+  const recargar = useCallback(async () => {
+    await Promise.all([
+      productos.recargar(),
+      categorias.recargar(),
+      insumos.recargar(),
+      adicionales.recargar(),
+      pedidos.recargar(),
+      mensajes.recargar(),
+      usuarios.recargar(),
+      reservas.recargar(),
+    ]);
+  }, [
+    adicionales.recargar,
+    categorias.recargar,
+    insumos.recargar,
+    mensajes.recargar,
+    pedidos.recargar,
+    productos.recargar,
+    reservas.recargar,
+    usuarios.recargar,
+  ]);
+
+  const guardarPedido = useCallback(
+    (datos: PedidoForm, editando?: PedidoAdmin | null) => pedidos.guardar(datos, editando, clientes),
+    [clientes, pedidos.guardar],
+  );
+
+  const error =
+    [
+      productos.error,
+      categorias.error,
+      insumos.error,
+      adicionales.error,
+      pedidos.error,
+      mensajes.error,
+      usuarios.error,
+      reservas.error,
+    ]
+      .filter(Boolean)
+      .join(' ') || null;
 
   return {
     user,
     token,
-    logout,
-    cargando,
+    esAdmin: user?.role === 'admin',
+    salir: ajustes.salir,
+    cargando:
+      productos.cargando &&
+      categorias.cargando &&
+      insumos.cargando &&
+      adicionales.cargando &&
+      pedidos.cargando &&
+      mensajes.cargando &&
+      usuarios.cargando &&
+      reservas.cargando,
+    guardando:
+      productos.guardando ||
+      categorias.guardando ||
+      insumos.guardando ||
+      adicionales.guardando ||
+      pedidos.guardando ||
+      mensajes.guardando ||
+      usuarios.guardando ||
+      ajustes.guardando,
     error,
-    setError,
     recargar,
-    pedidos,
-    setPedidos,
-    reservas,
-    setReservas,
-    productos,
-    setProductos,
-    categorias,
-    setCategorias,
-    insumos,
-    setInsumos,
-    adicionales,
-    setAdicionales,
-    mensajes,
-    setMensajes,
-    clientes,
-    setClientes: (lista: ClienteAdmin[]) => {
-      setUsuarios((previos) => [...previos.filter((usuario) => usuario.role === 'admin'), ...lista]);
-    },
     stats,
+    idDe,
+    pedidos: pedidos.pedidos,
+    reservas: reservas.reservas,
+    setReservas: reservas.setReservas,
+    productos: productos.productos,
+    categorias: categorias.categorias,
+    insumos: insumos.insumos,
+    adicionales: adicionales.adicionales,
+    mensajes: mensajes.mensajes,
+    clientes,
+    guardarProducto: productos.guardar,
+    alternarProducto: productos.alternar,
+    eliminarProducto: productos.eliminar,
+    guardarCategoria: categorias.guardar,
+    eliminarCategoria: categorias.eliminar,
+    guardarInsumo: insumos.guardar,
+    eliminarInsumo: insumos.eliminar,
+    guardarAdicional: adicionales.guardar,
+    alternarAdicional: adicionales.alternar,
+    eliminarAdicional: adicionales.eliminar,
+    guardarPedido,
+    cambiarEstadoPedido: pedidos.cambiarEstado,
+    eliminarPedido: pedidos.eliminar,
+    guardarMensaje: mensajes.guardar,
+    eliminarMensaje: mensajes.eliminar,
+    guardarCliente: usuarios.guardar,
+    eliminarCliente: usuarios.eliminar,
+    guardarAjustes: ajustes.guardar,
   };
 }

@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
-import { useAviso } from '@/shared/components/aviso';
 
-import { actualizarCategoria, crearCategoria, eliminarCategoria } from '../../api/adminApi';
 import type { CategoriaAdmin, CategoriaForm } from '../../types';
 import { idDe } from '../../utils';
 import { EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -12,17 +10,16 @@ import { FormularioCategoria } from '../formularios/FormularioCategoria';
 import { AccionesCarta, CeldaTabla, EncabezadoTabla, FilaTabla, FotoCarta, InterruptorVista } from '../VistaCarta';
 
 type TabCategoriasProps = {
-  token: string;
   categorias: CategoriaAdmin[];
-  setCategorias: (categorias: CategoriaAdmin[]) => void;
+  guardando?: boolean;
+  onGuardar: (datos: CategoriaForm, editando?: CategoriaAdmin | null) => Promise<boolean>;
+  onEliminar: (categoria: CategoriaAdmin) => void;
 };
 
-export function TabCategorias({ token, categorias, setCategorias }: TabCategoriasProps) {
+export function TabCategorias({ categorias, guardando, onGuardar, onEliminar }: TabCategoriasProps) {
   const [vista, setVista] = useState<'lista' | 'cuadricula'>('cuadricula');
   const [abierto, setAbierto] = useState(false);
   const [editando, setEditando] = useState<CategoriaAdmin | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const aviso = useAviso();
 
   const abrir = (categoria?: CategoriaAdmin) => {
     setEditando(categoria ?? null);
@@ -30,45 +27,7 @@ export function TabCategorias({ token, categorias, setCategorias }: TabCategoria
   };
 
   const guardar = async (datos: CategoriaForm) => {
-    setGuardando(true);
-    try {
-      const cuerpo = {
-        name: datos.name.trim(),
-        description: datos.description.trim(),
-        imageUrl: datos.imageUrl.trim(),
-      };
-      if (editando) {
-        const actualizado = await actualizarCategoria(token, idDe(editando), cuerpo);
-        setCategorias(categorias.map((item) => (idDe(item) === idDe(editando) ? { ...item, ...actualizado, ...cuerpo } : item)));
-        aviso.ok('Categoría editada', `${cuerpo.name} fue editada.`);
-      } else {
-        setCategorias([await crearCategoria(token, cuerpo), ...categorias]);
-        aviso.ok('Categoría creada', `${cuerpo.name} ya está en la carta.`);
-      }
-      setAbierto(false);
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo guardar.', 'Categoría');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const borrar = (categoria: CategoriaAdmin) => {
-    aviso.confirmar({
-      sello: 'CARTA',
-      titulo: 'Eliminar categoría',
-      texto: `¿Quitar ${categoria.name} de la carta?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Categoría eliminada',
-        texto: `${categoria.name} fue eliminada.`,
-      },
-      onConfirmar: async () => {
-        await eliminarCategoria(token, idDe(categoria));
-        setCategorias(categorias.filter((item) => idDe(item) !== idDe(categoria)));
-      },
-    });
+    if (await onGuardar(datos, editando)) setAbierto(false);
   };
 
   return (
@@ -100,7 +59,7 @@ export function TabCategorias({ token, categorias, setCategorias }: TabCategoria
                       <Text className="text-sm font-light text-white" numberOfLines={2}>
                         {categoria.name}
                       </Text>
-                      <AccionesCarta onEditar={() => abrir(categoria)} onEliminar={() => borrar(categoria)} />
+                      <AccionesCarta onEditar={() => abrir(categoria)} onEliminar={() => onEliminar(categoria)} />
                     </View>
                   </View>
                 </CeldaTabla>
@@ -127,7 +86,7 @@ export function TabCategorias({ token, categorias, setCategorias }: TabCategoria
                   <Text className="text-sm text-crema/60" numberOfLines={2}>
                     {categoria.description || 'Sin nota'}
                   </Text>
-                  <AccionesCarta onEditar={() => abrir(categoria)} onEliminar={() => borrar(categoria)} />
+                  <AccionesCarta onEditar={() => abrir(categoria)} onEliminar={() => onEliminar(categoria)} />
                 </View>
               </View>
             ))}

@@ -3,9 +3,7 @@ import { Text, TextInput, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
-import { useAviso } from '@/shared/components/aviso';
 
-import { actualizarProducto, crearProducto, eliminarProducto } from '../../api/adminApi';
 import type { CategoriaAdmin, ProductoAdmin, ProductoForm } from '../../types';
 import { idDe } from '../../utils';
 import { ChipFiltro, EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -22,13 +20,15 @@ import {
 } from '../VistaCarta';
 
 type TabProductosProps = {
-  token: string;
   productos: ProductoAdmin[];
-  setProductos: (productos: ProductoAdmin[]) => void;
   categorias: CategoriaAdmin[];
+  guardando?: boolean;
+  onGuardar: (datos: ProductoForm, editando?: ProductoAdmin | null) => Promise<boolean>;
+  onAlternar: (producto: ProductoAdmin) => void;
+  onEliminar: (producto: ProductoAdmin) => void;
 };
 
-export function TabProductos({ token, productos, setProductos, categorias }: TabProductosProps) {
+export function TabProductos({ productos, categorias, guardando, onGuardar, onAlternar, onEliminar }: TabProductosProps) {
   const [busqueda, setBusqueda] = useState('');
   const [categoriaFiltro, setCategoriaFiltro] = useState('');
   const [disponibilidad, setDisponibilidad] = useState<'all' | 'carta' | 'oculto'>('all');
@@ -36,8 +36,6 @@ export function TabProductos({ token, productos, setProductos, categorias }: Tab
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
   const [abierto, setAbierto] = useState(false);
   const [editando, setEditando] = useState<ProductoAdmin | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const aviso = useAviso();
 
   const lista = useMemo(() => {
     const texto = busqueda.trim().toLowerCase();
@@ -59,62 +57,7 @@ export function TabProductos({ token, productos, setProductos, categorias }: Tab
   };
 
   const guardar = async (datos: ProductoForm) => {
-    setGuardando(true);
-    try {
-      const cuerpo = {
-        name: datos.name.trim(),
-        description: datos.description.trim(),
-        price: Number(datos.price),
-        categoryId: datos.categoryId,
-        imageUrl: datos.imageUrl.trim(),
-        available: editando?.available !== false,
-      };
-      if (editando) {
-        const actualizado = await actualizarProducto(token, idDe(editando), cuerpo);
-        setProductos(productos.map((item) => (idDe(item) === idDe(editando) ? { ...item, ...actualizado, ...cuerpo } : item)));
-        aviso.ok('Plato editado', `${cuerpo.name} fue editado.`);
-      } else {
-        setProductos([await crearProducto(token, cuerpo), ...productos]);
-        aviso.ok('Plato creado', `${cuerpo.name} ya está en la carta.`);
-      }
-      setAbierto(false);
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo guardar.', 'Producto');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const alternar = async (producto: ProductoAdmin) => {
-    try {
-      const available = producto.available === false;
-      await actualizarProducto(token, idDe(producto), { available });
-      setProductos(productos.map((item) => (idDe(item) === idDe(producto) ? { ...item, available } : item)));
-      aviso.ok(
-        available ? 'Plato activado' : 'Plato oculto',
-        available ? `${producto.name} volvió a la carta.` : `${producto.name} quedó oculto.`,
-      );
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo actualizar.', 'Producto');
-    }
-  };
-
-  const borrar = (producto: ProductoAdmin) => {
-    aviso.confirmar({
-      sello: 'CARTA',
-      titulo: 'Eliminar plato',
-      texto: `¿Quitar ${producto.name} de la carta?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Plato eliminado',
-        texto: `${producto.name} fue eliminado de la carta.`,
-      },
-      onConfirmar: async () => {
-        await eliminarProducto(token, idDe(producto));
-        setProductos(productos.filter((item) => idDe(item) !== idDe(producto)));
-      },
-    });
+    if (await onGuardar(datos, editando)) setAbierto(false);
   };
 
   return (
@@ -188,8 +131,8 @@ export function TabProductos({ token, productos, setProductos, categorias }: Tab
                       </Text>
                       <AccionesCarta
                         onEditar={() => abrir(producto)}
-                        onAlternar={() => void alternar(producto)}
-                        onEliminar={() => borrar(producto)}
+                        onAlternar={() => onAlternar(producto)}
+                        onEliminar={() => onEliminar(producto)}
                         etiquetaAlternar={producto.available === false ? 'ACTIVAR' : 'OCULTAR'}
                       />
                     </View>
@@ -222,8 +165,8 @@ export function TabProductos({ token, productos, setProductos, categorias }: Tab
                   </Text>
                   <AccionesCarta
                     onEditar={() => abrir(producto)}
-                    onAlternar={() => void alternar(producto)}
-                    onEliminar={() => borrar(producto)}
+                    onAlternar={() => onAlternar(producto)}
+                    onEliminar={() => onEliminar(producto)}
                     etiquetaAlternar={producto.available === false ? 'ACTIVAR' : 'OCULTAR'}
                   />
                 </View>

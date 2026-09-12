@@ -1,10 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
-import { useAviso } from '@/shared/components/aviso';
 
-import { actualizarMensaje, crearMensaje, eliminarMensaje } from '../../api/adminApi';
 import type { MensajeAdmin, MensajeForm } from '../../types';
 import { formatoFechaHora, idDe } from '../../utils';
 import { AccionesAdmin, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -19,9 +17,10 @@ import {
 } from '../VistaCarta';
 
 type TabMensajesProps = {
-  token: string;
   mensajes: MensajeAdmin[];
-  setMensajes: (mensajes: MensajeAdmin[]) => void;
+  guardando?: boolean;
+  onGuardar: (datos: MensajeForm, editando?: MensajeAdmin | null) => Promise<boolean>;
+  onEliminar: (mensaje: MensajeAdmin) => void;
 };
 
 function valoresDe(mensaje?: MensajeAdmin): MensajeForm {
@@ -34,23 +33,11 @@ function valoresDe(mensaje?: MensajeAdmin): MensajeForm {
   };
 }
 
-function cuerpoDe(datos: MensajeForm) {
-  return {
-    user_name: datos.name.trim(),
-    user_email: datos.email.trim().toLowerCase(),
-    user_phone: datos.phone.trim(),
-    user_title: datos.subject.trim(),
-    user_comment: datos.message.trim(),
-  };
-}
-
-export function TabMensajes({ token, mensajes, setMensajes }: TabMensajesProps) {
+export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabMensajesProps) {
   const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
   const [abierto, setAbierto] = useState(false);
   const [editando, setEditando] = useState<MensajeAdmin | null>(null);
   const [detalle, setDetalle] = useState<MensajeAdmin | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const aviso = useAviso();
 
   const lista = useMemo(
     () =>
@@ -58,56 +45,17 @@ export function TabMensajes({ token, mensajes, setMensajes }: TabMensajesProps) 
     [mensajes],
   );
 
+  useEffect(() => {
+    if (detalle && !mensajes.some((item) => idDe(item) === idDe(detalle))) setDetalle(null);
+  }, [detalle, mensajes]);
+
   const abrir = (mensaje?: MensajeAdmin) => {
     setEditando(mensaje ?? null);
     setAbierto(true);
   };
 
   const guardar = async (datos: MensajeForm) => {
-    setGuardando(true);
-    try {
-      const cuerpo = cuerpoDe(datos);
-      const visto = {
-        name: cuerpo.user_name,
-        email: cuerpo.user_email,
-        phone: cuerpo.user_phone,
-        subject: cuerpo.user_title,
-        message: cuerpo.user_comment,
-      };
-      if (editando) {
-        const actualizado = await actualizarMensaje(token, idDe(editando), cuerpo);
-        setMensajes(mensajes.map((item) => (idDe(item) === idDe(editando) ? { ...item, ...actualizado, ...visto } : item)));
-        aviso.ok('Mensaje editado', `El mensaje de ${visto.name} fue editado.`);
-      } else {
-        const creado = await crearMensaje(token, cuerpo);
-        setMensajes([{ ...creado, ...visto }, ...mensajes]);
-        aviso.ok('Mensaje creado', `El mensaje de ${visto.name} fue creado.`);
-      }
-      setAbierto(false);
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo guardar.', 'Mensaje');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const borrar = (mensaje: MensajeAdmin) => {
-    aviso.confirmar({
-      sello: 'CORREO',
-      titulo: 'Eliminar mensaje',
-      texto: `¿Borrar el mensaje de ${mensaje.name}?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Mensaje eliminado',
-        texto: `El mensaje de ${mensaje.name} fue eliminado.`,
-      },
-      onConfirmar: async () => {
-        await eliminarMensaje(token, idDe(mensaje));
-        setMensajes(mensajes.filter((item) => idDe(item) !== idDe(mensaje)));
-        if (detalle && idDe(detalle) === idDe(mensaje)) setDetalle(null);
-      },
-    });
+    if (await onGuardar(datos, editando)) setAbierto(false);
   };
 
   return (
@@ -138,7 +86,7 @@ export function TabMensajes({ token, mensajes, setMensajes }: TabMensajesProps) 
                   <AccionesAdmin>
                     <EnlaceAdmin etiqueta="VER" onPress={() => setDetalle(mensaje)} />
                     <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(mensaje)} />
-                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(mensaje)} />
+                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(mensaje)} />
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla flex={0.8}>
@@ -168,7 +116,7 @@ export function TabMensajes({ token, mensajes, setMensajes }: TabMensajesProps) 
                 <AccionesAdmin>
                   <EnlaceAdmin etiqueta="VER" onPress={() => setDetalle(mensaje)} />
                   <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(mensaje)} />
-                  <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(mensaje)} />
+                  <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(mensaje)} />
                 </AccionesAdmin>
               </CajaCuadricula>
             ))}
@@ -196,7 +144,7 @@ export function TabMensajes({ token, mensajes, setMensajes }: TabMensajesProps) 
             <Text className="mt-2 text-base leading-6 text-marca-oscura">{detalle.message}</Text>
             <AccionesAdmin>
               <EnlaceAdmin etiqueta="EDITAR" onPress={() => { setDetalle(null); abrir(detalle); }} />
-              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => borrar(detalle)} />
+              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
             </AccionesAdmin>
           </View>
         ) : null}

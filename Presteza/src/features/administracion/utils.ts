@@ -1,4 +1,4 @@
-import type { PedidoAdmin, StatsAdmin } from './types';
+import type { ClienteAdmin, PedidoAdmin, ReservaAdmin, StatsAdmin } from './types';
 
 export function idDe(item?: { _id?: string; id?: string }) {
   return item?._id || item?.id || '';
@@ -98,6 +98,34 @@ export function calcularStats(datos: {
     totalInsumos: insumos.length,
     totalAdicionales: adicionales.length,
   };
+}
+
+export function enriquecerClientes(
+  usuarios: ClienteAdmin[],
+  pedidos: PedidoAdmin[],
+  reservas: ReservaAdmin[],
+): ClienteAdmin[] {
+  return usuarios
+    .filter((usuario) => usuario.role !== 'admin')
+    .map((cliente) => {
+      const susPedidos = pedidos.filter(
+        (pedido) =>
+          (pedido.userId && pedido.userId === cliente.id) ||
+          (pedido.user_name && (pedido.user_name === cliente.name || pedido.user_name === cliente.email)),
+      );
+      const susReservas = reservas.filter(
+        (reserva) =>
+          (cliente.email && reserva.userEmail === cliente.email) ||
+          (cliente.name && reserva.userName === cliente.name),
+      );
+
+      return {
+        ...cliente,
+        totalOrders: susPedidos.length,
+        totalReservations: susReservas.length,
+        totalSpent: susPedidos.reduce((suma, pedido) => suma + (Number(pedido.total) || 0), 0),
+      };
+    });
 }
 
 export function iniciales(nombre?: string) {

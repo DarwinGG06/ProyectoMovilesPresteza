@@ -3,6 +3,7 @@ import { pedirApi } from '@/services/api/cliente';
 import type {
   AdicionalAdmin,
   CategoriaAdmin,
+  ClienteAdmin,
   InsumoAdmin,
   MensajeAdmin,
   MesaAdmin,
@@ -251,11 +252,17 @@ export function eliminarCategoria(token: string, id: string) {
 }
 
 export function listarInsumos(token: string) {
-  return seguro(
-    async () =>
-      lista(await pedirApi<InsumoAdmin[] | { supplies?: InsumoAdmin[] }>('/supplies', { token }), 'supplies'),
-    [],
-  );
+  return seguro(async () => {
+    const crudos = lista<Record<string, unknown>>(await pedirApi('/supplies', { token }), 'supplies');
+    return crudos.map((item) => ({
+      _id: texto(item._id) || undefined,
+      id: texto(item.id) || undefined,
+      name: texto(item.name),
+      description: texto(item.description),
+      unit_price: Number(item.unit_price) || 0,
+      quantity: Number(item.quantity) || 0,
+    })) as InsumoAdmin[];
+  }, [] as InsumoAdmin[]);
 }
 
 export function crearInsumo(token: string, datos: Record<string, unknown>) {
@@ -277,13 +284,13 @@ export function listarAdicionales(token: string) {
       _id: texto(item._id) || undefined,
       id: texto(item.id) || undefined,
       name: texto(item.name),
-      description: texto(item.description),
+      description: texto(item.description) || undefined,
       price: Number(item.price) || 0,
       available: item.available !== false,
       categoryIds: Array.isArray(item.categoryIds) ? (item.categoryIds as string[]) : undefined,
       dishIds: Array.isArray(item.dishIds) ? (item.dishIds as string[]) : undefined,
-    }));
-  }, []);
+    })) as AdicionalAdmin[];
+  }, [] as AdicionalAdmin[]);
 }
 
 export function crearAdicional(token: string, datos: Record<string, unknown>) {
@@ -329,15 +336,15 @@ export function listarUsuarios(token: string) {
       { id?: string; _id?: string; complete_name?: string; name?: string; email?: string; phone_number?: string; role?: string }[]
       | { users?: { id?: string; _id?: string; complete_name?: string; name?: string; email?: string; phone_number?: string; role?: string }[] }
     >('/users', { token });
-    const crudos = lista(data, 'users');
+    const crudos = lista<Record<string, unknown>>(data, 'users');
     return crudos.map((usuario) => ({
-      id: idDe(usuario),
-      name: usuario.complete_name || usuario.name || '',
-      email: usuario.email,
-      phone: usuario.phone_number,
-      role: usuario.role,
-    }));
-  }, []);
+      id: idDe({ id: texto(usuario.id), _id: texto(usuario._id) }),
+      name: texto(usuario.complete_name) || texto(usuario.name),
+      email: texto(usuario.email) || undefined,
+      phone: texto(usuario.phone_number) || undefined,
+      role: texto(usuario.role) || undefined,
+    })) as ClienteAdmin[];
+  }, [] as ClienteAdmin[]);
 }
 
 export async function crearCliente(datos: { name: string; email: string; phone: string; password: string }) {

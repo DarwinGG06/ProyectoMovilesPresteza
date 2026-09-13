@@ -1,4 +1,4 @@
-import type { ClienteAdmin, PedidoAdmin, ReservaAdmin, StatsAdmin } from './types';
+import type { ClienteAdmin, PedidoAdmin, StatsAdmin } from './types';
 
 export function idDe(item?: { _id?: string; id?: string }) {
   return item?._id || item?.id || '';
@@ -103,7 +103,7 @@ export function calcularStats(datos: {
 export function enriquecerClientes(
   usuarios: ClienteAdmin[],
   pedidos: PedidoAdmin[],
-  reservas: ReservaAdmin[],
+  reservas: { userEmail?: string; userName?: string }[],
 ): ClienteAdmin[] {
   return usuarios
     .filter((usuario) => usuario.role !== 'admin')

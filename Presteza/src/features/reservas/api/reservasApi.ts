@@ -13,6 +13,14 @@ function lista<T>(data: unknown, ...claves: string[]): T[] {
     if (Array.isArray(valor)) return valor as T[];
   }
 
+  const anidado = Object.values(obj).find((valor) => Array.isArray(valor));
+  if (anidado) return anidado as T[];
+
+  const llaves = Object.keys(obj);
+  if (llaves.length && llaves.every((clave) => /^\d+$/.test(clave))) {
+    return llaves.sort((a, b) => Number(a) - Number(b)).map((clave) => obj[clave]) as T[];
+  }
+
   return [];
 }
 
@@ -66,10 +74,19 @@ function normalizarMesa(crudo: Record<string, unknown>): Mesa {
   };
 }
 
+function esReserva(data: unknown) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+  const obj = data as Record<string, unknown>;
+  return Boolean(obj.tableNumber || obj.table_number || obj.date);
+}
+
 export async function listarReservas(token: string, alcance: AlcanceReservas = 'mias') {
   const ruta = alcance === 'todas' ? '/reservations' : '/reservations/my-reservations';
-  const crudos = lista<Record<string, unknown>>(await pedirApi(ruta, { token }), 'reservations');
-  return crudos.map(normalizarReserva);
+  const data = await pedirApi(ruta, { token });
+  const crudos = lista<Record<string, unknown>>(data, 'reservations');
+  if (crudos.length) return crudos.map(normalizarReserva);
+  if (esReserva(data)) return [normalizarReserva(data as Record<string, unknown>)];
+  return [];
 }
 
 export async function crearReserva(token: string, datos: ReservaDatos) {

@@ -41,3 +41,20 @@ export type ReservaDatos = {
 };
 
 export type AlcanceReservas = 'mias' | 'todas';
+
+export type MesaPlano = {
+  id: string;
+  capacity: number;
+  x: number;
+  y: number;
+};
+
+export type MesaVisual = MesaPlano & {
+  available: boolean;
+};
+
+export type SeleccionReserva =
+  | { tipo: 'mesa'; mesa: MesaVisual }
+  | { tipo: 'barra' }
+  | { tipo: 'custom' }
+  | null;

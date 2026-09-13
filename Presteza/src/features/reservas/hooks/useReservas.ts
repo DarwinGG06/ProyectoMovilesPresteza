@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '@/auth/AuthContext';
 import { useAviso } from '@/shared/components/aviso';
@@ -13,7 +13,9 @@ import {
 } from '../api/reservasApi';
 import type { AlcanceReservas, Mesa, Reserva, ReservaForm } from '../types';
 import {
+  avisoCambioEstado,
   datosDeFormulario,
+  fusionarReserva,
   idReserva,
   mesasDisponibles,
   ordenarReservas,
@@ -36,44 +38,87 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<'all' | Reserva['status']>('all');
+  const onCambioRef = useRef(onCambio);
 
-  const publicar = useCallback(
-    (siguientes: Reserva[]) => {
-      setReservas(siguientes);
-      onCambio?.(siguientes);
-    },
-    [onCambio],
-  );
+  useEffect(() => {
+    onCambioRef.current = onCambio;
+  }, [onCambio]);
+
+  const aplicar = useCallback((mutar: (prev: Reserva[]) => Reserva[]) => {
+    setReservas((prev) => {
+      const siguientes = mutar(prev);
+      onCambioRef.current?.(siguientes);
+      return siguientes;
+    });
+  }, []);
 
   const recargar = useCallback(async () => {
-    if (!token) return;
+    if (!token) {
+      setReservas([]);
+      setMesas([]);
+      setCargando(false);
+      return;
+    }
 
     setError(null);
     setCargando(true);
-    try {
-      const [lista, listaMesas] = await Promise.all([
-        listarReservas(token, alcance),
-        listarMesas().catch(() => [] as Mesa[]),
-      ]);
-      publicar(lista);
-      setMesas(listaMesas);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudieron cargar las reservas.');
-    } finally {
-      setCargando(false);
+    const [resultadoReservas, resultadoMesas] = await Promise.allSettled([
+      listarReservas(token, alcance),
+      listarMesas(),
+    ]);
+
+    if (resultadoReservas.status === 'fulfilled') {
+      aplicar(() => resultadoReservas.value);
+    } else {
+      aplicar(() => []);
+      setError(
+        resultadoReservas.reason instanceof Error
+          ? resultadoReservas.reason.message
+          : 'No se pudieron cargar las reservas.',
+      );
     }
-  }, [alcance, publicar, token]);
+    setMesas(resultadoMesas.status === 'fulfilled' ? resultadoMesas.value : []);
+    setCargando(false);
+  }, [alcance, aplicar, token]);
 
   useEffect(() => {
     let viva = true;
-    const timer = setTimeout(() => {
-      if (viva) void recargar();
-    }, 0);
+
+    void (async () => {
+      if (!token) {
+        if (!viva) return;
+        setReservas([]);
+        setMesas([]);
+        setCargando(false);
+        return;
+      }
+
+      setError(null);
+      setCargando(true);
+      const [resultadoReservas, resultadoMesas] = await Promise.allSettled([
+        listarReservas(token, alcance),
+        listarMesas(),
+      ]);
+      if (!viva) return;
+
+      if (resultadoReservas.status === 'fulfilled') {
+        aplicar(() => resultadoReservas.value);
+      } else {
+        aplicar(() => []);
+        setError(
+          resultadoReservas.reason instanceof Error
+            ? resultadoReservas.reason.message
+            : 'No se pudieron cargar las reservas.',
+        );
+      }
+      setMesas(resultadoMesas.status === 'fulfilled' ? resultadoMesas.value : []);
+      setCargando(false);
+    })();
+
     return () => {
       viva = false;
-      clearTimeout(timer);
     };
-  }, [recargar]);
+  }, [alcance, aplicar, token]);
 
   const lista = useMemo(() => {
     const ordenadas = ordenarReservas(reservas);
@@ -96,7 +141,7 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
       setGuardando(true);
       try {
         const creada = await crearReserva(token, cuerpo);
-        publicar([creada, ...reservas]);
+        aplicar((prev) => [{ ...creada, ...cuerpo }, ...prev]);
         aviso.ok('Reserva creada', `La mesa ${cuerpo.tableNumber} quedó reservada.`);
         return true;
       } catch (err) {
@@ -106,7 +151,7 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
         setGuardando(false);
       }
     },
-    [aviso, publicar, reservas, token],
+    [aplicar, aviso, token],
   );
 
   const editar = useCallback(
@@ -121,11 +166,7 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
       setGuardando(true);
       try {
         const actualizada = await actualizarReserva(token, idReserva(reserva), cuerpo);
-        publicar(
-          reservas.map((item) =>
-            idReserva(item) === idReserva(reserva) ? { ...item, ...actualizada, ...cuerpo } : item,
-          ),
-        );
+        aplicar((prev) => fusionarReserva(prev, { ...reserva, ...actualizada }, cuerpo));
         aviso.ok('Reserva editada', `La mesa ${cuerpo.tableNumber} fue editada.`);
         return true;
       } catch (err) {
@@ -135,7 +176,7 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
         setGuardando(false);
       }
     },
-    [aviso, publicar, reservas, token],
+    [aplicar, aviso, token],
   );
 
   const guardar = useCallback(
@@ -148,35 +189,7 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
   const cambiarEstado = useCallback(
     (reserva: Reserva, status: 'confirmed' | 'cancelled' | 'completed') => {
       if (!token) return;
-      const id = idReserva(reserva);
-      const aplicar = async () => {
-        await cambiarEstadoReserva(token, id, status);
-        publicar(reservas.map((item) => (idReserva(item) === id ? { ...item, status } : item)));
-      };
-
-      const textos = {
-        cancelled: {
-          titulo: 'Cancelar reserva',
-          texto: `¿Cancelar la mesa ${reserva.tableNumber}?`,
-          confirmar: 'CANCELAR RESERVA',
-          listo: 'Reserva cancelada',
-          detalle: `La mesa ${reserva.tableNumber} fue cancelada.`,
-        },
-        confirmed: {
-          titulo: 'Confirmar reserva',
-          texto: `¿Confirmar la mesa ${reserva.tableNumber}?`,
-          confirmar: 'CONFIRMAR',
-          listo: 'Reserva confirmada',
-          detalle: `La mesa ${reserva.tableNumber} fue confirmada.`,
-        },
-        completed: {
-          titulo: 'Completar reserva',
-          texto: `¿Marcar la mesa ${reserva.tableNumber} como completada?`,
-          confirmar: 'COMPLETAR',
-          listo: 'Reserva completada',
-          detalle: `La mesa ${reserva.tableNumber} fue completada.`,
-        },
-      }[status];
+      const textos = avisoCambioEstado(reserva, status);
 
       aviso.confirmar({
         sello: 'MESAS',
@@ -185,10 +198,13 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
         confirmar: textos.confirmar,
         peligro: status === 'cancelled',
         exito: { titulo: textos.listo, texto: textos.detalle },
-        onConfirmar: aplicar,
+        onConfirmar: async () => {
+          await cambiarEstadoReserva(token, idReserva(reserva), status);
+          aplicar((prev) => fusionarReserva(prev, reserva, { status }));
+        },
       });
     },
-    [aviso, publicar, reservas, token],
+    [aplicar, aviso, token],
   );
 
   const eliminar = useCallback(
@@ -206,11 +222,11 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
         },
         onConfirmar: async () => {
           await eliminarReserva(token, idReserva(reserva));
-          publicar(reservas.filter((item) => idReserva(item) !== idReserva(reserva)));
+          aplicar((prev) => prev.filter((item) => idReserva(item) !== idReserva(reserva)));
         },
       });
     },
-    [aviso, publicar, reservas, token],
+    [aplicar, aviso, token],
   );
 
   return {
@@ -242,3 +258,5 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
     textoEstado: textoEstadoReserva,
   };
 }
+
+export type CasaReservas = ReturnType<typeof useReservas>;

@@ -87,7 +87,7 @@ export function PerfilScreen() {
           {pestana === 'pagos' ? (
             <TabPagos userId={user.id} token={token} perfil={perfil} onActualizado={setPerfil} />
           ) : null}
-          {pestana === 'reservas' ? <TabReservas onCambio={setReservas} /> : null}
+          {pestana === 'reservas' ? <TabReservas onCambio={(lista) => setReservas(lista)} /> : null}
           {pestana === 'ajustes' ? (
             <TabAjustes
               userId={user.id}

@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
-import { useReservas } from '@/features/reservas/hooks/useReservas';
+import type { CasaReservas } from '@/features/reservas/hooks/useReservas';
 import type { Reserva } from '@/features/reservas/types';
 
-import type { ReservaAdmin } from '../../types';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioReservaAdmin } from '../formularios/FormularioReservaAdmin';
 import {
@@ -27,18 +26,14 @@ const FILTROS = [
 ] as const;
 
 type TabReservasProps = {
-  onCambio?: (reservas: ReservaAdmin[]) => void;
+  reservas: CasaReservas;
 };
 
-export function TabReservas({ onCambio }: TabReservasProps) {
+export function TabReservas({ reservas }: TabReservasProps) {
   const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
   const [abierto, setAbierto] = useState(false);
   const [editando, setEditando] = useState<Reserva | null>(null);
-  const reservas = useReservas({
-    alcance: 'todas',
-    onCambio: onCambio as ((lista: Reserva[]) => void) | undefined,
-  });
 
   const abrir = (reserva?: Reserva) => {
     setEditando(reserva ?? null);

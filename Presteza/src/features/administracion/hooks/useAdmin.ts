@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
+import { useReservas } from '@/features/reservas/hooks/useReservas';
+
 import type { PedidoAdmin, PedidoForm } from '../types';
 import { calcularStats, enriquecerClientes, idDe } from '../utils';
 import { useSesionAdmin } from './adminComun';
@@ -11,7 +13,6 @@ import { useAdminInsumos } from './useAdminInsumos';
 import { useAdminMensajes } from './useAdminMensajes';
 import { useAdminPedidos } from './useAdminPedidos';
 import { useAdminProductos } from './useAdminProductos';
-import { useAdminReservasLista } from './useAdminReservasLista';
 
 export function useAdmin() {
   const { user, token } = useSesionAdmin();
@@ -22,7 +23,7 @@ export function useAdmin() {
   const pedidos = useAdminPedidos();
   const mensajes = useAdminMensajes();
   const usuarios = useAdminClientes();
-  const reservas = useAdminReservasLista();
+  const reservas = useReservas({ alcance: 'todas' });
   const ajustes = useAdminAjustes();
 
   const clientes = useMemo(
@@ -117,6 +118,7 @@ export function useAdmin() {
       pedidos.guardando ||
       mensajes.guardando ||
       usuarios.guardando ||
+      reservas.guardando ||
       ajustes.guardando,
     error,
     recargar,
@@ -124,7 +126,7 @@ export function useAdmin() {
     idDe,
     pedidos: pedidos.pedidos,
     reservas: reservas.reservas,
-    setReservas: reservas.setReservas,
+    casaReservas: reservas,
     productos: productos.productos,
     categorias: categorias.categorias,
     insumos: insumos.insumos,

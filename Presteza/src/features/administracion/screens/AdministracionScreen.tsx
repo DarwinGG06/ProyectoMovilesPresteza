@@ -120,7 +120,7 @@ export function AdministracionScreen() {
               onEliminar={admin.eliminarInsumo}
             />
           ) : null}
-          {pestana === 'reservas' ? <TabReservas onCambio={admin.setReservas} /> : null}
+          {pestana === 'reservas' ? <TabReservas reservas={admin.casaReservas} /> : null}
           {pestana === 'adicionales' ? (
             <TabAdicionales
               adicionales={admin.adicionales}

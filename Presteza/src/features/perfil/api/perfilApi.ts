@@ -114,11 +114,17 @@ export async function obtenerPedidos(userId: string) {
 }
 
 export async function obtenerReservas(token: string) {
-  const data = await pedirApi<Reserva[] | { reservations?: Reserva[] }>('/reservations/my-reservations', {
+  const data = await pedirApi<Reserva[] | Reserva | { reservations?: Reserva[] }>('/reservations/my-reservations', {
     token,
   });
   if (Array.isArray(data)) return data;
-  return data.reservations ?? [];
+  if (data && typeof data === 'object' && 'reservations' in data && Array.isArray(data.reservations)) {
+    return data.reservations;
+  }
+  if (data && typeof data === 'object' && ('tableNumber' in data || 'date' in data)) {
+    return [data as Reserva];
+  }
+  return [];
 }
 
 export async function actualizarReserva(

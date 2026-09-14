@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '@/auth/AuthContext';
@@ -8,16 +9,17 @@ import {
   obtenerReservas,
   obtenerUsuario,
 } from '../api/perfilApi';
-import type { Pedido, PlatoFavorito, Reserva, UsuarioPerfil } from '../types';
+import type { Pedido, PestanaId, PlatoFavorito, Reserva, UsuarioPerfil } from '../types';
 
 export function usePerfil() {
-  const { user, token, actualizarUsuario } = useAuth();
+  const { user, token, actualizarUsuario, isAuthenticated, logout } = useAuth();
   const [perfil, setPerfil] = useState<UsuarioPerfil | null>(null);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [favoritos, setFavoritos] = useState<PlatoFavorito[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pestana, setPestana] = useState<PestanaId>('cuenta');
 
   const recargar = useCallback(async () => {
     if (!user?.id) return;
@@ -69,9 +71,17 @@ export function usePerfil() {
     recargar();
   }, [recargar]);
 
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      router.replace('/administracion');
+    }
+  }, [user?.role]);
+
   return {
     user,
     token,
+    isAuthenticated,
+    logout,
     perfil,
     setPerfil,
     pedidos,
@@ -82,5 +92,7 @@ export function usePerfil() {
     cargando,
     error,
     recargar,
+    pestana,
+    setPestana,
   };
 }

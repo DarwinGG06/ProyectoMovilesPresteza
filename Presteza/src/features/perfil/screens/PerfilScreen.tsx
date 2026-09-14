@@ -1,8 +1,5 @@
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
-import { useAuth } from '@/auth/AuthContext';
 import { Footer } from '@/shared/components/footer';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
@@ -16,20 +13,25 @@ import { TabPagos } from '../components/tabs/TabPagos';
 import { TabPedidos } from '../components/tabs/TabPedidos';
 import { TabReservas } from '../components/tabs/TabReservas';
 import { usePerfil } from '../hooks/usePerfil';
-import type { PestanaId } from '../types';
 import { formatFecha } from '../utils';
 
 export function PerfilScreen() {
-  const { isAuthenticated, logout } = useAuth();
-  const { user, token, perfil, setPerfil, pedidos, reservas, setReservas, favoritos, cargando, error } =
-    usePerfil();
-  const [pestana, setPestana] = useState<PestanaId>('cuenta');
-
-  useEffect(() => {
-    if (user?.role === 'admin') {
-      router.replace('/administracion');
-    }
-  }, [user?.role]);
+  const {
+    isAuthenticated,
+    logout,
+    user,
+    token,
+    perfil,
+    setPerfil,
+    pedidos,
+    reservas,
+    setReservas,
+    favoritos,
+    cargando,
+    error,
+    pestana,
+    setPestana,
+  } = usePerfil();
 
   if (!isAuthenticated || !user) {
     return <InvitadoPerfil />;

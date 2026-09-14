@@ -1,43 +1,12 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
 
-import { useAuth } from '@/auth/AuthContext';
-import { logError, logInfo } from '@/services/api/logger';
 import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
 
 import Field from '../../../../components/Field';
-
-type LoginForm = {
-  email: string;
-  password: string;
-};
+import { useIniciarSesion } from '../hooks/useIniciarSesion';
 
 export function IniciarSesionScreen() {
-  const { login } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
-  const { control, handleSubmit } = useForm<LoginForm>({
-    defaultValues: { email: '', password: '' },
-  });
-
-  const enviar = handleSubmit(async (datos) => {
-    setError(null);
-    setEnviando(true);
-    logInfo('ui', 'IniciarSesionScreen enviar', { email: datos.email.trim().toLowerCase() });
-    try {
-      await login(datos.email, datos.password);
-      logInfo('ui', 'IniciarSesionScreen OK, yendo a /perfil');
-      router.push('/perfil');
-    } catch (err) {
-      const mensaje = err instanceof Error ? err.message : 'No se pudo iniciar sesión.';
-      logError('ui', 'IniciarSesionScreen error', { mensaje });
-      setError(mensaje);
-    } finally {
-      setEnviando(false);
-    }
-  });
+  const { control, error, enviando, enviar, irARegistro } = useIniciarSesion();
 
   return (
     <ContenedorPantalla titulo="Iniciar sesión">
@@ -70,7 +39,7 @@ export function IniciarSesionScreen() {
         </Text>
       </Pressable>
 
-      <Pressable onPress={() => router.push('/registro')} className="mt-5 py-2">
+      <Pressable onPress={irARegistro} className="mt-5 py-2">
         <Text className="text-center text-sm text-marca">No tengo cuenta. Registrarme</Text>
       </Pressable>
     </ContenedorPantalla>

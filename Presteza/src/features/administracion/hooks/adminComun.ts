@@ -11,7 +11,7 @@ export function fusionar<T extends { _id?: string; id?: string }>(lista: T[], ac
 }
 
 export function useSesionAdmin() {
-  const { user, token, logout, actualizarUsuario } = useAuth();
+  const { user, token, logout, actualizarUsuario, isAuthenticated } = useAuth();
   const aviso = useAviso();
 
   const conToken = useCallback(() => {
@@ -22,7 +22,7 @@ export function useSesionAdmin() {
     return token;
   }, [aviso, token]);
 
-  return { user, token, logout, actualizarUsuario, aviso, conToken };
+  return { user, token, logout, actualizarUsuario, isAuthenticated, aviso, conToken };
 }
 
 export function useListaAdmin<T>(listar: (token: string) => Promise<T[]>) {

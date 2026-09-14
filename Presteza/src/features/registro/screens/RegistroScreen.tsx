@@ -1,57 +1,12 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
 
-import { useAuth } from '@/auth/AuthContext';
-import { logError, logInfo } from '@/services/api/logger';
 import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
 
 import Field from '../../../../components/Field';
-
-type RegistroForm = {
-  complete_name: string;
-  email: string;
-  phone_number: string;
-  password: string;
-  confirmar: string;
-};
+import { useRegistro } from '../hooks/useRegistro';
 
 export function RegistroScreen() {
-  const { register } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);
-  const { control, handleSubmit, getValues } = useForm<RegistroForm>({
-    defaultValues: {
-      complete_name: '',
-      email: '',
-      phone_number: '',
-      password: '',
-      confirmar: '',
-    },
-  });
-
-  const enviar = handleSubmit(async (datos) => {
-    setError(null);
-    setEnviando(true);
-    logInfo('ui', 'RegistroScreen enviar', { email: datos.email.trim().toLowerCase() });
-    try {
-      await register({
-        complete_name: datos.complete_name,
-        email: datos.email,
-        phone_number: datos.phone_number,
-        password: datos.password,
-      });
-      logInfo('ui', 'RegistroScreen OK, yendo a /perfil');
-      router.push('/perfil');
-    } catch (err) {
-      const mensaje = err instanceof Error ? err.message : 'No se pudo registrar.';
-      logError('ui', 'RegistroScreen error', { mensaje });
-      setError(mensaje);
-    } finally {
-      setEnviando(false);
-    }
-  });
+  const { control, error, enviando, enviar, getValues, irAIniciarSesion } = useRegistro();
 
   return (
     <ContenedorPantalla titulo="Registro">
@@ -123,7 +78,7 @@ export function RegistroScreen() {
         </Text>
       </Pressable>
 
-      <Pressable onPress={() => router.push('/iniciar-sesion')} className="mt-5 py-2">
+      <Pressable onPress={irAIniciarSesion} className="mt-5 py-2">
         <Text className="text-center text-sm text-marca">Ya tengo cuenta. Iniciar sesión</Text>
       </Pressable>
     </ContenedorPantalla>

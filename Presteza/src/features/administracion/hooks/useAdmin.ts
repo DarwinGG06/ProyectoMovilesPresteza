@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from 'react';
+import { router } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useReservas } from '@/features/reservas/hooks/useReservas';
 
-import type { PedidoAdmin, PedidoForm } from '../types';
+import type { PedidoAdmin, PedidoForm, PestanaAdmin } from '../types';
 import { calcularStats, enriquecerClientes, idDe } from '../utils';
 import { useSesionAdmin } from './adminComun';
 import { useAdminAdicionales } from './useAdminAdicionales';
@@ -15,7 +16,8 @@ import { useAdminPedidos } from './useAdminPedidos';
 import { useAdminProductos } from './useAdminProductos';
 
 export function useAdmin() {
-  const { user, token } = useSesionAdmin();
+  const { user, token, isAuthenticated } = useSesionAdmin();
+  const [pestana, setPestana] = useState<PestanaAdmin>('dashboard');
   const productos = useAdminProductos();
   const categorias = useAdminCategorias();
   const insumos = useAdminInsumos();
@@ -54,6 +56,12 @@ export function useAdmin() {
       reservas.reservas,
     ],
   );
+
+  useEffect(() => {
+    if (isAuthenticated && user && user.role !== 'admin') {
+      router.replace('/perfil');
+    }
+  }, [isAuthenticated, user]);
 
   const recargar = useCallback(async () => {
     await Promise.all([
@@ -99,6 +107,9 @@ export function useAdmin() {
   return {
     user,
     token,
+    isAuthenticated,
+    pestana,
+    setPestana,
     esAdmin: user?.role === 'admin',
     salir: ajustes.salir,
     cargando:

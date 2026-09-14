@@ -1,8 +1,5 @@
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
-import { useAuth } from '@/auth/AuthContext';
 import { InvitadoPerfil } from '@/features/perfil/components/InvitadoPerfil';
 import { Footer } from '@/shared/components/footer';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
@@ -20,18 +17,10 @@ import { TabPedidos } from '@/features/administracion/components/tabs/TabPedidos
 import { TabProductos } from '@/features/administracion/components/tabs/TabProductos';
 import { TabReservas } from '@/features/administracion/components/tabs/TabReservas';
 import { useAdmin } from '@/features/administracion/hooks/useAdmin';
-import type { PestanaAdmin } from '@/features/administracion/types';
 
 export function AdministracionScreen() {
-  const { isAuthenticated, user } = useAuth();
   const admin = useAdmin();
-  const [pestana, setPestana] = useState<PestanaAdmin>('dashboard');
-
-  useEffect(() => {
-    if (isAuthenticated && user && user.role !== 'admin') {
-      router.replace('/perfil');
-    }
-  }, [isAuthenticated, user]);
+  const { isAuthenticated, user, pestana, setPestana } = admin;
 
   if (!isAuthenticated || !user) {
     return <InvitadoPerfil />;

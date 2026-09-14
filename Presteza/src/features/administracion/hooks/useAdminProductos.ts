@@ -18,7 +18,8 @@ export function useAdminProductos() {
         description: datos.description.trim(),
         price: Number(datos.price),
         categoryId: datos.categoryId,
-        imageUrl: datos.imageUrl.trim(),
+         image: datos.imageUrl.trim(),
+         type: "acompañante",
         available: editando?.available !== false,
       };
 

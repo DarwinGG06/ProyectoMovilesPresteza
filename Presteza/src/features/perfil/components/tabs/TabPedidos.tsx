@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 
 import { formatCOP, useCart } from '@/services/cart/CartContext';
 
-import { idPedido } from '../../api/perfilApi';
+import { idPedido } from '@/api/perfil';
 import type { Pedido } from '../../types';
 import {
   formatFecha,

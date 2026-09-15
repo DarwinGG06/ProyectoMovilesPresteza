@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
-import Field from '../../../../../components/Field';
+import Field from '@/components/Field';
 import type { InsumoForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 

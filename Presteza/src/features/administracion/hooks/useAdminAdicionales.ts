@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { actualizarAdicional, crearAdicional, eliminarAdicional, listarAdicionales } from '../api/adminApi';
+import { actualizarAdicional, crearAdicional, eliminarAdicional, listarAdicionales } from '@/api/admin';
 import type { AdicionalAdmin, AdicionalForm } from '../types';
 import { idDe } from '../utils';
 import { fusionar, useListaAdmin } from './adminComun';

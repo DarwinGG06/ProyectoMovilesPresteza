@@ -1,7 +1,14 @@
 import type { ClienteAdmin, PedidoAdmin, StatsAdmin } from './types';
 
-export function idDe(item?: { _id?: string; id?: string }) {
-  return item?._id || item?.id || '';
+export { idDe } from '@/api/helpers';
+
+/** Solo las claves cuyo valor cambió. Así el PATCH no reescribe lo que sigue igual. */
+export function cambiosDe<T extends Record<string, unknown>>(actual: T, original: T): Partial<T> {
+  const out: Partial<T> = {};
+  (Object.keys(actual) as (keyof T)[]).forEach((clave) => {
+    if (actual[clave] !== original[clave]) out[clave] = actual[clave];
+  });
+  return out;
 }
 
 export function formatoFechaHora(valor?: string) {

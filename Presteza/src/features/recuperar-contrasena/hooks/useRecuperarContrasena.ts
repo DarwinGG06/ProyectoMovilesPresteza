@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { forgotPasswordApi } from '@/auth/authApi';
+import { forgotPassword } from '@/api/auth';
 
 export type RecuperarForm = {
   email: string;
@@ -18,7 +18,7 @@ export function useRecuperarContrasena() {
     setError(null);
     setListo(null);
     try {
-      const respuesta = await forgotPasswordApi(datos.email);
+      const respuesta = await forgotPassword(datos.email);
       setListo(respuesta.message);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo enviar el correo.');

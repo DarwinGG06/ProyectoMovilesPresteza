@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import CampoBusqueda from '@/components/CampoBusqueda';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
 
@@ -67,12 +68,11 @@ export function TabProductos({ productos, categorias, guardando, onGuardar, onAl
         badge="CARTA"
         titulo="Platos"
         accion={{ etiqueta: 'AGREGAR', onPress: () => abrir() }}>
-        <TextInput
+        <CampoBusqueda
           value={busqueda}
           onChangeText={setBusqueda}
           placeholder="Buscar plato..."
-          placeholderTextColor="#d4af7788"
-          className="mb-4 border-b border-oro/30 py-3 text-crema"
+          variant="oscuro"
         />
 
         <InterruptorVista
@@ -178,6 +178,7 @@ export function TabProductos({ productos, categorias, guardando, onGuardar, onAl
 
       <ModalAdmin visible={abierto} titulo={editando ? 'Editar plato' : 'Nuevo plato'} onCerrar={() => setAbierto(false)}>
         <FormularioProducto
+          key={idDe(editando) || 'nuevo'}
           valores={{
             name: editando?.name ?? '',
             description: editando?.description ?? '',

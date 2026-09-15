@@ -1,34 +1,52 @@
 import { useCallback } from 'react';
 
-import { crearCliente, eliminarCliente, listarUsuarios } from '../api/adminApi';
+import { actualizarCliente, crearCliente, eliminarCliente, listarUsuarios } from '@/api/auth';
 import type { ClienteAdmin, ClienteForm } from '../types';
-import { useListaAdmin } from './adminComun';
+import { fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminClientes() {
   const { lista: usuarios, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
     useListaAdmin(listarUsuarios);
 
   const guardar = useCallback(
-    async (datos: ClienteForm) => {
+    async (datos: ClienteForm, editando?: ClienteAdmin | null) => {
+      const name = datos.name.trim();
+      const email = datos.email.trim().toLowerCase();
+      const phone = datos.phone.trim();
+      const password = datos.password.trim();
+
       setGuardando(true);
       try {
-        const creado = await crearCliente({
-          name: datos.name.trim(),
-          email: datos.email.trim().toLowerCase(),
-          phone: datos.phone.trim(),
-          password: datos.password.trim(),
-        });
-        setLista((prev) => [creado, ...prev]);
-        aviso.ok('Cliente creado', `${creado.name} ya está en la casa.`);
+        if (editando) {
+          const sesion = conToken();
+          if (!sesion) return false;
+          const cambios: { name?: string; email?: string; phone?: string; password?: string } = {};
+          if (name !== (editando.name ?? '')) cambios.name = name;
+          if (email !== (editando.email ?? '')) cambios.email = email;
+          if (phone !== (editando.phone ?? '')) cambios.phone = phone;
+          if (password) cambios.password = password;
+          if (!Object.keys(cambios).length) {
+            aviso.ok('Sin cambios', 'No hay nada que guardar.');
+            return true;
+          }
+          await actualizarCliente(sesion, editando.id, cambios);
+          const { password: _omitida, ...visibles } = cambios;
+          setLista((prev) => fusionar(prev, editando, visibles));
+          aviso.ok('Cliente editado', `${name} fue actualizado.`);
+        } else {
+          const creado = await crearCliente({ name, email, phone, password });
+          setLista((prev) => [creado, ...prev]);
+          aviso.ok('Cliente creado', `${creado.name} ya está en la casa.`);
+        }
         return true;
       } catch (err) {
-        aviso.errorDe(err, 'No se pudo crear.', 'Cliente');
+        aviso.errorDe(err, 'No se pudo guardar.', 'Cliente');
         return false;
       } finally {
         setGuardando(false);
       }
     },
-    [aviso, setGuardando, setLista],
+    [aviso, conToken, setGuardando, setLista],
   );
 
   const eliminar = useCallback(

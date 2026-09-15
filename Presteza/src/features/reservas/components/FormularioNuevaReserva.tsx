@@ -1,7 +1,7 @@
 import { Controller, type Control } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
 
-import Field from '../../../../components/Field';
+import Field from '@/components/Field';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
 import { horaEnHorario } from '../data';

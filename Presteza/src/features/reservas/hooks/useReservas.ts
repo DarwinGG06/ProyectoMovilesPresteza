@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useAuth } from '@/auth/AuthContext';
+import { useSession } from '@/session/context';
 import { useAviso } from '@/shared/components/aviso';
 
 import {
@@ -10,7 +10,7 @@ import {
   eliminarReserva,
   listarMesas,
   listarReservas,
-} from '../api/reservasApi';
+} from '@/api/reservas';
 import type { AlcanceReservas, Mesa, Reserva, ReservaForm } from '../types';
 import {
   avisoCambioEstado,
@@ -30,7 +30,7 @@ type UseReservasOpciones = {
 };
 
 export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones = {}) {
-  const { token, user, isAuthenticated } = useAuth();
+  const { token, user, isAuthenticated } = useSession();
   const aviso = useAviso();
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [mesas, setMesas] = useState<Mesa[]>([]);

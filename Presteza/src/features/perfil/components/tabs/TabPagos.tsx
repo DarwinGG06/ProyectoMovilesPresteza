@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 
 import { useAviso } from '@/shared/components/aviso';
 
-import { agregarTarjeta, eliminarTarjeta, marcarTarjetaPrincipal } from '../../api/perfilApi';
+import { agregarTarjeta, eliminarTarjeta, marcarTarjetaPrincipal } from '@/api/perfil';
 import type { TarjetaForm, UsuarioPerfil } from '../../types';
 import { AccionesFila, Comanda, EnlaceAccion, LineaCuenta } from '../elementos';
 import { FormularioPago } from '../formularios/FormularioPago';

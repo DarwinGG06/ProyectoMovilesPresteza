@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { actualizarCategoria, crearCategoria, eliminarCategoria, listarCategorias } from '../api/adminApi';
+import { actualizarCategoria, crearCategoria, eliminarCategoria, listarCategorias } from '@/api/categorias';
 import type { CategoriaAdmin, CategoriaForm } from '../types';
-import { idDe } from '../utils';
+import { cambiosDe, idDe } from '../utils';
 import { fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminCategorias() {
@@ -13,7 +13,7 @@ export function useAdminCategorias() {
     async (datos: CategoriaForm, editando?: CategoriaAdmin | null) => {
       const sesion = conToken();
       if (!sesion) return false;
-      const cuerpo = {
+      const actual = {
         name: datos.name.trim(),
         description: datos.description.trim(),
         imageUrl: datos.imageUrl.trim(),
@@ -22,13 +22,23 @@ export function useAdminCategorias() {
       setGuardando(true);
       try {
         if (editando) {
-          const actualizado = await actualizarCategoria(sesion, idDe(editando), cuerpo);
-          setLista((prev) => fusionar(prev, { ...editando, ...actualizado }, cuerpo));
-          aviso.ok('Categoría editada', `${cuerpo.name} fue editada.`);
+          const original = {
+            name: editando.name,
+            description: editando.description ?? '',
+            imageUrl: editando.imageUrl ?? '',
+          };
+          const cambios = cambiosDe(actual, original);
+          if (!Object.keys(cambios).length) {
+            aviso.ok('Sin cambios', 'No hay nada que guardar.');
+            return true;
+          }
+          const actualizado = await actualizarCategoria(sesion, idDe(editando), cambios);
+          setLista((prev) => fusionar(prev, { ...editando, ...actualizado }, cambios));
+          aviso.ok('Categoría editada', `${actual.name} fue editada.`);
         } else {
-          const creada = await crearCategoria(sesion, cuerpo);
-          setLista((prev) => [{ ...creada, ...cuerpo }, ...prev]);
-          aviso.ok('Categoría creada', `${cuerpo.name} ya está en la carta.`);
+          const creada = await crearCategoria(sesion, actual);
+          setLista((prev) => [{ ...creada, ...actual }, ...prev]);
+          aviso.ok('Categoría creada', `${actual.name} ya está en la carta.`);
         }
         return true;
       } catch (err) {

@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
 
+import Select from '@/components/Select';
 import { formatCOP } from '@/services/cart/CartContext';
 
 import type { ClienteAdmin, PedidoForm, ProductoAdmin } from '../../types';
@@ -8,15 +9,15 @@ import { idDe } from '../../utils';
 import { AccionesForm } from './AccionesForm';
 
 const PAGOS = [
-  { id: 'cash', etiqueta: 'EFECTIVO' },
-  { id: 'card', etiqueta: 'TARJETA' },
+  { value: 'cash', label: 'Efectivo' },
+  { value: 'card', label: 'Tarjeta' },
 ];
 
 const ESTADOS = [
-  { id: 'pendiente', etiqueta: 'PENDIENTE' },
-  { id: 'Preparando', etiqueta: 'PREPARANDO' },
-  { id: 'listo', etiqueta: 'LISTO' },
-  { id: 'entregado', etiqueta: 'ENTREGADO' },
+  { value: 'pendiente', label: 'Pendiente' },
+  { value: 'Preparando', label: 'Preparando' },
+  { value: 'listo', label: 'Listo' },
+  { value: 'entregado', label: 'Entregado' },
 ];
 
 export function FormularioPedido({
@@ -34,10 +35,7 @@ export function FormularioPedido({
   onGuardar: (datos: PedidoForm) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { handleSubmit, setValue, watch } = useForm<PedidoForm>({ defaultValues: valores });
-  const userId = watch('userId');
-  const pago = watch('payment_method');
-  const status = watch('status');
+  const { control, handleSubmit, setValue, watch } = useForm<PedidoForm>({ defaultValues: valores });
   const lineas = watch('lineas') ?? [];
   const total = lineas.reduce((suma, linea) => suma + linea.unit_price * linea.quantity, 0);
 
@@ -77,68 +75,35 @@ export function FormularioPedido({
 
   return (
     <View className="gap-4">
-      <View>
-        <Text className="mb-2 font-semibold">Cliente</Text>
-        <View className="flex-row flex-wrap gap-2">
-          {clientes.map((cliente) => {
-            const activo = userId === cliente.id;
-            return (
-              <Pressable
-                key={cliente.id}
-                onPress={() => setValue('userId', cliente.id)}
-                className={`px-3 py-2 ${activo ? 'bg-marca-oscura' : 'border border-marca/20'}`}>
-                <Text className={`text-[12px] ${activo ? 'text-crema' : 'text-marca-oscura'}`}>{cliente.name}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
+      {clientes.length > 0 ? (
+        <Select
+          control={control}
+          name="userId"
+          label="Cliente"
+          options={clientes.map((cliente) => ({ value: cliente.id, label: cliente.name }))}
+          rules={{ required: 'Elige un cliente' }}
+        />
+      ) : (
+        <Text className="text-sm text-texto/55">No hay clientes registrados.</Text>
+      )}
+
+      <Select
+        control={control}
+        name="payment_method"
+        label="Pago"
+        options={PAGOS}
+        rules={{ required: 'Elige el medio de pago' }}
+      />
+      <Select control={control} name="status" label="Estado" options={ESTADOS} rules={{ required: 'Elige el estado' }} />
 
       <View>
-        <Text className="mb-2 font-semibold">Pago</Text>
-        <View className="flex-row flex-wrap gap-2">
-          {PAGOS.map((item) => {
-            const activo = pago === item.id;
-            return (
-              <Pressable
-                key={item.id}
-                onPress={() => setValue('payment_method', item.id)}
-                className={`px-3 py-2 ${activo ? 'bg-marca-oscura' : 'border border-marca/20'}`}>
-                <Text className={`text-[12px] ${activo ? 'text-crema' : 'text-marca-oscura'}`}>{item.etiqueta}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
-
-      <View>
-        <Text className="mb-2 font-semibold">Estado</Text>
-        <View className="flex-row flex-wrap gap-2">
-          {ESTADOS.map((item) => {
-            const activo = status === item.id;
-            return (
-              <Pressable
-                key={item.id}
-                onPress={() => setValue('status', item.id)}
-                className={`px-3 py-2 ${activo ? 'bg-marca-oscura' : 'border border-marca/20'}`}>
-                <Text className={`text-[12px] ${activo ? 'text-crema' : 'text-marca-oscura'}`}>{item.etiqueta}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
-
-      <View>
-        <Text className="mb-2 font-semibold">Platos</Text>
+        <Text className="mb-2 font-semibold text-marca-oscura">Platos</Text>
         {productos.length === 0 ? (
           <Text className="text-sm text-texto/55">No hay platos en la carta.</Text>
         ) : (
           <View className="flex-row flex-wrap gap-2">
             {productos.map((producto) => (
-              <Pressable
-                key={idDe(producto)}
-                onPress={() => agregar(producto)}
-                className="border border-marca/20 px-3 py-2">
+              <Pressable key={idDe(producto)} onPress={() => agregar(producto)} className="border border-marca/20 px-3 py-2">
                 <Text className="text-[12px] text-marca-oscura">{producto.name}</Text>
               </Pressable>
             ))}

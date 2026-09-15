@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import CampoBusqueda from '@/components/CampoBusqueda';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
 
@@ -21,7 +22,7 @@ import {
 type TabClientesProps = {
   clientes: ClienteAdmin[];
   guardando?: boolean;
-  onGuardar: (datos: ClienteForm) => Promise<boolean>;
+  onGuardar: (datos: ClienteForm, editando?: ClienteAdmin | null) => Promise<boolean>;
   onEliminar: (cliente: ClienteAdmin) => void;
 };
 
@@ -30,7 +31,8 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
   const [filtro, setFiltro] = useState<'all' | 'pedidos' | 'reservas'>('all');
   const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
-  const [creando, setCreando] = useState(false);
+  const [abierto, setAbierto] = useState(false);
+  const [editando, setEditando] = useState<ClienteAdmin | null>(null);
   const [detalle, setDetalle] = useState<ClienteAdmin | null>(null);
 
   const lista = useMemo(() => {
@@ -50,8 +52,13 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
     if (detalle && !clientes.some((item) => item.id === detalle.id)) setDetalle(null);
   }, [clientes, detalle]);
 
+  const abrir = (cliente?: ClienteAdmin) => {
+    setEditando(cliente ?? null);
+    setAbierto(true);
+  };
+
   const guardar = async (datos: ClienteForm) => {
-    if (await onGuardar(datos)) setCreando(false);
+    if (await onGuardar(datos, editando)) setAbierto(false);
   };
 
   return (
@@ -60,13 +67,12 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
         numero="I"
         badge="MESA"
         titulo="Clientes"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => setCreando(true) }}>
-        <TextInput
+        accion={{ etiqueta: 'AGREGAR', onPress: () => abrir() }}>
+        <CampoBusqueda
           value={busqueda}
           onChangeText={setBusqueda}
           placeholder="Buscar cliente..."
-          placeholderTextColor="#d4af7788"
-          className="mb-4 border-b border-oro/30 py-3 text-crema"
+          variant="oscuro"
         />
         <InterruptorVista
           vista={vista}
@@ -105,6 +111,7 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
                   ) : null}
                   <AccionesAdmin>
                     <EnlaceAdmin etiqueta="VER" onPress={() => setDetalle(cliente)} />
+                    <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(cliente)} />
                     <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(cliente)} />
                   </AccionesAdmin>
                 </CeldaTabla>
@@ -140,6 +147,7 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
                 ) : null}
                 <AccionesAdmin>
                   <EnlaceAdmin etiqueta="VER" onPress={() => setDetalle(cliente)} />
+                  <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(cliente)} />
                   <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(cliente)} />
                 </AccionesAdmin>
               </CajaCuadricula>
@@ -148,10 +156,20 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={creando} titulo="Nuevo cliente" onCerrar={() => setCreando(false)}>
+      <ModalAdmin
+        visible={abierto}
+        titulo={editando ? 'Editar cliente' : 'Nuevo cliente'}
+        onCerrar={() => setAbierto(false)}>
         <FormularioCliente
-          valores={{ name: '', email: '', phone: '', password: '' }}
-          onCancelar={() => setCreando(false)}
+          key={editando?.id ?? 'nuevo'}
+          valores={{
+            name: editando?.name ?? '',
+            email: editando?.email ?? '',
+            phone: editando?.phone ?? '',
+            password: '',
+          }}
+          editando={Boolean(editando)}
+          onCancelar={() => setAbierto(false)}
           onGuardar={guardar}
           guardando={guardando}
         />

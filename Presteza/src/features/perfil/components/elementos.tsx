@@ -1,6 +1,7 @@
 import { type ComponentProps, type ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
+import Button from '@/components/Button';
 import { PuntosTicket } from '@/features/inicio/components/MesaDecor';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
@@ -100,24 +101,6 @@ export function AccionesFila({ children }: { children: ReactNode }) {
   return <View className="mt-3 flex-row flex-wrap items-center">{children}</View>;
 }
 
-export function ChipOpcion({
-  etiqueta,
-  activo,
-  onPress,
-}: {
-  etiqueta: string;
-  activo: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable onPress={onPress} className={`px-3 py-2 ${activo ? 'bg-marca-oscura' : 'border border-marca/20'}`}>
-      <Text className={`text-[11px] tracking-[1px] ${activo ? 'text-crema' : 'text-marca-oscura'}`}>
-        {etiqueta}
-      </Text>
-    </Pressable>
-  );
-}
-
 export function AccionesFormulario({
   onCancelar,
   onGuardar,
@@ -131,8 +114,8 @@ export function AccionesFormulario({
 }) {
   return (
     <View className="mt-5 gap-2">
-      <BotonPerfil etiqueta={guardando ? 'GUARDANDO...' : etiquetaGuardar} onPress={onGuardar} disabled={guardando} />
-      <BotonPerfil etiqueta="CANCELAR" onPress={onCancelar} variante="outline" />
+      <Button text={guardando ? 'GUARDANDO…' : etiquetaGuardar} onPress={onGuardar} disabled={guardando} />
+      <Button text="CANCELAR" onPress={onCancelar} secondary />
     </View>
   );
 }

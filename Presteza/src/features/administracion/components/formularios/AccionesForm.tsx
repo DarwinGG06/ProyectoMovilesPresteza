@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 
-import { BotonPerfil } from '@/features/perfil/components/elementos';
+import Button from '@/components/Button';
 
 export function AccionesForm({
   onCancelar,
@@ -15,8 +15,8 @@ export function AccionesForm({
 }) {
   return (
     <View className="mt-5 gap-2">
-      <BotonPerfil etiqueta={guardando ? 'GUARDANDO...' : etiqueta} onPress={onGuardar} disabled={guardando} />
-      {onCancelar ? <BotonPerfil etiqueta="CANCELAR" onPress={onCancelar} variante="outline" /> : null}
+      <Button text={guardando ? 'GUARDANDO…' : etiqueta} onPress={onGuardar} disabled={guardando} />
+      {onCancelar ? <Button text="CANCELAR" onPress={onCancelar} secondary /> : null}
     </View>
   );
 }

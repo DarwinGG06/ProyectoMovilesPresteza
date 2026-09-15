@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { Linking, Pressable, Text, View } from 'react-native';
+import { Linking, Text, View } from 'react-native';
 
 import { MarcaCurso, PuntosTicket } from '@/features/inicio/components/MesaDecor';
 
-import Field from '../../../../components/Field';
+import Button from '@/components/Button';
+import Field from '@/components/Field';
 import { SEDE } from '../data';
 
 type VisitaSede = {
@@ -41,7 +42,11 @@ export function FormularioSede() {
             name="nombre"
             label="Nombre"
             placeholder="Tu nombre"
-            rules={{ required: 'Escribe tu nombre' }}
+            maxLength={80}
+            rules={{
+              required: 'Escribe tu nombre',
+              maxLength: { value: 80, message: 'Máximo 80 caracteres' },
+            }}
           />
           <Field
             control={control}
@@ -49,22 +54,17 @@ export function FormularioSede() {
             label="Número de personas"
             placeholder="Ej: 2"
             keyboardType="number-pad"
+            maxLength={2}
             rules={{ required: 'Indica cuántas personas' }}
           />
         </View>
 
-        <Pressable onPress={reservar} className="mt-6 bg-marca-oscura py-4">
-          <Text className="text-center text-[11px] tracking-[3px] text-crema">RESERVAR</Text>
-        </Pressable>
+        <Button text="RESERVAR" onPress={reservar} className="mt-6" />
       </View>
 
       <View className="mt-6 flex-row gap-3">
-        <Pressable onPress={() => router.push('/menu')} className="flex-1 border border-oro py-4">
-          <Text className="text-center text-[11px] tracking-[2px] text-oro">VER MENÚ</Text>
-        </Pressable>
-        <Pressable onPress={() => Linking.openURL(`tel:${SEDE.telefono}`)} className="flex-1 bg-oro py-4">
-          <Text className="text-center text-[11px] tracking-[2px] text-marca-oscura">LLAMAR</Text>
-        </Pressable>
+        <Button text="VER MENÚ" onPress={() => router.push('/menu')} variant="ghost" className="flex-1" />
+        <Button text="LLAMAR" onPress={() => Linking.openURL(`tel:${SEDE.telefono}`)} variant="gold" className="flex-1" />
       </View>
     </View>
   );

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
-import Field from '../../../../../components/Field';
+import Field from '@/components/Field';
 import type { AjustesForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 

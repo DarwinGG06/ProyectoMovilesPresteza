@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { Modal, Pressable, Text, View } from 'react-native';
 
-import { useAuth } from '@/auth/AuthContext';
+import { useSession } from '@/session/context';
 
 import { IconoNav } from './IconoNav';
 import { SelloP } from './SelloP';
@@ -12,7 +12,7 @@ type UserMenuProps = {
 };
 
 export function UserMenu({ visible, onClose }: UserMenuProps) {
-  const { user, logout } = useAuth();
+  const { user, logout } = useSession();
 
   if (!user) return null;
 

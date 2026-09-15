@@ -1,3 +1,8 @@
+export type { Categoria as CategoriaAdmin, CategoriaForm } from '@/types';
+export type { Producto as ProductoAdmin, ProductoForm } from '@/types';
+export type { Mesa as MesaAdmin, Reserva as ReservaAdmin } from '@/types';
+export type { Cliente as ClienteAdmin } from '@/types';
+
 export type PestanaAdmin =
   | 'dashboard'
   | 'productos'
@@ -9,26 +14,6 @@ export type PestanaAdmin =
   | 'mensajes'
   | 'clientes'
   | 'ajustes';
-
-export type ProductoAdmin = {
-  _id?: string;
-  id?: string;
-  name: string;
-  description?: string;
-  price: number;
-  categoryId?: string;
-  imageUrl?: string;
-  available?: boolean;
-};
-
-export type CategoriaAdmin = {
-  _id?: string;
-  id?: string;
-  name: string;
-  description?: string;
-  imageUrl?: string;
-  icon?: string;
-};
 
 export type PedidoAdmin = {
   _id?: string;
@@ -46,30 +31,6 @@ export type PedidoAdmin = {
   user_name?: string;
   userId?: string;
   createdAt?: string;
-};
-
-export type ReservaAdmin = {
-  _id?: string;
-  id?: string;
-  tableNumber: string;
-  date: string;
-  time: string;
-  numberOfPeople: number;
-  specialRequests?: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | string;
-  userId?: string;
-  userName?: string;
-  userEmail?: string;
-  createdAt?: string;
-};
-
-export type MesaAdmin = {
-  _id?: string;
-  id?: string;
-  number: string;
-  capacity: number;
-  active?: boolean;
-  status?: string;
 };
 
 export type InsumoAdmin = {
@@ -104,17 +65,6 @@ export type MensajeAdmin = {
   createdAt?: string;
 };
 
-export type ClienteAdmin = {
-  id: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  role?: string;
-  totalOrders?: number;
-  totalReservations?: number;
-  totalSpent?: number;
-};
-
 export type StatsAdmin = {
   totalOrders: number;
   pendingOrders: number;
@@ -128,20 +78,6 @@ export type StatsAdmin = {
   totalCategorias: number;
   totalInsumos: number;
   totalAdicionales: number;
-};
-
-export type ProductoForm = {
-  name: string;
-  description: string;
-  price: string;
-  categoryId: string;
-  imageUrl: string;
-};
-
-export type CategoriaForm = {
-  name: string;
-  description: string;
-  imageUrl: string;
 };
 
 export type InsumoForm = {

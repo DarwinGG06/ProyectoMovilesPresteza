@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { useAviso } from '@/shared/components/aviso';
 
-import { actualizarPerfilApi } from '../../api/perfilApi';
+import { actualizarPerfilApi } from '@/api/perfil';
 import type { ContrasenaForm, PerfilForm, UsuarioPerfil } from '../../types';
 import { CuentaEscrita } from '../CuentaEscrita';
 import { BotonPerfil, Comanda } from '../elementos';

@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 
-import { actualizarPerfilApi } from '@/features/perfil/api/perfilApi';
+import { actualizarPerfilApi } from '@/api/perfil';
 
 import type { AjustesForm } from '../types';
 import { useSesionAdmin } from './adminComun';

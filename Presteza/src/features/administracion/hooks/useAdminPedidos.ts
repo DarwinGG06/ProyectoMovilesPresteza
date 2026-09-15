@@ -6,7 +6,7 @@ import {
   crearPedido,
   eliminarPedido,
   listarPedidos,
-} from '../api/adminApi';
+} from '@/api/admin';
 import type { ClienteAdmin, PedidoAdmin, PedidoForm } from '../types';
 import { estadoPedidoBackend, idDe, textoEstadoPedido } from '../utils';
 import { fusionar, useListaAdmin } from './adminComun';

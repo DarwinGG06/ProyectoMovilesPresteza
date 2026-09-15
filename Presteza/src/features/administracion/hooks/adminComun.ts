@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useAuth } from '@/auth/AuthContext';
+import { useSession } from '@/session/context';
 import { useAviso } from '@/shared/components/aviso';
 
 import { idDe } from '../utils';
@@ -11,7 +11,7 @@ export function fusionar<T extends { _id?: string; id?: string }>(lista: T[], ac
 }
 
 export function useSesionAdmin() {
-  const { user, token, logout, actualizarUsuario, isAuthenticated } = useAuth();
+  const { user, token, logout, actualizarUsuario, isAuthenticated } = useSession();
   const aviso = useAviso();
 
   const conToken = useCallback(() => {

@@ -1,41 +1,38 @@
 import { useState, useEffect } from 'react';
+import { listarProductos } from '@/api/productos'; 
+import { listarCategorias } from '@/api/categorias';
 
-// Ajustamos la importación para apuntar a la API de administración que ya tienes creada.
-// Usamos el alias @ asumiendo que tu api está en src/features/administracion/api/adminApi
-import { listarProductos, listarCategorias } from '@/features/administracion/api/adminApi'; 
-
-// Importa los tipos desde donde los tengas definidos (ajusta la ruta si es necesario)
-import type { ProductoAdmin, CategoriaAdmin } from '@/features/administracion/types'; 
-// Si tus tipos están en la raíz, podría ser: import type { ProductoAdmin, CategoriaAdmin } from '@/types';
+// Usa los tipos Producto y Categoria exportados en tu archivo de tipos
+import type { Producto, Categoria } from '@/types'; 
 
 export function useMenuPublico() {
-  const [productos, setProductos] = useState<ProductoAdmin[]>([]);
-  const [categorias, setCategorias] = useState<CategoriaAdmin[]>([]);
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let montado = true; // Para evitar actualizaciones de estado si el componente se desmonta
+    let montado = true;
 
     const cargarDatos = async () => {
       try {
         setCargando(true);
         setError(null);
 
-        // Hacemos ambas peticiones al mismo tiempo.
-        // Si tu función en adminApi espera obligatoriamente un parámetro 'sesion' o 'token', 
-        // le pasamos un string vacío '' o (null as any) para engañar a TypeScript en la vista pública.
-        const [prods, cats] = await Promise.all([
+        const [resProds, resCats] = await Promise.all([
           listarProductos('' as any), 
           listarCategorias('' as any)
         ]);
         
+        // Garantiza que la respuesta sea un arreglo, incluso si la API responde { data: [...] }
+        const listaProductos: Producto[] = Array.isArray(resProds) ? resProds : resProds?.data || [];
+        const listaCategorias: Categoria[] = Array.isArray(resCats) ? resCats : resCats?.data || [];
+
         if (montado) {
-          // Filtramos para que al cliente SOLO le salgan los disponibles (available !== false)
-          const productosDisponibles = prods.filter((p: ProductoAdmin) => p.available !== false);
+          const productosDisponibles = listaProductos.filter((p) => p.available !== false);
           
           setProductos(productosDisponibles);
-          setCategorias(cats);
+          setCategorias(listaCategorias);
         }
       } catch (err) {
         if (montado) {
@@ -51,7 +48,6 @@ export function useMenuPublico() {
 
     cargarDatos();
 
-    // Cleanup function
     return () => {
       montado = false;
     };
@@ -59,5 +55,3 @@ export function useMenuPublico() {
 
   return { productos, categorias, cargando, error };
 }
-
-

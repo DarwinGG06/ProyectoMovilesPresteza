@@ -5,7 +5,7 @@ import { Animated, Platform, Pressable, Text, View } from 'react-native';
 const usarNativo = Platform.OS !== 'web';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useAuth } from '@/auth/AuthContext';
+import { useSession } from '@/session/context';
 import { useCart } from '@/services/cart/CartContext';
 
 import { CartSheet } from './CartSheet';
@@ -16,7 +16,7 @@ import { SelloP } from './SelloP';
 import { UserMenu } from './UserMenu';
 
 export function NavBar() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useSession();
   const { totalItems } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);

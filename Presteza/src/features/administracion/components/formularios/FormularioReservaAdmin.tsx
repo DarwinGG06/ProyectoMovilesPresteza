@@ -1,7 +1,8 @@
 import { useForm } from 'react-hook-form';
-import { Pressable, Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import Field from '../../../../../components/Field';
+import Field from '@/components/Field';
+import Select from '@/components/Select';
 import type { MesaAdmin, ReservaFormAdmin } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -18,32 +19,22 @@ export function FormularioReservaAdmin({
   onGuardar: (datos: ReservaFormAdmin) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, handleSubmit, setValue, watch } = useForm<ReservaFormAdmin>({ defaultValues: valores });
-  const mesa = watch('tableNumber');
+  const { control, handleSubmit } = useForm<ReservaFormAdmin>({ defaultValues: valores });
+  const mesasActivas = mesas.filter((item) => item.active !== false);
 
   return (
     <View className="gap-4">
-      {mesas.length > 0 ? (
-        <View>
-          <Text className="mb-2 font-semibold">Mesa</Text>
-          <View className="flex-row flex-wrap gap-2">
-            {mesas
-              .filter((item) => item.active !== false)
-              .map((item) => {
-                const activa = mesa === item.number;
-                return (
-                  <Pressable
-                    key={item.number}
-                    onPress={() => setValue('tableNumber', item.number)}
-                    className={`px-3 py-2 ${activa ? 'bg-marca-oscura' : 'border border-marca/20'}`}>
-                    <Text className={`text-[12px] ${activa ? 'text-crema' : 'text-marca-oscura'}`}>
-                      {item.number} · {item.capacity}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-          </View>
-        </View>
+      {mesasActivas.length > 0 ? (
+        <Select
+          control={control}
+          name="tableNumber"
+          label="Mesa"
+          options={mesasActivas.map((item) => ({
+            value: item.number,
+            label: `${item.number} · ${item.capacity}`,
+          }))}
+          rules={{ required: 'Elige la mesa' }}
+        />
       ) : (
         <Field
           control={control}

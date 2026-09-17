@@ -6,7 +6,7 @@ import { Plato } from '@/features/inicio/components/MesaDecor';
 import { PRODUCTOS_DESTACADOS } from '@/features/inicio/data';
 import { formatCOP, useCart } from '@/services/cart/CartContext';
 
-import { actualizarPerfilApi } from '../../api/perfilApi';
+import { actualizarPerfilApi } from '@/api/perfil';
 import type { PerfilForm, PlatoFavorito, UsuarioPerfil } from '../../types';
 import { formatFecha } from '../../utils';
 import { CuentaEscrita } from '../CuentaEscrita';

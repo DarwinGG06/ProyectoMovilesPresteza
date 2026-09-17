@@ -1,5 +1,3 @@
-import { pedirApi } from '@/services/api/cliente';
-
 import type {
   Direccion,
   Pedido,
@@ -7,7 +5,9 @@ import type {
   Reserva,
   TarjetaPago,
   UsuarioPerfil,
-} from '../types';
+} from '@/features/perfil/types';
+
+import { request } from './client';
 
 type RespuestaUsuario = { message?: string; user: UsuarioPerfil };
 type RespuestaPedidos = { orders?: Pedido[] } | Pedido[];
@@ -32,7 +32,7 @@ function normalizarUsuario(user: UsuarioPerfil): UsuarioPerfil {
 }
 
 export async function obtenerUsuario(userId: string) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}`);
+  const data = await request<RespuestaUsuario>(`/users/${userId}`);
   return extraerUsuario(data);
 }
 
@@ -40,7 +40,7 @@ export async function actualizarPerfilApi(
   userId: string,
   datos: { complete_name?: string; email?: string; phone_number?: string; password?: string },
 ) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}`, {
+  const data = await request<RespuestaUsuario>(`/users/${userId}`, {
     method: 'PATCH',
     body: datos,
   });
@@ -48,7 +48,7 @@ export async function actualizarPerfilApi(
 }
 
 export async function agregarDireccion(userId: string, direccion: Direccion) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}/addresses`, {
+  const data = await request<RespuestaUsuario>(`/users/${userId}/addresses`, {
     method: 'POST',
     body: direccion,
   });
@@ -56,7 +56,7 @@ export async function agregarDireccion(userId: string, direccion: Direccion) {
 }
 
 export async function actualizarDireccion(userId: string, index: number, direccion: Partial<Direccion>) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}/addresses/${index}`, {
+  const data = await request<RespuestaUsuario>(`/users/${userId}/addresses/${index}`, {
     method: 'PATCH',
     body: direccion,
   });
@@ -64,58 +64,58 @@ export async function actualizarDireccion(userId: string, index: number, direcci
 }
 
 export async function eliminarDireccion(userId: string, index: number) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}/addresses/${index}`, {
+  const data = await request<RespuestaUsuario>(`/users/${userId}/addresses/${index}`, {
     method: 'DELETE',
   });
   return extraerUsuario(data);
 }
 
 export async function marcarDireccionPrincipal(userId: string, index: number) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}/addresses/${index}/primary`, {
+  const data = await request<RespuestaUsuario>(`/users/${userId}/addresses/${index}/primary`, {
     method: 'PATCH',
   });
   return extraerUsuario(data);
 }
 
-export async function obtenerTarjetas(userId: string, token: string) {
-  const data = await pedirApi<RespuestaTarjetas>(`/users/${userId}/payment-cards`, { token });
+export async function obtenerTarjetas(userId: string, jwt: string) {
+  const data = await request<RespuestaTarjetas>(`/users/${userId}/payment-cards`, { token: jwt });
   return data.paymentCards ?? [];
 }
 
-export async function agregarTarjeta(userId: string, token: string, tarjeta: TarjetaPago) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}/payment-cards`, {
+export async function agregarTarjeta(userId: string, jwt: string, tarjeta: TarjetaPago) {
+  const data = await request<RespuestaUsuario>(`/users/${userId}/payment-cards`, {
     method: 'POST',
     body: tarjeta,
-    token,
+    token: jwt,
   });
   return extraerUsuario(data);
 }
 
-export async function eliminarTarjeta(userId: string, token: string, index: number) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}/payment-cards/${index}`, {
+export async function eliminarTarjeta(userId: string, jwt: string, index: number) {
+  const data = await request<RespuestaUsuario>(`/users/${userId}/payment-cards/${index}`, {
     method: 'DELETE',
-    token,
+    token: jwt,
   });
   return extraerUsuario(data);
 }
 
-export async function marcarTarjetaPrincipal(userId: string, token: string, index: number) {
-  const data = await pedirApi<RespuestaUsuario>(`/users/${userId}/payment-cards/${index}/primary`, {
+export async function marcarTarjetaPrincipal(userId: string, jwt: string, index: number) {
+  const data = await request<RespuestaUsuario>(`/users/${userId}/payment-cards/${index}/primary`, {
     method: 'PATCH',
-    token,
+    token: jwt,
   });
   return extraerUsuario(data);
 }
 
 export async function obtenerPedidos(userId: string) {
-  const data = await pedirApi<RespuestaPedidos>(`/orders/user/${userId}`);
+  const data = await request<RespuestaPedidos>(`/orders/user/${userId}`);
   if (Array.isArray(data)) return data;
   return data.orders ?? [];
 }
 
-export async function obtenerReservas(token: string) {
-  const data = await pedirApi<Reserva[] | Reserva | { reservations?: Reserva[] }>('/reservations/my-reservations', {
-    token,
+export async function obtenerReservas(jwt: string) {
+  const data = await request<Reserva[] | Reserva | { reservations?: Reserva[] }>('/reservations/my-reservations', {
+    token: jwt,
   });
   if (Array.isArray(data)) return data;
   if (data && typeof data === 'object' && 'reservations' in data && Array.isArray(data.reservations)) {
@@ -127,27 +127,27 @@ export async function obtenerReservas(token: string) {
   return [];
 }
 
-export async function actualizarReserva(
+export async function actualizarReservaPerfil(
   reservaId: string,
-  token: string,
+  jwt: string,
   datos: { date?: string; time?: string; numberOfPeople?: number; specialRequests?: string },
 ) {
-  return pedirApi<Reserva>(`/reservations/${reservaId}`, {
+  return request<Reserva>(`/reservations/${reservaId}`, {
     method: 'PATCH',
     body: datos,
-    token,
+    token: jwt,
   });
 }
 
-export async function eliminarReserva(reservaId: string, token: string) {
-  await pedirApi<void>(`/reservations/${reservaId}`, {
+export async function eliminarReservaPerfil(reservaId: string, jwt: string) {
+  await request<void>(`/reservations/${reservaId}`, {
     method: 'DELETE',
-    token,
+    token: jwt,
   });
 }
 
-export async function obtenerFavoritos(userId: string, token: string) {
-  const data = await pedirApi<RespuestaFavoritos>(`/users/${userId}/favorites`, { token });
+export async function obtenerFavoritos(userId: string, jwt: string) {
+  const data = await request<RespuestaFavoritos>(`/users/${userId}/favorites`, { token: jwt });
   return data.favorites ?? [];
 }
 

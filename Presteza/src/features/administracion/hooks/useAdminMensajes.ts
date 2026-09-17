@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { actualizarMensaje, crearMensaje, eliminarMensaje, listarMensajes } from '../api/adminApi';
+import { actualizarMensaje, crearMensaje, eliminarMensaje, listarMensajes } from '@/api/admin';
 import type { MensajeAdmin, MensajeForm } from '../types';
 import { idDe } from '../utils';
 import { fusionar, useListaAdmin } from './adminComun';

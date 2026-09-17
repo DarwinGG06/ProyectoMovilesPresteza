@@ -1,7 +1,8 @@
 import { useForm } from 'react-hook-form';
-import { Pressable, Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import Field from '../../../../../components/Field';
+import Field from '@/components/Field';
+import Select from '@/components/Select';
 import type { CategoriaAdmin, ProductoForm } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesForm } from './AccionesForm';
@@ -21,8 +22,7 @@ export function FormularioProducto({
   onGuardar,
   guardando,
 }: FormularioProductoProps) {
-  const { control, handleSubmit, setValue, watch } = useForm<ProductoForm>({ defaultValues: valores });
-  const categoriaId = watch('categoryId');
+  const { control, handleSubmit } = useForm<ProductoForm>({ defaultValues: valores });
 
   return (
     <View className="gap-4">
@@ -32,7 +32,12 @@ export function FormularioProducto({
         label="Nombre"
         placeholder="Nombre del plato"
         autoCapitalize="words"
-        rules={{ required: 'Escribe el nombre', minLength: { value: 3, message: 'Mínimo 3 caracteres' } }}
+        maxLength={80}
+        rules={{
+          required: 'Escribe el nombre',
+          minLength: { value: 3, message: 'Mínimo 3 caracteres' },
+          maxLength: { value: 80, message: 'Máximo 80 caracteres' },
+        }}
       />
       <Field
         control={control}
@@ -40,7 +45,11 @@ export function FormularioProducto({
         label="Descripción"
         placeholder="Ingredientes y preparación"
         multiline
-        rules={{ required: 'Escribe una descripción' }}
+        maxLength={400}
+        rules={{
+          required: 'Escribe una descripción',
+          maxLength: { value: 400, message: 'Máximo 400 caracteres' },
+        }}
       />
       <Field
         control={control}
@@ -50,24 +59,24 @@ export function FormularioProducto({
         keyboardType="numeric"
         rules={{ required: 'Escribe el precio' }}
       />
-      <Field control={control} name="imageUrl" label="Imagen (URL)" placeholder="https://..." />
-      <View>
-        <Text className="mb-2 font-semibold">Categoría</Text>
-        <View className="flex-row flex-wrap gap-2">
-          {categorias.map((categoria) => {
-            const id = idDe(categoria);
-            const activa = categoriaId === id;
-            return (
-              <Pressable
-                key={id}
-                onPress={() => setValue('categoryId', id)}
-                className={`px-3 py-2 ${activa ? 'bg-marca-oscura' : 'border border-marca/20'}`}>
-                <Text className={`text-[12px] ${activa ? 'text-crema' : 'text-marca-oscura'}`}>{categoria.name}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
+      <Field
+        control={control}
+        name="imageUrl"
+        label="Imagen (URL)"
+        placeholder="https://..."
+        maxLength={500}
+        rules={{
+          required: 'Pega la URL de la foto',
+          maxLength: { value: 500, message: 'Máximo 500 caracteres' },
+        }}
+      />
+      <Select
+        control={control}
+        name="categoryId"
+        label="Categoría"
+        options={categorias.map((categoria) => ({ value: idDe(categoria), label: categoria.name }))}
+        rules={{ required: 'Elige una categoría' }}
+      />
       <AccionesForm onCancelar={onCancelar} onGuardar={handleSubmit(onGuardar)} guardando={guardando} />
     </View>
   );

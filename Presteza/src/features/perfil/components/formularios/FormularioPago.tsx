@@ -1,9 +1,10 @@
 import { useForm } from 'react-hook-form';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import Field from '../../../../../components/Field';
+import Field from '@/components/Field';
+import Select from '@/components/Select';
 import type { TarjetaForm } from '../../types';
-import { AccionesFormulario, ChipOpcion } from '../elementos';
+import { AccionesFormulario } from '../elementos';
 
 const MARCAS = ['Visa', 'Mastercard', 'American Express', 'Diners Club'];
 
@@ -14,7 +15,7 @@ type FormularioPagoProps = {
 };
 
 export function FormularioPago({ onCancelar, onGuardar, guardando }: FormularioPagoProps) {
-  const { control, handleSubmit, watch, setValue } = useForm<TarjetaForm>({
+  const { control, handleSubmit } = useForm<TarjetaForm>({
     defaultValues: {
       name: '',
       cardholder_name: '',
@@ -26,10 +27,6 @@ export function FormularioPago({ onCancelar, onGuardar, guardando }: FormularioP
     },
   });
 
-  const tipo = watch('type');
-  const marca = watch('brand');
-  const esPrincipal = watch('is_primary');
-
   return (
     <View className="gap-4">
       <Field
@@ -38,7 +35,11 @@ export function FormularioPago({ onCancelar, onGuardar, guardando }: FormularioP
         label="Nombre de la tarjeta"
         placeholder="Ej: Tarjeta personal"
         autoCapitalize="words"
-        rules={{ required: 'Escribe un nombre' }}
+        maxLength={40}
+        rules={{
+          required: 'Escribe un nombre',
+          maxLength: { value: 40, message: 'Máximo 40 caracteres' },
+        }}
       />
       <Field
         control={control}
@@ -46,7 +47,11 @@ export function FormularioPago({ onCancelar, onGuardar, guardando }: FormularioP
         label="Titular"
         placeholder="Nombre como aparece en la tarjeta"
         autoCapitalize="words"
-        rules={{ required: 'Escribe el titular' }}
+        maxLength={80}
+        rules={{
+          required: 'Escribe el titular',
+          maxLength: { value: 80, message: 'Máximo 80 caracteres' },
+        }}
       />
       <Field
         control={control}
@@ -72,35 +77,26 @@ export function FormularioPago({ onCancelar, onGuardar, guardando }: FormularioP
         }}
       />
 
-      <View className="gap-2">
-        <Text className="font-semibold">Tipo</Text>
-        <View className="flex-row gap-2">
-          <ChipOpcion etiqueta="Crédito" activo={tipo === 'credit'} onPress={() => setValue('type', 'credit')} />
-          <ChipOpcion etiqueta="Débito" activo={tipo === 'debit'} onPress={() => setValue('type', 'debit')} />
-        </View>
-      </View>
-
-      <View className="gap-2">
-        <Text className="font-semibold">Marca</Text>
-        <View className="flex-row flex-wrap gap-2">
-          {MARCAS.map((opcion) => (
-            <ChipOpcion
-              key={opcion}
-              etiqueta={opcion}
-              activo={marca === opcion}
-              onPress={() => setValue('brand', opcion)}
-            />
-          ))}
-        </View>
-      </View>
-
-      <View className="gap-2">
-        <Text className="font-semibold">Método principal</Text>
-        <View className="flex-row gap-2">
-          <ChipOpcion etiqueta="Sí" activo={esPrincipal} onPress={() => setValue('is_primary', true)} />
-          <ChipOpcion etiqueta="No" activo={!esPrincipal} onPress={() => setValue('is_primary', false)} />
-        </View>
-      </View>
+      <Select
+        control={control}
+        name="type"
+        label="Tipo"
+        options={[
+          { value: 'credit', label: 'Crédito' },
+          { value: 'debit', label: 'Débito' },
+        ]}
+        rules={{ required: 'Elige el tipo' }}
+      />
+      <Select control={control} name="brand" label="Marca" options={MARCAS} rules={{ required: 'Elige la marca' }} />
+      <Select
+        control={control}
+        name="is_primary"
+        label="Método principal"
+        options={[
+          { value: true, label: 'Sí' },
+          { value: false, label: 'No' },
+        ]}
+      />
 
       <AccionesFormulario
         onCancelar={onCancelar}

@@ -1,19 +1,16 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, View } from 'react-native';
 
-import { useAuth } from '@/auth/AuthContext';
-import { logError, logInfo } from '@/services/api/logger';
+import { useSession } from '@/session/context';
+import Button from '@/components/Button';
+import Field from '@/components/Field';
+import MensajeError from '@/components/MensajeError';
 
-import Field from '../../../../components/Field';
 import { IconoNav } from './IconoNav';
 import { SelloP } from './SelloP';
 
-type LoginForm = {
-  email: string;
-  password: string;
-};
+type LoginForm = { email: string; password: string };
 
 type LoginModalProps = {
   visible: boolean;
@@ -21,32 +18,25 @@ type LoginModalProps = {
 };
 
 export function LoginModal({ visible, onClose }: LoginModalProps) {
-  const { login } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const { control, handleSubmit, reset } = useForm<LoginForm>({
+  const { signIn } = useSession();
+  const { control, handleSubmit, reset, setError, formState } = useForm<LoginForm>({
     defaultValues: { email: '', password: '' },
   });
 
   const close = () => {
     reset();
-    setError(null);
     onClose();
   };
 
-  const submit = handleSubmit(async (datos) => {
-    setError(null);
-    logInfo('ui', 'LoginModal enviar', { email: datos.email.trim().toLowerCase() });
+  const submit = async ({ email, password }: LoginForm) => {
     try {
-      await login(datos.email, datos.password);
-      logInfo('ui', 'LoginModal OK, yendo a /perfil');
+      await signIn(email, password);
       close();
-      router.push('/perfil');
-    } catch (err) {
-      const mensaje = err instanceof Error ? err.message : 'Error al iniciar sesión.';
-      logError('ui', 'LoginModal error', { mensaje });
-      setError(mensaje);
+      router.replace('/perfil');
+    } catch (error) {
+      setError('root', { message: (error as Error).message });
     }
-  });
+  };
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
@@ -67,11 +57,44 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                 <Text className="mt-1 text-3xl font-extrabold text-crema">Bienvenido</Text>
               </View>
 
-              {error ? (
-                <Text className="mb-3 text-center text-sm text-red-300">{error}</Text>
-              ) : null}
+              <View className="bg-crema px-4 py-5">
+                <View className="gap-4">
+                  <Field
+                    control={control}
+                    name="email"
+                    label="Correo"
+                    placeholder="tu@email.com"
+                    keyboardType="email-address"
+                    rules={{
+                      required: 'El correo es obligatorio',
+                      pattern: { value: /^\S+@\S+\.\S+$/, message: 'Correo inválido' },
+                      maxLength: { value: 120, message: 'Máximo 120 caracteres' },
+                    }}
+                    maxLength={120}
+                  />
+                  <Field
+                    control={control}
+                    name="password"
+                    label="Contraseña"
+                    placeholder="••••••••"
+                    secureTextEntry
+                    rules={{
+                      required: 'La contraseña es obligatoria',
+                      maxLength: { value: 72, message: 'Máximo 72 caracteres' },
+                    }}
+                    maxLength={72}
+                  />
+                </View>
 
-              <FormularioLogin control={control} onSubmit={submit} />
+                <MensajeError className="mt-3" texto={formState.errors.root?.message} />
+
+                <Button
+                  className="mt-5"
+                  text={formState.isSubmitting ? 'ENTRANDO…' : 'ENTRAR'}
+                  onPress={handleSubmit(submit)}
+                  disabled={formState.isSubmitting}
+                />
+              </View>
 
               <Pressable
                 onPress={() => {
@@ -96,39 +119,5 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
         </Pressable>
       </KeyboardAvoidingView>
     </Modal>
-  );
-}
-
-function FormularioLogin({
-  control,
-  onSubmit,
-}: {
-  control: ReturnType<typeof useForm<LoginForm>>['control'];
-  onSubmit: () => void;
-}) {
-  return (
-    <View className="bg-crema px-4 py-5">
-      <View className="gap-4">
-        <Field
-          control={control}
-          name="email"
-          label="Correo"
-          placeholder="tu@email.com"
-          keyboardType="email-address"
-          rules={{ required: 'Escribe tu correo' }}
-        />
-        <Field
-          control={control}
-          name="password"
-          label="Contraseña"
-          placeholder="Contraseña"
-          secureTextEntry
-          rules={{ required: 'Escribe tu contraseña' }}
-        />
-      </View>
-      <Pressable onPress={onSubmit} className="mt-5 bg-marca-oscura py-4">
-        <Text className="text-center text-[11px] tracking-[3px] text-crema">ENTRAR</Text>
-      </Pressable>
-    </View>
   );
 }

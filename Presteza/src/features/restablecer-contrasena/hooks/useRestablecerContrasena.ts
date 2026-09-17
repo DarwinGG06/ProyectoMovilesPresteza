@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { resetPasswordApi } from '@/auth/authApi';
+import { resetPassword } from '@/api/auth';
 
 export type ResetForm = {
   token: string;
@@ -19,7 +19,7 @@ export function useRestablecerContrasena() {
   const enviar = handleSubmit(async (datos) => {
     setError(null);
     try {
-      await resetPasswordApi(datos.token, datos.newPassword);
+      await resetPassword(datos.token, datos.newPassword);
       router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo cambiar la contraseña.');

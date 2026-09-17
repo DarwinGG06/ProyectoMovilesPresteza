@@ -3,8 +3,8 @@ import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { AuthProvider } from '@/auth/AuthContext';
 import { CartProvider } from '@/services/cart/CartContext';
+import { SessionProvider } from '@/session/context';
 import { AvisoProvider } from '@/shared/components/aviso';
 import { WhatsAppFloat } from '@/shared/components/footer';
 import { NavBar } from '@/shared/components/nav-bar';
@@ -13,7 +13,7 @@ import '../global.css';
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
+    <SessionProvider>
       <CartProvider>
         <SafeAreaProvider>
           <AvisoProvider>
@@ -28,6 +28,6 @@ export default function RootLayout() {
           </AvisoProvider>
         </SafeAreaProvider>
       </CartProvider>
-    </AuthProvider>
+    </SessionProvider>
   );
 }

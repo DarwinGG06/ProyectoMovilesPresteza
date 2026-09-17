@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { actualizarProducto, crearProducto, eliminarProducto, listarProductos } from '../api/adminApi';
+import { actualizarProducto, crearProducto, eliminarProducto, listarProductos } from '@/api/productos';
 import type { ProductoAdmin, ProductoForm } from '../types';
-import { idDe } from '../utils';
+import { cambiosDe, idDe } from '../utils';
 import { fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminProductos() {
@@ -13,26 +13,39 @@ export function useAdminProductos() {
     async (datos: ProductoForm, editando?: ProductoAdmin | null) => {
       const sesion = conToken();
       if (!sesion) return false;
-      const cuerpo = {
+      const imagen = datos.imageUrl.trim();
+      const actual = {
         name: datos.name.trim(),
         description: datos.description.trim(),
         price: Number(datos.price),
         categoryId: datos.categoryId,
-         image: datos.imageUrl.trim(),
-         type: "acompañante",
-        available: editando?.available !== false,
+        image: imagen,
       };
 
       setGuardando(true);
       try {
         if (editando) {
-          const actualizado = await actualizarProducto(sesion, idDe(editando), cuerpo);
-          setLista((prev) => fusionar(prev, { ...editando, ...actualizado }, cuerpo));
-          aviso.ok('Plato editado', `${cuerpo.name} fue editado.`);
+          const original = {
+            name: editando.name,
+            description: editando.description ?? '',
+            price: editando.price,
+            categoryId: editando.categoryId ?? '',
+            image: editando.imageUrl ?? '',
+          };
+          const cambios = cambiosDe(actual, original);
+          if (!Object.keys(cambios).length) {
+            aviso.ok('Sin cambios', 'No hay nada que guardar.');
+            return true;
+          }
+          const actualizado = await actualizarProducto(sesion, idDe(editando), cambios);
+          setLista((prev) =>
+            fusionar(prev, { ...editando, ...actualizado }, { ...cambios, imageUrl: imagen }),
+          );
+          aviso.ok('Plato editado', `${actual.name} fue editado.`);
         } else {
-          const creado = await crearProducto(sesion, cuerpo);
-          setLista((prev) => [{ ...creado, ...cuerpo }, ...prev]);
-          aviso.ok('Plato creado', `${cuerpo.name} ya está en la carta.`);
+          const creado = await crearProducto(sesion, { ...actual, type: 'principal', available: true });
+          setLista((prev) => [{ ...creado, ...actual, imageUrl: imagen, available: true }, ...prev]);
+          aviso.ok('Plato creado', `${actual.name} ya está en la carta.`);
         }
         return true;
       } catch (err) {

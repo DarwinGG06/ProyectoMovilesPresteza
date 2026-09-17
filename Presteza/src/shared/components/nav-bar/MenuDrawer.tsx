@@ -5,7 +5,7 @@ import { Animated, Modal, Platform, Pressable, Text, View } from 'react-native';
 const usarNativo = Platform.OS !== 'web';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useAuth } from '@/auth/AuthContext';
+import { useSession } from '@/session/context';
 
 import { IconoNav } from './IconoNav';
 import { SelloP } from './SelloP';
@@ -27,7 +27,7 @@ type MenuDrawerProps = {
 };
 
 export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
-  const { user } = useAuth();
+  const { user } = useSession();
   const enlaces = user?.role === 'admin'
     ? [...ENLACES, { etiqueta: 'Administración', ruta: '/administracion' as Href, icono: 'speedometer-outline' as NombreIcono, numero: '07' }]
     : ENLACES;

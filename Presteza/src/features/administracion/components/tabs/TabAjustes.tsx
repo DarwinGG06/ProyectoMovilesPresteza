@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 
-import type { Usuario } from '@/auth/AuthContext';
+import type { Usuario } from '@/types';
 import { BotonPerfil, Comanda } from '@/features/perfil/components/elementos';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 

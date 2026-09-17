@@ -1,18 +1,18 @@
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useAuth } from '@/auth/AuthContext';
+import { useSession } from '@/session/context';
 
 import {
   obtenerFavoritos,
   obtenerPedidos,
   obtenerReservas,
   obtenerUsuario,
-} from '../api/perfilApi';
+} from '@/api/perfil';
 import type { Pedido, PestanaId, PlatoFavorito, Reserva, UsuarioPerfil } from '../types';
 
 export function usePerfil() {
-  const { user, token, actualizarUsuario, isAuthenticated, logout } = useAuth();
+  const { user, token, actualizarUsuario, isAuthenticated, logout } = useSession();
   const [perfil, setPerfil] = useState<UsuarioPerfil | null>(null);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [reservas, setReservas] = useState<Reserva[]>([]);

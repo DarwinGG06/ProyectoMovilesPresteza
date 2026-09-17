@@ -59,17 +59,7 @@ export type Pedido = {
   createdAt?: string;
 };
 
-export type Reserva = {
-  _id?: string;
-  id?: string;
-  tableNumber: string;
-  date: string;
-  time: string;
-  numberOfPeople: number;
-  specialRequests?: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
-  createdAt?: string;
-};
+export type { Reserva } from '@/types';
 
 export type PestanaId = 'cuenta' | 'pedidos' | 'direcciones' | 'pagos' | 'reservas' | 'ajustes';
 

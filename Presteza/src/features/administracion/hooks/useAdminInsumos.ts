@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { actualizarInsumo, crearInsumo, eliminarInsumo, listarInsumos } from '../api/adminApi';
+import { actualizarInsumo, crearInsumo, eliminarInsumo, listarInsumos } from '@/api/admin';
 import type { InsumoAdmin, InsumoForm } from '../types';
 import { idDe } from '../utils';
 import { fusionar, useListaAdmin } from './adminComun';

@@ -8,7 +8,7 @@ import {
   agregarDireccion,
   eliminarDireccion,
   marcarDireccionPrincipal,
-} from '../../api/perfilApi';
+} from '@/api/perfil';
 import type { Direccion, DireccionForm, UsuarioPerfil } from '../../types';
 import { AccionesFila, Comanda, EnlaceAccion, LineaCuenta } from '../elementos';
 import { FormularioDireccion } from '../formularios/FormularioDireccion';

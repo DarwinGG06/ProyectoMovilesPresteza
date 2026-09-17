@@ -1,6 +1,6 @@
 # Presteza
 
-App móvil del restaurante **Presteza** (barrio Milán, Manizales).
+App móvil del restaurante **Presteza** (Manizales).
 
 Está hecha con **Expo**, **React Native** y **NativeWind** (Tailwind). El código de la
 app vive en la carpeta `Presteza/`. Habla con un backend propio en

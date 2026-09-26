@@ -8,17 +8,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSession } from '@/session/context';
 import { useCart } from '@/services/cart/CartContext';
 
+import { useControlDrawerHome } from '@/features/inicio/context/ControlDrawerHome';
+
 import { CartSheet } from './CartSheet';
 import { IconoNav } from './IconoNav';
 import { LoginModal } from './LoginModal';
-import { MenuDrawer } from './MenuDrawer';
 import { SelloP } from './SelloP';
 import { UserMenu } from './UserMenu';
 
 export function NavBar() {
   const { user, isAuthenticated } = useSession();
   const { totalItems } = useCart();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { alternar: alternarDrawer } = useControlDrawerHome();
   const [loginOpen, setLoginOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -45,7 +46,7 @@ export function NavBar() {
       <SafeAreaView edges={['top']}>
         <View className="px-4 pb-3 pt-1">
           <View className="flex-row items-center rounded-full bg-marca-oscura px-2 py-2 shadow-xl">
-            <Pressable onPress={() => router.push('/')} className="flex-row items-center gap-2 pl-1">
+            <Pressable onPress={() => router.push('/home')} className="flex-row items-center gap-2 pl-1">
               <SelloP size="sm" />
               <View>
                 <Text className="text-lg font-extrabold tracking-[4px] text-crema">PRESTEZA</Text>
@@ -69,13 +70,12 @@ export function NavBar() {
                   </Animated.View>
                 ) : null}
               </View>
-              <BotonIsla icono="menu" destacado onPress={() => setMenuOpen(true)} />
+              <BotonIsla icono="menu" destacado onPress={alternarDrawer} />
             </View>
           </View>
         </View>
       </SafeAreaView>
 
-      <MenuDrawer visible={menuOpen} onClose={() => setMenuOpen(false)} />
       <LoginModal visible={loginOpen} onClose={() => setLoginOpen(false)} />
       <UserMenu visible={userOpen} onClose={() => setUserOpen(false)} />
       <CartSheet visible={cartOpen} onClose={() => setCartOpen(false)} />

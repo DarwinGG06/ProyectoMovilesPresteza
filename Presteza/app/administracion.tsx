@@ -1,5 +1,5 @@
-import { AdministracionScreen } from '@/features/administracion/screens/AdministracionScreen';
+import { Redirect } from 'expo-router';
 
-export default function AdministracionRoute() {
-  return <AdministracionScreen />;
+export default function AdministracionRedirect() {
+  return <Redirect href="/home/administracion" />;
 }

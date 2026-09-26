@@ -29,7 +29,7 @@ type MenuDrawerProps = {
 export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
   const { user } = useSession();
   const enlaces = user?.role === 'admin'
-    ? [...ENLACES, { etiqueta: 'Administración', ruta: '/administracion' as Href, icono: 'speedometer-outline' as NombreIcono, numero: '07' }]
+    ? [...ENLACES, { etiqueta: 'Administración', ruta: '/home/admin' as Href, icono: 'speedometer-outline' as NombreIcono, numero: '07' }]
     : ENLACES;
 
   return (

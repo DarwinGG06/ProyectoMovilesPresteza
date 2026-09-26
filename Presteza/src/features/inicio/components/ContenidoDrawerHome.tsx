@@ -42,7 +42,7 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
           ...ENLACES,
           {
             etiqueta: 'Administración',
-            ruta: 'administracion',
+            ruta: 'admin',
             icono: 'speedometer-outline' as NombreIcono,
             numero: '07',
           },

@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useSession } from '@/session/context';
@@ -73,7 +73,7 @@ export function usePerfil() {
 
   useEffect(() => {
     if (user?.role === 'admin') {
-      router.replace('/administracion');
+      router.replace('/home/admin' as Href);
     }
   }, [user?.role]);
 

@@ -1,9 +1,9 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { useReservas } from '@/features/reservas/hooks/useReservas';
 
-import type { PedidoAdmin, PedidoForm, PestanaAdmin } from '../types';
+import type { PedidoAdmin, PedidoForm } from '../types';
 import { calcularStats, enriquecerClientes, idDe } from '../utils';
 import { useSesionAdmin } from './adminComun';
 import { useAdminAdicionales } from './useAdminAdicionales';
@@ -17,7 +17,6 @@ import { useAdminProductos } from './useAdminProductos';
 
 export function useAdmin() {
   const { user, token, isAuthenticated } = useSesionAdmin();
-  const [pestana, setPestana] = useState<PestanaAdmin>('dashboard');
   const productos = useAdminProductos();
   const categorias = useAdminCategorias();
   const insumos = useAdminInsumos();
@@ -108,8 +107,6 @@ export function useAdmin() {
     user,
     token,
     isAuthenticated,
-    pestana,
-    setPestana,
     esAdmin: user?.role === 'admin',
     salir: ajustes.salir,
     cargando:

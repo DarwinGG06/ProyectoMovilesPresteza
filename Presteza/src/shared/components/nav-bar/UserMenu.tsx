@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Href, router } from 'expo-router';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import { useSession } from '@/session/context';
@@ -32,7 +32,7 @@ export function UserMenu({ visible, onClose }: UserMenuProps) {
           <Pressable
             onPress={() => {
               onClose();
-              router.push(user.role === 'admin' ? '/administracion' : '/perfil');
+              router.push((user.role === 'admin' ? '/home/admin' : '/perfil') as Href);
             }}
             className="mx-4 mt-4 flex-row items-center justify-between rounded-2xl bg-white px-4 py-4">
             <View className="flex-row items-center gap-3">

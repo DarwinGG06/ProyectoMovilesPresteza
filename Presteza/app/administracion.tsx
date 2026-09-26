@@ -1,5 +1,5 @@
-import { Redirect } from 'expo-router';
+import { Redirect, type Href } from 'expo-router';
 
 export default function AdministracionRedirect() {
-  return <Redirect href="/home/administracion" />;
+  return <Redirect href={'/home/admin' as Href} />;
 }

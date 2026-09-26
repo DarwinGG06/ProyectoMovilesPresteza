@@ -1,15 +1,20 @@
+import { router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
 import { formatCOP } from '@/services/cart/CartContext';
 
+import { hrefAdmin } from '../../rutas';
 import type { PedidoAdmin, PestanaAdmin, StatsAdmin } from '../../types';
 import { formatoFechaHora, idDe, textoEstadoPedido } from '../../utils';
 
 type TabDashboardProps = {
   stats: StatsAdmin;
   pedidos: PedidoAdmin[];
-  onIr: (tab: PestanaAdmin) => void;
 };
+
+function irA(tab: PestanaAdmin) {
+  router.push(hrefAdmin(tab));
+}
 
 function Mosaic({
   etiqueta,
@@ -32,7 +37,7 @@ function Mosaic({
   );
 }
 
-export function TabDashboard({ stats, pedidos, onIr }: TabDashboardProps) {
+export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
   const recientes = [...pedidos]
     .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
     .slice(0, 4);
@@ -42,17 +47,17 @@ export function TabDashboard({ stats, pedidos, onIr }: TabDashboardProps) {
       <Text className="mb-4 text-[10px] tracking-[3px] text-oro">RESUMEN</Text>
 
       <View className="flex-row flex-wrap justify-between">
-        <Mosaic etiqueta="INGRESOS" valor={formatCOP(stats.totalRevenue)} onPress={() => onIr('pedidos')} ancho="completo" />
-        <Mosaic etiqueta="PEDIDOS" valor={String(stats.totalOrders)} onPress={() => onIr('pedidos')} />
-        <Mosaic etiqueta="PENDIENTES" valor={String(stats.pendingOrders)} onPress={() => onIr('pedidos')} />
-        <Mosaic etiqueta="CATEGORÍAS" valor={String(stats.totalCategorias)} onPress={() => onIr('categorias')} />
-        <Mosaic etiqueta="INVENTARIO" valor={String(stats.totalInsumos)} onPress={() => onIr('inventario')} />
-        <Mosaic etiqueta="ADICIONALES" valor={String(stats.totalAdicionales)} onPress={() => onIr('adicionales')} />
-        <Mosaic etiqueta="CLIENTES" valor={String(stats.totalCustomers)} onPress={() => onIr('clientes')} />
-        <Mosaic etiqueta="PRODUCTOS" valor={String(stats.totalProducts)} onPress={() => onIr('productos')} />
+        <Mosaic etiqueta="INGRESOS" valor={formatCOP(stats.totalRevenue)} onPress={() => irA('pedidos')} ancho="completo" />
+        <Mosaic etiqueta="PEDIDOS" valor={String(stats.totalOrders)} onPress={() => irA('pedidos')} />
+        <Mosaic etiqueta="PENDIENTES" valor={String(stats.pendingOrders)} onPress={() => irA('pedidos')} />
+        <Mosaic etiqueta="CATEGORÍAS" valor={String(stats.totalCategorias)} onPress={() => irA('categorias')} />
+        <Mosaic etiqueta="INVENTARIO" valor={String(stats.totalInsumos)} onPress={() => irA('inventario')} />
+        <Mosaic etiqueta="ADICIONALES" valor={String(stats.totalAdicionales)} onPress={() => irA('adicionales')} />
+        <Mosaic etiqueta="CLIENTES" valor={String(stats.totalCustomers)} onPress={() => irA('clientes')} />
+        <Mosaic etiqueta="PRODUCTOS" valor={String(stats.totalProducts)} onPress={() => irA('productos')} />
       </View>
 
-      <Pressable onPress={() => onIr('pedidos')} className="mb-10 mt-2 border-y border-oro/25 py-5">
+      <Pressable onPress={() => irA('pedidos')} className="mb-10 mt-2 border-y border-oro/25 py-5">
         <View className="flex-row items-end justify-between">
           <Text className="text-[11px] tracking-[2px] text-crema">ÚLTIMOS PEDIDOS</Text>
           <Text className="text-[11px] tracking-[2px] text-oro">VER PEDIDOS →</Text>

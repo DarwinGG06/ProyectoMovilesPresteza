@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Presteza",
-    "slug": "Presteza",
+    "slug": "presteza",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,7 +20,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#3a0c20"
-      }
+      },
+      "package": "com.rafamontosteam.presteza"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -40,6 +41,13 @@
     "experiments": {
       "tsconfigPaths": true,
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4ab9035c-11a6-45e5-9fea-3d39e52e077f"
+      }
+    },
+    "owner": "rafamontos-team"
   }
 }

@@ -1,24 +1,14 @@
-import { router } from 'expo-router';
-import { useForm } from 'react-hook-form';
-import { Linking, Text, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 import Button from '@/components/Button';
 import Field from '@/components/Field';
+
+import { useCtaInicio } from '../hooks/useCtaInicio';
 import { MarcaCurso, PuntosTicket } from './MesaDecor';
 
-type ReservaRapida = {
-  nombre: string;
-  personas: string;
-};
-
 export function CtaInicio() {
-  const { control, handleSubmit } = useForm<ReservaRapida>({
-    defaultValues: { nombre: '', personas: '' },
-  });
-
-  const reservar = handleSubmit(() => {
-    router.push('/reservas');
-  });
+  const { control, reservar, verMenu, llamar } = useCtaInicio();
 
   return (
     <View className="bg-marca-oscura px-5 pb-14">
@@ -60,8 +50,8 @@ export function CtaInicio() {
       </View>
 
       <View className="mt-6 flex-row gap-3">
-        <Button text="VER MENÚ" onPress={() => router.push('/menu')} variant="ghost" className="flex-1" />
-        <Button text="LLAMAR" onPress={() => Linking.openURL('tel:3104941839')} variant="gold" className="flex-1" />
+        <Button text="VER MENÚ" onPress={verMenu} variant="ghost" className="flex-1" />
+        <Button text="LLAMAR" onPress={llamar} variant="gold" className="flex-1" />
       </View>
     </View>
   );

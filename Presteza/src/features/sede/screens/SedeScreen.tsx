@@ -1,6 +1,7 @@
 import { ImageBackground, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { MarcaCurso } from '@/features/inicio/components/MesaDecor';
+import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { Footer } from '@/shared/components/footer';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
@@ -12,8 +13,9 @@ export function SedeScreen() {
   const { sede, instalaciones, abrirMapa } = useSede();
 
   return (
-    <View className="flex-1 bg-marca-oscura">
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <EvitarTeclado>
+      <View className="flex-1 bg-marca-oscura">
+        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <ImageBackground source={{ uri: sede.foto }} style={{ height: 360 }} resizeMode="cover">
           <View className="flex-1 justify-end bg-marca-oscura/70 px-5 pb-8 pt-10">
             <Text className="text-[10px] tracking-[3px] text-oro">SEDE · MILÁN · MANIZALES</Text>
@@ -76,7 +78,8 @@ export function SedeScreen() {
 
         <FormularioSede />
         <Footer />
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </EvitarTeclado>
   );
 }

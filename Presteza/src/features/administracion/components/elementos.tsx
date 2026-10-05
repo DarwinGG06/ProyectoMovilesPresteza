@@ -2,6 +2,7 @@ import { type ComponentProps, type ReactNode } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { PuntosTicket } from '@/features/inicio/components/MesaDecor';
+import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
 type NombreIcono = ComponentProps<typeof IconoNav>['name'];
@@ -65,17 +66,21 @@ export function ModalAdmin({
 }) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCerrar}>
-      <Pressable onPress={onCerrar} className="flex-1 justify-end bg-marca-oscura/80">
-        <Pressable onPress={() => {}} className="max-h-[88%] bg-crema px-5 pb-8 pt-6">
-          <View className="mb-4 flex-row items-center justify-between">
-            <Text className="flex-1 text-2xl font-light text-marca-oscura">{titulo}</Text>
-            <Pressable onPress={onCerrar} className="h-10 w-10 items-center justify-center">
-              <IconoNav name="close" size={20} className="text-marca-oscura" />
-            </Pressable>
-          </View>
-          <ScrollView keyboardShouldPersistTaps="handled">{children}</ScrollView>
+      <EvitarTeclado offset={0}>
+        <Pressable onPress={onCerrar} className="flex-1 justify-end bg-marca-oscura/80">
+          <Pressable onPress={() => {}} className="max-h-[88%] bg-crema px-5 pb-8 pt-6">
+            <View className="mb-4 flex-row items-center justify-between">
+              <Text className="flex-1 text-2xl font-light text-marca-oscura">{titulo}</Text>
+              <Pressable onPress={onCerrar} className="h-10 w-10 items-center justify-center">
+                <IconoNav name="close" size={20} className="text-marca-oscura" />
+              </Pressable>
+            </View>
+            <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
+              {children}
+            </ScrollView>
+          </Pressable>
         </Pressable>
-      </Pressable>
+      </EvitarTeclado>
     </Modal>
   );
 }

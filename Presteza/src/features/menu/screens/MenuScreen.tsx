@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Asset } from 'expo-asset'; // <-- IMPORTANTE
 
 import { Footer } from '@/shared/components/footer';
+import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 import { useMenuPublico } from '../hooks/useMenuPublico';
 import { ModelViewerModal } from '@/features/menu/components/ModelViewerModal'; 
@@ -76,8 +77,9 @@ export function MenuScreen() {
   }
 
   return (
-    <View className="flex-1 bg-marca-oscura">
-      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+    <EvitarTeclado>
+      <View className="flex-1 bg-marca-oscura">
+        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         
         <View className="px-5 pt-10 pb-6 items-center">
           <SelloP size="md" />
@@ -197,6 +199,7 @@ export function MenuScreen() {
         modelUrl={currentModelUrl}
         productName={currentProductName}
       />
-    </View>
+      </View>
+    </EvitarTeclado>
   );
 }

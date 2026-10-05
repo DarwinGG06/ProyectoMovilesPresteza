@@ -1,11 +1,12 @@
 import { router } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, Text, View } from 'react-native';
 
 import { useSession } from '@/session/context';
 import Button from '@/components/Button';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
+import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 
 import { IconoNav } from './IconoNav';
 import { SelloP } from './SelloP';
@@ -40,7 +41,7 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1">
+      <EvitarTeclado offset={0}>
         <Pressable onPress={close} className="flex-1 items-center justify-center bg-marca-oscura/70 px-5">
           <Pressable onPress={() => {}} className="w-full overflow-hidden bg-marca-oscura">
             <View className="h-1 w-full bg-oro" />
@@ -117,7 +118,7 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
             </View>
           </Pressable>
         </Pressable>
-      </KeyboardAvoidingView>
+      </EvitarTeclado>
     </Modal>
   );
 }

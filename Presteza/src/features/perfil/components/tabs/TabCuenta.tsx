@@ -1,13 +1,12 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Plato } from '@/features/inicio/components/MesaDecor';
 import { PRODUCTOS_DESTACADOS } from '@/features/inicio/data';
 import { formatCOP, useCart } from '@/services/cart/CartContext';
 
-import { actualizarPerfilApi } from '@/api/perfil';
-import type { PerfilForm, PlatoFavorito, UsuarioPerfil } from '../../types';
+import { useCuenta } from '../../hooks/useCuenta';
+import type { PlatoFavorito, UsuarioPerfil } from '../../types';
 import { formatFecha } from '../../utils';
 import { CuentaEscrita } from '../CuentaEscrita';
 import { Comanda } from '../elementos';
@@ -23,28 +22,8 @@ type TabCuentaProps = {
 
 export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuentaProps) {
   const { addItem } = useCart();
-  const [editando, setEditando] = useState(false);
-  const [guardando, setGuardando] = useState(false);
-  const [mensaje, setMensaje] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const cuenta = useCuenta({ userId, perfil, onActualizado });
   const [principal, segundo, postre] = PRODUCTOS_DESTACADOS;
-
-  const guardar = async (datos: PerfilForm) => {
-    setError(null);
-    setMensaje(null);
-    setGuardando(true);
-    try {
-      const actualizado = await actualizarPerfilApi(userId, datos);
-      onActualizado(actualizado);
-      setEditando(false);
-      setMensaje('Datos actualizados.');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo guardar.');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
   const platosFavoritos = favoritos.filter((plato) => plato.name);
 
   return (
@@ -53,21 +32,17 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
         numero="I"
         badge="DATOS"
         titulo="Tu información"
-        accion={editando ? undefined : { etiqueta: 'EDITAR', onPress: () => setEditando(true) }}>
-        {mensaje ? <Mensaje texto={mensaje} /> : null}
-        {error ? <Mensaje texto={error} error /> : null}
+        accion={cuenta.editando ? undefined : { etiqueta: 'EDITAR', onPress: cuenta.editar }}>
+        {cuenta.mensaje ? <Mensaje texto={cuenta.mensaje} /> : null}
+        {cuenta.error ? <Mensaje texto={cuenta.error} error /> : null}
 
-        {editando ? (
+        {cuenta.editando ? (
           <Comanda>
             <FormularioDatos
-              valores={{
-                complete_name: perfil.complete_name,
-                email: perfil.email,
-                phone_number: perfil.phone_number,
-              }}
-              onCancelar={() => setEditando(false)}
-              onGuardar={guardar}
-              guardando={guardando}
+              valores={cuenta.valores}
+              onCancelar={cuenta.cancelar}
+              onGuardar={cuenta.guardar}
+              guardando={cuenta.guardando}
             />
           </Comanda>
         ) : (

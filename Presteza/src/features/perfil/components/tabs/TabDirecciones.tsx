@@ -1,15 +1,7 @@
-import { useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { useAviso } from '@/shared/components/aviso';
-
-import {
-  actualizarDireccion,
-  agregarDireccion,
-  eliminarDireccion,
-  marcarDireccionPrincipal,
-} from '@/api/perfil';
-import type { Direccion, DireccionForm, UsuarioPerfil } from '../../types';
+import { useDirecciones } from '../../hooks/useDirecciones';
+import type { UsuarioPerfil } from '../../types';
 import { AccionesFila, Comanda, EnlaceAccion, LineaCuenta } from '../elementos';
 import { FormularioDireccion } from '../formularios/FormularioDireccion';
 import { EstadoVacio, Mensaje, TarjetaPerfil } from '../TarjetaPerfil';
@@ -21,83 +13,7 @@ type TabDireccionesProps = {
 };
 
 export function TabDirecciones({ userId, perfil, onActualizado }: TabDireccionesProps) {
-  const [mostrarForm, setMostrarForm] = useState(false);
-  const [indiceEdicion, setIndiceEdicion] = useState<number | null>(null);
-  const [guardando, setGuardando] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const aviso = useAviso();
-
-  const cerrar = () => {
-    setMostrarForm(false);
-    setIndiceEdicion(null);
-    setError(null);
-  };
-
-  const guardar = async (datos: DireccionForm) => {
-    setError(null);
-    setGuardando(true);
-    const cuerpo: Direccion = {
-      name: datos.name.trim(),
-      address: datos.address.trim(),
-      neighborhood: datos.neighborhood.trim(),
-      city: 'Manizales',
-      postal_code: '170001',
-      is_primary: datos.is_primary,
-    };
-
-    try {
-      const actualizado =
-        indiceEdicion === null
-          ? await agregarDireccion(userId, cuerpo)
-          : await actualizarDireccion(userId, indiceEdicion, cuerpo);
-      onActualizado(actualizado);
-      cerrar();
-      aviso.ok(
-        indiceEdicion === null ? 'Dirección creada' : 'Dirección editada',
-        indiceEdicion === null ? `${cuerpo.name} fue agregada.` : `${cuerpo.name} fue editada.`,
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo guardar la dirección.');
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const principal = async (index: number) => {
-    try {
-      onActualizado(await marcarDireccionPrincipal(userId, index));
-      aviso.ok('Dirección principal', 'La dirección quedó como principal.');
-    } catch (err) {
-      aviso.errorDe(err, 'No se pudo marcar como principal.', 'Dirección');
-    }
-  };
-
-  const borrar = (index: number, nombre: string) => {
-    aviso.confirmar({
-      sello: 'DIRECCIONES',
-      titulo: 'Eliminar dirección',
-      texto: `¿Quieres eliminar ${nombre}?`,
-      confirmar: 'ELIMINAR',
-      peligro: true,
-      exito: {
-        titulo: 'Dirección eliminada',
-        texto: `${nombre} fue eliminada.`,
-      },
-      onConfirmar: async () => {
-        onActualizado(await eliminarDireccion(userId, index));
-      },
-    });
-  };
-
-  const valoresEdicion =
-    indiceEdicion === null
-      ? undefined
-      : {
-          name: perfil.addresses[indiceEdicion]?.name ?? '',
-          address: perfil.addresses[indiceEdicion]?.address ?? '',
-          neighborhood: perfil.addresses[indiceEdicion]?.neighborhood ?? '',
-          is_primary: Boolean(perfil.addresses[indiceEdicion]?.is_primary),
-        };
+  const direcciones = useDirecciones({ userId, perfil, onActualizado });
 
   return (
     <TarjetaPerfil
@@ -105,19 +21,19 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
       badge="DIRECCIONES"
       titulo="Tus destinos"
       accion={
-        mostrarForm || indiceEdicion !== null
-          ? undefined
-          : { etiqueta: 'AGREGAR', onPress: () => setMostrarForm(true) }
+        direcciones.mostrarAccion
+          ? { etiqueta: 'AGREGAR', onPress: direcciones.abrirFormulario }
+          : undefined
       }>
-      {error ? <Mensaje texto={error} error /> : null}
+      {direcciones.error ? <Mensaje texto={direcciones.error} error /> : null}
 
-      {mostrarForm || indiceEdicion !== null ? (
+      {direcciones.formularioAbierto ? (
         <Comanda>
           <FormularioDireccion
-            valores={valoresEdicion}
-            onCancelar={cerrar}
-            onGuardar={guardar}
-            guardando={guardando}
+            valores={direcciones.valores}
+            onCancelar={direcciones.cancelar}
+            onGuardar={direcciones.guardar}
+            guardando={direcciones.guardando}
           />
         </Comanda>
       ) : perfil.addresses.length === 0 ? (
@@ -125,7 +41,7 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
           icono="location-outline"
           titulo="Sin direcciones"
           texto="Guarda una para agilizar tus pedidos en Manizales."
-          accion={{ etiqueta: 'AGREGAR DIRECCIÓN', onPress: () => setMostrarForm(true) }}
+          accion={{ etiqueta: 'AGREGAR DIRECCIÓN', onPress: direcciones.abrirFormulario }}
         />
       ) : (
         <View>
@@ -141,16 +57,14 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
               </Text>
               <AccionesFila>
                 {!direccion.is_primary ? (
-                  <EnlaceAccion etiqueta="PRINCIPAL" onPress={() => principal(index)} />
+                  <EnlaceAccion etiqueta="PRINCIPAL" onPress={() => direcciones.marcarPrincipal(index)} />
                 ) : null}
+                <EnlaceAccion etiqueta="EDITAR" onPress={() => direcciones.editar(index)} />
                 <EnlaceAccion
-                  etiqueta="EDITAR"
-                  onPress={() => {
-                    setIndiceEdicion(index);
-                    setMostrarForm(false);
-                  }}
+                  etiqueta="ELIMINAR"
+                  onPress={() => direcciones.eliminar(index, direccion.name)}
+                  peligro
                 />
-                <EnlaceAccion etiqueta="ELIMINAR" onPress={() => borrar(index, direccion.name)} peligro />
               </AccionesFila>
             </LineaCuenta>
           ))}

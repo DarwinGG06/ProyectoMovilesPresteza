@@ -49,6 +49,7 @@ export type Producto = {
   categoryId?: string;
   category?: string;
   imageUrl?: string;
+  modelUrl?: string;
   type?: string;
   available?: boolean;
 };

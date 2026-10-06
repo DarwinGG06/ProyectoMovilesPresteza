@@ -1,5 +1,6 @@
 import { ScrollView, View } from 'react-native';
 
+import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { Footer } from '@/shared/components/footer';
 import { LoginModal } from '@/shared/components/nav-bar/LoginModal';
 
@@ -13,8 +14,10 @@ export function ReservasScreen() {
   const reserva = useNuevaReserva();
 
   return (
-    <View className="flex-1 bg-crema">
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <>
+    <EvitarTeclado>
+      <View className="flex-1 bg-crema">
+        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <HeroReservas />
 
         <View className="px-4 py-6">
@@ -51,9 +54,10 @@ export function ReservasScreen() {
         </View>
 
         <Footer />
-      </ScrollView>
-
+        </ScrollView>
+      </View>
+    </EvitarTeclado>
       <LoginModal visible={reserva.loginAbierto} onClose={reserva.cerrarLogin} />
-    </View>
+    </>
   );
 }

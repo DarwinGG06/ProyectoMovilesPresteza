@@ -17,6 +17,7 @@
     },
     "android": {
       "usesCleartextTraffic": true,
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#3a0c20"

@@ -1,5 +1,6 @@
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
+import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { Footer } from '@/shared/components/footer';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
@@ -58,8 +59,9 @@ export function PerfilScreen() {
   }
 
   return (
-    <View className="flex-1 bg-marca-oscura">
-      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+    <EvitarTeclado>
+      <View className="flex-1 bg-marca-oscura">
+        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <HeroPerfil
           nombre={perfil.complete_name || user.name}
           email={perfil.email || user.email}
@@ -100,7 +102,8 @@ export function PerfilScreen() {
           ) : null}
         </View>
         <Footer />
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </EvitarTeclado>
   );
 }

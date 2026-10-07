@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
 
+import { useTabAdicionales } from '../../hooks/useTabAdicionales';
 import type { AdicionalAdmin, AdicionalForm } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -28,21 +28,7 @@ type TabAdicionalesProps = {
 };
 
 export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, onEliminar }: TabAdicionalesProps) {
-  const [filtro, setFiltro] = useState<'all' | 'on' | 'off'>('all');
-  const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
-  const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
-  const [abierto, setAbierto] = useState(false);
-  const [editando, setEditando] = useState<AdicionalAdmin | null>(null);
-
-  const lista = useMemo(() => {
-    if (filtro === 'on') return adicionales.filter((item) => item.available !== false);
-    if (filtro === 'off') return adicionales.filter((item) => item.available === false);
-    return adicionales;
-  }, [adicionales, filtro]);
-
-  const guardar = async (datos: AdicionalForm) => {
-    if (await onGuardar(datos, editando)) setAbierto(false);
-  };
+  const tab = useTabAdicionales(adicionales, onGuardar);
 
   return (
     <View>
@@ -50,24 +36,24 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
         numero="I"
         badge="EXTRAS"
         titulo="Adicionales"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => { setEditando(null); setAbierto(true); } }}>
+        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
         <InterruptorVista
-          vista={vista}
-          onChange={setVista}
-          filtrosAbiertos={filtrosAbiertos}
-          onFiltros={() => setFiltrosAbiertos((abierto) => !abierto)}
+          vista={tab.vista}
+          onChange={tab.setVista}
+          filtrosAbiertos={tab.filtrosAbiertos}
+          onFiltros={() => tab.setFiltrosAbiertos((abierto) => !abierto)}
         />
-        {filtrosAbiertos ? (
+        {tab.filtrosAbiertos ? (
           <FilaFiltros>
-            <ChipFiltro etiqueta="TODOS" activo={filtro === 'all'} onPress={() => setFiltro('all')} />
-            <ChipFiltro etiqueta="DISPONIBLES" activo={filtro === 'on'} onPress={() => setFiltro('on')} />
-            <ChipFiltro etiqueta="OCULTOS" activo={filtro === 'off'} onPress={() => setFiltro('off')} />
+            <ChipFiltro etiqueta="TODOS" activo={tab.filtro === 'all'} onPress={() => tab.setFiltro('all')} />
+            <ChipFiltro etiqueta="DISPONIBLES" activo={tab.filtro === 'on'} onPress={() => tab.setFiltro('on')} />
+            <ChipFiltro etiqueta="OCULTOS" activo={tab.filtro === 'off'} onPress={() => tab.setFiltro('off')} />
           </FilaFiltros>
         ) : null}
 
-        {lista.length === 0 ? (
+        {tab.lista.length === 0 ? (
           <EstadoVacioAdmin icono="add-circle-outline" titulo="Sin adicionales" texto="Crea extras para personalizar los platos." />
-        ) : vista === 'lista' ? (
+        ) : tab.vista === 'lista' ? (
           <View>
             <EncabezadoTabla
               columnas={[
@@ -76,14 +62,14 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
                 { texto: 'PRECIO', ancho: 82, derecha: true },
               ]}
             />
-            {lista.map((adicional) => (
+            {tab.lista.map((adicional) => (
               <FilaTabla key={idDe(adicional)}>
                 <CeldaTabla flex={1.3}>
                   <Text className="text-sm font-light text-white" numberOfLines={2}>
                     {adicional.name}
                   </Text>
                   <AccionesAdmin>
-                    <EnlaceAdmin etiqueta="EDITAR" onPress={() => { setEditando(adicional); setAbierto(true); }} />
+                    <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(adicional)} />
                     <EnlaceAdmin
                       etiqueta={adicional.available === false ? 'ACTIVAR' : 'OCULTAR'}
                       onPress={() => onAlternar(adicional)}
@@ -104,7 +90,7 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
           </View>
         ) : (
           <GrillaAdmin>
-            {lista.map((adicional) => (
+            {tab.lista.map((adicional) => (
               <CajaCuadricula key={idDe(adicional)}>
                 <Text className="text-[10px] tracking-[1px] text-oro">
                   {adicional.available === false ? 'OCULTO' : 'DISPONIBLE'}
@@ -114,10 +100,7 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
                 </Text>
                 <Text className="mt-2 text-lg text-oro">{formatCOP(adicional.price || 0)}</Text>
                 <AccionesCarta
-                  onEditar={() => {
-                    setEditando(adicional);
-                    setAbierto(true);
-                  }}
+                  onEditar={() => tab.abrir(adicional)}
                   onAlternar={() => onAlternar(adicional)}
                   onEliminar={() => onEliminar(adicional)}
                   etiquetaAlternar={adicional.available === false ? 'ACTIVAR' : 'OCULTAR'}
@@ -128,11 +111,11 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={abierto} titulo={editando ? 'Editar adicional' : 'Nuevo adicional'} onCerrar={() => setAbierto(false)}>
+      <ModalAdmin visible={tab.abierto} titulo={tab.editando ? 'Editar adicional' : 'Nuevo adicional'} onCerrar={tab.cerrar}>
         <FormularioAdicional
-          valores={{ name: editando?.name ?? '', price: editando ? String(editando.price) : '' }}
-          onCancelar={() => setAbierto(false)}
-          onGuardar={guardar}
+          valores={tab.valoresFormulario}
+          onCancelar={tab.cerrar}
+          onGuardar={tab.guardar}
           guardando={guardando}
         />
       </ModalAdmin>

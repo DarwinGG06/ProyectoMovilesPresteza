@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import CampoBusqueda from '@/components/CampoBusqueda';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 
+import { useTabCategorias } from '../../hooks/useTabCategorias';
 import type { CategoriaAdmin, CategoriaForm } from '../../types';
 import { idDe } from '../../utils';
 import { EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -18,28 +18,7 @@ type TabCategoriasProps = {
 };
 
 export function TabCategorias({ categorias, guardando, onGuardar, onEliminar }: TabCategoriasProps) {
-  const [busqueda, setBusqueda] = useState('');
-  const [vista, setVista] = useState<'lista' | 'cuadricula'>('cuadricula');
-  const [abierto, setAbierto] = useState(false);
-  const [editando, setEditando] = useState<CategoriaAdmin | null>(null);
-
-  const lista = useMemo(() => {
-    const texto = busqueda.trim().toLowerCase();
-    if (!texto) return categorias;
-    return categorias.filter(
-      (categoria) =>
-        categoria.name.toLowerCase().includes(texto) || (categoria.description ?? '').toLowerCase().includes(texto),
-    );
-  }, [busqueda, categorias]);
-
-  const abrir = (categoria?: CategoriaAdmin) => {
-    setEditando(categoria ?? null);
-    setAbierto(true);
-  };
-
-  const guardar = async (datos: CategoriaForm) => {
-    if (await onGuardar(datos, editando)) setAbierto(false);
-  };
+  const tab = useTabCategorias(categorias, onGuardar);
 
   return (
     <View>
@@ -47,19 +26,19 @@ export function TabCategorias({ categorias, guardando, onGuardar, onEliminar }: 
         numero="I"
         badge="CARTA"
         titulo="Categorías"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => abrir() }}>
+        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
         <CampoBusqueda
-          value={busqueda}
-          onChangeText={setBusqueda}
+          value={tab.busqueda}
+          onChangeText={tab.setBusqueda}
           placeholder="Buscar categoría..."
           variant="oscuro"
         />
-        <InterruptorVista vista={vista} onChange={setVista} />
-        <Text className="mb-4 text-sm text-crema/55">{lista.length} en la carta</Text>
+        <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
+        <Text className="mb-4 text-sm text-crema/55">{tab.lista.length} en la carta</Text>
 
-        {lista.length === 0 ? (
+        {tab.lista.length === 0 ? (
           <EstadoVacioAdmin icono="grid-outline" titulo="Sin categorías" texto="Crea las secciones de la carta." />
-        ) : vista === 'lista' ? (
+        ) : tab.vista === 'lista' ? (
           <View>
             <EncabezadoTabla
               columnas={[
@@ -67,7 +46,7 @@ export function TabCategorias({ categorias, guardando, onGuardar, onEliminar }: 
                 { texto: 'NOTA', flex: 1 },
               ]}
             />
-            {lista.map((categoria) => (
+            {tab.lista.map((categoria) => (
               <FilaTabla key={idDe(categoria)}>
                 <CeldaTabla flex={1.1}>
                   <View className="flex-row items-center">
@@ -76,7 +55,7 @@ export function TabCategorias({ categorias, guardando, onGuardar, onEliminar }: 
                       <Text className="text-sm font-light text-white" numberOfLines={2}>
                         {categoria.name}
                       </Text>
-                      <AccionesCarta onEditar={() => abrir(categoria)} onEliminar={() => onEliminar(categoria)} />
+                      <AccionesCarta onEditar={() => tab.abrir(categoria)} onEliminar={() => onEliminar(categoria)} />
                     </View>
                   </View>
                 </CeldaTabla>
@@ -90,7 +69,7 @@ export function TabCategorias({ categorias, guardando, onGuardar, onEliminar }: 
           </View>
         ) : (
           <View className="flex-row flex-wrap justify-between">
-            {lista.map((categoria) => (
+            {tab.lista.map((categoria) => (
               <View key={idDe(categoria)} className="mb-5 w-[48%] overflow-hidden border border-oro/25">
                 <View className="relative">
                   <FotoCarta uri={categoria.imageUrl} alto={168} ancha />
@@ -103,7 +82,7 @@ export function TabCategorias({ categorias, guardando, onGuardar, onEliminar }: 
                   <Text className="text-sm text-crema/60" numberOfLines={2}>
                     {categoria.description || 'Sin nota'}
                   </Text>
-                  <AccionesCarta onEditar={() => abrir(categoria)} onEliminar={() => onEliminar(categoria)} />
+                  <AccionesCarta onEditar={() => tab.abrir(categoria)} onEliminar={() => onEliminar(categoria)} />
                 </View>
               </View>
             ))}
@@ -111,16 +90,12 @@ export function TabCategorias({ categorias, guardando, onGuardar, onEliminar }: 
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={abierto} titulo={editando ? 'Editar categoría' : 'Nueva categoría'} onCerrar={() => setAbierto(false)}>
+      <ModalAdmin visible={tab.abierto} titulo={tab.editando ? 'Editar categoría' : 'Nueva categoría'} onCerrar={tab.cerrar}>
         <FormularioCategoria
-          key={idDe(editando) || 'nueva'}
-          valores={{
-            name: editando?.name ?? '',
-            description: editando?.description ?? '',
-            imageUrl: editando?.imageUrl ?? '',
-          }}
-          onCancelar={() => setAbierto(false)}
-          onGuardar={guardar}
+          key={idDe(tab.editando) || 'nueva'}
+          valores={tab.valoresFormulario}
+          onCancelar={tab.cerrar}
+          onGuardar={tab.guardar}
           guardando={guardando}
         />
       </ModalAdmin>

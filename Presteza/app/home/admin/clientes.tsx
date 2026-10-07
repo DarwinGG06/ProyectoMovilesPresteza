@@ -1,18 +1,5 @@
-import { PantallaPestanaAdmin } from '@/features/administracion/components/PantallaPestanaAdmin';
-import { TabClientes } from '@/features/administracion/components/tabs/TabClientes';
-import { useAdminContext } from '@/features/administracion/context/AdminContext';
+import { AdminClientesScreen } from '@/features/administracion/screens/AdminClientesScreen';
 
 export default function AdminClientesRoute() {
-  const admin = useAdminContext();
-
-  return (
-    <PantallaPestanaAdmin>
-      <TabClientes
-        clientes={admin.clientes}
-        guardando={admin.guardando}
-        onGuardar={admin.guardarCliente}
-        onEliminar={admin.eliminarCliente}
-      />
-    </PantallaPestanaAdmin>
-  );
+  return <AdminClientesScreen />;
 }

@@ -1,9 +1,9 @@
 import { Text, View } from 'react-native';
 
 const ITEMS = [
-  { etiqueta: 'Libre', color: '#e6c089' },
+  { etiqueta: 'Libre', color: '#22c55e' },
   { etiqueta: 'Tu mesa', color: '#d4af77' },
-  { etiqueta: 'Ocupada', color: '#c45b6a' },
+  { etiqueta: 'Ocupada', color: '#e53935' },
 ] as const;
 
 export function LeyendaMesas() {

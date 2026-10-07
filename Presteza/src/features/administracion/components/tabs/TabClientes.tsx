@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import CampoBusqueda from '@/components/CampoBusqueda';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
 
+import { useTabClientes } from '../../hooks/useTabClientes';
 import type { ClienteAdmin, ClienteForm } from '../../types';
 import { iniciales } from '../../utils';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
@@ -27,39 +27,7 @@ type TabClientesProps = {
 };
 
 export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabClientesProps) {
-  const [busqueda, setBusqueda] = useState('');
-  const [filtro, setFiltro] = useState<'all' | 'pedidos' | 'reservas'>('all');
-  const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
-  const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
-  const [abierto, setAbierto] = useState(false);
-  const [editando, setEditando] = useState<ClienteAdmin | null>(null);
-  const [detalle, setDetalle] = useState<ClienteAdmin | null>(null);
-
-  const lista = useMemo(() => {
-    const texto = busqueda.trim().toLowerCase();
-    return clientes.filter((cliente) => {
-      const coincideTexto =
-        !texto ||
-        [cliente.name, cliente.email, cliente.phone].filter(Boolean).some((campo) => campo!.toLowerCase().includes(texto));
-      const coincideActividad =
-        filtro === 'all' ||
-        (filtro === 'pedidos' ? (cliente.totalOrders ?? 0) > 0 : (cliente.totalReservations ?? 0) > 0);
-      return coincideTexto && coincideActividad;
-    });
-  }, [busqueda, clientes, filtro]);
-
-  useEffect(() => {
-    if (detalle && !clientes.some((item) => item.id === detalle.id)) setDetalle(null);
-  }, [clientes, detalle]);
-
-  const abrir = (cliente?: ClienteAdmin) => {
-    setEditando(cliente ?? null);
-    setAbierto(true);
-  };
-
-  const guardar = async (datos: ClienteForm) => {
-    if (await onGuardar(datos, editando)) setAbierto(false);
-  };
+  const tab = useTabClientes(clientes, onGuardar);
 
   return (
     <View>
@@ -67,29 +35,29 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
         numero="I"
         badge="MESA"
         titulo="Clientes"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => abrir() }}>
+        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
         <CampoBusqueda
-          value={busqueda}
-          onChangeText={setBusqueda}
+          value={tab.busqueda}
+          onChangeText={tab.setBusqueda}
           placeholder="Buscar cliente..."
           variant="oscuro"
         />
         <InterruptorVista
-          vista={vista}
-          onChange={setVista}
-          filtrosAbiertos={filtrosAbiertos}
-          onFiltros={() => setFiltrosAbiertos((prev) => !prev)}
+          vista={tab.vista}
+          onChange={tab.setVista}
+          filtrosAbiertos={tab.filtrosAbiertos}
+          onFiltros={() => tab.setFiltrosAbiertos((prev) => !prev)}
         />
-        {filtrosAbiertos ? (
+        {tab.filtrosAbiertos ? (
           <FilaFiltros>
-            <ChipFiltro etiqueta="TODOS" activo={filtro === 'all'} onPress={() => setFiltro('all')} />
-            <ChipFiltro etiqueta="CON PEDIDOS" activo={filtro === 'pedidos'} onPress={() => setFiltro('pedidos')} />
-            <ChipFiltro etiqueta="CON RESERVAS" activo={filtro === 'reservas'} onPress={() => setFiltro('reservas')} />
+            <ChipFiltro etiqueta="TODOS" activo={tab.filtro === 'all'} onPress={() => tab.setFiltro('all')} />
+            <ChipFiltro etiqueta="CON PEDIDOS" activo={tab.filtro === 'pedidos'} onPress={() => tab.setFiltro('pedidos')} />
+            <ChipFiltro etiqueta="CON RESERVAS" activo={tab.filtro === 'reservas'} onPress={() => tab.setFiltro('reservas')} />
           </FilaFiltros>
         ) : null}
-        {lista.length === 0 ? (
+        {tab.lista.length === 0 ? (
           <EstadoVacioAdmin icono="people-outline" titulo="Sin clientes" texto="Crea el primero o espera a que se registren." />
-        ) : vista === 'lista' ? (
+        ) : tab.vista === 'lista' ? (
           <View>
             <EncabezadoTabla
               columnas={[
@@ -98,7 +66,7 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
                 { texto: 'RESERVAS', ancho: 72, derecha: true },
               ]}
             />
-            {lista.map((cliente) => (
+            {tab.lista.map((cliente) => (
               <FilaTabla key={cliente.id}>
                 <CeldaTabla flex={1.4}>
                   <Text className="text-sm font-light text-white" numberOfLines={1}>
@@ -110,8 +78,8 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
                     </Text>
                   ) : null}
                   <AccionesAdmin>
-                    <EnlaceAdmin etiqueta="VER" onPress={() => setDetalle(cliente)} />
-                    <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(cliente)} />
+                    <EnlaceAdmin etiqueta="VER" onPress={() => tab.setDetalle(cliente)} />
+                    <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(cliente)} />
                     <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(cliente)} />
                   </AccionesAdmin>
                 </CeldaTabla>
@@ -126,7 +94,7 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
           </View>
         ) : (
           <GrillaAdmin>
-            {lista.map((cliente) => (
+            {tab.lista.map((cliente) => (
               <CajaCuadricula key={cliente.id}>
                 <View className="mb-2 h-10 w-10 items-center justify-center border border-oro/40">
                   <Text className="text-sm text-oro">{iniciales(cliente.name)}</Text>
@@ -146,8 +114,8 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
                   <Text className="mt-1 text-sm text-oro">{formatCOP(cliente.totalSpent)}</Text>
                 ) : null}
                 <AccionesAdmin>
-                  <EnlaceAdmin etiqueta="VER" onPress={() => setDetalle(cliente)} />
-                  <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(cliente)} />
+                  <EnlaceAdmin etiqueta="VER" onPress={() => tab.setDetalle(cliente)} />
+                  <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(cliente)} />
                   <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(cliente)} />
                 </AccionesAdmin>
               </CajaCuadricula>
@@ -157,32 +125,27 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
       </TarjetaPerfil>
 
       <ModalAdmin
-        visible={abierto}
-        titulo={editando ? 'Editar cliente' : 'Nuevo cliente'}
-        onCerrar={() => setAbierto(false)}>
+        visible={tab.abierto}
+        titulo={tab.editando ? 'Editar cliente' : 'Nuevo cliente'}
+        onCerrar={tab.cerrar}>
         <FormularioCliente
-          key={editando?.id ?? 'nuevo'}
-          valores={{
-            name: editando?.name ?? '',
-            email: editando?.email ?? '',
-            phone: editando?.phone ?? '',
-            password: '',
-          }}
-          editando={Boolean(editando)}
-          onCancelar={() => setAbierto(false)}
-          onGuardar={guardar}
+          key={tab.editando?.id ?? 'nuevo'}
+          valores={tab.valoresFormulario}
+          editando={Boolean(tab.editando)}
+          onCancelar={tab.cerrar}
+          onGuardar={tab.guardar}
           guardando={guardando}
         />
       </ModalAdmin>
 
-      <ModalAdmin visible={Boolean(detalle)} titulo={detalle?.name || 'Cliente'} onCerrar={() => setDetalle(null)}>
-        {detalle ? (
+      <ModalAdmin visible={Boolean(tab.detalle)} titulo={tab.detalle?.name || 'Cliente'} onCerrar={() => tab.setDetalle(null)}>
+        {tab.detalle ? (
           <View className="gap-3">
-            <Text className="text-sm text-texto/70">{detalle.email || 'Sin correo'}</Text>
-            <Text className="text-sm text-texto/70">{detalle.phone || 'Sin teléfono'}</Text>
-            <Text className="text-base text-marca-oscura">{detalle.totalOrders ?? 0} pedidos</Text>
-            <Text className="text-base text-marca-oscura">{detalle.totalReservations ?? 0} reservas</Text>
-            {detalle.totalSpent ? <Text className="text-lg text-marca">{formatCOP(detalle.totalSpent)}</Text> : null}
+            <Text className="text-sm text-texto/70">{tab.detalle.email || 'Sin correo'}</Text>
+            <Text className="text-sm text-texto/70">{tab.detalle.phone || 'Sin teléfono'}</Text>
+            <Text className="text-base text-marca-oscura">{tab.detalle.totalOrders ?? 0} pedidos</Text>
+            <Text className="text-base text-marca-oscura">{tab.detalle.totalReservations ?? 0} reservas</Text>
+            {tab.detalle.totalSpent ? <Text className="text-lg text-marca">{formatCOP(tab.detalle.totalSpent)}</Text> : null}
           </View>
         ) : null}
       </ModalAdmin>

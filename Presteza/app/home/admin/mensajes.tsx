@@ -1,18 +1,5 @@
-import { PantallaPestanaAdmin } from '@/features/administracion/components/PantallaPestanaAdmin';
-import { TabMensajes } from '@/features/administracion/components/tabs/TabMensajes';
-import { useAdminContext } from '@/features/administracion/context/AdminContext';
+import { AdminMensajesScreen } from '@/features/administracion/screens/AdminMensajesScreen';
 
 export default function AdminMensajesRoute() {
-  const admin = useAdminContext();
-
-  return (
-    <PantallaPestanaAdmin>
-      <TabMensajes
-        mensajes={admin.mensajes}
-        guardando={admin.guardando}
-        onGuardar={admin.guardarMensaje}
-        onEliminar={admin.eliminarMensaje}
-      />
-    </PantallaPestanaAdmin>
-  );
+  return <AdminMensajesScreen />;
 }

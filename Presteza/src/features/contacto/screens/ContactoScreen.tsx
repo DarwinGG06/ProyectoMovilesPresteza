@@ -1,29 +1,42 @@
-import { Text } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
-import Badge from '@/components/Badge';
-import Tarjeta from '@/components/Tarjeta';
-import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
+import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
+import { Footer } from '@/shared/components/footer';
+
+import { FormularioContacto } from '../components/FormularioContacto';
+import { HeroContacto } from '../components/HeroContacto';
+import { InfoContacto } from '../components/InfoContacto';
+import { useContacto } from '../hooks/useContacto';
 
 export function ContactoScreen() {
+  const contacto = useContacto();
+
   return (
-    <ContenedorPantalla titulo="Contacto">
-      <Badge text="MILÁN" className="mt-4" />
-      <Text className="mt-3 font-roboto text-base leading-6 text-texto/70">
-        Estamos en el barrio Milán, Manizales. Escríbenos o reserva mesa desde la app.
-      </Text>
-
-      <Tarjeta className="mt-8 gap-4">
-        <Badge text="WHATSAPP" variant="sello" />
-        <Text className="font-roboto-semibold text-lg text-marca-oscura">310 494 1839</Text>
-        <Text className="font-roboto text-sm text-texto/70">
-          El botón verde de la esquina también abre el chat.
-        </Text>
-      </Tarjeta>
-
-      <Tarjeta className="mt-4 gap-2">
-        <Badge text="CORREO" variant="sello" />
-        <Text className="font-roboto text-base text-marca-oscura">hola@presteza.com</Text>
-      </Tarjeta>
-    </ContenedorPantalla>
+    <EvitarTeclado>
+      <View className="flex-1 bg-marca-oscura">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag">
+          <HeroContacto />
+          <FormularioContacto
+            control={contacto.control}
+            enviar={contacto.enviar}
+            enviando={contacto.enviando}
+            exito={contacto.exito}
+            error={contacto.error}
+          />
+          <InfoContacto
+            contacto={contacto.contacto}
+            whatsapp={contacto.whatsapp}
+            llamar={contacto.llamar}
+            escribirCorreo={contacto.escribirCorreo}
+            abrirMapa={contacto.abrirMapa}
+            abrirWhatsapp={contacto.abrirWhatsapp}
+          />
+          <Footer />
+        </ScrollView>
+      </View>
+    </EvitarTeclado>
   );
 }

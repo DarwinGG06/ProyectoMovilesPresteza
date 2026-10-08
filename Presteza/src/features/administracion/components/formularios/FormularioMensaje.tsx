@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { MensajeForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -16,7 +16,7 @@ export function FormularioMensaje({
   onGuardar: (datos: MensajeForm) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, handleSubmit } = useForm<MensajeForm>({ defaultValues: valores });
+  const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
     <View className="gap-4">
@@ -37,7 +37,7 @@ export function FormularioMensaje({
         multiline
         rules={{ required: 'Escribe el mensaje' }}
       />
-      <AccionesForm onCancelar={onCancelar} onGuardar={handleSubmit(onGuardar)} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

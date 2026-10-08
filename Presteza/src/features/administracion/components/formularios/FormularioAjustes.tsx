@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { AjustesForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -14,7 +14,7 @@ export function FormularioAjustes({
   onGuardar: (datos: AjustesForm) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, handleSubmit } = useForm<AjustesForm>({ defaultValues: valores });
+  const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
     <View className="gap-4">
@@ -33,7 +33,7 @@ export function FormularioAjustes({
         rules={{ required: 'Escribe el correo' }}
       />
       <Field control={control} name="phone" label="Teléfono" keyboardType="phone-pad" rules={{ required: 'Escribe el teléfono' }} />
-      <AccionesForm onGuardar={handleSubmit(onGuardar)} guardando={guardando} etiqueta="GUARDAR" />
+      <AccionesForm onGuardar={guardar} guardando={guardando} etiqueta="GUARDAR" />
     </View>
   );
 }

@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { ReservaForm } from '../../types';
 import { AccionesFormulario } from '../elementos';
 
@@ -13,9 +13,7 @@ type FormularioReservaProps = {
 };
 
 export function FormularioReserva({ valores, onCancelar, onGuardar, guardando }: FormularioReservaProps) {
-  const { control, handleSubmit } = useForm<ReservaForm>({
-    defaultValues: valores,
-  });
+  const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
     <View className="gap-4">
@@ -61,7 +59,7 @@ export function FormularioReserva({ valores, onCancelar, onGuardar, guardando }:
       />
       <AccionesFormulario
         onCancelar={onCancelar}
-        onGuardar={handleSubmit(onGuardar)}
+        onGuardar={guardar}
         guardando={guardando}
         etiquetaGuardar="GUARDAR RESERVA"
       />

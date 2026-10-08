@@ -1,8 +1,8 @@
-import { useForm } from 'react-hook-form';
 import { Text, View } from 'react-native';
 
 import Field from '@/components/Field';
 import Select from '@/components/Select';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { DireccionForm } from '../../types';
 import { AccionesFormulario } from '../elementos';
 
@@ -19,14 +19,15 @@ export function FormularioDireccion({
   onGuardar,
   guardando,
 }: FormularioDireccionProps) {
-  const { control, handleSubmit } = useForm<DireccionForm>({
-    defaultValues: valores ?? {
+  const { control, guardar } = useFormulario(
+    valores ?? {
       name: '',
       address: '',
       neighborhood: '',
       is_primary: false,
     },
-  });
+    onGuardar,
+  );
 
   return (
     <View className="gap-4">
@@ -92,7 +93,7 @@ export function FormularioDireccion({
 
       <AccionesFormulario
         onCancelar={onCancelar}
-        onGuardar={handleSubmit(onGuardar)}
+        onGuardar={guardar}
         guardando={guardando}
       />
     </View>

@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { AdicionalForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -16,7 +16,7 @@ export function FormularioAdicional({
   onGuardar: (datos: AdicionalForm) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, handleSubmit } = useForm<AdicionalForm>({ defaultValues: valores });
+  const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
     <View className="gap-4">
@@ -36,7 +36,7 @@ export function FormularioAdicional({
         keyboardType="numeric"
         rules={{ required: 'Escribe el precio' }}
       />
-      <AccionesForm onCancelar={onCancelar} onGuardar={handleSubmit(onGuardar)} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

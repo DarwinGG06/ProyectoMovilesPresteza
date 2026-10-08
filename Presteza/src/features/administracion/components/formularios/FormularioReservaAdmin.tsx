@@ -1,8 +1,8 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import Select from '@/components/Select';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { MesaAdmin, ReservaFormAdmin } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -19,7 +19,7 @@ export function FormularioReservaAdmin({
   onGuardar: (datos: ReservaFormAdmin) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, handleSubmit } = useForm<ReservaFormAdmin>({ defaultValues: valores });
+  const { control, guardar } = useFormulario(valores, onGuardar);
   const mesasActivas = mesas.filter((item) => item.active !== false);
 
   return (
@@ -71,7 +71,7 @@ export function FormularioReservaAdmin({
         }}
       />
       <Field control={control} name="specialRequests" label="Notas" placeholder="Opcional" autoCapitalize="sentences" />
-      <AccionesForm onCancelar={onCancelar} onGuardar={handleSubmit(onGuardar)} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

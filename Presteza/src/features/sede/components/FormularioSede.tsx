@@ -1,26 +1,13 @@
-import { router } from 'expo-router';
-import { useForm } from 'react-hook-form';
-import { Linking, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { MarcaCurso, PuntosTicket } from '@/features/inicio/components/MesaDecor';
 
 import Button from '@/components/Button';
 import Field from '@/components/Field';
-import { SEDE } from '../data';
-
-type VisitaSede = {
-  nombre: string;
-  personas: string;
-};
+import { useFormularioSede } from '../hooks/useFormularioSede';
 
 export function FormularioSede() {
-  const { control, handleSubmit } = useForm<VisitaSede>({
-    defaultValues: { nombre: '', personas: '' },
-  });
-
-  const reservar = handleSubmit(() => {
-    router.push('/reservas');
-  });
+  const { control, reservar, verMenu, llamar } = useFormularioSede();
 
   return (
     <View className="px-5 pb-14">
@@ -67,18 +54,8 @@ export function FormularioSede() {
       </View>
 
       <View className="mt-6 flex-row gap-3">
-        <Button
-          text="VER MENÚ"
-          onPress={() => router.push('/menu')}
-          variant="ghost"
-          className="flex-1"
-        />
-        <Button
-          text="LLAMAR"
-          onPress={() => Linking.openURL(`tel:${SEDE.telefono}`)}
-          variant="gold"
-          className="flex-1"
-        />
+        <Button text="VER MENÚ" onPress={verMenu} variant="ghost" className="flex-1" />
+        <Button text="LLAMAR" onPress={llamar} variant="gold" className="flex-1" />
       </View>
     </View>
   );

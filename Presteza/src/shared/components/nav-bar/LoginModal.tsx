@@ -1,17 +1,13 @@
-import { router } from 'expo-router';
-import { useForm } from 'react-hook-form';
 import { Modal, Pressable, Text, View } from 'react-native';
 
-import { useSession } from '@/session/context';
 import Button from '@/components/Button';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
+import { useLoginModal } from '@/shared/hooks/useLoginModal';
 
 import { IconoNav } from './IconoNav';
 import { SelloP } from './SelloP';
-
-type LoginForm = { email: string; password: string };
 
 type LoginModalProps = {
   visible: boolean;
@@ -19,25 +15,8 @@ type LoginModalProps = {
 };
 
 export function LoginModal({ visible, onClose }: LoginModalProps) {
-  const { signIn } = useSession();
-  const { control, handleSubmit, reset, setError, formState } = useForm<LoginForm>({
-    defaultValues: { email: '', password: '' },
-  });
-
-  const close = () => {
-    reset();
-    onClose();
-  };
-
-  const submit = async ({ email, password }: LoginForm) => {
-    try {
-      await signIn(email, password);
-      close();
-      router.replace('/perfil');
-    } catch (error) {
-      setError('root', { message: (error as Error).message });
-    }
-  };
+  const { control, close, entrar, irARecuperar, irARegistro, error, enviando } =
+    useLoginModal(onClose);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
@@ -91,32 +70,23 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                   />
                 </View>
 
-                <MensajeError className="mt-3" texto={formState.errors.root?.message} />
+                <MensajeError className="mt-3" texto={error} />
 
                 <Button
                   className="mt-5"
-                  text={formState.isSubmitting ? 'ENTRANDO…' : 'ENTRAR'}
-                  onPress={handleSubmit(submit)}
-                  disabled={formState.isSubmitting}
+                  text={enviando ? 'ENTRANDO…' : 'ENTRAR'}
+                  onPress={entrar}
+                  disabled={enviando}
                 />
               </View>
 
-              <Pressable
-                onPress={() => {
-                  close();
-                  router.push('/recuperar-contrasena');
-                }}
-                className="mb-5 mt-4 self-end">
+              <Pressable onPress={irARecuperar} className="mb-5 mt-4 self-end">
                 <Text className="font-roboto text-xs tracking-wide text-oro">
                   ¿Olvidaste tu contraseña?
                 </Text>
               </Pressable>
 
-              <Pressable
-                onPress={() => {
-                  close();
-                  router.push('/registro');
-                }}>
+              <Pressable onPress={irARegistro}>
                 <Text className="text-center font-roboto text-crema/70">
                   ¿Primera vez? <Text className="font-roboto-bold text-oro">Regístrate</Text>
                 </Text>

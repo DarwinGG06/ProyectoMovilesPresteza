@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import type { CasaReservas } from '@/features/reservas/hooks/useReservas';
 import type { Reserva } from '@/features/reservas/types';
 
+import { useTabReservas } from '../../hooks/useTabReservas';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioReservaAdmin } from '../formularios/FormularioReservaAdmin';
 import {
@@ -30,19 +30,11 @@ type TabReservasProps = {
 };
 
 export function TabReservas({ reservas }: TabReservasProps) {
-  const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
-  const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
-  const [abierto, setAbierto] = useState(false);
-  const [editando, setEditando] = useState<Reserva | null>(null);
-
-  const abrir = (reserva?: Reserva) => {
-    setEditando(reserva ?? null);
-    setAbierto(true);
-  };
+  const tab = useTabReservas(reservas);
 
   const acciones = (reserva: Reserva) => (
     <AccionesAdmin>
-      <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(reserva)} />
+      <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(reserva)} />
       {reserva.status === 'pending' ? (
         <EnlaceAdmin etiqueta="CONFIRMAR" onPress={() => reservas.confirmar(reserva)} />
       ) : null}
@@ -62,14 +54,14 @@ export function TabReservas({ reservas }: TabReservasProps) {
         numero="I"
         badge="MESAS"
         titulo="Reservas"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => abrir() }}>
+        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
         <InterruptorVista
-          vista={vista}
-          onChange={setVista}
-          filtrosAbiertos={filtrosAbiertos}
-          onFiltros={() => setFiltrosAbiertos((abiertoFiltro) => !abiertoFiltro)}
+          vista={tab.vista}
+          onChange={tab.setVista}
+          filtrosAbiertos={tab.filtrosAbiertos}
+          onFiltros={() => tab.setFiltrosAbiertos((abierto) => !abierto)}
         />
-        {filtrosAbiertos ? (
+        {tab.filtrosAbiertos ? (
           <FilaFiltros>
             {FILTROS.map((item) => (
               <ChipFiltro
@@ -88,7 +80,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
             titulo="Sin reservas"
             texto="Crea una mesa o espera a que reserven."
           />
-        ) : vista === 'lista' ? (
+        ) : tab.vista === 'lista' ? (
           <View>
             <EncabezadoTabla
               columnas={[
@@ -151,17 +143,15 @@ export function TabReservas({ reservas }: TabReservasProps) {
       </TarjetaPerfil>
 
       <ModalAdmin
-        visible={abierto}
-        titulo={editando ? 'Editar reserva' : 'Nueva reserva'}
-        onCerrar={() => setAbierto(false)}>
+        visible={tab.abierto}
+        titulo={tab.editando ? 'Editar reserva' : 'Nueva reserva'}
+        onCerrar={tab.cerrar}>
         <FormularioReservaAdmin
-          key={editando ? reservas.idDe(editando) : 'nueva'}
-          valores={reservas.valoresDe(editando ?? undefined)}
+          key={tab.editando ? reservas.idDe(tab.editando) : 'nueva'}
+          valores={tab.valoresFormulario}
           mesas={reservas.mesas}
-          onCancelar={() => setAbierto(false)}
-          onGuardar={async (datos) => {
-            if (await reservas.guardar(datos, editando)) setAbierto(false);
-          }}
+          onCancelar={tab.cerrar}
+          onGuardar={tab.guardar}
           guardando={reservas.guardando}
         />
       </ModalAdmin>

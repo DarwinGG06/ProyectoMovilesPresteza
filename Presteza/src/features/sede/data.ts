@@ -1,3 +1,5 @@
+import { COORDENADAS_SEDE, urlMapaComoLlegar, urlMapaVer } from './mapa';
+
 export const SEDE = {
   nombre: 'Presteza — Sede principal',
   direccion: 'Carrera 23 # 70B-57',
@@ -11,10 +13,10 @@ export const SEDE = {
   foto: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&q=80',
   fotoCalle: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
   fotoMesa: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
-  mapaEmbed:
-    'https://maps.google.com/maps?q=Carrera%2023%2070B-57%20Av.%20Santander%20Torre%20Plaza%2070%20Milan%20Manizales&output=embed',
-  mapaLink:
-    'https://www.google.com/maps/search/?api=1&query=Carrera+23+70B-57+Av+Santander+Torre+Plaza+70+Milan+Manizales',
+  lat: COORDENADAS_SEDE.lat,
+  lng: COORDENADAS_SEDE.lng,
+  mapaLink: urlMapaVer(COORDENADAS_SEDE.lat, COORDENADAS_SEDE.lng),
+  mapaComoLlegar: urlMapaComoLlegar(COORDENADAS_SEDE.lat, COORDENADAS_SEDE.lng),
 };
 
 export const INSTALACIONES = [

@@ -10,7 +10,7 @@ import { MapaSede } from '../components/MapaSede';
 import { useSede } from '../hooks/useSede';
 
 export function SedeScreen() {
-  const { sede, instalaciones, abrirMapa } = useSede();
+  const { sede, instalaciones, abrirMapa, comoLlegar } = useSede();
 
   return (
     <EvitarTeclado>
@@ -74,13 +74,20 @@ export function SedeScreen() {
           <View className="px-5 pb-8">
             <MarcaCurso numero="III" nombre="CÓMO LLEGAR" />
             <View className="overflow-hidden border border-oro/30">
-              <MapaSede alto={260} />
+              <MapaSede alto={340} />
             </View>
-            <Pressable onPress={abrirMapa} className="mt-4 border border-oro py-4">
-              <Text className="text-center font-roboto text-[11px] tracking-[2px] text-oro">
-                ABRIR EN GOOGLE MAPS
-              </Text>
-            </Pressable>
+            <View className="mt-4 flex-row gap-3">
+              <Pressable onPress={abrirMapa} className="flex-1 border border-oro py-4">
+                <Text className="text-center font-roboto text-[11px] tracking-[2px] text-oro">
+                  VER EN MAPS
+                </Text>
+              </Pressable>
+              <Pressable onPress={comoLlegar} className="flex-1 bg-oro py-4">
+                <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
+                  CÓMO LLEGAR
+                </Text>
+              </Pressable>
+            </View>
           </View>
 
           <View className="px-5 pb-8">

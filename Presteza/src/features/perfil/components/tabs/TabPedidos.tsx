@@ -1,10 +1,9 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { formatCOP, useCart } from '@/services/cart/CartContext';
+import { formatCOP } from '@/services/cart/CartContext';
 
 import { idPedido } from '@/api/perfil';
+import { usePedidosPerfil } from '../../hooks/usePedidosPerfil';
 import type { Pedido } from '../../types';
 import {
   formatFecha,
@@ -23,27 +22,7 @@ type TabPedidosProps = {
 };
 
 export function TabPedidos({ pedidos }: TabPedidosProps) {
-  const { addItem } = useCart();
-  const [abiertos, setAbiertos] = useState<string[]>([]);
-
-  const lista = [...pedidos].sort((a, b) => {
-    return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
-  });
-
-  const toggle = (id: string) => {
-    setAbiertos((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
-  };
-
-  const repetir = (pedido: Pedido) => {
-    pedido.products?.forEach((item) => {
-      addItem({
-        id: item.dishId,
-        productName: item.name,
-        unitPrice: item.unit_price,
-      });
-    });
-    router.push('/menu');
-  };
+  const { lista, estaAbierto, alternarDetalle, repetir, irAlMenu } = usePedidosPerfil(pedidos);
 
   return (
     <TarjetaPerfil numero="I" badge="PEDIDOS" titulo="Historial">
@@ -52,14 +31,14 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
           icono="receipt-outline"
           titulo="No tienes pedidos"
           texto="Cuando pidas, el seguimiento aparece aquí."
-          accion={{ etiqueta: 'VER MENÚ', onPress: () => router.push('/menu') }}
+          accion={{ etiqueta: 'VER MENÚ', onPress: irAlMenu }}
         />
       ) : (
         <View>
           {lista.map((pedido, index) => {
             const id = idPedido(pedido);
             const paso = indiceEstadoPedido(pedido.status);
-            const abierto = abiertos.includes(id);
+            const abierto = estaAbierto(id);
 
             return (
               <LineaCuenta
@@ -93,7 +72,7 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
                 ) : null}
 
                 <View className="mt-3 flex-row">
-                  <EnlaceAccion etiqueta={abierto ? 'OCULTAR' : 'DETALLE'} onPress={() => toggle(id)} />
+                  <EnlaceAccion etiqueta={abierto ? 'OCULTAR' : 'DETALLE'} onPress={() => alternarDetalle(id)} />
                   <EnlaceAccion etiqueta="REPETIR" onPress={() => repetir(pedido)} />
                 </View>
 

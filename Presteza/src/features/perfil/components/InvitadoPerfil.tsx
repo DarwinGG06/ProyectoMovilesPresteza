@@ -1,15 +1,14 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { MarcaCurso } from '@/features/inicio/components/MesaDecor';
 import { Footer } from '@/shared/components/footer';
 import { LoginModal } from '@/shared/components/nav-bar/LoginModal';
 
+import { useInvitado } from '../hooks/useInvitado';
 import { BotonPerfil } from './elementos';
 
 export function InvitadoPerfil() {
-  const [loginAbierto, setLoginAbierto] = useState(false);
+  const invitado = useInvitado();
 
   return (
     <View className="flex-1 bg-marca-oscura">
@@ -26,18 +25,18 @@ export function InvitadoPerfil() {
             <Text className="mt-2 text-2xl font-light text-marca-oscura">Tu mesa te espera</Text>
             <Text className="mt-2 text-sm text-texto/55">Milán, Manizales.</Text>
             <View className="mt-6 gap-2">
-              <BotonPerfil etiqueta="INICIAR SESIÓN" onPress={() => setLoginAbierto(true)} />
-              <BotonPerfil etiqueta="CREAR CUENTA" onPress={() => router.push('/registro')} variante="outline" />
+              <BotonPerfil etiqueta="INICIAR SESIÓN" onPress={invitado.abrirLogin} />
+              <BotonPerfil etiqueta="CREAR CUENTA" onPress={invitado.irARegistro} variante="outline" />
             </View>
           </View>
 
-          <Pressable onPress={() => router.push('/')} className="mt-6 py-3">
+          <Pressable onPress={invitado.irAlInicio} className="mt-6 py-3">
             <Text className="text-center text-sm text-oro">Volver al inicio</Text>
           </Pressable>
         </View>
         <Footer />
       </ScrollView>
-      <LoginModal visible={loginAbierto} onClose={() => setLoginAbierto(false)} />
+      <LoginModal visible={invitado.loginAbierto} onClose={invitado.cerrarLogin} />
     </View>
   );
 }

@@ -1,15 +1,14 @@
-import { type ComponentProps, useEffect, useRef } from 'react';
+import { type ComponentProps } from 'react';
 import { DrawerContentScrollView, useDrawerStatus, type DrawerContentComponentProps } from 'expo-router/drawer';
-import { Animated, Platform, Pressable, Text, View } from 'react-native';
+import { Animated, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useSession } from '@/session/context';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
+import { useEntradaEscalonada } from '@/shared/hooks/useEntradaEscalonada';
 
-import { useControlDrawerHome } from '../context/ControlDrawerHome';
-
-const usarNativo = Platform.OS !== 'web';
+import { useRegistroDrawer } from '../hooks/useRegistroDrawer';
 
 type NombreIcono = ComponentProps<typeof IconoNav>['name'];
 
@@ -31,7 +30,6 @@ const ENLACES: EnlaceDrawer[] = [
 
 export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
   const { user } = useSession();
-  const { registrar } = useControlDrawerHome();
   const insets = useSafeAreaInsets();
   const rutaActiva = props.state.routes[props.state.index]?.name;
   const abierto = useDrawerStatus() === 'open';
@@ -49,14 +47,7 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
         ]
       : ENLACES;
 
-  useEffect(() => {
-    registrar({
-      abrir: () => props.navigation.openDrawer(),
-      cerrar: () => props.navigation.closeDrawer(),
-      alternar: () => props.navigation.toggleDrawer(),
-    });
-    return () => registrar(null);
-  }, [props.navigation, registrar]);
+  useRegistroDrawer(props.navigation);
 
   return (
     <View className="flex-1 bg-marca-oscura">
@@ -132,23 +123,10 @@ function EnlaceDrawer({
   icono: NombreIcono;
   onPress: () => void;
 }) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateX = useRef(new Animated.Value(20)).current;
-
-  useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.timing(opacity, { toValue: 1, duration: 380, delay, useNativeDriver: usarNativo }),
-        Animated.timing(translateX, { toValue: 0, duration: 380, delay, useNativeDriver: usarNativo }),
-      ]).start();
-    } else {
-      opacity.setValue(0);
-      translateX.setValue(20);
-    }
-  }, [delay, opacity, translateX, visible]);
+  const entrada = useEntradaEscalonada({ visible, delay, duracion: 380, desplazamiento: 20 });
 
   return (
-    <Animated.View style={{ opacity, transform: [{ translateX }] }}>
+    <Animated.View style={entrada}>
       <Pressable
         onPress={onPress}
         className={`mb-1 flex-row items-center rounded-sm px-3 py-3.5 ${activo ? 'bg-oro/10' : ''}`}>

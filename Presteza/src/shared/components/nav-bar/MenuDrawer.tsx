@@ -1,11 +1,10 @@
-import { type ComponentProps, useEffect, useRef } from 'react';
+import { type ComponentProps } from 'react';
 import { Href, router } from 'expo-router';
-import { Animated, Modal, Platform, Pressable, Text, View } from 'react-native';
-
-const usarNativo = Platform.OS !== 'web';
+import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useSession } from '@/session/context';
+import { useEntradaEscalonada } from '@/shared/hooks/useEntradaEscalonada';
 
 import { IconoNav } from './IconoNav';
 import { SelloP } from './SelloP';
@@ -95,23 +94,10 @@ function EnlaceEditorial({
   icono: NombreIcono;
   onPress: () => void;
 }) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateX = useRef(new Animated.Value(24)).current;
-
-  useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.timing(opacity, { toValue: 1, duration: 420, delay, useNativeDriver: usarNativo }),
-        Animated.timing(translateX, { toValue: 0, duration: 420, delay, useNativeDriver: usarNativo }),
-      ]).start();
-    } else {
-      opacity.setValue(0);
-      translateX.setValue(24);
-    }
-  }, [delay, opacity, translateX, visible]);
+  const entrada = useEntradaEscalonada({ visible, delay, duracion: 420, desplazamiento: 24 });
 
   return (
-    <Animated.View style={{ opacity, transform: [{ translateX }] }}>
+    <Animated.View style={entrada}>
       <Pressable onPress={onPress} className="mb-1 flex-row items-center px-3 py-3.5">
         <Text className="w-10 text-xs font-bold tracking-widest text-oro">{numero}</Text>
         <Text className="flex-1 text-[26px] font-light tracking-wide text-crema">{etiqueta}</Text>

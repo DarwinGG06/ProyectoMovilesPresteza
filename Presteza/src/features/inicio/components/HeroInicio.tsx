@@ -1,43 +1,15 @@
-import { useEffect } from 'react';
 import { router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
+import { useAnimacionHero } from '../hooks/useAnimacionHero';
 import { Plato } from './MesaDecor';
 
 const MESA = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&q=80';
 const COPA = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80';
 
 export function HeroInicio() {
-  const flota = useSharedValue(0);
-  const brillo = useSharedValue(0.35);
-
-  useEffect(() => {
-    flota.value = withRepeat(
-      withTiming(-10, { duration: 3400, easing: Easing.inOut(Easing.sin) }),
-      -1,
-      true,
-    );
-    brillo.value = withRepeat(
-      withTiming(0.7, { duration: 2600, easing: Easing.inOut(Easing.quad) }),
-      -1,
-      true,
-    );
-  }, [brillo, flota]);
-
-  const platoGrande = useAnimatedStyle(() => ({
-    transform: [{ translateY: flota.value }],
-  }));
-
-  const halo = useAnimatedStyle(() => ({
-    borderColor: `rgba(212,175,119,${brillo.value})`,
-  }));
+  const { platoGrande, halo } = useAnimacionHero();
 
   return (
     <View className="overflow-hidden bg-marca-oscura pb-10 pt-6">

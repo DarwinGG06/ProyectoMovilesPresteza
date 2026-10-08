@@ -1,37 +1,13 @@
-import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { useContadorStats } from '../hooks/useContadorStats';
 import { ESTADISTICAS } from '../data';
 import { MarcaCurso } from './MesaDecor';
 
 const FILAS = [ESTADISTICAS.slice(0, 2), ESTADISTICAS.slice(2, 4)];
 
 export function StatsInicio() {
-  const [visibles, setVisibles] = useState(ESTADISTICAS.map(() => 0));
-
-  useEffect(() => {
-    const timers = ESTADISTICAS.map((stat, index) => {
-      const pasos = 40;
-      const incremento = stat.valor / pasos;
-      let actual = 0;
-      let paso = 0;
-
-      return setTimeout(() => {
-        const intervalo = setInterval(() => {
-          paso += 1;
-          actual += incremento;
-          setVisibles((prev) => {
-            const copia = [...prev];
-            copia[index] = paso >= pasos ? stat.valor : actual;
-            return copia;
-          });
-          if (paso >= pasos) clearInterval(intervalo);
-        }, 30);
-      }, index * 140);
-    });
-
-    return () => timers.forEach(clearTimeout);
-  }, []);
+  const visibles = useContadorStats();
 
   return (
     <View className="bg-marca-oscura px-5 pb-12">

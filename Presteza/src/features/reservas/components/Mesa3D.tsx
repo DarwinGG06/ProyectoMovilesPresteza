@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { sillasIsometricas, tamanoMesa3D } from '../data';
+import { useAlzaMesa } from '../hooks/useAlzaMesa';
 import type { MesaVisual } from '../types';
 
 type Mesa3DProps = {
@@ -13,15 +13,7 @@ type Mesa3DProps = {
 };
 
 export function Mesa3D({ mesa, seleccionada, onPress }: Mesa3DProps) {
-  const alza = useSharedValue(0);
-
-  useEffect(() => {
-    alza.value = withSpring(seleccionada ? 1 : 0, { damping: 13, stiffness: 150 });
-  }, [alza, seleccionada]);
-
-  const estilo = useAnimatedStyle(() => ({
-    transform: [{ translateY: -16 * alza.value }, { scale: 1 + 0.1 * alza.value }],
-  }));
+  const estilo = useAlzaMesa(seleccionada);
 
   const tam = tamanoMesa3D(mesa.capacity);
   const ocupada = !mesa.available;

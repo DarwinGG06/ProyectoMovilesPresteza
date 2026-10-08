@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { Text, View } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
+import { useEntradaHero } from '../hooks/useEntradaHero';
 import { iniciales, primerNombre } from '../utils';
 
 type HeroPerfilProps = {
@@ -11,17 +11,8 @@ type HeroPerfilProps = {
 };
 
 export function HeroPerfil({ nombre, email, miembroDesde }: HeroPerfilProps) {
-  const entrada = useSharedValue(0);
+  const estilo = useEntradaHero();
   const corto = primerNombre(nombre);
-
-  useEffect(() => {
-    entrada.value = withTiming(1, { duration: 700, easing: Easing.out(Easing.cubic) });
-  }, [entrada]);
-
-  const estilo = useAnimatedStyle(() => ({
-    opacity: entrada.value,
-    transform: [{ translateY: (1 - entrada.value) * 10 }],
-  }));
 
   return (
     <View className="bg-marca-oscura px-6 pb-8 pt-7">

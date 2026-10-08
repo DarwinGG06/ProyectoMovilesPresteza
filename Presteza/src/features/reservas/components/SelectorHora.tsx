@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
-import { esFinDeSemana, horaEnHorario, horarioDelDia, horasAbiertas } from '../data';
+import { useSelectorHora } from '../hooks/useSelectorHora';
 
 type SelectorHoraProps = {
   fecha: string;
@@ -13,48 +12,17 @@ type SelectorHoraProps = {
 };
 
 export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) {
-  const [aviso, setAviso] = useState<string | null>(null);
-  const horario = horarioDelDia(fecha);
-  const horas = useMemo(() => horasAbiertas(fecha), [fecha]);
-  const indice = horas.indexOf(hora);
-
-  useEffect(() => {
-    if (hora && !horaEnHorario(fecha, hora)) {
-      setAviso(`No se puede. Ese día el restaurante está abierto de ${horario.etiqueta}.`);
-      return;
-    }
-    setAviso(null);
-  }, [fecha, hora, horario.etiqueta]);
-
-  const mover = (paso: number) => {
-    if (horas.length === 0) return;
-
-    if (indice === -1) {
-      const sugerida = horas.includes('7:00 p. m.') ? '7:00 p. m.' : horas[0];
-      onHora(sugerida);
-      setAviso(null);
-      return;
-    }
-
-    const siguiente = indice + paso;
-    if (siguiente < 0) {
-      setAviso(`No se puede. El restaurante abre a las ${horas[0]}.`);
-      return;
-    }
-    if (siguiente >= horas.length) {
-      setAviso(`No se puede. El restaurante cierra a las ${horas[horas.length - 1]}.`);
-      return;
-    }
-
-    onHora(horas[siguiente]);
-    setAviso(null);
-  };
+  const { aviso, etiquetaHorario, etiquetaDias, atajos, mover, elegir } = useSelectorHora({
+    fecha,
+    hora,
+    onHora,
+  });
 
   return (
     <View className="overflow-hidden rounded-2xl bg-[#6b1d3d] px-4 py-4">
       <Text className="text-[10px] font-semibold tracking-[2px] text-oro">HORA</Text>
       <Text className="mt-1 text-xs text-crema/70">
-        {esFinDeSemana(fecha) ? 'Sábado y domingo' : 'Lunes a viernes'} · {horario.etiqueta}
+        {etiquetaDias} · {etiquetaHorario}
       </Text>
 
       <View className="mt-4 flex-row items-center justify-between">
@@ -79,15 +47,12 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
       </View>
 
       <View className="mt-4 flex-row flex-wrap justify-center gap-1.5">
-        {horas.filter((_, index) => index % 2 === 0).map((item) => {
+        {atajos.map((item) => {
           const activa = hora === item;
           return (
             <Pressable
               key={item}
-              onPress={() => {
-                onHora(item);
-                setAviso(null);
-              }}
+              onPress={() => elegir(item)}
               className={`rounded-full px-2.5 py-1 ${activa ? 'bg-oro' : 'bg-white/10'}`}>
               <Text className={`text-[10px] ${activa ? 'text-marca-oscura' : 'text-crema/80'}`}>{item}</Text>
             </Pressable>

@@ -1,15 +1,9 @@
-import { useEffect } from 'react';
 import { router } from 'expo-router';
 import { Dimensions, Pressable, Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { CATEGORIAS } from '../data';
+import { useGiroCategorias } from '../hooks/useGiroCategorias';
 import { MarcaCurso, Plato } from './MesaDecor';
 
 const ANCHO = Dimensions.get('window').width;
@@ -21,11 +15,7 @@ const TAM = 74;
 const CENTRO = 108;
 
 export function CategoriasInicio() {
-  const giro = useSharedValue(0);
-
-  useEffect(() => {
-    giro.value = withRepeat(withTiming(360, { duration: 48000, easing: Easing.linear }), -1, false);
-  }, [giro]);
+  const giro = useGiroCategorias();
 
   return (
     <View className="bg-marca-oscura px-5 pb-12">

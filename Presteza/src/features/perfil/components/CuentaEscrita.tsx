@@ -1,14 +1,12 @@
-import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import Animated, {
-  Easing,
   Extrapolation,
   interpolate,
   type SharedValue,
   useAnimatedStyle,
-  useSharedValue,
-  withTiming,
 } from 'react-native-reanimated';
+
+import { useAnchoLinea, useCuentaEscrita } from '../hooks/useCuentaEscrita';
 
 type Fila = {
   etiqueta: string;
@@ -25,7 +23,7 @@ function FilaEscrita({
   progreso: SharedValue<number>;
 }) {
   const inicio = index * 0.14;
-  const [anchoLinea, setAnchoLinea] = useState(0);
+  const { ancho: anchoLinea, medir } = useAnchoLinea();
 
   const entrada = useAnimatedStyle(() => ({
     opacity: interpolate(progreso.value, [inicio, inicio + 0.32], [0, 1], Extrapolation.CLAMP),
@@ -46,7 +44,7 @@ function FilaEscrita({
         </Text>
         <Text style={{ color: '#f7f1ea', fontSize: 11, letterSpacing: 2.2, width: 92 }}>{fila.etiqueta}</Text>
         <View
-          onLayout={(evento) => setAnchoLinea(evento.nativeEvent.layout.width)}
+          onLayout={medir}
           className="mx-2 h-4 flex-1 justify-center overflow-hidden">
           <Animated.View style={[{ height: 1, backgroundColor: '#d4af77' }, linea]} />
         </View>
@@ -67,17 +65,7 @@ function FilaEscrita({
 }
 
 export function CuentaEscrita({ filas, animar = true }: { filas: Fila[]; animar?: boolean }) {
-  const progreso = useSharedValue(animar ? 0 : 1);
-  const firma = filas.map((fila) => `${fila.etiqueta}:${fila.valor}`).join('|');
-
-  useEffect(() => {
-    if (!animar) {
-      progreso.value = 1;
-      return;
-    }
-    progreso.value = 0;
-    progreso.value = withTiming(1, { duration: 1100, easing: Easing.out(Easing.cubic) });
-  }, [animar, firma, progreso]);
+  const progreso = useCuentaEscrita(filas, animar);
 
   return (
     <View className="border-y border-white/20 bg-white/10 px-2">

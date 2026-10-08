@@ -1,10 +1,10 @@
-// src/shared/components/ModelViewerModal.tsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Modal, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons'; 
-import * as FileSystem from 'expo-file-system/legacy';
+import { Ionicons } from '@expo/vector-icons';
+
+import { useModelo3d } from '../hooks/useModelo3d';
 
 interface ModelViewerModalProps {
   isVisible: boolean;
@@ -14,52 +14,7 @@ interface ModelViewerModalProps {
 }
 
 export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: ModelViewerModalProps) {
-  const [processedUrl, setProcessedUrl] = useState<string | null>(null);
-  const [procesando, setProcesando] = useState(false);
-
-  // Convierte archivos locales (file://) a Data URI en Base64 para saltar políticas CORS del WebView
-  useEffect(() => {
-    let montado = true;
-
-    async function prepararFuenteModelo() {
-      if (!modelUrl) {
-        setProcessedUrl(null);
-        return;
-      }
-
-      // Si es una URL remota o ya está en base64, usar directamente
-      if (modelUrl.startsWith('http://') || modelUrl.startsWith('https://') || modelUrl.startsWith('data:')) {
-        setProcessedUrl(modelUrl);
-        return;
-      }
-
-      // Si es un archivo local (file://), lo convertimos a Base64
-      if (modelUrl.startsWith('file://')) {
-        try {
-          setProcesando(true);
-          const base64 = await FileSystem.readAsStringAsync(modelUrl, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-          if (montado) {
-            setProcessedUrl(`data:model/gltf-binary;base64,${base64}`);
-          }
-        } catch (err) {
-          console.error('Error al convertir modelo local a Base64:', err);
-          if (montado) setProcessedUrl(modelUrl);
-        } finally {
-          if (montado) setProcesando(false);
-        }
-      } else {
-        setProcessedUrl(modelUrl);
-      }
-    }
-
-    prepararFuenteModelo();
-
-    return () => {
-      montado = false;
-    };
-  }, [modelUrl]);
+  const { fuente, procesando } = useModelo3d(modelUrl);
 
   if (!modelUrl) return null;
 
@@ -93,7 +48,7 @@ export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: 
     <body>
       <div id="error-text">No se pudo renderizar el modelo 3D.</div>
       <model-viewer 
-        src="${processedUrl || ''}" 
+        src="${fuente || ''}" 
         camera-controls 
         auto-rotate
         shadow-intensity="1"

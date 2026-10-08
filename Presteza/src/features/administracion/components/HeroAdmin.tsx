@@ -1,14 +1,9 @@
-import { useEffect } from 'react';
 import { Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
 import { formatCOP } from '@/services/cart/CartContext';
 
+import { useEntradaCifra } from '../hooks/useEntradaCifra';
 import type { StatsAdmin } from '../types';
 
 type HeroAdminProps = {
@@ -17,16 +12,7 @@ type HeroAdminProps = {
 };
 
 export function HeroAdmin({ nombre, stats }: HeroAdminProps) {
-  const entrada = useSharedValue(0);
-
-  useEffect(() => {
-    entrada.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.cubic) });
-  }, [entrada]);
-
-  const cifra = useAnimatedStyle(() => ({
-    opacity: entrada.value,
-    transform: [{ translateY: (1 - entrada.value) * 14 }],
-  }));
+  const cifra = useEntradaCifra();
 
   return (
     <View className="overflow-hidden bg-marca-oscura px-6 pb-8 pt-7">

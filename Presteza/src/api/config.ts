@@ -14,11 +14,7 @@ function extraerHost(valor: string): string | null {
 }
 
 function esIpPrivada(host: string) {
-  return (
-    /^10\./.test(host) ||
-    /^192\.168\./.test(host) ||
-    /^172\.(1[6-9]|2\d|3[0-1])\./.test(host)
-  );
+  return /^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2\d|3[0-1])\./.test(host);
 }
 
 function hostDesdeMetro(): string | null {
@@ -44,12 +40,23 @@ function resolverApiUrl(): { url: string; origen: string } {
   const hostEnv = desdeEnv ? extraerHost(desdeEnv) : null;
   const lan = hostDesdeMetro();
 
+  const esRemoto = (host: string) =>
+    !esIpPrivada(host) && host !== 'localhost' && host !== '127.0.0.1';
+
   if (Platform.OS === 'web') {
     const url = `http://localhost:${PUERTO_API}`;
-    if (desdeEnv && (hostEnv === 'localhost' || hostEnv === '127.0.0.1' || (lan && hostEnv === lan))) {
+    // Un dominio público (el backend desplegado) funciona igual desde el
+    // navegador, así que se respeta antes de caer a localhost.
+    if (desdeEnv && hostEnv && esRemoto(hostEnv)) {
+      return { url: desdeEnv, origen: 'env-remoto' };
+    }
+    if (
+      desdeEnv &&
+      (hostEnv === 'localhost' || hostEnv === '127.0.0.1' || (lan && hostEnv === lan))
+    ) {
       return { url: desdeEnv, origen: 'env' };
     }
-    if (desdeEnv && hostEnv && esIpPrivada(hostEnv) && hostEnv !== 'localhost') {
+    if (desdeEnv && hostEnv && esIpPrivada(hostEnv)) {
       logWarn('api', `Ignorando EXPO_PUBLIC_API_URL=${desdeEnv} en web; usando ${url}`);
     }
     return { url, origen: 'web-localhost' };
@@ -57,13 +64,13 @@ function resolverApiUrl(): { url: string; origen: string } {
 
   if (lan) {
     const urlLan = `http://${lan}:${PUERTO_API}`;
-    if (desdeEnv && hostEnv && !esIpPrivada(hostEnv) && hostEnv !== 'localhost') {
+    if (desdeEnv && hostEnv && esRemoto(hostEnv)) {
       return { url: desdeEnv, origen: 'env-remoto' };
     }
     if (desdeEnv && hostEnv && hostEnv !== lan) {
       logWarn(
         'api',
-        `EXPO_PUBLIC_API_URL (${desdeEnv}) no coincide con la IP de Metro (${lan}). Se usará ${urlLan}`,
+        `EXPO_PUBLIC_API_URL (${desdeEnv}) no coincide con la IP de Metro (${lan}). Se usará ${urlLan}`
       );
     }
     return { url: urlLan, origen: 'metro-lan' };

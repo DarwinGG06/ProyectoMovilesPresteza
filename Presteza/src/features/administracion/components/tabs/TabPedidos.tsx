@@ -10,8 +10,6 @@ import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } 
 import { FormularioPedido } from '../formularios/FormularioPedido';
 import {
   CajaCuadricula,
-  CeldaTabla,
-  EncabezadoTabla,
   FilaFiltros,
   FilaTabla,
   GrillaAdmin,
@@ -48,19 +46,23 @@ export function TabPedidos({
   const tab = useTabPedidos(pedidos, clientes, onGuardar);
 
   const acciones = (pedido: PedidoAdmin) => (
-    <AccionesAdmin>
-      <EnlaceAdmin etiqueta="VER" onPress={() => tab.verDetalle(pedido)} />
-      <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(pedido)} />
-      {ESTADOS.map((estado) => (
-        <EnlaceAdmin
-          key={estado.id}
-          etiqueta={estado.etiqueta}
-          peligro={estado.id === 'cancelled'}
-          onPress={() => onCambiarEstado(pedido, estado.id)}
-        />
-      ))}
-      <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(pedido)} />
-    </AccionesAdmin>
+    <View>
+      <AccionesAdmin>
+        <EnlaceAdmin etiqueta="VER" onPress={() => tab.verDetalle(pedido)} />
+        <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(pedido)} />
+        <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(pedido)} />
+      </AccionesAdmin>
+      <AccionesAdmin>
+        {ESTADOS.map((estado) => (
+          <EnlaceAdmin
+            key={estado.id}
+            etiqueta={estado.etiqueta}
+            peligro={estado.id === 'cancelled'}
+            onPress={() => onCambiarEstado(pedido, estado.id)}
+          />
+        ))}
+      </AccionesAdmin>
+    </View>
   );
 
   return (
@@ -97,37 +99,30 @@ export function TabPedidos({
           />
         ) : tab.vista === 'lista' ? (
           <View>
-            <EncabezadoTabla
-              columnas={[
-                { texto: 'PEDIDO', flex: 1.2 },
-                { texto: 'CLIENTE', flex: 0.9 },
-                { texto: 'TOTAL', ancho: 82, derecha: true },
-              ]}
-            />
             {tab.lista.map((pedido) => (
               <FilaTabla key={idDe(pedido)}>
-                <CeldaTabla flex={1.2}>
-                  <Text className="font-roboto-light text-sm text-white">
-                    #{idDe(pedido).slice(-8).toUpperCase()}
-                  </Text>
-                  <Text className="mt-0.5 font-roboto text-[10px] tracking-[1px] text-oro">
-                    {textoEstadoPedido(pedido.status).toUpperCase()}
-                  </Text>
+                <View className="flex-1">
+                  <View className="flex-row items-start justify-between gap-2">
+                    <View className="flex-1">
+                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-oro">
+                        {textoEstadoPedido(pedido.status).toUpperCase()}
+                      </Text>
+                      <Text className="mt-1 font-roboto-light text-base text-white">
+                        #{idDe(pedido).slice(-8).toUpperCase()}
+                      </Text>
+                      <Text className="mt-1 font-roboto text-sm text-crema/60" numberOfLines={1}>
+                        {pedido.user_name || 'Cliente'}
+                      </Text>
+                      <Text className="mt-0.5 font-roboto text-[11px] text-crema/40">
+                        {formatoFechaHora(pedido.createdAt)}
+                      </Text>
+                    </View>
+                    <Text className="font-roboto text-base text-oro">
+                      {formatCOP(pedido.total || 0)}
+                    </Text>
+                  </View>
                   {acciones(pedido)}
-                </CeldaTabla>
-                <CeldaTabla flex={0.9}>
-                  <Text className="font-roboto text-sm text-crema/70" numberOfLines={1}>
-                    {pedido.user_name || 'Cliente'}
-                  </Text>
-                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/40" numberOfLines={1}>
-                    {formatoFechaHora(pedido.createdAt)}
-                  </Text>
-                </CeldaTabla>
-                <CeldaTabla ancho={82} derecha>
-                  <Text className="text-right font-roboto text-sm text-oro">
-                    {formatCOP(pedido.total || 0)}
-                  </Text>
-                </CeldaTabla>
+                </View>
               </FilaTabla>
             ))}
           </View>

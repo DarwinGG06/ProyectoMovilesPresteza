@@ -66,25 +66,29 @@ export function TabCategorias({
             />
             {tab.lista.map((categoria) => (
               <FilaTabla key={idDe(categoria)}>
-                <CeldaTabla flex={1.1}>
+                <View className="flex-1">
                   <View className="flex-row items-center">
-                    <FotoCarta uri={categoria.imageUrl} alto={48} />
-                    <View className="ml-2 flex-1">
-                      <Text className="font-roboto-light text-sm text-white" numberOfLines={2}>
-                        {categoria.name}
+                    <CeldaTabla flex={1.1}>
+                      <View className="flex-row items-center">
+                        <FotoCarta uri={categoria.imageUrl} alto={48} />
+                        <Text
+                          className="ml-2 flex-1 font-roboto-light text-sm text-white"
+                          numberOfLines={2}>
+                          {categoria.name}
+                        </Text>
+                      </View>
+                    </CeldaTabla>
+                    <CeldaTabla flex={1}>
+                      <Text className="font-roboto text-sm text-crema/55" numberOfLines={3}>
+                        {categoria.description || 'Sin nota'}
                       </Text>
-                      <AccionesCarta
-                        onEditar={() => tab.abrir(categoria)}
-                        onEliminar={() => onEliminar(categoria)}
-                      />
-                    </View>
+                    </CeldaTabla>
                   </View>
-                </CeldaTabla>
-                <CeldaTabla flex={1}>
-                  <Text className="font-roboto text-sm text-crema/55" numberOfLines={3}>
-                    {categoria.description || 'Sin nota'}
-                  </Text>
-                </CeldaTabla>
+                  <AccionesCarta
+                    onEditar={() => tab.abrir(categoria)}
+                    onEliminar={() => onEliminar(categoria)}
+                  />
+                </View>
               </FilaTabla>
             ))}
           </View>

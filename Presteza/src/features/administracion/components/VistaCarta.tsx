@@ -94,12 +94,12 @@ function estiloColumna(columna: { flex?: number; ancho?: number }) {
 
 export function EncabezadoTabla({ columnas }: { columnas: ColumnaTabla[] }) {
   return (
-    <View className="mb-1 flex-row items-center bg-marca px-3 py-3">
+    <View className="mb-2 flex-row items-center px-1 pb-2">
       {columnas.map((columna) => (
         <Text
           key={columna.texto}
           style={estiloColumna(columna)}
-          className={`font-roboto text-[10px] tracking-[2px] text-oro ${columna.derecha ? 'text-right' : ''}`}>
+          className={`font-roboto text-[10px] tracking-[2px] text-oro/70 ${columna.derecha ? 'text-right' : ''}`}>
           {columna.texto}
         </Text>
       ))}
@@ -108,7 +108,11 @@ export function EncabezadoTabla({ columnas }: { columnas: ColumnaTabla[] }) {
 }
 
 export function FilaTabla({ children }: { children: ReactNode }) {
-  return <View className="flex-row items-center border-b border-oro/15 px-3 py-3">{children}</View>;
+  return (
+    <View className="mb-3 border border-oro/20 bg-marca/25 px-3.5 py-3.5">
+      <View className="flex-row items-center">{children}</View>
+    </View>
+  );
 }
 
 export function CeldaTabla({

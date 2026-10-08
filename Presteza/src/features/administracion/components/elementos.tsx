@@ -50,9 +50,12 @@ export function EnlaceAdmin({
   peligro?: boolean;
 }) {
   return (
-    <Pressable onPress={onPress} className="py-1 pr-4">
+    <Pressable
+      onPress={onPress}
+      hitSlop={4}
+      className={`mb-2 mr-2 px-3 py-2.5 ${peligro ? 'border border-red-300/40' : 'border border-oro/35'}`}>
       <Text
-        className={`font-roboto text-[11px] tracking-[2px] ${peligro ? 'text-red-300' : 'text-oro'}`}>
+        className={`font-roboto text-[10px] tracking-[1.4px] ${peligro ? 'text-red-300' : 'text-oro'}`}>
         {etiqueta}
       </Text>
     </Pressable>
@@ -60,7 +63,7 @@ export function EnlaceAdmin({
 }
 
 export function AccionesAdmin({ children }: { children: ReactNode }) {
-  return <View className="mt-3 flex-row flex-wrap items-center">{children}</View>;
+  return <View className="mt-3 flex-row flex-wrap">{children}</View>;
 }
 
 export function ModalAdmin({

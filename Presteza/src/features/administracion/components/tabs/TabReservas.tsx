@@ -9,8 +9,6 @@ import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } 
 import { FormularioReservaAdmin } from '../formularios/FormularioReservaAdmin';
 import {
   CajaCuadricula,
-  CeldaTabla,
-  EncabezadoTabla,
   FilaFiltros,
   FilaTabla,
   GrillaAdmin,
@@ -82,37 +80,30 @@ export function TabReservas({ reservas }: TabReservasProps) {
           />
         ) : tab.vista === 'lista' ? (
           <View>
-            <EncabezadoTabla
-              columnas={[
-                { texto: 'MESA', flex: 1.1 },
-                { texto: 'FECHA', flex: 1 },
-                { texto: 'ESTADO', ancho: 86 },
-              ]}
-            />
             {reservas.lista.map((reserva) => (
               <FilaTabla key={reservas.idDe(reserva)}>
-                <CeldaTabla flex={1.1}>
-                  <Text className="font-roboto-light text-sm text-white">
-                    Mesa {reserva.tableNumber}
-                  </Text>
-                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/55" numberOfLines={1}>
-                    {reserva.userName || 'Cliente'}
-                  </Text>
+                <View className="flex-1">
+                  <View className="flex-row items-start justify-between gap-2">
+                    <View className="flex-1">
+                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-oro">
+                        {reservas.textoEstado(reserva.status).toUpperCase()}
+                      </Text>
+                      <Text className="mt-1 font-roboto-light text-xl text-white">
+                        Mesa {reserva.tableNumber}
+                      </Text>
+                      <Text className="mt-1 font-roboto text-sm text-crema/70" numberOfLines={1}>
+                        {reserva.userName || 'Cliente'}
+                      </Text>
+                      <Text className="mt-1 font-roboto text-sm text-crema/55">
+                        {reserva.date} · {reserva.time}
+                      </Text>
+                      <Text className="mt-0.5 font-roboto text-[11px] text-crema/45">
+                        {reserva.numberOfPeople} personas
+                      </Text>
+                    </View>
+                  </View>
                   {acciones(reserva)}
-                </CeldaTabla>
-                <CeldaTabla flex={1}>
-                  <Text className="font-roboto text-sm text-crema/70">
-                    {reserva.date} · {reserva.time}
-                  </Text>
-                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/45">
-                    {reserva.numberOfPeople} personas
-                  </Text>
-                </CeldaTabla>
-                <CeldaTabla ancho={86}>
-                  <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
-                    {reservas.textoEstado(reserva.status).toUpperCase()}
-                  </Text>
-                </CeldaTabla>
+                </View>
               </FilaTabla>
             ))}
           </View>

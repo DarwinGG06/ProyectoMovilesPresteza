@@ -11,8 +11,6 @@ import { ChipFiltro, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioProducto } from '../formularios/FormularioProducto';
 import {
   AccionesCarta,
-  CeldaTabla,
-  EncabezadoTabla,
   FilaFiltros,
   FilaTabla,
   FotoCarta,
@@ -97,41 +95,34 @@ export function TabProductos({
           />
         ) : tab.vista === 'lista' ? (
           <View>
-            <EncabezadoTabla
-              columnas={[
-                { texto: 'PLATO', flex: 1.4 },
-                { texto: 'CARTA', ancho: 78 },
-                { texto: 'PRECIO', ancho: 82, derecha: true },
-              ]}
-            />
             {tab.lista.map((producto) => (
               <FilaTabla key={idDe(producto)}>
-                <CeldaTabla flex={1.4}>
-                  <View className="flex-row items-center">
-                    <FotoCarta uri={producto.imageUrl} alto={48} redonda />
-                    <View className="ml-2 flex-1">
-                      <Text className="font-roboto-light text-sm text-white" numberOfLines={1}>
+                <View className="flex-row">
+                  <FotoCarta uri={producto.imageUrl} alto={64} />
+                  <View className="ml-3 flex-1">
+                    <View className="flex-row items-start justify-between gap-2">
+                      <Text
+                        className="flex-1 font-roboto-light text-base text-white"
+                        numberOfLines={2}>
                         {producto.name}
                       </Text>
-                      <AccionesCarta
-                        onEditar={() => tab.abrir(producto)}
-                        onAlternar={() => onAlternar(producto)}
-                        onEliminar={() => onEliminar(producto)}
-                        etiquetaAlternar={producto.available === false ? 'ACTIVAR' : 'OCULTAR'}
-                      />
+                      <Text className="font-roboto text-sm text-oro">
+                        {formatCOP(producto.price || 0)}
+                      </Text>
                     </View>
+                    <Text className="mt-1 font-roboto text-[10px] tracking-[1.4px] text-crema/50">
+                      {tab.nombreCategoria(producto.categoryId).toUpperCase()}
+                      {'  ·  '}
+                      {producto.available === false ? 'OCULTO' : 'EN CARTA'}
+                    </Text>
+                    <AccionesCarta
+                      onEditar={() => tab.abrir(producto)}
+                      onAlternar={() => onAlternar(producto)}
+                      onEliminar={() => onEliminar(producto)}
+                      etiquetaAlternar={producto.available === false ? 'ACTIVAR' : 'OCULTAR'}
+                    />
                   </View>
-                </CeldaTabla>
-                <CeldaTabla ancho={78}>
-                  <Text className="font-roboto text-[11px] text-crema/60" numberOfLines={2}>
-                    {tab.nombreCategoria(producto.categoryId)}
-                  </Text>
-                </CeldaTabla>
-                <CeldaTabla ancho={82} derecha>
-                  <Text className="text-right font-roboto text-sm text-oro">
-                    {formatCOP(producto.price || 0)}
-                  </Text>
-                </CeldaTabla>
+                </View>
               </FilaTabla>
             ))}
           </View>

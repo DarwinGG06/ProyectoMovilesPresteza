@@ -26,12 +26,12 @@ type TabMensajesProps = {
 export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabMensajesProps) {
   const tab = useTabMensajes(mensajes, onGuardar);
 
-  const lista = useMemo(
-    () =>
-      [...mensajes].sort(
-        (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
-      ),
-    [mensajes]
+  const acciones = (mensaje: MensajeAdmin) => (
+    <AccionesAdmin>
+      <EnlaceAdmin etiqueta="VER" onPress={() => tab.verDetalle(mensaje)} />
+      <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(mensaje)} />
+      <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(mensaje)} />
+    </AccionesAdmin>
   );
 
   return (
@@ -43,13 +43,13 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
         accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
         <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
 
-        {lista.length === 0 ? (
+        {tab.lista.length === 0 ? (
           <EstadoVacioAdmin
             icono="mail-outline"
             titulo="Sin mensajes"
             texto="Crea uno o espera a que escriban."
           />
-        ) : vista === 'lista' ? (
+        ) : tab.vista === 'lista' ? (
           <View>
             <EncabezadoTabla
               columnas={[
@@ -97,9 +97,9 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
       </TarjetaPerfil>
 
       <ModalAdmin
-        visible={abierto}
-        titulo={editando ? 'Editar mensaje' : 'Nuevo mensaje'}
-        onCerrar={() => setAbierto(false)}>
+        visible={tab.abierto}
+        titulo={tab.editando ? 'Editar mensaje' : 'Nuevo mensaje'}
+        onCerrar={tab.cerrar}>
         <FormularioMensaje
           key={tab.editando ? idDe(tab.editando) : 'nuevo'}
           valores={tab.valoresFormulario}
@@ -110,31 +110,29 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
       </ModalAdmin>
 
       <ModalAdmin
-        visible={Boolean(detalle)}
-        titulo={detalle?.subject || 'Mensaje'}
-        onCerrar={() => setDetalle(null)}>
-        {detalle ? (
+        visible={Boolean(tab.detalle)}
+        titulo={tab.detalle?.subject || 'Mensaje'}
+        onCerrar={tab.cerrarDetalle}>
+        {tab.detalle ? (
           <View className="gap-3">
-            <Text className="font-roboto text-base text-marca-oscura">{detalle.name}</Text>
-            <Text className="font-roboto text-sm text-texto/70">{detalle.email}</Text>
-            {detalle.phone ? (
-              <Text className="font-roboto text-sm text-texto/70">{detalle.phone}</Text>
+            <Text className="font-roboto text-base text-marca-oscura">{tab.detalle.name}</Text>
+            <Text className="font-roboto text-sm text-texto/70">{tab.detalle.email}</Text>
+            {tab.detalle.phone ? (
+              <Text className="font-roboto text-sm text-texto/70">{tab.detalle.phone}</Text>
             ) : null}
             <Text className="font-roboto text-sm text-texto/55">
-              {formatoFechaHora(detalle.createdAt)}
+              {formatoFechaHora(tab.detalle.createdAt)}
             </Text>
             <Text className="mt-2 font-roboto text-base leading-6 text-marca-oscura">
-              {detalle.message}
+              {tab.detalle.message}
             </Text>
             <AccionesAdmin>
+              <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
               <EnlaceAdmin
-                etiqueta="EDITAR"
-                onPress={() => {
-                  setDetalle(null);
-                  abrir(detalle);
-                }}
+                etiqueta="ELIMINAR"
+                peligro
+                onPress={() => tab.detalle && onEliminar(tab.detalle)}
               />
-              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
             </AccionesAdmin>
           </View>
         ) : null}

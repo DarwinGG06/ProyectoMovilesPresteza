@@ -45,42 +45,7 @@ export function TabPedidos({
   onCambiarEstado,
   onEliminar,
 }: TabPedidosProps) {
-  const [filtro, setFiltro] = useState<(typeof FILTROS)[number]['id']>('all');
-  const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
-  const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
-  const [abierto, setAbierto] = useState(false);
-  const [editando, setEditando] = useState<PedidoAdmin | null>(null);
-  const [detalle, setDetalle] = useState<PedidoAdmin | null>(null);
-
-  const lista = useMemo(() => {
-    const ordenados = [...pedidos].sort(
-      (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
-    );
-    if (filtro === 'all') return ordenados;
-    return ordenados.filter((pedido) => {
-      const estado = pedido.status;
-      if (filtro === 'pending') return estado === 'pending' || estado === 'pendiente';
-      if (filtro === 'preparing')
-        return estado === 'preparing' || estado === 'en_proceso' || estado === 'Preparando';
-      if (filtro === 'ready')
-        return estado === 'ready' || estado === 'completado' || estado === 'listo';
-      if (filtro === 'delivered') return estado === 'delivered' || estado === 'entregado';
-      return true;
-    });
-  }, [filtro, pedidos]);
-
-  useEffect(() => {
-    if (detalle && !pedidos.some((item) => idDe(item) === idDe(detalle))) setDetalle(null);
-  }, [detalle, pedidos]);
-
-  const abrir = (pedido?: PedidoAdmin) => {
-    setEditando(pedido ?? null);
-    setAbierto(true);
-  };
-
-  const guardar = async (datos: PedidoForm) => {
-    if (await onGuardar(datos, editando)) setAbierto(false);
-  };
+  const tab = useTabPedidos(pedidos, clientes, onGuardar);
 
   const acciones = (pedido: PedidoAdmin) => (
     <AccionesAdmin>
@@ -113,24 +78,24 @@ export function TabPedidos({
         />
         {tab.filtrosAbiertos ? (
           <FilaFiltros>
-            {FILTROS.map((item) => (
+            {FILTROS_PEDIDOS.map((item) => (
               <ChipFiltro
                 key={item.id}
                 etiqueta={item.etiqueta}
-                activo={filtro === item.id}
-                onPress={() => setFiltro(item.id)}
+                activo={tab.filtro === item.id}
+                onPress={() => tab.setFiltro(item.id)}
               />
             ))}
           </FilaFiltros>
         ) : null}
 
-        {lista.length === 0 ? (
+        {tab.lista.length === 0 ? (
           <EstadoVacioAdmin
             icono="receipt-outline"
             titulo="Sin pedidos"
             texto="Crea una comanda o espera a que lleguen."
           />
-        ) : vista === 'lista' ? (
+        ) : tab.vista === 'lista' ? (
           <View>
             <EncabezadoTabla
               columnas={[
@@ -193,9 +158,9 @@ export function TabPedidos({
       </TarjetaPerfil>
 
       <ModalAdmin
-        visible={abierto}
-        titulo={editando ? 'Editar pedido' : 'Nuevo pedido'}
-        onCerrar={() => setAbierto(false)}>
+        visible={tab.abierto}
+        titulo={tab.editando ? 'Editar pedido' : 'Nuevo pedido'}
+        onCerrar={tab.cerrar}>
         <FormularioPedido
           key={tab.editando ? idDe(tab.editando) : 'nuevo'}
           valores={tab.valoresFormulario}
@@ -208,37 +173,37 @@ export function TabPedidos({
       </ModalAdmin>
 
       <ModalAdmin
-        visible={Boolean(detalle)}
-        titulo={detalle ? `#${idDe(detalle).slice(-8).toUpperCase()}` : 'Pedido'}
-        onCerrar={() => setDetalle(null)}>
-        {detalle ? (
+        visible={Boolean(tab.detalle)}
+        titulo={tab.detalle ? `#${idDe(tab.detalle).slice(-8).toUpperCase()}` : 'Pedido'}
+        onCerrar={tab.cerrarDetalle}>
+        {tab.detalle ? (
           <View className="gap-3">
             <Text className="font-roboto text-sm text-texto/70">
-              {detalle.user_name || 'Cliente'}
+              {tab.detalle.user_name || 'Cliente'}
             </Text>
             <Text className="font-roboto text-sm text-texto/55">
-              {textoEstadoPedido(detalle.status)}
+              {textoEstadoPedido(tab.detalle.status)}
             </Text>
             <Text className="font-roboto text-sm text-texto/55">
-              {formatoFechaHora(detalle.createdAt)}
+              {formatoFechaHora(tab.detalle.createdAt)}
             </Text>
-            {(detalle.products ?? []).map((producto, index) => (
+            {(tab.detalle.products ?? []).map((producto, index) => (
               <Text
                 key={`${producto.dishId}-${index}`}
                 className="font-roboto text-base text-marca-oscura">
                 {producto.quantity} × {producto.name}
               </Text>
             ))}
-            <Text className="font-roboto text-lg text-marca">{formatCOP(detalle.total || 0)}</Text>
+            <Text className="font-roboto text-lg text-marca">
+              {formatCOP(tab.detalle.total || 0)}
+            </Text>
             <AccionesAdmin>
+              <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
               <EnlaceAdmin
-                etiqueta="EDITAR"
-                onPress={() => {
-                  setDetalle(null);
-                  abrir(detalle);
-                }}
+                etiqueta="ELIMINAR"
+                peligro
+                onPress={() => tab.detalle && onEliminar(tab.detalle)}
               />
-              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
             </AccionesAdmin>
           </View>
         ) : null}

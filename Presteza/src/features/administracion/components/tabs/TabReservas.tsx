@@ -34,7 +34,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
 
   const acciones = (reserva: Reserva) => (
     <AccionesAdmin>
-      <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(reserva)} />
+      <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(reserva)} />
       {reserva.status === 'pending' ? (
         <EnlaceAdmin etiqueta="CONFIRMAR" onPress={() => reservas.confirmar(reserva)} />
       ) : null}
@@ -80,7 +80,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
             titulo="Sin reservas"
             texto="Crea una mesa o espera a que reserven."
           />
-        ) : vista === 'lista' ? (
+        ) : tab.vista === 'lista' ? (
           <View>
             <EncabezadoTabla
               columnas={[
@@ -143,9 +143,9 @@ export function TabReservas({ reservas }: TabReservasProps) {
       </TarjetaPerfil>
 
       <ModalAdmin
-        visible={abierto}
-        titulo={editando ? 'Editar reserva' : 'Nueva reserva'}
-        onCerrar={() => setAbierto(false)}>
+        visible={tab.abierto}
+        titulo={tab.editando ? 'Editar reserva' : 'Nueva reserva'}
+        onCerrar={tab.cerrar}>
         <FormularioReservaAdmin
           key={tab.editando ? reservas.idDe(tab.editando) : 'nueva'}
           valores={tab.valoresFormulario}

@@ -10,10 +10,15 @@ import { SessionProvider } from '@/session/context';
 import { AvisoProvider } from '@/shared/components/aviso';
 import { WhatsAppFloat } from '@/shared/components/footer';
 import { NavBar } from '@/shared/components/nav-bar';
+import { useFuentes } from '@/shared/hooks/useFuentes';
 
 import '../global.css';
 
 export default function RootLayout() {
+  const fuentesListas = useFuentes();
+
+  if (!fuentesListas) return null;
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SessionProvider>

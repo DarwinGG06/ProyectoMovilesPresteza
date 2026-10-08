@@ -6,6 +6,16 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      // Cada grosor de Roboto es una familia aparte: React Native no genera
+      // negritas ni finas a partir de un solo archivo de fuente.
+      fontFamily: {
+        roboto: ['Roboto_400Regular'],
+        'roboto-light': ['Roboto_300Light'],
+        'roboto-medium': ['Roboto_500Medium'],
+        'roboto-semibold': ['Roboto_600SemiBold'],
+        'roboto-bold': ['Roboto_700Bold'],
+        'roboto-extrabold': ['Roboto_800ExtraBold'],
+      },
       colors: {
         marca: '#6b1d3d',
         'marca-clara': '#8b2d4f',

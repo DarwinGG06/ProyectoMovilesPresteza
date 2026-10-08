@@ -45,7 +45,7 @@ export function PerfilScreen() {
         <View className="mt-6">
           <ActivityIndicator color="#d4af77" />
         </View>
-        <Text className="mt-3 text-sm text-crema/70">Cargando tu mesa...</Text>
+        <Text className="mt-3 font-roboto text-sm text-crema/70">Cargando tu mesa...</Text>
       </View>
     );
   }
@@ -53,7 +53,9 @@ export function PerfilScreen() {
   if (!perfil || !token) {
     return (
       <View className="flex-1 items-center justify-center bg-marca-oscura px-6">
-        <Text className="text-center text-crema">{error || 'No pudimos cargar tu perfil.'}</Text>
+        <Text className="text-center font-roboto text-crema">
+          {error || 'No pudimos cargar tu perfil.'}
+        </Text>
       </View>
     );
   }
@@ -61,47 +63,57 @@ export function PerfilScreen() {
   return (
     <EvitarTeclado>
       <View className="flex-1 bg-marca-oscura">
-        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-        <HeroPerfil
-          nombre={perfil.complete_name || user.name}
-          email={perfil.email || user.email}
-          miembroDesde={formatFecha(perfil.created_at)}
-        />
-        <PestanasPerfil
-          activa={pestana}
-          onChange={setPestana}
-          contadores={{
-            pedidos: pedidos.length,
-            direcciones: perfil.addresses.length,
-            pagos: perfil.paymentCards.length,
-            reservas: reservas.length,
-          }}
-        />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag">
+          <HeroPerfil
+            nombre={perfil.complete_name || user.name}
+            email={perfil.email || user.email}
+            miembroDesde={formatFecha(perfil.created_at)}
+          />
+          <PestanasPerfil
+            activa={pestana}
+            onChange={setPestana}
+            contadores={{
+              pedidos: pedidos.length,
+              direcciones: perfil.addresses.length,
+              pagos: perfil.paymentCards.length,
+              reservas: reservas.length,
+            }}
+          />
 
-        <View className="px-5 pb-10 pt-6">
-          {error ? <Text className="mb-4 text-sm text-red-300">{error}</Text> : null}
+          <View className="px-5 pb-10 pt-6">
+            {error ? <Text className="mb-4 font-roboto text-sm text-red-300">{error}</Text> : null}
 
-          {pestana === 'cuenta' ? (
-            <TabCuenta userId={user.id} perfil={perfil} favoritos={favoritos} onActualizado={setPerfil} />
-          ) : null}
-          {pestana === 'pedidos' ? <TabPedidos pedidos={pedidos} /> : null}
-          {pestana === 'direcciones' ? (
-            <TabDirecciones userId={user.id} perfil={perfil} onActualizado={setPerfil} />
-          ) : null}
-          {pestana === 'pagos' ? (
-            <TabPagos userId={user.id} token={token} perfil={perfil} onActualizado={setPerfil} />
-          ) : null}
-          {pestana === 'reservas' ? <TabReservas onCambio={(lista) => setReservas(lista)} /> : null}
-          {pestana === 'ajustes' ? (
-            <TabAjustes
-              userId={user.id}
-              perfil={perfil}
-              onActualizado={setPerfil}
-              onCerrarSesion={logout}
-            />
-          ) : null}
-        </View>
-        <Footer />
+            {pestana === 'cuenta' ? (
+              <TabCuenta
+                userId={user.id}
+                perfil={perfil}
+                favoritos={favoritos}
+                onActualizado={setPerfil}
+              />
+            ) : null}
+            {pestana === 'pedidos' ? <TabPedidos pedidos={pedidos} /> : null}
+            {pestana === 'direcciones' ? (
+              <TabDirecciones userId={user.id} perfil={perfil} onActualizado={setPerfil} />
+            ) : null}
+            {pestana === 'pagos' ? (
+              <TabPagos userId={user.id} token={token} perfil={perfil} onActualizado={setPerfil} />
+            ) : null}
+            {pestana === 'reservas' ? (
+              <TabReservas onCambio={(lista) => setReservas(lista)} />
+            ) : null}
+            {pestana === 'ajustes' ? (
+              <TabAjustes
+                userId={user.id}
+                perfil={perfil}
+                onActualizado={setPerfil}
+                onCerrarSesion={logout}
+              />
+            ) : null}
+          </View>
+          <Footer />
         </ScrollView>
       </View>
     </EvitarTeclado>

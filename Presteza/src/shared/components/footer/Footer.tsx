@@ -25,11 +25,15 @@ export function Footer({ facebookUrl, instagramUrl }: FooterProps) {
       <View className="h-1 bg-oro" />
       <View className="items-center px-8 pb-14 pt-10">
         <SelloP size="md" />
-        <Text className="mt-4 text-2xl font-extrabold tracking-[6px] text-crema">PRESTEZA</Text>
-        <Text className="mt-1 text-[11px] tracking-[3px] text-oro">COMIDA PARA TODOS</Text>
+        <Text className="mt-4 font-roboto-extrabold text-2xl tracking-[6px] text-crema">
+          PRESTEZA
+        </Text>
+        <Text className="mt-1 font-roboto text-[11px] tracking-[3px] text-oro">
+          COMIDA PARA TODOS
+        </Text>
         <View className="my-6 h-px w-16 bg-oro/40" />
 
-        <Text className="mb-3 text-[10px] tracking-[3px] text-oro">ACCESO RÁPIDO</Text>
+        <Text className="mb-3 font-roboto text-[10px] tracking-[3px] text-oro">ACCESO RÁPIDO</Text>
         <View className="mb-8 flex-row flex-wrap justify-center gap-x-5 gap-y-2">
           {ENLACES_RAPIDOS.map((enlace) => (
             <Enlace key={enlace.ruta} onPress={() => router.push(enlace.ruta as Href)}>
@@ -38,7 +42,7 @@ export function Footer({ facebookUrl, instagramUrl }: FooterProps) {
           ))}
         </View>
 
-        <Text className="mb-2 text-[10px] tracking-[3px] text-oro">VISÍTANOS</Text>
+        <Text className="mb-2 font-roboto text-[10px] tracking-[3px] text-oro">VISÍTANOS</Text>
         <Enlace onPress={() => router.push('/sede')}>Sede Manizales – Milán</Enlace>
 
         <View className="mt-8 flex-row gap-4">
@@ -54,7 +58,8 @@ function Enlace({ children, onPress }: { children: string; onPress?: () => void 
   return (
     <Pressable onPress={onPress} className="py-1">
       {({ pressed }) => (
-        <Text className={`text-sm tracking-wide ${pressed ? 'text-oro' : 'text-crema/80'}`}>
+        <Text
+          className={`font-roboto text-sm tracking-wide ${pressed ? 'text-oro' : 'text-crema/80'}`}>
           {children}
         </Text>
       )}
@@ -62,13 +67,7 @@ function Enlace({ children, onPress }: { children: string; onPress?: () => void 
   );
 }
 
-function IconoSocial({
-  nombre,
-  url,
-}: {
-  nombre: 'facebook' | 'instagram';
-  url?: string;
-}) {
+function IconoSocial({ nombre, url }: { nombre: 'facebook' | 'instagram'; url?: string }) {
   return (
     <Pressable
       onPress={() => {

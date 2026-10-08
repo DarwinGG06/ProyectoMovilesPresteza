@@ -37,7 +37,7 @@ export default function Button({ text, onPress, disabled, variant, secondary, cl
               : 'bg-marca-oscura'
       } ${className ?? ''}`}>
       <Text
-        className={`text-center text-[11px] tracking-[3px] ${
+        className={`text-center font-roboto text-[11px] tracking-[3px] ${
           tono === 'ghost' ? 'text-oro' : tono === 'primary' ? 'text-crema' : 'text-marca-oscura'
         }`}>
         {text}

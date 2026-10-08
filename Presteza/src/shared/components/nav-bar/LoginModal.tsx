@@ -42,7 +42,9 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
       <EvitarTeclado offset={0}>
-        <Pressable onPress={close} className="flex-1 items-center justify-center bg-marca-oscura/70 px-5">
+        <Pressable
+          onPress={close}
+          className="flex-1 items-center justify-center bg-marca-oscura/70 px-5">
           <Pressable onPress={() => {}} className="w-full overflow-hidden bg-marca-oscura">
             <View className="h-1 w-full bg-oro" />
             <View className="p-6">
@@ -54,8 +56,10 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
 
               <View className="mb-6 items-center pt-3">
                 <SelloP size="lg" />
-                <Text className="mt-4 text-[11px] tracking-[4px] text-oro">INICIAR SESIÓN</Text>
-                <Text className="mt-1 text-3xl font-extrabold text-crema">Bienvenido</Text>
+                <Text className="mt-4 font-roboto text-[11px] tracking-[4px] text-oro">
+                  INICIAR SESIÓN
+                </Text>
+                <Text className="mt-1 font-roboto-extrabold text-3xl text-crema">Bienvenido</Text>
               </View>
 
               <View className="bg-crema px-4 py-5">
@@ -103,7 +107,9 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                   router.push('/recuperar-contrasena');
                 }}
                 className="mb-5 mt-4 self-end">
-                <Text className="text-xs tracking-wide text-oro">¿Olvidaste tu contraseña?</Text>
+                <Text className="font-roboto text-xs tracking-wide text-oro">
+                  ¿Olvidaste tu contraseña?
+                </Text>
               </Pressable>
 
               <Pressable
@@ -111,8 +117,8 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                   close();
                   router.push('/registro');
                 }}>
-                <Text className="text-center text-crema/70">
-                  ¿Primera vez? <Text className="font-bold text-oro">Regístrate</Text>
+                <Text className="text-center font-roboto text-crema/70">
+                  ¿Primera vez? <Text className="font-roboto-bold text-oro">Regístrate</Text>
                 </Text>
               </Pressable>
             </View>

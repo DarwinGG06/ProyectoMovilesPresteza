@@ -1,15 +1,9 @@
-import { useEffect } from 'react';
 import { router } from 'expo-router';
 import { Dimensions, Pressable, Text, View } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { CATEGORIAS } from '../data';
+import { useGiroCategorias } from '../hooks/useGiroCategorias';
 import { MarcaCurso, Plato } from './MesaDecor';
 
 const ANCHO = Dimensions.get('window').width;
@@ -21,16 +15,14 @@ const TAM = 74;
 const CENTRO = 108;
 
 export function CategoriasInicio() {
-  const giro = useSharedValue(0);
-
-  useEffect(() => {
-    giro.value = withRepeat(withTiming(360, { duration: 48000, easing: Easing.linear }), -1, false);
-  }, [giro]);
+  const giro = useGiroCategorias();
 
   return (
     <View className="bg-marca-oscura px-5 pb-12">
       <MarcaCurso numero="III" nombre="NUESTRA CARTA" />
-      <Text className="mb-5 text-sm text-crema/55">Elige una categoría y entra al menú.</Text>
+      <Text className="mb-5 font-roboto text-sm text-crema/55">
+        Elige una categoría y entra al menú.
+      </Text>
 
       <View className="items-center">
         <View style={{ width: LIENZO, height: LIENZO + 28 }}>
@@ -90,8 +82,8 @@ export function CategoriasInicio() {
                 borderWidth: 1,
                 borderColor: 'rgba(212,175,119,0.35)',
               }}>
-              <Text className="text-[10px] tracking-[3px] text-oro">MENÚ</Text>
-              <Text className="text-xl font-light text-crema">Carta</Text>
+              <Text className="font-roboto text-[10px] tracking-[3px] text-oro">MENÚ</Text>
+              <Text className="font-roboto-light text-xl text-crema">Carta</Text>
             </View>
           </Pressable>
         </View>
@@ -100,13 +92,7 @@ export function CategoriasInicio() {
   );
 }
 
-function RadioOro({
-  index,
-  giro,
-}: {
-  index: number;
-  giro: Animated.SharedValue<number>;
-}) {
+function RadioOro({ index, giro }: { index: number; giro: Animated.SharedValue<number> }) {
   const base = (index / CATEGORIAS.length) * 360 - 90;
 
   const estilo = useAnimatedStyle(() => ({
@@ -189,7 +175,9 @@ function Satelite({
       ]}>
       <Pressable onPress={() => router.push('/menu')}>
         <Plato uri={categoria.imageUrl} size={TAM} />
-        <Text className="mt-1 text-center text-[11px] tracking-[1px] text-crema">{categoria.name}</Text>
+        <Text className="mt-1 text-center font-roboto text-[11px] tracking-[1px] text-crema">
+          {categoria.name}
+        </Text>
       </Pressable>
     </Animated.View>
   );

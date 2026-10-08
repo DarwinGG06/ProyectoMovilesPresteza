@@ -1,10 +1,10 @@
-// src/shared/components/ModelViewerModal.tsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Modal, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons'; 
-import * as FileSystem from 'expo-file-system/legacy';
+import { Ionicons } from '@expo/vector-icons';
+
+import { useModelo3d } from '../hooks/useModelo3d';
 
 interface ModelViewerModalProps {
   isVisible: boolean;
@@ -13,53 +13,13 @@ interface ModelViewerModalProps {
   productName: string | null;
 }
 
-export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: ModelViewerModalProps) {
-  const [processedUrl, setProcessedUrl] = useState<string | null>(null);
-  const [procesando, setProcesando] = useState(false);
-
-  // Convierte archivos locales (file://) a Data URI en Base64 para saltar políticas CORS del WebView
-  useEffect(() => {
-    let montado = true;
-
-    async function prepararFuenteModelo() {
-      if (!modelUrl) {
-        setProcessedUrl(null);
-        return;
-      }
-
-      // Si es una URL remota o ya está en base64, usar directamente
-      if (modelUrl.startsWith('http://') || modelUrl.startsWith('https://') || modelUrl.startsWith('data:')) {
-        setProcessedUrl(modelUrl);
-        return;
-      }
-
-      // Si es un archivo local (file://), lo convertimos a Base64
-      if (modelUrl.startsWith('file://')) {
-        try {
-          setProcesando(true);
-          const base64 = await FileSystem.readAsStringAsync(modelUrl, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-          if (montado) {
-            setProcessedUrl(`data:model/gltf-binary;base64,${base64}`);
-          }
-        } catch (err) {
-          console.error('Error al convertir modelo local a Base64:', err);
-          if (montado) setProcessedUrl(modelUrl);
-        } finally {
-          if (montado) setProcesando(false);
-        }
-      } else {
-        setProcessedUrl(modelUrl);
-      }
-    }
-
-    prepararFuenteModelo();
-
-    return () => {
-      montado = false;
-    };
-  }, [modelUrl]);
+export function ModelViewerModal({
+  isVisible,
+  onClose,
+  modelUrl,
+  productName,
+}: ModelViewerModalProps) {
+  const { fuente, procesando } = useModelo3d(modelUrl);
 
   if (!modelUrl) return null;
 
@@ -93,7 +53,7 @@ export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: 
     <body>
       <div id="error-text">No se pudo renderizar el modelo 3D.</div>
       <model-viewer 
-        src="${processedUrl || ''}" 
+        src="${fuente || ''}" 
         camera-controls 
         auto-rotate
         shadow-intensity="1"
@@ -110,19 +70,14 @@ export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: 
   `;
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={isVisible}
-      onRequestClose={onClose}
-    >
+    <Modal animationType="slide" transparent={false} visible={isVisible} onRequestClose={onClose}>
       <SafeAreaView className="flex-1 bg-marca-oscura">
         {/* Cabecera del Modal */}
-        <View className="flex-row items-center justify-between px-5 py-4 border-b border-white/10">
-          <Text className="text-xl font-bold text-crema" numberOfLines={1}>
+        <View className="flex-row items-center justify-between border-b border-white/10 px-5 py-4">
+          <Text className="font-roboto-bold text-xl text-crema" numberOfLines={1}>
             {productName || 'Vista 3D'}
           </Text>
-          <TouchableOpacity onPress={onClose} className="p-2 rounded-full bg-black/30">
+          <TouchableOpacity onPress={onClose} className="rounded-full bg-black/30 p-2">
             <Ionicons name="close" size={24} color="#d4af77" />
           </TouchableOpacity>
         </View>
@@ -132,7 +87,9 @@ export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: 
           {procesando ? (
             <View className="flex-1 items-center justify-center bg-marca-oscura">
               <ActivityIndicator size="large" color="#d4af77" />
-              <Text className="text-[#d4af77] mt-4">Procesando archivo 3D local...</Text>
+              <Text className="mt-4 font-roboto text-[#d4af77]">
+                Procesando archivo 3D local...
+              </Text>
             </View>
           ) : (
             <WebView
@@ -150,16 +107,18 @@ export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: 
               renderLoading={() => (
                 <View className="absolute inset-0 items-center justify-center bg-marca-oscura">
                   <ActivityIndicator size="large" color="#d4af77" />
-                  <Text className="text-[#d4af77] mt-4">Iniciando visor...</Text>
+                  <Text className="mt-4 font-roboto text-[#d4af77]">Iniciando visor...</Text>
                 </View>
               )}
             />
           )}
         </View>
-        
+
         {/* Controles de instrucción */}
-        <View className="px-5 py-3 items-center border-t border-white/10 bg-marca-oscura">
-            <Text className="text-xs text-crema/60">Gira con un dedo · Haz zoom pellizcando</Text>
+        <View className="items-center border-t border-white/10 bg-marca-oscura px-5 py-3">
+          <Text className="font-roboto text-xs text-crema/60">
+            Gira con un dedo · Haz zoom pellizcando
+          </Text>
         </View>
       </SafeAreaView>
     </Modal>

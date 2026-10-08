@@ -12,7 +12,9 @@ export function RestablecerContrasenaScreen() {
 
   return (
     <ContenedorPantalla titulo="Restablecer contraseña">
-      <Text className="mt-3 text-base text-texto/70">Pega el token del correo y escribe la nueva clave.</Text>
+      <Text className="mt-3 font-roboto text-base text-texto/70">
+        Pega el token del correo y escribe la nueva clave.
+      </Text>
 
       <View className="mt-8 gap-5">
         <Field
@@ -21,7 +23,10 @@ export function RestablecerContrasenaScreen() {
           label="Token"
           placeholder="Token del correo"
           maxLength={200}
-          rules={{ required: 'Pega el token', maxLength: { value: 200, message: 'Máximo 200 caracteres' } }}
+          rules={{
+            required: 'Pega el token',
+            maxLength: { value: 200, message: 'Máximo 200 caracteres' },
+          }}
         />
         <Field
           control={control}

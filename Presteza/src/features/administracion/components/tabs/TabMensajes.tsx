@@ -26,12 +26,12 @@ type TabMensajesProps = {
 export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabMensajesProps) {
   const tab = useTabMensajes(mensajes, onGuardar);
 
-  const acciones = (mensaje: MensajeAdmin) => (
-    <AccionesAdmin>
-      <EnlaceAdmin etiqueta="VER" onPress={() => tab.verDetalle(mensaje)} />
-      <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(mensaje)} />
-      <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(mensaje)} />
-    </AccionesAdmin>
+  const lista = useMemo(
+    () =>
+      [...mensajes].sort(
+        (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+      ),
+    [mensajes]
   );
 
   return (
@@ -43,9 +43,13 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
         accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
         <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
 
-        {tab.lista.length === 0 ? (
-          <EstadoVacioAdmin icono="mail-outline" titulo="Sin mensajes" texto="Crea uno o espera a que escriban." />
-        ) : tab.vista === 'lista' ? (
+        {lista.length === 0 ? (
+          <EstadoVacioAdmin
+            icono="mail-outline"
+            titulo="Sin mensajes"
+            texto="Crea uno o espera a que escriban."
+          />
+        ) : vista === 'lista' ? (
           <View>
             <EncabezadoTabla
               columnas={[
@@ -56,16 +60,16 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
             {tab.lista.map((mensaje) => (
               <FilaTabla key={idDe(mensaje)}>
                 <CeldaTabla flex={1.2}>
-                  <Text className="text-sm font-light text-white" numberOfLines={2}>
+                  <Text className="font-roboto-light text-sm text-white" numberOfLines={2}>
                     {mensaje.subject}
                   </Text>
                   {acciones(mensaje)}
                 </CeldaTabla>
                 <CeldaTabla flex={0.8}>
-                  <Text className="text-sm text-crema/70" numberOfLines={1}>
+                  <Text className="font-roboto text-sm text-crema/70" numberOfLines={1}>
                     {mensaje.name}
                   </Text>
-                  <Text className="mt-0.5 text-[11px] text-crema/40" numberOfLines={1}>
+                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/40" numberOfLines={1}>
                     {formatoFechaHora(mensaje.createdAt)}
                   </Text>
                 </CeldaTabla>
@@ -76,13 +80,13 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
           <GrillaAdmin>
             {tab.lista.map((mensaje) => (
               <CajaCuadricula key={idDe(mensaje)}>
-                <Text className="text-base font-light text-white" numberOfLines={2}>
+                <Text className="font-roboto-light text-base text-white" numberOfLines={2}>
                   {mensaje.subject}
                 </Text>
-                <Text className="mt-1 text-sm text-crema/70" numberOfLines={1}>
+                <Text className="mt-1 font-roboto text-sm text-crema/70" numberOfLines={1}>
                   {mensaje.name}
                 </Text>
-                <Text className="mt-2 text-sm text-crema/50" numberOfLines={3}>
+                <Text className="mt-2 font-roboto text-sm text-crema/50" numberOfLines={3}>
                   {mensaje.message}
                 </Text>
                 {acciones(mensaje)}
@@ -92,7 +96,10 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={tab.abierto} titulo={tab.editando ? 'Editar mensaje' : 'Nuevo mensaje'} onCerrar={tab.cerrar}>
+      <ModalAdmin
+        visible={abierto}
+        titulo={editando ? 'Editar mensaje' : 'Nuevo mensaje'}
+        onCerrar={() => setAbierto(false)}>
         <FormularioMensaje
           key={tab.editando ? idDe(tab.editando) : 'nuevo'}
           valores={tab.valoresFormulario}
@@ -102,17 +109,32 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
         />
       </ModalAdmin>
 
-      <ModalAdmin visible={Boolean(tab.detalle)} titulo={tab.detalle?.subject || 'Mensaje'} onCerrar={tab.cerrarDetalle}>
-        {tab.detalle ? (
+      <ModalAdmin
+        visible={Boolean(detalle)}
+        titulo={detalle?.subject || 'Mensaje'}
+        onCerrar={() => setDetalle(null)}>
+        {detalle ? (
           <View className="gap-3">
-            <Text className="text-base text-marca-oscura">{tab.detalle.name}</Text>
-            <Text className="text-sm text-texto/70">{tab.detalle.email}</Text>
-            {tab.detalle.phone ? <Text className="text-sm text-texto/70">{tab.detalle.phone}</Text> : null}
-            <Text className="text-sm text-texto/55">{formatoFechaHora(tab.detalle.createdAt)}</Text>
-            <Text className="mt-2 text-base leading-6 text-marca-oscura">{tab.detalle.message}</Text>
+            <Text className="font-roboto text-base text-marca-oscura">{detalle.name}</Text>
+            <Text className="font-roboto text-sm text-texto/70">{detalle.email}</Text>
+            {detalle.phone ? (
+              <Text className="font-roboto text-sm text-texto/70">{detalle.phone}</Text>
+            ) : null}
+            <Text className="font-roboto text-sm text-texto/55">
+              {formatoFechaHora(detalle.createdAt)}
+            </Text>
+            <Text className="mt-2 font-roboto text-base leading-6 text-marca-oscura">
+              {detalle.message}
+            </Text>
             <AccionesAdmin>
-              <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
-              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => tab.detalle && onEliminar(tab.detalle)} />
+              <EnlaceAdmin
+                etiqueta="EDITAR"
+                onPress={() => {
+                  setDetalle(null);
+                  abrir(detalle);
+                }}
+              />
+              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
             </AccionesAdmin>
           </View>
         ) : null}

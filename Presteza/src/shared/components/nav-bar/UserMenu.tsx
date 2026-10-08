@@ -18,15 +18,17 @@ export function UserMenu({ visible, onClose }: UserMenuProps) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable onPress={onClose} className="flex-1 items-center justify-center bg-marca-oscura/70 px-6">
+      <Pressable
+        onPress={onClose}
+        className="flex-1 items-center justify-center bg-marca-oscura/70 px-6">
         <Pressable onPress={() => {}} className="w-full overflow-hidden rounded-[32px] bg-crema">
           <View className="items-center bg-marca-oscura px-6 pb-8 pt-7">
             <View className="mb-3">
               <SelloP size="md" />
             </View>
-            <Text className="text-[10px] tracking-[3px] text-oro">MESA RESERVADA</Text>
-            <Text className="mt-1 text-2xl font-extrabold text-crema">{user.name}</Text>
-            <Text className="mt-1 text-sm text-oro/80">{user.email}</Text>
+            <Text className="font-roboto text-[10px] tracking-[3px] text-oro">MESA RESERVADA</Text>
+            <Text className="mt-1 font-roboto-extrabold text-2xl text-crema">{user.name}</Text>
+            <Text className="mt-1 font-roboto text-sm text-oro/80">{user.email}</Text>
           </View>
 
           <Pressable
@@ -39,7 +41,7 @@ export function UserMenu({ visible, onClose }: UserMenuProps) {
               <View className="h-10 w-10 items-center justify-center rounded-full bg-marca-oscura">
                 <IconoNav name="person-outline" size={18} className="text-oro" />
               </View>
-              <Text className="text-base font-semibold text-marca-oscura">Mi Perfil</Text>
+              <Text className="font-roboto-semibold text-base text-marca-oscura">Mi Perfil</Text>
             </View>
             <IconoNav name="chevron-forward" size={16} className="text-oro" />
           </Pressable>
@@ -52,7 +54,7 @@ export function UserMenu({ visible, onClose }: UserMenuProps) {
             }}
             className="mx-4 mb-5 mt-2 flex-row items-center justify-center gap-2 rounded-2xl py-4">
             <IconoNav name="log-out-outline" size={18} className="text-marca" />
-            <Text className="font-semibold text-marca">Cerrar sesión</Text>
+            <Text className="font-roboto-semibold text-marca">Cerrar sesión</Text>
           </Pressable>
         </Pressable>
       </Pressable>

@@ -71,13 +71,17 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
             <Plato uri={principal.imageUrl} size={168} />
           </Pressable>
           <Pressable
-            onPress={() => addItem({ id: segundo.id, productName: segundo.name, unitPrice: segundo.price })}
+            onPress={() =>
+              addItem({ id: segundo.id, productName: segundo.name, unitPrice: segundo.price })
+            }
             className="absolute right-2 top-0">
             <Plato uri={segundo.imageUrl} size={108} />
           </Pressable>
           {postre ? (
             <Pressable
-              onPress={() => addItem({ id: postre.id, productName: postre.name, unitPrice: postre.price })}
+              onPress={() =>
+                addItem({ id: postre.id, productName: postre.name, unitPrice: postre.price })
+              }
               className="absolute bottom-0 right-10">
               <Plato uri={postre.imageUrl} size={92} />
             </Pressable>
@@ -87,12 +91,16 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
         {PRODUCTOS_DESTACADOS.map((plato, index) => (
           <Pressable
             key={plato.id}
-            onPress={() => addItem({ id: plato.id, productName: plato.name, unitPrice: plato.price })}
+            onPress={() =>
+              addItem({ id: plato.id, productName: plato.name, unitPrice: plato.price })
+            }
             className="flex-row items-baseline py-3.5">
-            <Text className="w-7 text-[10px] text-oro">{String(index + 1).padStart(2, '0')}</Text>
-            <Text className="text-lg font-light text-crema">{plato.name}</Text>
+            <Text className="w-7 font-roboto text-[10px] text-oro">
+              {String(index + 1).padStart(2, '0')}
+            </Text>
+            <Text className="font-roboto-light text-lg text-crema">{plato.name}</Text>
             <View className="mx-2 mb-1 h-px flex-1 bg-oro/35" />
-            <Text className="text-oro">{formatCOP(plato.price)}</Text>
+            <Text className="font-roboto text-oro">{formatCOP(plato.price)}</Text>
           </Pressable>
         ))}
       </TarjetaPerfil>
@@ -108,13 +116,17 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
         ) : (
           <View>
             {platosFavoritos.map((plato, index) => (
-              <View key={plato.id || plato._id} className="flex-row items-baseline border-b border-oro/20 py-3.5">
-                <Text className="w-7 text-[10px] text-oro">{String(index + 1).padStart(2, '0')}</Text>
-                <Text className="text-lg font-light text-crema">{plato.name}</Text>
+              <View
+                key={plato.id || plato._id}
+                className="flex-row items-baseline border-b border-oro/20 py-3.5">
+                <Text className="w-7 font-roboto text-[10px] text-oro">
+                  {String(index + 1).padStart(2, '0')}
+                </Text>
+                <Text className="font-roboto-light text-lg text-crema">{plato.name}</Text>
                 {plato.price ? (
                   <>
                     <View className="mx-2 mb-1 h-px flex-1 bg-oro/35" />
-                    <Text className="text-oro">{formatCOP(plato.price)}</Text>
+                    <Text className="font-roboto text-oro">{formatCOP(plato.price)}</Text>
                   </>
                 ) : null}
               </View>

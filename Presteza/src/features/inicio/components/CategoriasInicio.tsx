@@ -20,7 +20,9 @@ export function CategoriasInicio() {
   return (
     <View className="bg-marca-oscura px-5 pb-12">
       <MarcaCurso numero="III" nombre="NUESTRA CARTA" />
-      <Text className="mb-5 text-sm text-crema/55">Elige una categoría y entra al menú.</Text>
+      <Text className="mb-5 font-roboto text-sm text-crema/55">
+        Elige una categoría y entra al menú.
+      </Text>
 
       <View className="items-center">
         <View style={{ width: LIENZO, height: LIENZO + 28 }}>
@@ -80,8 +82,8 @@ export function CategoriasInicio() {
                 borderWidth: 1,
                 borderColor: 'rgba(212,175,119,0.35)',
               }}>
-              <Text className="text-[10px] tracking-[3px] text-oro">MENÚ</Text>
-              <Text className="text-xl font-light text-crema">Carta</Text>
+              <Text className="font-roboto text-[10px] tracking-[3px] text-oro">MENÚ</Text>
+              <Text className="font-roboto-light text-xl text-crema">Carta</Text>
             </View>
           </Pressable>
         </View>
@@ -90,13 +92,7 @@ export function CategoriasInicio() {
   );
 }
 
-function RadioOro({
-  index,
-  giro,
-}: {
-  index: number;
-  giro: Animated.SharedValue<number>;
-}) {
+function RadioOro({ index, giro }: { index: number; giro: Animated.SharedValue<number> }) {
   const base = (index / CATEGORIAS.length) * 360 - 90;
 
   const estilo = useAnimatedStyle(() => ({
@@ -179,7 +175,9 @@ function Satelite({
       ]}>
       <Pressable onPress={() => router.push('/menu')}>
         <Plato uri={categoria.imageUrl} size={TAM} />
-        <Text className="mt-1 text-center text-[11px] tracking-[1px] text-crema">{categoria.name}</Text>
+        <Text className="mt-1 text-center font-roboto text-[11px] tracking-[1px] text-crema">
+          {categoria.name}
+        </Text>
       </Pressable>
     </Animated.View>
   );

@@ -25,7 +25,7 @@ export function TabReservas({ onCambio }: TabReservasProps) {
 
       {reservas.edicion ? (
         <Comanda>
-          <Text className="mb-3 text-sm text-texto/55">
+          <Text className="mb-3 font-roboto text-sm text-texto/55">
             Mesa {reservas.edicion.mesa}. La mesa no se puede cambiar.
           </Text>
           <FormularioReserva
@@ -50,25 +50,35 @@ export function TabReservas({ onCambio }: TabReservasProps) {
               indice={index}
               titulo={`Mesa ${reserva.tableNumber}`}
               sello={reservas.textoEstado(reserva.status).toUpperCase()}>
-              <Text className="mt-1 text-sm text-crema/70">
+              <Text className="mt-1 font-roboto text-sm text-crema/70">
                 {reserva.date} · {reserva.time}
               </Text>
-              <Text className="mt-1 text-sm text-crema/45">
+              <Text className="mt-1 font-roboto text-sm text-crema/45">
                 {reserva.numberOfPeople} {reserva.numberOfPeople === 1 ? 'persona' : 'personas'}
               </Text>
               {reserva.specialRequests ? (
-                <Text className="mt-2 text-sm italic text-crema/50">{reserva.specialRequests}</Text>
+                <Text className="mt-2 font-roboto text-sm italic text-crema/50">
+                  {reserva.specialRequests}
+                </Text>
               ) : null}
               {reserva.createdAt ? (
-                <Text className="mt-2 text-xs text-crema/35">Hecha el {formatFecha(reserva.createdAt)}</Text>
+                <Text className="mt-2 font-roboto text-xs text-crema/35">
+                  Hecha el {formatFecha(reserva.createdAt)}
+                </Text>
               ) : null}
               {reserva.status === 'cancelled' ? (
-                <Text className="mt-2 text-sm text-red-300">Esta reserva fue cancelada.</Text>
+                <Text className="mt-2 font-roboto text-sm text-red-300">
+                  Esta reserva fue cancelada.
+                </Text>
               ) : null}
               {reservas.sePuedeEditar(reserva) ? (
                 <AccionesFila>
                   <EnlaceAccion etiqueta="EDITAR" onPress={() => reservas.editar(reserva)} />
-                  <EnlaceAccion etiqueta="ELIMINAR" onPress={() => reservas.eliminar(reserva)} peligro />
+                  <EnlaceAccion
+                    etiqueta="ELIMINAR"
+                    onPress={() => reservas.eliminar(reserva)}
+                    peligro
+                  />
                 </AccionesFila>
               ) : null}
             </LineaCuenta>

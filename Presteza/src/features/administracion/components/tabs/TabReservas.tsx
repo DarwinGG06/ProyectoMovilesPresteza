@@ -43,7 +43,9 @@ export function TabReservas({ reservas }: TabReservasProps) {
   const acciones = (reserva: Reserva) => (
     <AccionesAdmin>
       <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(reserva)} />
-      {reserva.status === 'pending' ? <EnlaceAdmin etiqueta="CONFIRMAR" onPress={() => reservas.confirmar(reserva)} /> : null}
+      {reserva.status === 'pending' ? (
+        <EnlaceAdmin etiqueta="CONFIRMAR" onPress={() => reservas.confirmar(reserva)} />
+      ) : null}
       {reservas.sePuedeEditar(reserva) ? (
         <EnlaceAdmin etiqueta="CANCELAR" peligro onPress={() => reservas.cancelar(reserva)} />
       ) : null}
@@ -81,7 +83,11 @@ export function TabReservas({ reservas }: TabReservasProps) {
         ) : null}
 
         {reservas.lista.length === 0 ? (
-          <EstadoVacioAdmin icono="calendar-outline" titulo="Sin reservas" texto="Crea una mesa o espera a que reserven." />
+          <EstadoVacioAdmin
+            icono="calendar-outline"
+            titulo="Sin reservas"
+            texto="Crea una mesa o espera a que reserven."
+          />
         ) : vista === 'lista' ? (
           <View>
             <EncabezadoTabla
@@ -94,20 +100,24 @@ export function TabReservas({ reservas }: TabReservasProps) {
             {reservas.lista.map((reserva) => (
               <FilaTabla key={reservas.idDe(reserva)}>
                 <CeldaTabla flex={1.1}>
-                  <Text className="text-sm font-light text-white">Mesa {reserva.tableNumber}</Text>
-                  <Text className="mt-0.5 text-[11px] text-crema/55" numberOfLines={1}>
+                  <Text className="font-roboto-light text-sm text-white">
+                    Mesa {reserva.tableNumber}
+                  </Text>
+                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/55" numberOfLines={1}>
                     {reserva.userName || 'Cliente'}
                   </Text>
                   {acciones(reserva)}
                 </CeldaTabla>
                 <CeldaTabla flex={1}>
-                  <Text className="text-sm text-crema/70">
+                  <Text className="font-roboto text-sm text-crema/70">
                     {reserva.date} · {reserva.time}
                   </Text>
-                  <Text className="mt-0.5 text-[11px] text-crema/45">{reserva.numberOfPeople} personas</Text>
+                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/45">
+                    {reserva.numberOfPeople} personas
+                  </Text>
                 </CeldaTabla>
                 <CeldaTabla ancho={86}>
-                  <Text className="text-[10px] tracking-[1px] text-oro">
+                  <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
                     {reservas.textoEstado(reserva.status).toUpperCase()}
                   </Text>
                 </CeldaTabla>
@@ -118,13 +128,19 @@ export function TabReservas({ reservas }: TabReservasProps) {
           <GrillaAdmin>
             {reservas.lista.map((reserva) => (
               <CajaCuadricula key={reservas.idDe(reserva)}>
-                <Text className="text-[10px] tracking-[1px] text-oro">{reservas.textoEstado(reserva.status).toUpperCase()}</Text>
-                <Text className="mt-1 text-xl font-light text-white">Mesa {reserva.tableNumber}</Text>
-                <Text className="mt-1 text-sm text-crema/55">
+                <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                  {reservas.textoEstado(reserva.status).toUpperCase()}
+                </Text>
+                <Text className="mt-1 font-roboto-light text-xl text-white">
+                  Mesa {reserva.tableNumber}
+                </Text>
+                <Text className="mt-1 font-roboto text-sm text-crema/55">
                   {reserva.date} · {reserva.time}
                 </Text>
-                <Text className="mt-1 text-sm text-crema">{reserva.numberOfPeople} personas</Text>
-                <Text className="mt-2 text-sm text-crema/70" numberOfLines={1}>
+                <Text className="mt-1 font-roboto text-sm text-crema">
+                  {reserva.numberOfPeople} personas
+                </Text>
+                <Text className="mt-2 font-roboto text-sm text-crema/70" numberOfLines={1}>
                   {reserva.userName || 'Cliente'}
                 </Text>
                 {acciones(reserva)}
@@ -134,7 +150,10 @@ export function TabReservas({ reservas }: TabReservasProps) {
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={abierto} titulo={editando ? 'Editar reserva' : 'Nueva reserva'} onCerrar={() => setAbierto(false)}>
+      <ModalAdmin
+        visible={abierto}
+        titulo={editando ? 'Editar reserva' : 'Nueva reserva'}
+        onCerrar={() => setAbierto(false)}>
         <FormularioReservaAdmin
           key={editando ? reservas.idDe(editando) : 'nueva'}
           valores={reservas.valoresDe(editando ?? undefined)}

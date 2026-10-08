@@ -20,8 +20,12 @@ export function NavBar() {
             <Pressable onPress={nav.irAlInicio} className="flex-row items-center gap-2 pl-1">
               <SelloP size="sm" />
               <View>
-                <Text className="text-lg font-extrabold tracking-[4px] text-crema">PRESTEZA</Text>
-                <Text className="-mt-0.5 text-[9px] tracking-[2px] text-oro">MANIZALES</Text>
+                <Text className="font-roboto-extrabold text-lg tracking-[4px] text-crema">
+                  PRESTEZA
+                </Text>
+                <Text className="-mt-0.5 font-roboto text-[9px] tracking-[2px] text-oro">
+                  MANIZALES
+                </Text>
               </View>
             </Pressable>
 
@@ -33,7 +37,9 @@ export function NavBar() {
                   <Animated.View
                     style={{ transform: [{ scale: nav.pulso }] }}
                     className="absolute -right-0.5 -top-0.5 min-h-[16px] min-w-[16px] items-center justify-center rounded-full bg-oro px-1">
-                    <Text className="text-[9px] font-extrabold text-marca-oscura">{nav.totalItems}</Text>
+                    <Text className="font-roboto-extrabold text-[9px] text-marca-oscura">
+                      {nav.totalItems}
+                    </Text>
                   </Animated.View>
                 ) : null}
               </View>
@@ -68,7 +74,10 @@ function BotonIsla({
         destacado ? 'bg-oro' : 'border border-oro/40 bg-white/5'
       }`}>
       {inicial ? (
-        <Text className={`text-[15px] font-semibold ${destacado ? 'text-marca-oscura' : 'text-oro'}`}>{inicial}</Text>
+        <Text
+          className={`font-roboto-semibold text-[15px] ${destacado ? 'text-marca-oscura' : 'text-oro'}`}>
+          {inicial}
+        </Text>
       ) : (
         <IconoNav name={icono} size={18} className={destacado ? 'text-marca-oscura' : 'text-oro'} />
       )}

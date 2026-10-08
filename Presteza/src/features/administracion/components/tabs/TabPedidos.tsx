@@ -77,14 +77,16 @@ export function TabPedidos({
 
   const lista = useMemo(() => {
     const ordenados = [...pedidos].sort(
-      (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime(),
+      (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
     );
     if (filtro === 'all') return ordenados;
     return ordenados.filter((pedido) => {
       const estado = pedido.status;
       if (filtro === 'pending') return estado === 'pending' || estado === 'pendiente';
-      if (filtro === 'preparing') return estado === 'preparing' || estado === 'en_proceso' || estado === 'Preparando';
-      if (filtro === 'ready') return estado === 'ready' || estado === 'completado' || estado === 'listo';
+      if (filtro === 'preparing')
+        return estado === 'preparing' || estado === 'en_proceso' || estado === 'Preparando';
+      if (filtro === 'ready')
+        return estado === 'ready' || estado === 'completado' || estado === 'listo';
       if (filtro === 'delivered') return estado === 'delivered' || estado === 'entregado';
       return true;
     });
@@ -135,13 +137,22 @@ export function TabPedidos({
         {filtrosAbiertos ? (
           <FilaFiltros>
             {FILTROS.map((item) => (
-              <ChipFiltro key={item.id} etiqueta={item.etiqueta} activo={filtro === item.id} onPress={() => setFiltro(item.id)} />
+              <ChipFiltro
+                key={item.id}
+                etiqueta={item.etiqueta}
+                activo={filtro === item.id}
+                onPress={() => setFiltro(item.id)}
+              />
             ))}
           </FilaFiltros>
         ) : null}
 
         {lista.length === 0 ? (
-          <EstadoVacioAdmin icono="receipt-outline" titulo="Sin pedidos" texto="Crea una comanda o espera a que lleguen." />
+          <EstadoVacioAdmin
+            icono="receipt-outline"
+            titulo="Sin pedidos"
+            texto="Crea una comanda o espera a que lleguen."
+          />
         ) : vista === 'lista' ? (
           <View>
             <EncabezadoTabla
@@ -154,22 +165,26 @@ export function TabPedidos({
             {lista.map((pedido) => (
               <FilaTabla key={idDe(pedido)}>
                 <CeldaTabla flex={1.2}>
-                  <Text className="text-sm font-light text-white">#{idDe(pedido).slice(-8).toUpperCase()}</Text>
-                  <Text className="mt-0.5 text-[10px] tracking-[1px] text-oro">
+                  <Text className="font-roboto-light text-sm text-white">
+                    #{idDe(pedido).slice(-8).toUpperCase()}
+                  </Text>
+                  <Text className="mt-0.5 font-roboto text-[10px] tracking-[1px] text-oro">
                     {textoEstadoPedido(pedido.status).toUpperCase()}
                   </Text>
                   {acciones(pedido)}
                 </CeldaTabla>
                 <CeldaTabla flex={0.9}>
-                  <Text className="text-sm text-crema/70" numberOfLines={1}>
+                  <Text className="font-roboto text-sm text-crema/70" numberOfLines={1}>
                     {pedido.user_name || 'Cliente'}
                   </Text>
-                  <Text className="mt-0.5 text-[11px] text-crema/40" numberOfLines={1}>
+                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/40" numberOfLines={1}>
                     {formatoFechaHora(pedido.createdAt)}
                   </Text>
                 </CeldaTabla>
                 <CeldaTabla ancho={82} derecha>
-                  <Text className="text-right text-sm text-oro">{formatCOP(pedido.total || 0)}</Text>
+                  <Text className="text-right font-roboto text-sm text-oro">
+                    {formatCOP(pedido.total || 0)}
+                  </Text>
                 </CeldaTabla>
               </FilaTabla>
             ))}
@@ -178,13 +193,21 @@ export function TabPedidos({
           <GrillaAdmin>
             {lista.map((pedido) => (
               <CajaCuadricula key={idDe(pedido)}>
-                <Text className="text-[10px] tracking-[1px] text-oro">{textoEstadoPedido(pedido.status).toUpperCase()}</Text>
-                <Text className="mt-1 text-base font-light text-white">#{idDe(pedido).slice(-8).toUpperCase()}</Text>
-                <Text className="mt-1 text-sm text-crema/55" numberOfLines={1}>
+                <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                  {textoEstadoPedido(pedido.status).toUpperCase()}
+                </Text>
+                <Text className="mt-1 font-roboto-light text-base text-white">
+                  #{idDe(pedido).slice(-8).toUpperCase()}
+                </Text>
+                <Text className="mt-1 font-roboto text-sm text-crema/55" numberOfLines={1}>
                   {pedido.user_name || 'Cliente'}
                 </Text>
-                <Text className="mt-1 text-[11px] text-crema/40">{formatoFechaHora(pedido.createdAt)}</Text>
-                <Text className="mt-2 text-lg text-oro">{formatCOP(pedido.total || 0)}</Text>
+                <Text className="mt-1 font-roboto text-[11px] text-crema/40">
+                  {formatoFechaHora(pedido.createdAt)}
+                </Text>
+                <Text className="mt-2 font-roboto text-lg text-oro">
+                  {formatCOP(pedido.total || 0)}
+                </Text>
                 {acciones(pedido)}
               </CajaCuadricula>
             ))}
@@ -192,7 +215,10 @@ export function TabPedidos({
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={abierto} titulo={editando ? 'Editar pedido' : 'Nuevo pedido'} onCerrar={() => setAbierto(false)}>
+      <ModalAdmin
+        visible={abierto}
+        titulo={editando ? 'Editar pedido' : 'Nuevo pedido'}
+        onCerrar={() => setAbierto(false)}>
         <FormularioPedido
           key={editando ? idDe(editando) : 'nuevo'}
           valores={valoresDe(editando ?? undefined, clientes[0]?.id ?? '')}
@@ -204,20 +230,37 @@ export function TabPedidos({
         />
       </ModalAdmin>
 
-      <ModalAdmin visible={Boolean(detalle)} titulo={detalle ? `#${idDe(detalle).slice(-8).toUpperCase()}` : 'Pedido'} onCerrar={() => setDetalle(null)}>
+      <ModalAdmin
+        visible={Boolean(detalle)}
+        titulo={detalle ? `#${idDe(detalle).slice(-8).toUpperCase()}` : 'Pedido'}
+        onCerrar={() => setDetalle(null)}>
         {detalle ? (
           <View className="gap-3">
-            <Text className="text-sm text-texto/70">{detalle.user_name || 'Cliente'}</Text>
-            <Text className="text-sm text-texto/55">{textoEstadoPedido(detalle.status)}</Text>
-            <Text className="text-sm text-texto/55">{formatoFechaHora(detalle.createdAt)}</Text>
+            <Text className="font-roboto text-sm text-texto/70">
+              {detalle.user_name || 'Cliente'}
+            </Text>
+            <Text className="font-roboto text-sm text-texto/55">
+              {textoEstadoPedido(detalle.status)}
+            </Text>
+            <Text className="font-roboto text-sm text-texto/55">
+              {formatoFechaHora(detalle.createdAt)}
+            </Text>
             {(detalle.products ?? []).map((producto, index) => (
-              <Text key={`${producto.dishId}-${index}`} className="text-base text-marca-oscura">
+              <Text
+                key={`${producto.dishId}-${index}`}
+                className="font-roboto text-base text-marca-oscura">
                 {producto.quantity} × {producto.name}
               </Text>
             ))}
-            <Text className="text-lg text-marca">{formatCOP(detalle.total || 0)}</Text>
+            <Text className="font-roboto text-lg text-marca">{formatCOP(detalle.total || 0)}</Text>
             <AccionesAdmin>
-              <EnlaceAdmin etiqueta="EDITAR" onPress={() => { setDetalle(null); abrir(detalle); }} />
+              <EnlaceAdmin
+                etiqueta="EDITAR"
+                onPress={() => {
+                  setDetalle(null);
+                  abrir(detalle);
+                }}
+              />
               <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
             </AccionesAdmin>
           </View>

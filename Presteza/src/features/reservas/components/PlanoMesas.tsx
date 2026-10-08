@@ -30,16 +30,22 @@ export function PlanoMesas({
   return (
     <View className="overflow-hidden rounded-[28px] border border-oro/35 bg-marca-oscura">
       <View className="px-4 pb-2 pt-5">
-        <Text className="text-center text-[10px] tracking-[4px] text-oro">SALÓN PRESTEZA</Text>
-        <Text className="mt-1 text-center text-2xl font-light text-crema">Elige tu mesa</Text>
-        <Text className="mb-4 mt-1 text-center text-sm text-crema/60">Toca una mesa libre.</Text>
+        <Text className="text-center font-roboto text-[10px] tracking-[4px] text-oro">
+          SALÓN PRESTEZA
+        </Text>
+        <Text className="mt-1 text-center font-roboto-light text-2xl text-crema">
+          Elige tu mesa
+        </Text>
+        <Text className="mb-4 mt-1 text-center font-roboto text-sm text-crema/60">
+          Toca una mesa libre.
+        </Text>
         <LeyendaMesas />
       </View>
 
       <View className="bg-crema px-2 pb-2 pt-4">
         {grupos.map((grupo) => (
           <View key={grupo.capacity} className="mb-4">
-            <Text className="mb-2 text-center text-[10px] tracking-[3px] text-marca">
+            <Text className="mb-2 text-center font-roboto text-[10px] tracking-[3px] text-marca">
               {etiquetaCapacidad(grupo.capacity)}
             </Text>
             <View className="flex-row flex-wrap">
@@ -59,21 +65,25 @@ export function PlanoMesas({
       </View>
 
       <View className="px-4 py-5">
-        <Text className="mb-3 text-[11px] tracking-[3px] text-oro">OTRAS OPCIONES</Text>
+        <Text className="mb-3 font-roboto text-[11px] tracking-[3px] text-oro">OTRAS OPCIONES</Text>
         <View className="flex-row gap-3">
           <Pressable
             onPress={onBarra}
             className={`flex-1 rounded-2xl border px-3 py-4 ${barra ? 'border-oro bg-oro' : 'border-oro/35 bg-crema'}`}>
             <IconoNav name="wine-outline" size={22} className="text-marca-oscura" />
-            <Text className="mt-2 text-[11px] tracking-[2px] text-marca-oscura">BARRA</Text>
-            <Text className="mt-1 text-xs text-texto/60">1 o más personas</Text>
+            <Text className="mt-2 font-roboto text-[11px] tracking-[2px] text-marca-oscura">
+              BARRA
+            </Text>
+            <Text className="mt-1 font-roboto text-xs text-texto/60">1 o más personas</Text>
           </Pressable>
           <Pressable
             onPress={onPersonalizada}
             className={`flex-1 rounded-2xl border px-3 py-4 ${personalizada ? 'border-oro bg-oro' : 'border-oro/35 bg-crema'}`}>
             <IconoNav name="sparkles-outline" size={22} className="text-marca-oscura" />
-            <Text className="mt-2 text-[11px] tracking-[2px] text-marca-oscura">A TU MEDIDA</Text>
-            <Text className="mt-1 text-xs text-texto/60">Grupo grande</Text>
+            <Text className="mt-2 font-roboto text-[11px] tracking-[2px] text-marca-oscura">
+              A TU MEDIDA
+            </Text>
+            <Text className="mt-1 font-roboto text-xs text-texto/60">Grupo grande</Text>
           </Pressable>
         </View>
       </View>
@@ -113,8 +123,9 @@ function TarjetaMesa({
         seleccionada ? 'border-oro bg-oro/20' : 'border-transparent'
       }`}>
       <IconoMesa ocupada={ocupada} />
-      <Text className="mt-1 text-[14px] font-medium text-[#2c2c2c]">Mesa {numero}</Text>
-      <Text className={`text-[12px] ${ocupada ? 'font-medium text-[#e53935]' : 'text-[#8d8d8d]'}`}>
+      <Text className="mt-1 font-roboto-medium text-[14px] text-[#2c2c2c]">Mesa {numero}</Text>
+      <Text
+        className={`font-roboto text-[12px] ${ocupada ? 'font-roboto-medium text-[#e53935]' : 'text-[#8d8d8d]'}`}>
         {ocupada ? 'Ocupada' : 'Libre'}
       </Text>
     </Pressable>

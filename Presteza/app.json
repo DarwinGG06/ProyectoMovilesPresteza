@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#3a0c20"
+      "backgroundColor": "#4d000a"
     },
     "ios": {
       "supportsTablet": true
@@ -20,7 +20,7 @@
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#3a0c20"
+        "backgroundColor": "#4d000a"
       },
       "package": "com.rafamontosteam.presteza"
     },
@@ -32,12 +32,13 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash.png",
-          "backgroundColor": "#3a0c20"
+          "backgroundColor": "#4d000a"
         }
       ],
       "expo-status-bar",
       "expo-router",
-      "expo-asset"
+      "expo-asset",
+      "expo-font"
     ],
     "experiments": {
       "tsconfigPaths": true,

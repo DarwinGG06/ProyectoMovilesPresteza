@@ -20,8 +20,8 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
 
   return (
     <View className="overflow-hidden rounded-2xl bg-[#6b1d3d] px-4 py-4">
-      <Text className="text-[10px] font-semibold tracking-[2px] text-oro">HORA</Text>
-      <Text className="mt-1 text-xs text-crema/70">
+      <Text className="font-roboto-semibold text-[10px] tracking-[2px] text-oro">HORA</Text>
+      <Text className="mt-1 font-roboto text-xs text-crema/70">
         {etiquetaDias} · {etiquetaHorario}
       </Text>
 
@@ -33,8 +33,8 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
         </Pressable>
 
         <View className="items-center px-2">
-          <Text className="text-3xl font-light text-crema">{hora || '--:--'}</Text>
-          <Text className="mt-1 text-[10px] tracking-[1px] text-oro">
+          <Text className="font-roboto-light text-3xl text-crema">{hora || '--:--'}</Text>
+          <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-oro">
             {hora ? 'DENTRO DEL HORARIO' : 'ELIGE CON LAS FLECHAS'}
           </Text>
         </View>
@@ -54,14 +54,17 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
               key={item}
               onPress={() => elegir(item)}
               className={`rounded-full px-2.5 py-1 ${activa ? 'bg-oro' : 'bg-white/10'}`}>
-              <Text className={`text-[10px] ${activa ? 'text-marca-oscura' : 'text-crema/80'}`}>{item}</Text>
+              <Text
+                className={`font-roboto text-[10px] ${activa ? 'text-marca-oscura' : 'text-crema/80'}`}>
+                {item}
+              </Text>
             </Pressable>
           );
         })}
       </View>
 
       {aviso || error ? (
-        <Text className="mt-3 text-center text-xs font-semibold text-[#ffd0a8]">
+        <Text className="mt-3 text-center font-roboto-semibold text-xs text-[#ffd0a8]">
           {aviso ?? error}
         </Text>
       ) : null}

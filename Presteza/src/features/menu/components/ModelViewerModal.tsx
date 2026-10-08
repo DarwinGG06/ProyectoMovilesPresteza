@@ -13,7 +13,12 @@ interface ModelViewerModalProps {
   productName: string | null;
 }
 
-export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: ModelViewerModalProps) {
+export function ModelViewerModal({
+  isVisible,
+  onClose,
+  modelUrl,
+  productName,
+}: ModelViewerModalProps) {
   const { fuente, procesando } = useModelo3d(modelUrl);
 
   if (!modelUrl) return null;
@@ -65,19 +70,14 @@ export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: 
   `;
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={isVisible}
-      onRequestClose={onClose}
-    >
+    <Modal animationType="slide" transparent={false} visible={isVisible} onRequestClose={onClose}>
       <SafeAreaView className="flex-1 bg-marca-oscura">
         {/* Cabecera del Modal */}
-        <View className="flex-row items-center justify-between px-5 py-4 border-b border-white/10">
-          <Text className="text-xl font-bold text-crema" numberOfLines={1}>
+        <View className="flex-row items-center justify-between border-b border-white/10 px-5 py-4">
+          <Text className="font-roboto-bold text-xl text-crema" numberOfLines={1}>
             {productName || 'Vista 3D'}
           </Text>
-          <TouchableOpacity onPress={onClose} className="p-2 rounded-full bg-black/30">
+          <TouchableOpacity onPress={onClose} className="rounded-full bg-black/30 p-2">
             <Ionicons name="close" size={24} color="#d4af77" />
           </TouchableOpacity>
         </View>
@@ -87,7 +87,9 @@ export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: 
           {procesando ? (
             <View className="flex-1 items-center justify-center bg-marca-oscura">
               <ActivityIndicator size="large" color="#d4af77" />
-              <Text className="text-[#d4af77] mt-4">Procesando archivo 3D local...</Text>
+              <Text className="mt-4 font-roboto text-[#d4af77]">
+                Procesando archivo 3D local...
+              </Text>
             </View>
           ) : (
             <WebView
@@ -105,16 +107,18 @@ export function ModelViewerModal({ isVisible, onClose, modelUrl, productName }: 
               renderLoading={() => (
                 <View className="absolute inset-0 items-center justify-center bg-marca-oscura">
                   <ActivityIndicator size="large" color="#d4af77" />
-                  <Text className="text-[#d4af77] mt-4">Iniciando visor...</Text>
+                  <Text className="mt-4 font-roboto text-[#d4af77]">Iniciando visor...</Text>
                 </View>
               )}
             />
           )}
         </View>
-        
+
         {/* Controles de instrucción */}
-        <View className="px-5 py-3 items-center border-t border-white/10 bg-marca-oscura">
-            <Text className="text-xs text-crema/60">Gira con un dedo · Haz zoom pellizcando</Text>
+        <View className="items-center border-t border-white/10 bg-marca-oscura px-5 py-3">
+          <Text className="font-roboto text-xs text-crema/60">
+            Gira con un dedo · Haz zoom pellizcando
+          </Text>
         </View>
       </SafeAreaView>
     </Modal>

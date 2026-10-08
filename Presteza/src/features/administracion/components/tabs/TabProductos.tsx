@@ -29,7 +29,14 @@ type TabProductosProps = {
   onEliminar: (producto: ProductoAdmin) => void;
 };
 
-export function TabProductos({ productos, categorias, guardando, onGuardar, onAlternar, onEliminar }: TabProductosProps) {
+export function TabProductos({
+  productos,
+  categorias,
+  guardando,
+  onGuardar,
+  onAlternar,
+  onEliminar,
+}: TabProductosProps) {
   const tab = useTabProductos(productos, categorias, onGuardar);
 
   return (
@@ -54,7 +61,11 @@ export function TabProductos({ productos, categorias, guardando, onGuardar, onAl
         />
         {tab.filtrosAbiertos ? (
           <FilaFiltros>
-            <ChipFiltro etiqueta="TODOS" activo={!tab.categoriaFiltro} onPress={() => tab.setCategoriaFiltro('')} />
+            <ChipFiltro
+              etiqueta="TODOS"
+              activo={!tab.categoriaFiltro}
+              onPress={() => tab.setCategoriaFiltro('')}
+            />
             {categorias.map((categoria) => (
               <ChipFiltro
                 key={idDe(categoria)}
@@ -71,7 +82,9 @@ export function TabProductos({ productos, categorias, guardando, onGuardar, onAl
             <ChipFiltro
               etiqueta="OCULTOS"
               activo={tab.disponibilidad === 'oculto'}
-              onPress={() => tab.setDisponibilidad((prev) => (prev === 'oculto' ? 'all' : 'oculto'))}
+              onPress={() =>
+                tab.setDisponibilidad((prev) => (prev === 'oculto' ? 'all' : 'oculto'))
+              }
             />
           </FilaFiltros>
         ) : null}
@@ -97,7 +110,7 @@ export function TabProductos({ productos, categorias, guardando, onGuardar, onAl
                   <View className="flex-row items-center">
                     <FotoCarta uri={producto.imageUrl} alto={48} redonda />
                     <View className="ml-2 flex-1">
-                      <Text className="text-sm font-light text-white" numberOfLines={1}>
+                      <Text className="font-roboto-light text-sm text-white" numberOfLines={1}>
                         {producto.name}
                       </Text>
                       <AccionesCarta
@@ -110,12 +123,14 @@ export function TabProductos({ productos, categorias, guardando, onGuardar, onAl
                   </View>
                 </CeldaTabla>
                 <CeldaTabla ancho={78}>
-                  <Text className="text-[11px] text-crema/60" numberOfLines={2}>
+                  <Text className="font-roboto text-[11px] text-crema/60" numberOfLines={2}>
                     {tab.nombreCategoria(producto.categoryId)}
                   </Text>
                 </CeldaTabla>
                 <CeldaTabla ancho={82} derecha>
-                  <Text className="text-right text-sm text-oro">{formatCOP(producto.price || 0)}</Text>
+                  <Text className="text-right font-roboto text-sm text-oro">
+                    {formatCOP(producto.price || 0)}
+                  </Text>
                 </CeldaTabla>
               </FilaTabla>
             ))}
@@ -126,12 +141,16 @@ export function TabProductos({ productos, categorias, guardando, onGuardar, onAl
               <View key={idDe(producto)} className="mb-5 w-[48%] border border-oro/20 bg-marca/30">
                 <FotoCarta uri={producto.imageUrl} alto={132} ancha />
                 <View className="px-3 py-3">
-                  <Text className="text-[10px] tracking-[1px] text-oro">{tab.nombreCategoria(producto.categoryId).toUpperCase()}</Text>
-                  <Text className="mt-1 text-base font-light text-white" numberOfLines={2}>
+                  <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                    {tab.nombreCategoria(producto.categoryId).toUpperCase()}
+                  </Text>
+                  <Text className="mt-1 font-roboto-light text-base text-white" numberOfLines={2}>
                     {producto.name}
                   </Text>
-                  <Text className="mt-2 text-lg text-oro">{formatCOP(producto.price || 0)}</Text>
-                  <Text className="mt-1 text-[10px] tracking-[1px] text-crema/45">
+                  <Text className="mt-2 font-roboto text-lg text-oro">
+                    {formatCOP(producto.price || 0)}
+                  </Text>
+                  <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-crema/45">
                     {producto.available === false ? 'OCULTO' : 'EN CARTA'}
                   </Text>
                   <AccionesCarta
@@ -147,7 +166,10 @@ export function TabProductos({ productos, categorias, guardando, onGuardar, onAl
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={tab.abierto} titulo={tab.editando ? 'Editar plato' : 'Nuevo plato'} onCerrar={tab.cerrar}>
+      <ModalAdmin
+        visible={tab.abierto}
+        titulo={tab.editando ? 'Editar plato' : 'Nuevo plato'}
+        onCerrar={tab.cerrar}>
         <FormularioProducto
           key={idDe(tab.editando) || 'nuevo'}
           valores={tab.valoresFormulario}

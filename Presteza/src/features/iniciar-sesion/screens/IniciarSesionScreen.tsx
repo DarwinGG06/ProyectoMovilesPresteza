@@ -14,7 +14,9 @@ export function IniciarSesionScreen() {
 
   return (
     <ContenedorPantalla titulo="Iniciar sesión">
-      <Text className="mt-3 text-base text-texto/70">Entra con el correo que registraste.</Text>
+      <Text className="mt-3 font-roboto text-base text-texto/70">
+        Entra con el correo que registraste.
+      </Text>
 
       <View className="mt-8 gap-5">
         <Field

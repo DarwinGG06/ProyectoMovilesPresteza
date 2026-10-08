@@ -16,7 +16,7 @@ export function SelloP({ size = 'sm' }: SelloPProps) {
   return (
     <View className={`${m.caja} items-center justify-center rounded-full bg-oro`}>
       <View className={`${m.anillo} items-center justify-center rounded-full bg-marca-oscura`}>
-        <Text className={`${m.letra} font-extrabold text-oro`}>P</Text>
+        <Text className={`${m.letra} font-roboto-extrabold text-oro`}>P</Text>
       </View>
     </View>
   );

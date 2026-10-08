@@ -14,7 +14,12 @@ type BotonPerfilProps = {
   disabled?: boolean;
 };
 
-export function BotonPerfil({ etiqueta, onPress, variante = 'primario', disabled }: BotonPerfilProps) {
+export function BotonPerfil({
+  etiqueta,
+  onPress,
+  variante = 'primario',
+  disabled,
+}: BotonPerfilProps) {
   const clases =
     variante === 'primario'
       ? 'bg-marca-oscura'
@@ -25,8 +30,13 @@ export function BotonPerfil({ etiqueta, onPress, variante = 'primario', disabled
     variante === 'outline' ? 'text-oro' : variante === 'peligro' ? 'text-red-300' : 'text-crema';
 
   return (
-    <Pressable onPress={onPress} disabled={disabled} className={`px-4 py-3 ${clases} ${disabled ? 'opacity-50' : ''}`}>
-      <Text className={`text-center text-[11px] tracking-[2px] ${texto}`}>{etiqueta}</Text>
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      className={`px-4 py-3 ${clases} ${disabled ? 'opacity-50' : ''}`}>
+      <Text className={`text-center font-roboto text-[11px] tracking-[2px] ${texto}`}>
+        {etiqueta}
+      </Text>
     </Pressable>
   );
 }
@@ -41,9 +51,11 @@ export function FilaDato({
 }) {
   return (
     <View className="flex-row items-baseline py-3.5">
-      <Text className="w-[92px] text-[10px] tracking-[2px] text-crema">{etiqueta}</Text>
+      <Text className="w-[92px] font-roboto text-[10px] tracking-[2px] text-crema">{etiqueta}</Text>
       <View className="mx-2 mb-1 h-px flex-1 bg-oro" />
-      <Text className="max-w-[58%] text-right text-[17px] font-light text-white">{valor}</Text>
+      <Text className="max-w-[58%] text-right font-roboto-light text-[17px] text-white">
+        {valor}
+      </Text>
     </View>
   );
 }
@@ -68,11 +80,13 @@ export function LineaCuenta({
   return (
     <View className="border-b border-oro/20 py-5">
       <View className="flex-row items-start gap-3">
-        <Text className="mt-1 w-7 text-[10px] text-oro">{numero}</Text>
+        <Text className="mt-1 w-7 font-roboto text-[10px] text-oro">{numero}</Text>
         <View className="flex-1">
           <View className="flex-row items-baseline justify-between gap-3">
-            <Text className="flex-1 text-xl font-light text-crema">{titulo}</Text>
-            {sello ? <Text className="text-[10px] tracking-[2px] text-oro">{sello}</Text> : null}
+            <Text className="flex-1 font-roboto-light text-xl text-crema">{titulo}</Text>
+            {sello ? (
+              <Text className="font-roboto text-[10px] tracking-[2px] text-oro">{sello}</Text>
+            ) : null}
           </View>
           {children}
         </View>
@@ -92,7 +106,10 @@ export function EnlaceAccion({
 }) {
   return (
     <Pressable onPress={onPress} className="py-1 pr-4">
-      <Text className={`text-[11px] tracking-[2px] ${peligro ? 'text-red-300' : 'text-oro'}`}>{etiqueta}</Text>
+      <Text
+        className={`font-roboto text-[11px] tracking-[2px] ${peligro ? 'text-red-300' : 'text-oro'}`}>
+        {etiqueta}
+      </Text>
     </Pressable>
   );
 }
@@ -114,7 +131,11 @@ export function AccionesFormulario({
 }) {
   return (
     <View className="mt-5 gap-2">
-      <Button text={guardando ? 'GUARDANDO…' : etiquetaGuardar} onPress={onGuardar} disabled={guardando} />
+      <Button
+        text={guardando ? 'GUARDANDO…' : etiquetaGuardar}
+        onPress={onGuardar}
+        disabled={guardando}
+      />
       <Button text="CANCELAR" onPress={onCancelar} secondary />
     </View>
   );

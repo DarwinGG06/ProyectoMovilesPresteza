@@ -27,7 +27,7 @@ export function PantallaPestanaAdmin({ children }: PantallaPestanaAdminProps) {
         {user ? <HeroAdmin nombre={user.name} stats={stats} /> : null}
         <BarraTabsAdmin />
         <View className="px-5 pb-10 pt-6">
-          {error ? <Text className="mb-4 text-sm text-red-300">{error}</Text> : null}
+          {error ? <Text className="mb-4 font-roboto text-sm text-red-300">{error}</Text> : null}
           {children}
         </View>
         <Footer />

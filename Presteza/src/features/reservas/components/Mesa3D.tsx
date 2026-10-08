@@ -55,7 +55,13 @@ export function Mesa3D({ mesa, seleccionada, onPress }: Mesa3DProps) {
         {sillas
           .filter((silla) => silla.atras)
           .map((silla, index) => (
-            <Silla3D key={`atras-${index}`} x={silla.x} y={silla.y} ocupada={ocupada} seleccionada={seleccionada} />
+            <Silla3D
+              key={`atras-${index}`}
+              x={silla.x}
+              y={silla.y}
+              ocupada={ocupada}
+              seleccionada={seleccionada}
+            />
           ))}
 
         <View style={estilos.pie}>
@@ -74,7 +80,10 @@ export function Mesa3D({ mesa, seleccionada, onPress }: Mesa3DProps) {
               top: 26 + altoTapa - 2,
             },
           ]}>
-          <LinearGradient colors={ocupada ? ['#4a1c22', '#2a1014'] : ['#7a4a1c', '#4a2a10']} style={estilos.relleno} />
+          <LinearGradient
+            colors={ocupada ? ['#4a1c22', '#2a1014'] : ['#7a4a1c', '#4a2a10']}
+            style={estilos.relleno}
+          />
         </View>
 
         <View
@@ -89,23 +98,40 @@ export function Mesa3D({ mesa, seleccionada, onPress }: Mesa3DProps) {
               borderWidth: 3,
             },
           ]}>
-          <LinearGradient colors={[...madera]} start={{ x: 0.2, y: 0 }} end={{ x: 0.85, y: 1 }} style={estilos.relleno} />
+          <LinearGradient
+            colors={[...madera]}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 0.85, y: 1 }}
+            style={estilos.relleno}
+          />
           <View style={estilos.brillo} />
           <View style={[estilos.plato, ocupada && estilos.platoOcupado]} />
           {ocupada ? null : <View style={[estilos.llama, seleccionada && estilos.llamaAlta]} />}
-          <Text style={estilos.numero}>{mesa.id}</Text>
-          <Text style={estilos.capacidad}>{mesa.capacity}</Text>
+          <Text style={estilos.numero} className="font-roboto">
+            {mesa.id}
+          </Text>
+          <Text style={estilos.capacidad} className="font-roboto">
+            {mesa.capacity}
+          </Text>
         </View>
 
         {sillas
           .filter((silla) => !silla.atras)
           .map((silla, index) => (
-            <Silla3D key={`frente-${index}`} x={silla.x} y={silla.y} ocupada={ocupada} seleccionada={seleccionada} />
+            <Silla3D
+              key={`frente-${index}`}
+              x={silla.x}
+              y={silla.y}
+              ocupada={ocupada}
+              seleccionada={seleccionada}
+            />
           ))}
 
         {ocupada ? (
           <View style={estilos.sello}>
-            <Text style={estilos.textoSello}>OCUPADA</Text>
+            <Text style={estilos.textoSello} className="font-roboto">
+              OCUPADA
+            </Text>
           </View>
         ) : null}
       </Animated.View>
@@ -134,7 +160,13 @@ function Silla3D({
       />
       <View style={estilos.asiento}>
         <LinearGradient
-          colors={ocupada ? ['#8a454c', '#5a2a30'] : seleccionada ? ['#a34468', '#6b1d3d'] : ['#a56a40', '#6a4024']}
+          colors={
+            ocupada
+              ? ['#8a454c', '#5a2a30']
+              : seleccionada
+                ? ['#a34468', '#6b1d3d']
+                : ['#a56a40', '#6a4024']
+          }
           style={estilos.relleno}
         />
       </View>
@@ -244,14 +276,14 @@ const estilos = StyleSheet.create({
   numero: {
     color: '#2a0818',
     fontSize: 11,
-    fontWeight: '800',
+    fontFamily: 'Roboto_800ExtraBold',
     letterSpacing: 0.4,
     marginTop: 8,
   },
   capacidad: {
     color: 'rgba(42,8,24,0.7)',
     fontSize: 8,
-    fontWeight: '700',
+    fontFamily: 'Roboto_700Bold',
   },
   silla: {
     position: 'absolute',
@@ -293,7 +325,7 @@ const estilos = StyleSheet.create({
   textoSello: {
     color: '#fff',
     fontSize: 7,
-    fontWeight: '800',
+    fontFamily: 'Roboto_800ExtraBold',
     letterSpacing: 0.6,
   },
 });

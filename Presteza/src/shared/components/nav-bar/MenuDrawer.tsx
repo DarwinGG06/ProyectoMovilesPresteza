@@ -27,9 +27,18 @@ type MenuDrawerProps = {
 
 export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
   const { user } = useSession();
-  const enlaces = user?.role === 'admin'
-    ? [...ENLACES, { etiqueta: 'Administración', ruta: '/home/admin' as Href, icono: 'speedometer-outline' as NombreIcono, numero: '07' }]
-    : ENLACES;
+  const enlaces =
+    user?.role === 'admin'
+      ? [
+          ...ENLACES,
+          {
+            etiqueta: 'Administración',
+            ruta: '/home/admin' as Href,
+            icono: 'speedometer-outline' as NombreIcono,
+            numero: '07',
+          },
+        ]
+      : ENLACES;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -48,8 +57,12 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
           </View>
 
           <View className="mb-8 mt-6 px-6">
-            <Text className="text-[11px] tracking-[4px] text-oro">CARTA DE NAVEGACIÓN</Text>
-            <Text className="mt-1 text-4xl font-extrabold tracking-[6px] text-crema">PRESTEZA</Text>
+            <Text className="font-roboto text-[11px] tracking-[4px] text-oro">
+              CARTA DE NAVEGACIÓN
+            </Text>
+            <Text className="mt-1 font-roboto-extrabold text-4xl tracking-[6px] text-crema">
+              PRESTEZA
+            </Text>
             <View className="mt-3 h-px w-24 bg-oro" />
           </View>
 
@@ -70,7 +83,7 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
             ))}
           </View>
 
-          <Text className="mt-auto px-6 pb-8 text-center text-[11px] tracking-[3px] text-oro/70">
+          <Text className="mt-auto px-6 pb-8 text-center font-roboto text-[11px] tracking-[3px] text-oro/70">
             COMIDA PARA TODOS · MANIZALES
           </Text>
         </SafeAreaView>
@@ -99,8 +112,10 @@ function EnlaceEditorial({
   return (
     <Animated.View style={entrada}>
       <Pressable onPress={onPress} className="mb-1 flex-row items-center px-3 py-3.5">
-        <Text className="w-10 text-xs font-bold tracking-widest text-oro">{numero}</Text>
-        <Text className="flex-1 text-[26px] font-light tracking-wide text-crema">{etiqueta}</Text>
+        <Text className="w-10 font-roboto-bold text-xs tracking-widest text-oro">{numero}</Text>
+        <Text className="flex-1 font-roboto-light text-[26px] tracking-wide text-crema">
+          {etiqueta}
+        </Text>
         <IconoNav name={icono} size={18} className="text-oro/80" />
       </Pressable>
       <View className="ml-12 h-px bg-oro/15" />

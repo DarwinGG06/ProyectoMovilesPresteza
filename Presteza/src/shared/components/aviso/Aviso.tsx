@@ -39,13 +39,26 @@ function BotonAviso({
   disabled?: boolean;
 }) {
   const caja =
-    variante === 'oro' ? styles.botonOro : variante === 'peligro' ? styles.botonPeligro : styles.botonOutline;
+    variante === 'oro'
+      ? styles.botonOro
+      : variante === 'peligro'
+        ? styles.botonPeligro
+        : styles.botonOutline;
   const texto =
-    variante === 'oro' ? styles.textoOro : variante === 'peligro' ? styles.textoPeligro : styles.textoOutline;
+    variante === 'oro'
+      ? styles.textoOro
+      : variante === 'peligro'
+        ? styles.textoPeligro
+        : styles.textoOutline;
 
   return (
-    <Pressable onPress={onPress} disabled={disabled} style={[styles.boton, caja, disabled ? styles.apagado : null]}>
-      <Text style={[styles.botonEtiqueta, texto]}>{etiqueta}</Text>
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={[styles.boton, caja, disabled ? styles.apagado : null]}>
+      <Text style={[styles.botonEtiqueta, texto]} className="font-roboto">
+        {etiqueta}
+      </Text>
     </Pressable>
   );
 }
@@ -61,7 +74,8 @@ function AvisoModal({
   onCerrar: () => void;
   onAceptar: () => void;
 }) {
-  const sello = aviso?.sello || (aviso?.peligro ? 'CUIDADO' : aviso?.cancelar ? 'CONFIRMAR' : 'AVISO');
+  const sello =
+    aviso?.sello || (aviso?.peligro ? 'CUIDADO' : aviso?.cancelar ? 'CONFIRMAR' : 'AVISO');
   const tieneCancelar = Boolean(aviso?.cancelar);
   const etiquetaConfirmar = aviso?.confirmar || (tieneCancelar ? 'CONFIRMAR' : 'ENTENDIDO');
 
@@ -74,14 +88,21 @@ function AvisoModal({
       presentationStyle={Platform.OS === 'ios' ? 'overFullScreen' : undefined}
       onRequestClose={tieneCancelar ? onCerrar : onAceptar}>
       <View style={styles.fondo}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={cargando ? undefined : tieneCancelar ? onCerrar : onAceptar} />
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={cargando ? undefined : tieneCancelar ? onCerrar : onAceptar}
+        />
         <View style={styles.caja}>
           <View style={styles.linea} />
           <View style={styles.cuerpo}>
             <View style={styles.centro}>
               <SelloP size="sm" />
-              <Text style={styles.sello}>{sello}</Text>
-              <Text style={styles.titulo}>{aviso?.titulo}</Text>
+              <Text style={styles.sello} className="font-roboto">
+                {sello}
+              </Text>
+              <Text style={styles.titulo} className="font-roboto">
+                {aviso?.titulo}
+              </Text>
             </View>
 
             <View style={styles.puntos}>
@@ -90,7 +111,9 @@ function AvisoModal({
               ))}
             </View>
 
-            <Text style={styles.texto}>{aviso?.texto}</Text>
+            <Text style={styles.texto} className="font-roboto">
+              {aviso?.texto}
+            </Text>
 
             <View style={styles.acciones}>
               <BotonAviso
@@ -100,7 +123,12 @@ function AvisoModal({
                 disabled={cargando}
               />
               {tieneCancelar ? (
-                <BotonAviso etiqueta={aviso?.cancelar ?? 'CANCELAR'} onPress={onCerrar} variante="outline" disabled={cargando} />
+                <BotonAviso
+                  etiqueta={aviso?.cancelar ?? 'CANCELAR'}
+                  onPress={onCerrar}
+                  variante="outline"
+                  disabled={cargando}
+                />
               ) : null}
             </View>
           </View>
@@ -151,7 +179,7 @@ export function AvisoProvider({ children }: { children: ReactNode }) {
           confirmar: 'ENTENDIDO',
         }),
     }),
-    [mostrar],
+    [mostrar]
   );
 
   const aceptar = async () => {
@@ -190,7 +218,12 @@ export function AvisoProvider({ children }: { children: ReactNode }) {
   return (
     <AvisoContext.Provider value={api}>
       {children}
-      <AvisoModal aviso={aviso} cargando={cargando} onCerrar={() => setAviso(null)} onAceptar={() => void aceptar()} />
+      <AvisoModal
+        aviso={aviso}
+        cargando={cargando}
+        onCerrar={() => setAviso(null)}
+        onAceptar={() => void aceptar()}
+      />
     </AvisoContext.Provider>
   );
 }
@@ -241,7 +274,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: 'center',
     fontSize: 26,
-    fontWeight: '300',
+    fontFamily: 'Roboto_300Light',
     color: '#faf6f2',
   },
   puntos: {

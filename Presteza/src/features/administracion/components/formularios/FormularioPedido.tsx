@@ -35,7 +35,9 @@ export function FormularioPedido({
   onGuardar: (datos: PedidoForm) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, handleSubmit, setValue, watch } = useForm<PedidoForm>({ defaultValues: valores });
+  const { control, handleSubmit, setValue, watch } = useForm<PedidoForm>({
+    defaultValues: valores,
+  });
   const lineas = watch('lineas') ?? [];
   const total = lineas.reduce((suma, linea) => suma + linea.unit_price * linea.quantity, 0);
 
@@ -43,7 +45,9 @@ export function FormularioPedido({
     const id = idDe(producto);
     const existente = lineas.find((linea) => linea.dishId === id);
     const siguientes = existente
-      ? lineas.map((linea) => (linea.dishId === id ? { ...linea, quantity: linea.quantity + 1 } : linea))
+      ? lineas.map((linea) =>
+          linea.dishId === id ? { ...linea, quantity: linea.quantity + 1 } : linea
+        )
       : [
           ...lineas,
           {
@@ -62,14 +66,14 @@ export function FormularioPedido({
       setValue(
         'lineas',
         lineas.filter((linea) => linea.dishId !== dishId),
-        { shouldDirty: true },
+        { shouldDirty: true }
       );
       return;
     }
     setValue(
       'lineas',
       lineas.map((linea) => (linea.dishId === dishId ? { ...linea, quantity } : linea)),
-      { shouldDirty: true },
+      { shouldDirty: true }
     );
   };
 
@@ -84,7 +88,7 @@ export function FormularioPedido({
           rules={{ required: 'Elige un cliente' }}
         />
       ) : (
-        <Text className="text-sm text-texto/55">No hay clientes registrados.</Text>
+        <Text className="font-roboto text-sm text-texto/55">No hay clientes registrados.</Text>
       )}
 
       <Select
@@ -94,42 +98,63 @@ export function FormularioPedido({
         options={PAGOS}
         rules={{ required: 'Elige el medio de pago' }}
       />
-      <Select control={control} name="status" label="Estado" options={ESTADOS} rules={{ required: 'Elige el estado' }} />
+      <Select
+        control={control}
+        name="status"
+        label="Estado"
+        options={ESTADOS}
+        rules={{ required: 'Elige el estado' }}
+      />
 
       <View>
-        <Text className="mb-2 font-semibold text-marca-oscura">Platos</Text>
+        <Text className="mb-2 font-roboto-semibold text-marca-oscura">Platos</Text>
         {productos.length === 0 ? (
-          <Text className="text-sm text-texto/55">No hay platos en la carta.</Text>
+          <Text className="font-roboto text-sm text-texto/55">No hay platos en la carta.</Text>
         ) : (
           <View className="flex-row flex-wrap gap-2">
             {productos.map((producto) => (
-              <Pressable key={idDe(producto)} onPress={() => agregar(producto)} className="border border-marca/20 px-3 py-2">
-                <Text className="text-[12px] text-marca-oscura">{producto.name}</Text>
+              <Pressable
+                key={idDe(producto)}
+                onPress={() => agregar(producto)}
+                className="border border-marca/20 px-3 py-2">
+                <Text className="font-roboto text-[12px] text-marca-oscura">{producto.name}</Text>
               </Pressable>
             ))}
           </View>
         )}
         {lineas.map((linea) => (
-          <View key={linea.dishId} className="mt-3 flex-row items-center justify-between border-b border-marca/10 pb-2">
+          <View
+            key={linea.dishId}
+            className="mt-3 flex-row items-center justify-between border-b border-marca/10 pb-2">
             <View className="flex-1 pr-3">
-              <Text className="text-sm text-marca-oscura">{linea.name}</Text>
-              <Text className="text-[12px] text-texto/55">{formatCOP(linea.unit_price)}</Text>
+              <Text className="font-roboto text-sm text-marca-oscura">{linea.name}</Text>
+              <Text className="font-roboto text-[12px] text-texto/55">
+                {formatCOP(linea.unit_price)}
+              </Text>
             </View>
             <View className="flex-row items-center gap-3">
               <Pressable onPress={() => cambiarCantidad(linea.dishId, linea.quantity - 1)}>
-                <Text className="text-lg text-marca-oscura">−</Text>
+                <Text className="font-roboto text-lg text-marca-oscura">−</Text>
               </Pressable>
-              <Text className="w-6 text-center text-sm text-marca-oscura">{linea.quantity}</Text>
+              <Text className="w-6 text-center font-roboto text-sm text-marca-oscura">
+                {linea.quantity}
+              </Text>
               <Pressable onPress={() => cambiarCantidad(linea.dishId, linea.quantity + 1)}>
-                <Text className="text-lg text-marca-oscura">+</Text>
+                <Text className="font-roboto text-lg text-marca-oscura">+</Text>
               </Pressable>
             </View>
           </View>
         ))}
-        <Text className="mt-3 text-base text-marca-oscura">Total {formatCOP(total)}</Text>
+        <Text className="mt-3 font-roboto text-base text-marca-oscura">
+          Total {formatCOP(total)}
+        </Text>
       </View>
 
-      <AccionesForm onCancelar={onCancelar} onGuardar={handleSubmit(onGuardar)} guardando={guardando} />
+      <AccionesForm
+        onCancelar={onCancelar}
+        onGuardar={handleSubmit(onGuardar)}
+        guardando={guardando}
+      />
     </View>
   );
 }

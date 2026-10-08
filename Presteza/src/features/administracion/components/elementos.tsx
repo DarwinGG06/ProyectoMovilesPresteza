@@ -10,9 +10,11 @@ type NombreIcono = ComponentProps<typeof IconoNav>['name'];
 export function FilaStat({ etiqueta, valor }: { etiqueta: string; valor: string }) {
   return (
     <View className="flex-row items-baseline border-b border-white/10 py-4">
-      <Text className="w-[140px] text-[10px] tracking-[2px] text-crema">{etiqueta}</Text>
+      <Text className="w-[140px] font-roboto text-[10px] tracking-[2px] text-crema">
+        {etiqueta}
+      </Text>
       <View className="mx-2 mb-1 h-px flex-1 bg-oro" />
-      <Text className="text-right text-[22px] font-light text-white">{valor}</Text>
+      <Text className="text-right font-roboto-light text-[22px] text-white">{valor}</Text>
     </View>
   );
 }
@@ -27,8 +29,13 @@ export function ChipFiltro({
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} className={`mb-2 mr-2 px-3 py-2 ${activo ? 'bg-oro' : 'border border-oro/30'}`}>
-      <Text className={`text-[10px] tracking-[1px] ${activo ? 'text-marca-oscura' : 'text-crema/70'}`}>{etiqueta}</Text>
+    <Pressable
+      onPress={onPress}
+      className={`mb-2 mr-2 px-3 py-2 ${activo ? 'bg-oro' : 'border border-oro/30'}`}>
+      <Text
+        className={`font-roboto text-[10px] tracking-[1px] ${activo ? 'text-marca-oscura' : 'text-crema/70'}`}>
+        {etiqueta}
+      </Text>
     </Pressable>
   );
 }
@@ -44,7 +51,10 @@ export function EnlaceAdmin({
 }) {
   return (
     <Pressable onPress={onPress} className="py-1 pr-4">
-      <Text className={`text-[11px] tracking-[2px] ${peligro ? 'text-red-300' : 'text-oro'}`}>{etiqueta}</Text>
+      <Text
+        className={`font-roboto text-[11px] tracking-[2px] ${peligro ? 'text-red-300' : 'text-oro'}`}>
+        {etiqueta}
+      </Text>
     </Pressable>
   );
 }
@@ -70,7 +80,7 @@ export function ModalAdmin({
         <Pressable onPress={onCerrar} className="flex-1 justify-end bg-marca-oscura/80">
           <Pressable onPress={() => {}} className="max-h-[88%] bg-crema px-5 pb-8 pt-6">
             <View className="mb-4 flex-row items-center justify-between">
-              <Text className="flex-1 text-2xl font-light text-marca-oscura">{titulo}</Text>
+              <Text className="flex-1 font-roboto-light text-2xl text-marca-oscura">{titulo}</Text>
               <Pressable onPress={onCerrar} className="h-10 w-10 items-center justify-center">
                 <IconoNav name="close" size={20} className="text-marca-oscura" />
               </Pressable>
@@ -108,8 +118,8 @@ export function EstadoVacioAdmin({
     <View className="py-4">
       <View className="mb-4 h-px w-12 bg-oro" />
       <IconoNav name={icono} size={22} className="text-oro" />
-      <Text className="mt-3 text-2xl font-light text-crema">{titulo}</Text>
-      <Text className="mt-2 text-sm leading-5 text-crema/55">{texto}</Text>
+      <Text className="mt-3 font-roboto-light text-2xl text-crema">{titulo}</Text>
+      <Text className="mt-2 font-roboto text-sm leading-5 text-crema/55">{texto}</Text>
     </View>
   );
 }

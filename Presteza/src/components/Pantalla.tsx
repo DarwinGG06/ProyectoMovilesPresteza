@@ -17,7 +17,9 @@ export default function Pantalla({ titulo, children }: { titulo: string; childre
           <View className="px-6 pb-12 pt-8">
             <View className="mb-3 h-px w-12 bg-oro" />
             <Badge text="PRESTEZA" variant="sello" />
-            <Text className="mt-1 text-4xl font-extrabold leading-tight text-marca-oscura">{titulo}</Text>
+            <Text className="mt-1 font-roboto-extrabold text-4xl leading-tight text-marca-oscura">
+              {titulo}
+            </Text>
             {children}
           </View>
           <Footer />

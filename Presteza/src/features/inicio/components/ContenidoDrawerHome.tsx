@@ -1,5 +1,9 @@
 import { type ComponentProps } from 'react';
-import { DrawerContentScrollView, useDrawerStatus, type DrawerContentComponentProps } from 'expo-router/drawer';
+import {
+  DrawerContentScrollView,
+  useDrawerStatus,
+  type DrawerContentComponentProps,
+} from 'expo-router/drawer';
 import { Animated, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -74,10 +78,16 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
         </View>
 
         <View className="mb-6 mt-7 px-6">
-          <Text className="text-[11px] tracking-[4px] text-oro">CARTA DE NAVEGACIÓN</Text>
-          <Text className="mt-1 text-4xl font-extrabold tracking-[6px] text-crema">PRESTEZA</Text>
+          <Text className="font-roboto text-[11px] tracking-[4px] text-oro">
+            CARTA DE NAVEGACIÓN
+          </Text>
+          <Text className="mt-1 font-roboto-extrabold text-4xl tracking-[6px] text-crema">
+            PRESTEZA
+          </Text>
           <View className="mt-3 h-px w-24 bg-oro" />
-          <Text className="mt-3 text-sm font-light text-crema/55">Elige el siguiente servicio de la casa.</Text>
+          <Text className="mt-3 font-roboto-light text-sm text-crema/55">
+            Elige el siguiente servicio de la casa.
+          </Text>
         </View>
 
         <View className="px-3">
@@ -98,7 +108,7 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
           ))}
         </View>
 
-        <Text className="mt-auto px-6 pt-10 text-center text-[11px] tracking-[3px] text-oro/70">
+        <Text className="mt-auto px-6 pt-10 text-center font-roboto text-[11px] tracking-[3px] text-oro/70">
           COMIDA PARA TODOS · MANIZALES
         </Text>
       </DrawerContentScrollView>
@@ -131,11 +141,12 @@ function EnlaceDrawer({
         onPress={onPress}
         className={`mb-1 flex-row items-center rounded-sm px-3 py-3.5 ${activo ? 'bg-oro/10' : ''}`}>
         <View className={`mr-1 h-8 w-[3px] rounded-full ${activo ? 'bg-oro' : 'bg-transparent'}`} />
-        <Text className={`w-10 text-xs font-bold tracking-widest ${activo ? 'text-oro' : 'text-oro/70'}`}>
+        <Text
+          className={`w-10 font-roboto-bold text-xs tracking-widest ${activo ? 'text-oro' : 'text-oro/70'}`}>
           {numero}
         </Text>
         <Text
-          className={`flex-1 text-[24px] tracking-wide ${activo ? 'font-medium text-oro' : 'font-light text-crema'}`}>
+          className={`flex-1 font-roboto text-[24px] tracking-wide ${activo ? 'font-roboto-medium text-oro' : 'font-roboto-light text-crema'}`}>
           {etiqueta}
         </Text>
         <IconoNav name={icono} size={18} className={activo ? 'text-oro' : 'text-oro/70'} />

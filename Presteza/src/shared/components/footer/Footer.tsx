@@ -1,15 +1,9 @@
 import { Href, router } from 'expo-router';
-import { Linking, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { Icono } from './Icono';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
 export type RutaFooter = '/' | '/contacto' | '/nosotros' | '/menu' | '/reservas' | '/sede';
-
-type FooterProps = {
-  facebookUrl?: string;
-  instagramUrl?: string;
-};
 
 const ENLACES_RAPIDOS: { etiqueta: string; ruta: RutaFooter }[] = [
   { etiqueta: 'Inicio', ruta: '/' },
@@ -19,7 +13,7 @@ const ENLACES_RAPIDOS: { etiqueta: string; ruta: RutaFooter }[] = [
   { etiqueta: 'Reservas', ruta: '/reservas' },
 ];
 
-export function Footer({ facebookUrl, instagramUrl }: FooterProps) {
+export function Footer() {
   return (
     <View className="bg-marca-oscura">
       <View className="h-1 bg-oro" />
@@ -44,11 +38,6 @@ export function Footer({ facebookUrl, instagramUrl }: FooterProps) {
 
         <Text className="mb-2 font-roboto text-[10px] tracking-[3px] text-oro">VISÍTANOS</Text>
         <Enlace onPress={() => router.push('/sede')}>Sede Manizales – Milán</Enlace>
-
-        <View className="mt-8 flex-row gap-4">
-          <IconoSocial nombre="facebook" url={facebookUrl} />
-          <IconoSocial nombre="instagram" url={instagramUrl} />
-        </View>
       </View>
     </View>
   );
@@ -63,18 +52,6 @@ function Enlace({ children, onPress }: { children: string; onPress?: () => void 
           {children}
         </Text>
       )}
-    </Pressable>
-  );
-}
-
-function IconoSocial({ nombre, url }: { nombre: 'facebook' | 'instagram'; url?: string }) {
-  return (
-    <Pressable
-      onPress={() => {
-        if (url) Linking.openURL(url);
-      }}
-      className="h-11 w-11 items-center justify-center rounded-full border border-oro/40">
-      <Icono name={nombre} size={18} className="text-oro" />
     </Pressable>
   );
 }

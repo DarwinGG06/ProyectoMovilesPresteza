@@ -4,7 +4,7 @@ import { Linking, Pressable, Text, View } from 'react-native';
 import { Icono } from './Icono';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
-export type RutaFooter = '/' | '/contacto' | '/nosotros' | '/menu' | '/reservas' | '/sede';
+export type RutaFooter = '/' | '/home/contacto' | '/home/nosotros' | '/home/menu' | '/home/reservas' | '/home/sede';
 
 type FooterProps = {
   facebookUrl?: string;
@@ -13,10 +13,10 @@ type FooterProps = {
 
 const ENLACES_RAPIDOS: { etiqueta: string; ruta: RutaFooter }[] = [
   { etiqueta: 'Inicio', ruta: '/' },
-  { etiqueta: 'Contacto', ruta: '/contacto' },
-  { etiqueta: 'Nosotros', ruta: '/nosotros' },
-  { etiqueta: 'Menú', ruta: '/menu' },
-  { etiqueta: 'Reservas', ruta: '/reservas' },
+  { etiqueta: 'Contacto', ruta: '/home/contacto' },
+  { etiqueta: 'Nosotros', ruta: '/home/nosotros' },
+  { etiqueta: 'Menú', ruta: '/home/menu' },
+  { etiqueta: 'Reservas', ruta: '/home/reservas' },
 ];
 
 export function Footer({ facebookUrl, instagramUrl }: FooterProps) {
@@ -39,7 +39,7 @@ export function Footer({ facebookUrl, instagramUrl }: FooterProps) {
         </View>
 
         <Text className="mb-2 text-[10px] tracking-[3px] text-oro">VISÍTANOS</Text>
-        <Enlace onPress={() => router.push('/sede')}>Sede Manizales – Milán</Enlace>
+        <Enlace onPress={() => router.push('/home/sede')}>Sede Manizales – Milán</Enlace>
 
         <View className="mt-8 flex-row gap-4">
           <IconoSocial nombre="facebook" url={facebookUrl} />

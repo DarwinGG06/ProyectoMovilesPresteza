@@ -42,7 +42,7 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
         unitPrice: item.unit_price,
       });
     });
-    router.push('/menu');
+    router.push('/home/menu');
   };
 
   return (
@@ -52,7 +52,7 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
           icono="receipt-outline"
           titulo="No tienes pedidos"
           texto="Cuando pidas, el seguimiento aparece aquí."
-          accion={{ etiqueta: 'VER MENÚ', onPress: () => router.push('/menu') }}
+          accion={{ etiqueta: 'VER MENÚ', onPress: () => router.push('/home/menu') }}
         />
       ) : (
         <View>

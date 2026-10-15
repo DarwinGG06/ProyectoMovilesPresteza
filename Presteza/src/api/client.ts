@@ -14,7 +14,7 @@ const TIMEOUT_MS = 15000;
 /**
  * Token JWT de la sesión activa.
  *
- * Vive en memoria: al cerrar la app se pierde y hay que volver a entrar.
+ * El contexto de sesión lo restaura desde almacenamiento al abrir la app.
  */
 let token: string | null = null;
 

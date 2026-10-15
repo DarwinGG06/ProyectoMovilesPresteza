@@ -48,7 +48,15 @@ export function decodificarToken(jwt: string): User {
       name?: string;
       phone_number?: string;
       role?: string;
+      exp?: number;
     };
+
+    if (payload.exp !== undefined && (!Number.isFinite(payload.exp) || payload.exp <= Date.now() / 1000)) {
+      throw new Error('La sesión ha expirado');
+    }
+    if (!payload.userId || !payload.email) {
+      throw new Error('El token no contiene un usuario válido');
+    }
 
     const usuario: User = {
       id: payload.userId ?? '',

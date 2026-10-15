@@ -55,7 +55,7 @@ export function ProductosInicio() {
         ))}
       </View>
 
-      <Pressable onPress={() => router.push('/menu')} className="mt-6 self-start">
+      <Pressable onPress={() => router.push('/home/menu')} className="mt-6 self-start">
         <Text className="text-[11px] tracking-[3px] text-oro">VER EL MENÚ COMPLETO →</Text>
       </Pressable>
     </View>

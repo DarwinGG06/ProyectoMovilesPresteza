@@ -19,7 +19,7 @@ export function FormularioSede() {
   });
 
   const reservar = handleSubmit(() => {
-    router.push('/reservas');
+    router.push('/home/reservas');
   });
 
   return (
@@ -63,7 +63,7 @@ export function FormularioSede() {
       </View>
 
       <View className="mt-6 flex-row gap-3">
-        <Button text="VER MENÚ" onPress={() => router.push('/menu')} variant="ghost" className="flex-1" />
+        <Button text="VER MENÚ" onPress={() => router.push('/home/menu')} variant="ghost" className="flex-1" />
         <Button text="LLAMAR" onPress={() => Linking.openURL(`tel:${SEDE.telefono}`)} variant="gold" className="flex-1" />
       </View>
     </View>

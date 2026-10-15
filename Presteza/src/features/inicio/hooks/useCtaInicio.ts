@@ -13,11 +13,11 @@ export function useCtaInicio() {
   });
 
   const reservar = handleSubmit(() => {
-    router.push('/reservas');
+    router.push('/home/reservas');
   });
 
   const verMenu = () => {
-    router.push('/menu');
+    router.push('/home/menu');
   };
 
   const llamar = () => {

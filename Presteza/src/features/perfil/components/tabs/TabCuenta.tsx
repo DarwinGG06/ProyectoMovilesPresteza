@@ -61,7 +61,7 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
         numero="II"
         badge="CARTA"
         titulo="Para tu mesa"
-        accion={{ etiqueta: 'VER MENÚ', onPress: () => router.push('/menu') }}>
+        accion={{ etiqueta: 'VER MENÚ', onPress: () => router.push('/home/menu') }}>
         <View className="mb-2 h-[220px]">
           <Pressable
             onPress={() =>
@@ -103,7 +103,7 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
             icono="heart-outline"
             titulo="Aún no tienes favoritos"
             texto="Explora el menú y marca lo que más te guste."
-            accion={{ etiqueta: 'IR AL MENÚ', onPress: () => router.push('/menu') }}
+            accion={{ etiqueta: 'IR AL MENÚ', onPress: () => router.push('/home/menu') }}
           />
         ) : (
           <View>

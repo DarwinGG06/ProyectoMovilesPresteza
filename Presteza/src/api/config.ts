@@ -44,6 +44,11 @@ function resolverApiUrl(): { url: string; origen: string } {
   const hostEnv = desdeEnv ? extraerHost(desdeEnv) : null;
   const lan = hostDesdeMetro();
 
+  // Un backend remoto configurado también tiene prioridad al ejecutar en web.
+  if (desdeEnv && hostEnv && !esIpPrivada(hostEnv) && hostEnv !== 'localhost' && hostEnv !== '127.0.0.1') {
+    return { url: desdeEnv, origen: 'env-remoto' };
+  }
+
   if (Platform.OS === 'web') {
     const url = `http://localhost:${PUERTO_API}`;
     if (desdeEnv && (hostEnv === 'localhost' || hostEnv === '127.0.0.1' || (lan && hostEnv === lan))) {

@@ -72,7 +72,7 @@ export function CategoriasInicio() {
           ))}
 
           <Pressable
-            onPress={() => router.push('/menu')}
+            onPress={() => router.push('/home/menu')}
             className="absolute items-center justify-center rounded-full bg-marca"
             style={{
               width: CENTRO,
@@ -187,7 +187,7 @@ function Satelite({
         },
         estilo,
       ]}>
-      <Pressable onPress={() => router.push('/menu')}>
+      <Pressable onPress={() => router.push('/home/menu')}>
         <Plato uri={categoria.imageUrl} size={TAM} />
         <Text className="mt-1 text-center text-[11px] tracking-[1px] text-crema">{categoria.name}</Text>
       </Pressable>

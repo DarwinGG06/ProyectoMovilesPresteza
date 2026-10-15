@@ -14,11 +14,11 @@ type NombreIcono = ComponentProps<typeof IconoNav>['name'];
 
 const ENLACES: { etiqueta: string; ruta: Href; icono: NombreIcono; numero: string }[] = [
   { etiqueta: 'Inicio', ruta: '/', icono: 'home-outline', numero: '01' },
-  { etiqueta: 'Menú', ruta: '/menu', icono: 'restaurant-outline', numero: '02' },
-  { etiqueta: 'Nuestra Sede', ruta: '/sede', icono: 'location-outline', numero: '03' },
-  { etiqueta: 'Nosotros', ruta: '/nosotros', icono: 'heart-outline', numero: '04' },
-  { etiqueta: 'Contacto', ruta: '/contacto', icono: 'chatbubble-ellipses-outline', numero: '05' },
-  { etiqueta: 'Reservas', ruta: '/reservas', icono: 'calendar-outline', numero: '06' },
+  { etiqueta: 'Menú', ruta: '/home/menu', icono: 'restaurant-outline', numero: '02' },
+  { etiqueta: 'Nuestra Sede', ruta: '/home/sede', icono: 'location-outline', numero: '03' },
+  { etiqueta: 'Nosotros', ruta: '/home/nosotros', icono: 'heart-outline', numero: '04' },
+  { etiqueta: 'Contacto', ruta: '/home/contacto', icono: 'chatbubble-ellipses-outline', numero: '05' },
+  { etiqueta: 'Reservas', ruta: '/home/reservas', icono: 'calendar-outline', numero: '06' },
 ];
 
 type MenuDrawerProps = {

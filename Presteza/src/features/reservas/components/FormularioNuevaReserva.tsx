@@ -39,13 +39,15 @@ export function FormularioNuevaReserva({
         <View className="mb-3 h-16 w-16 items-center justify-center rounded-full bg-marca/10">
           <IconoNav name="calendar" size={30} className="text-marca" />
         </View>
-        <Text className="text-center text-2xl font-bold uppercase tracking-[1px] text-marca">Completa tu reserva</Text>
-        <Text className="mt-2 text-center text-sm text-marca-clara">{subtitulo}</Text>
+        <Text className="text-center font-roboto-bold text-2xl uppercase tracking-[1px] text-marca">
+          Completa tu reserva
+        </Text>
+        <Text className="mt-2 text-center font-roboto text-sm text-marca-clara">{subtitulo}</Text>
       </View>
 
       {exito ? (
         <View className="mb-5 rounded-2xl bg-[#28a745] px-4 py-3">
-          <Text className="text-center text-sm font-semibold text-white">
+          <Text className="text-center font-roboto-semibold text-sm text-white">
             ¡Reserva realizada! Te esperamos en Presteza.
           </Text>
         </View>
@@ -68,7 +70,8 @@ export function FormularioNuevaReserva({
           name="time"
           rules={{
             required: 'La hora es requerida',
-            validate: (valor) => horaEnHorario(fecha, valor) || 'Esa hora está fuera del horario del restaurante',
+            validate: (valor) =>
+              horaEnHorario(fecha, valor) || 'Esa hora está fuera del horario del restaurante',
           }}
           render={({ field, fieldState }) => (
             <SelectorHora
@@ -114,7 +117,7 @@ export function FormularioNuevaReserva({
         onPress={onEnviar}
         disabled={guardando || deshabilitado}
         className={`mt-6 rounded-full py-4 ${guardando || deshabilitado ? 'bg-marca/40' : 'bg-marca'}`}>
-        <Text className="text-center text-[12px] font-bold tracking-[2px] text-white">
+        <Text className="text-center font-roboto-bold text-[12px] tracking-[2px] text-white">
           {guardando ? 'PROCESANDO...' : etiqueta}
         </Text>
       </Pressable>

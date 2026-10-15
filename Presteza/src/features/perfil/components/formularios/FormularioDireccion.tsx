@@ -1,8 +1,8 @@
-import { useForm } from 'react-hook-form';
 import { Text, View } from 'react-native';
 
 import Field from '@/components/Field';
 import Select from '@/components/Select';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { DireccionForm } from '../../types';
 import { AccionesFormulario } from '../elementos';
 
@@ -13,15 +13,21 @@ type FormularioDireccionProps = {
   guardando?: boolean;
 };
 
-export function FormularioDireccion({ valores, onCancelar, onGuardar, guardando }: FormularioDireccionProps) {
-  const { control, handleSubmit } = useForm<DireccionForm>({
-    defaultValues: valores ?? {
+export function FormularioDireccion({
+  valores,
+  onCancelar,
+  onGuardar,
+  guardando,
+}: FormularioDireccionProps) {
+  const { control, guardar } = useFormulario(
+    valores ?? {
       name: '',
       address: '',
       neighborhood: '',
       is_primary: false,
     },
-  });
+    onGuardar,
+  );
 
   return (
     <View className="gap-4">
@@ -63,12 +69,16 @@ export function FormularioDireccion({ valores, onCancelar, onGuardar, guardando 
       />
 
       <View className="gap-1.5">
-        <Text className="font-semibold text-marca-oscura">Ciudad</Text>
-        <Text className="border border-linea bg-white p-3.5 text-marca-oscura">Manizales</Text>
+        <Text className="font-roboto-semibold text-marca-oscura">Ciudad</Text>
+        <Text className="border border-linea bg-white p-3.5 font-roboto text-marca-oscura">
+          Manizales
+        </Text>
       </View>
       <View className="gap-1.5">
-        <Text className="font-semibold text-marca-oscura">Código postal</Text>
-        <Text className="border border-linea bg-white p-3.5 text-marca-oscura">170001</Text>
+        <Text className="font-roboto-semibold text-marca-oscura">Código postal</Text>
+        <Text className="border border-linea bg-white p-3.5 font-roboto text-marca-oscura">
+          170001
+        </Text>
       </View>
 
       <Select
@@ -81,7 +91,11 @@ export function FormularioDireccion({ valores, onCancelar, onGuardar, guardando 
         ]}
       />
 
-      <AccionesFormulario onCancelar={onCancelar} onGuardar={handleSubmit(onGuardar)} guardando={guardando} />
+      <AccionesFormulario
+        onCancelar={onCancelar}
+        onGuardar={guardar}
+        guardando={guardando}
+      />
     </View>
   );
 }

@@ -8,5 +8,9 @@ export function useSede() {
     void Linking.openURL(SEDE.mapaLink);
   }, []);
 
-  return { sede: SEDE, instalaciones: INSTALACIONES, abrirMapa };
+  const comoLlegar = useCallback(() => {
+    void Linking.openURL(SEDE.mapaComoLlegar);
+  }, []);
+
+  return { sede: SEDE, instalaciones: INSTALACIONES, abrirMapa, comoLlegar };
 }

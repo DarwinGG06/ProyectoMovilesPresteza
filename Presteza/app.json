@@ -10,17 +10,22 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#3a0c20"
+      "backgroundColor": "#4d000a"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Presteza usa la cámara para fotografiar el plato de la carta.",
+        "NSPhotoLibraryUsageDescription": "Presteza usa la galería para elegir la foto del plato."
+      }
     },
     "android": {
       "usesCleartextTraffic": true,
+      "permissions": ["CAMERA", "READ_MEDIA_IMAGES", "READ_EXTERNAL_STORAGE"],
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#3a0c20"
+        "backgroundColor": "#4d000a"
       },
       "package": "com.rafamontosteam.presteza"
     },
@@ -32,13 +37,22 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash.png",
-          "backgroundColor": "#3a0c20"
+          "backgroundColor": "#4d000a"
         }
       ],
       "expo-status-bar",
       "expo-router",
       "expo-asset",
       "expo-secure-store"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Presteza usa la galería para elegir la foto del plato.",
+          "cameraPermission": "Presteza usa la cámara para fotografiar el plato de la carta."
+        }
+      ],
+      "expo-document-picker"
     ],
     "experiments": {
       "tsconfigPaths": true,

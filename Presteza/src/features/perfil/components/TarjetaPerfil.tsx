@@ -19,10 +19,12 @@ export function TarjetaPerfil({ numero, badge, titulo, accion, children }: Tarje
     <View className="mb-10">
       <MarcaCurso numero={numero} nombre={badge} />
       <View className="mb-5 flex-row items-end justify-between gap-3">
-        <Text className="flex-1 text-3xl font-light text-white">{titulo}</Text>
+        <Text className="flex-1 font-roboto-light text-3xl text-white">{titulo}</Text>
         {accion ? (
           <Pressable onPress={accion.onPress} className="pb-1">
-            <Text className="text-[11px] tracking-[2px] text-oro">{accion.etiqueta} →</Text>
+            <Text className="font-roboto text-[11px] tracking-[2px] text-oro">
+              {accion.etiqueta} →
+            </Text>
           </Pressable>
         ) : null}
       </View>
@@ -43,11 +45,13 @@ export function EstadoVacio({ icono, titulo, texto, accion }: EstadoVacioProps) 
     <View className="py-2">
       <View className="mb-4 h-px w-12 bg-oro" />
       <IconoNav name={icono} size={22} className="text-oro" />
-      <Text className="mt-3 text-2xl font-light text-crema">{titulo}</Text>
-      <Text className="mt-2 text-sm leading-5 text-crema/55">{texto}</Text>
+      <Text className="mt-3 font-roboto-light text-2xl text-crema">{titulo}</Text>
+      <Text className="mt-2 font-roboto text-sm leading-5 text-crema/55">{texto}</Text>
       {accion ? (
         <Pressable onPress={accion.onPress} className="mt-5 self-start">
-          <Text className="text-[11px] tracking-[2px] text-oro">{accion.etiqueta} →</Text>
+          <Text className="font-roboto text-[11px] tracking-[2px] text-oro">
+            {accion.etiqueta} →
+          </Text>
         </Pressable>
       ) : null}
     </View>
@@ -55,6 +59,9 @@ export function EstadoVacio({ icono, titulo, texto, accion }: EstadoVacioProps) 
 }
 
 export function Mensaje({ texto, error }: { texto: string; error?: boolean }) {
-  return <Text className={`mb-3 text-sm ${error ? 'text-red-300' : 'text-oro'}`}>{texto}</Text>;
+  return (
+    <Text className={`mb-3 font-roboto text-sm ${error ? 'text-red-300' : 'text-oro'}`}>
+      {texto}
+    </Text>
+  );
 }
-

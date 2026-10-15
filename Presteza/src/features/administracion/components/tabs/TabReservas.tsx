@@ -1,16 +1,14 @@
-import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import type { CasaReservas } from '@/features/reservas/hooks/useReservas';
 import type { Reserva } from '@/features/reservas/types';
 
+import { useTabReservas } from '../../hooks/useTabReservas';
 import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioReservaAdmin } from '../formularios/FormularioReservaAdmin';
 import {
   CajaCuadricula,
-  CeldaTabla,
-  EncabezadoTabla,
   FilaFiltros,
   FilaTabla,
   GrillaAdmin,
@@ -30,20 +28,14 @@ type TabReservasProps = {
 };
 
 export function TabReservas({ reservas }: TabReservasProps) {
-  const [vista, setVista] = useState<'lista' | 'cuadricula'>('lista');
-  const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
-  const [abierto, setAbierto] = useState(false);
-  const [editando, setEditando] = useState<Reserva | null>(null);
-
-  const abrir = (reserva?: Reserva) => {
-    setEditando(reserva ?? null);
-    setAbierto(true);
-  };
+  const tab = useTabReservas(reservas);
 
   const acciones = (reserva: Reserva) => (
     <AccionesAdmin>
-      <EnlaceAdmin etiqueta="EDITAR" onPress={() => abrir(reserva)} />
-      {reserva.status === 'pending' ? <EnlaceAdmin etiqueta="CONFIRMAR" onPress={() => reservas.confirmar(reserva)} /> : null}
+      <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(reserva)} />
+      {reserva.status === 'pending' ? (
+        <EnlaceAdmin etiqueta="CONFIRMAR" onPress={() => reservas.confirmar(reserva)} />
+      ) : null}
       {reservas.sePuedeEditar(reserva) ? (
         <EnlaceAdmin etiqueta="CANCELAR" peligro onPress={() => reservas.cancelar(reserva)} />
       ) : null}
@@ -60,14 +52,14 @@ export function TabReservas({ reservas }: TabReservasProps) {
         numero="I"
         badge="MESAS"
         titulo="Reservas"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => abrir() }}>
+        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
         <InterruptorVista
-          vista={vista}
-          onChange={setVista}
-          filtrosAbiertos={filtrosAbiertos}
-          onFiltros={() => setFiltrosAbiertos((abiertoFiltro) => !abiertoFiltro)}
+          vista={tab.vista}
+          onChange={tab.setVista}
+          filtrosAbiertos={tab.filtrosAbiertos}
+          onFiltros={() => tab.setFiltrosAbiertos((abierto) => !abierto)}
         />
-        {filtrosAbiertos ? (
+        {tab.filtrosAbiertos ? (
           <FilaFiltros>
             {FILTROS.map((item) => (
               <ChipFiltro
@@ -81,36 +73,37 @@ export function TabReservas({ reservas }: TabReservasProps) {
         ) : null}
 
         {reservas.lista.length === 0 ? (
-          <EstadoVacioAdmin icono="calendar-outline" titulo="Sin reservas" texto="Crea una mesa o espera a que reserven." />
-        ) : vista === 'lista' ? (
+          <EstadoVacioAdmin
+            icono="calendar-outline"
+            titulo="Sin reservas"
+            texto="Crea una mesa o espera a que reserven."
+          />
+        ) : tab.vista === 'lista' ? (
           <View>
-            <EncabezadoTabla
-              columnas={[
-                { texto: 'MESA', flex: 1.1 },
-                { texto: 'FECHA', flex: 1 },
-                { texto: 'ESTADO', ancho: 86 },
-              ]}
-            />
             {reservas.lista.map((reserva) => (
               <FilaTabla key={reservas.idDe(reserva)}>
-                <CeldaTabla flex={1.1}>
-                  <Text className="text-sm font-light text-white">Mesa {reserva.tableNumber}</Text>
-                  <Text className="mt-0.5 text-[11px] text-crema/55" numberOfLines={1}>
-                    {reserva.userName || 'Cliente'}
-                  </Text>
+                <View className="flex-1">
+                  <View className="flex-row items-start justify-between gap-2">
+                    <View className="flex-1">
+                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-oro">
+                        {reservas.textoEstado(reserva.status).toUpperCase()}
+                      </Text>
+                      <Text className="mt-1 font-roboto-light text-xl text-white">
+                        Mesa {reserva.tableNumber}
+                      </Text>
+                      <Text className="mt-1 font-roboto text-sm text-crema/70" numberOfLines={1}>
+                        {reserva.userName || 'Cliente'}
+                      </Text>
+                      <Text className="mt-1 font-roboto text-sm text-crema/55">
+                        {reserva.date} · {reserva.time}
+                      </Text>
+                      <Text className="mt-0.5 font-roboto text-[11px] text-crema/45">
+                        {reserva.numberOfPeople} personas
+                      </Text>
+                    </View>
+                  </View>
                   {acciones(reserva)}
-                </CeldaTabla>
-                <CeldaTabla flex={1}>
-                  <Text className="text-sm text-crema/70">
-                    {reserva.date} · {reserva.time}
-                  </Text>
-                  <Text className="mt-0.5 text-[11px] text-crema/45">{reserva.numberOfPeople} personas</Text>
-                </CeldaTabla>
-                <CeldaTabla ancho={86}>
-                  <Text className="text-[10px] tracking-[1px] text-oro">
-                    {reservas.textoEstado(reserva.status).toUpperCase()}
-                  </Text>
-                </CeldaTabla>
+                </View>
               </FilaTabla>
             ))}
           </View>
@@ -118,13 +111,19 @@ export function TabReservas({ reservas }: TabReservasProps) {
           <GrillaAdmin>
             {reservas.lista.map((reserva) => (
               <CajaCuadricula key={reservas.idDe(reserva)}>
-                <Text className="text-[10px] tracking-[1px] text-oro">{reservas.textoEstado(reserva.status).toUpperCase()}</Text>
-                <Text className="mt-1 text-xl font-light text-white">Mesa {reserva.tableNumber}</Text>
-                <Text className="mt-1 text-sm text-crema/55">
+                <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                  {reservas.textoEstado(reserva.status).toUpperCase()}
+                </Text>
+                <Text className="mt-1 font-roboto-light text-xl text-white">
+                  Mesa {reserva.tableNumber}
+                </Text>
+                <Text className="mt-1 font-roboto text-sm text-crema/55">
                   {reserva.date} · {reserva.time}
                 </Text>
-                <Text className="mt-1 text-sm text-crema">{reserva.numberOfPeople} personas</Text>
-                <Text className="mt-2 text-sm text-crema/70" numberOfLines={1}>
+                <Text className="mt-1 font-roboto text-sm text-crema">
+                  {reserva.numberOfPeople} personas
+                </Text>
+                <Text className="mt-2 font-roboto text-sm text-crema/70" numberOfLines={1}>
                   {reserva.userName || 'Cliente'}
                 </Text>
                 {acciones(reserva)}
@@ -134,15 +133,16 @@ export function TabReservas({ reservas }: TabReservasProps) {
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={abierto} titulo={editando ? 'Editar reserva' : 'Nueva reserva'} onCerrar={() => setAbierto(false)}>
+      <ModalAdmin
+        visible={tab.abierto}
+        titulo={tab.editando ? 'Editar reserva' : 'Nueva reserva'}
+        onCerrar={tab.cerrar}>
         <FormularioReservaAdmin
-          key={editando ? reservas.idDe(editando) : 'nueva'}
-          valores={reservas.valoresDe(editando ?? undefined)}
+          key={tab.editando ? reservas.idDe(tab.editando) : 'nueva'}
+          valores={tab.valoresFormulario}
           mesas={reservas.mesas}
-          onCancelar={() => setAbierto(false)}
-          onGuardar={async (datos) => {
-            if (await reservas.guardar(datos, editando)) setAbierto(false);
-          }}
+          onCancelar={tab.cerrar}
+          onGuardar={tab.guardar}
           guardando={reservas.guardando}
         />
       </ModalAdmin>

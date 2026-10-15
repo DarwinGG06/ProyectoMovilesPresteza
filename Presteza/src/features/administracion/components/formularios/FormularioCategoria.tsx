@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { CategoriaForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -16,7 +16,7 @@ export function FormularioCategoria({
   onGuardar: (datos: CategoriaForm) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, handleSubmit } = useForm<CategoriaForm>({ defaultValues: valores });
+  const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
     <View className="gap-4">
@@ -44,7 +44,7 @@ export function FormularioCategoria({
         }}
       />
       <Field control={control} name="imageUrl" label="Imagen (URL)" placeholder="https://..." />
-      <AccionesForm onCancelar={onCancelar} onGuardar={handleSubmit(onGuardar)} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

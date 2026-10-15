@@ -1,11 +1,9 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { useFormularioCliente } from '../../hooks/useFormularioCliente';
 import type { ClienteForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
-
-type Formulario = ClienteForm & { confirmation: string };
 
 export function FormularioCliente({
   valores,
@@ -20,11 +18,7 @@ export function FormularioCliente({
   onGuardar: (datos: ClienteForm) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, handleSubmit, getValues } = useForm<Formulario>({
-    defaultValues: { ...valores, confirmation: '' },
-  });
-
-  const enviar = handleSubmit(({ confirmation: _omitida, ...datos }) => onGuardar(datos));
+  const { control, enviar, getValues } = useFormularioCliente(valores, onGuardar);
 
   return (
     <View className="gap-4">

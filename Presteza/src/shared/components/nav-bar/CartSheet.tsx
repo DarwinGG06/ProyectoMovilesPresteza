@@ -24,8 +24,8 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
 
           <View className="flex-row items-end justify-between px-6 pb-4 pt-3">
             <View>
-              <Text className="text-[10px] tracking-[3px] text-oro">TU PEDIDO</Text>
-              <Text className="text-3xl font-extrabold text-marca-oscura">La bandeja</Text>
+              <Text className="font-roboto text-[10px] tracking-[3px] text-oro">TU PEDIDO</Text>
+              <Text className="font-roboto-extrabold text-3xl text-marca-oscura">La bandeja</Text>
             </View>
             <Pressable
               onPress={onClose}
@@ -40,25 +40,33 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                 <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-marca-oscura">
                   <IconoNav name="leaf-outline" size={32} className="text-oro" />
                 </View>
-                <Text className="text-xl font-semibold text-marca-oscura">Aún no hay sabores</Text>
-                <Text className="mt-1 text-center text-marca/60">El menú ya está caliente. Empieza por un plato.</Text>
+                <Text className="font-roboto-semibold text-xl text-marca-oscura">
+                  Aún no hay sabores
+                </Text>
+                <Text className="mt-1 text-center font-roboto text-marca/60">
+                  El menú ya está caliente. Empieza por un plato.
+                </Text>
               </View>
             ) : (
               items.map((item) => (
                 <View key={item.id} className="mb-3 rounded-3xl bg-white p-4 shadow-sm">
-                  <Text className="text-base font-semibold text-marca-oscura">{item.productName}</Text>
+                  <Text className="font-roboto-semibold text-base text-marca-oscura">
+                    {item.productName}
+                  </Text>
                   {item.selectedOptions?.length ? (
                     <View className="mt-2 flex-row flex-wrap gap-2">
                       {item.selectedOptions.map((option) => (
                         <Text
                           key={option.name}
-                          className="rounded-full bg-crema px-3 py-1 text-xs text-marca">
+                          className="rounded-full bg-crema px-3 py-1 font-roboto text-xs text-marca">
                           {option.name}
                         </Text>
                       ))}
                     </View>
                   ) : null}
-                  <Text className="mt-2 text-lg font-extrabold text-oro">{formatCOP(item.totalPrice)}</Text>
+                  <Text className="mt-2 font-roboto-extrabold text-lg text-oro">
+                    {formatCOP(item.totalPrice)}
+                  </Text>
                   <View className="mt-3 flex-row items-center justify-between">
                     <View className="flex-row items-center rounded-full bg-crema px-2 py-1">
                       <Pressable
@@ -67,7 +75,7 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                         className="h-8 w-8 items-center justify-center">
                         <IconoNav name="remove" size={16} className="text-marca-oscura" />
                       </Pressable>
-                      <Text className="min-w-[24px] text-center font-bold text-marca-oscura">
+                      <Text className="min-w-[24px] text-center font-roboto-bold text-marca-oscura">
                         {item.quantity}
                       </Text>
                       <Pressable
@@ -88,8 +96,10 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
           {items.length > 0 ? (
             <View className="bg-marca-oscura px-6 pb-8 pt-5">
               <View className="mb-4 flex-row items-center justify-between">
-                <Text className="tracking-widest text-oro">TOTAL</Text>
-                <Text className="text-3xl font-extrabold text-crema">{formatCOP(totalPrice)}</Text>
+                <Text className="font-roboto tracking-widest text-oro">TOTAL</Text>
+                <Text className="font-roboto-extrabold text-3xl text-crema">
+                  {formatCOP(totalPrice)}
+                </Text>
               </View>
               <Pressable
                 onPress={() => {
@@ -97,7 +107,7 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                   router.push('/pago');
                 }}
                 className="rounded-full bg-oro py-4">
-                <Text className="text-center text-base font-extrabold tracking-widest text-marca-oscura">
+                <Text className="text-center font-roboto-extrabold text-base tracking-widest text-marca-oscura">
                   LLEVAR A LA MESA
                 </Text>
               </Pressable>

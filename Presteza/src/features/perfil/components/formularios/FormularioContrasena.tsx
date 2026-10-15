@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { ContrasenaForm } from '../../types';
 import { AccionesFormulario } from '../elementos';
 
@@ -12,9 +12,10 @@ type FormularioContrasenaProps = {
 };
 
 export function FormularioContrasena({ onCancelar, onGuardar, guardando }: FormularioContrasenaProps) {
-  const { control, handleSubmit, getValues } = useForm<ContrasenaForm>({
-    defaultValues: { newPassword: '', confirmPassword: '' },
-  });
+  const { control, guardar, getValues } = useFormulario<ContrasenaForm>(
+    { newPassword: '', confirmPassword: '' },
+    onGuardar,
+  );
 
   return (
     <View className="gap-4">
@@ -46,7 +47,7 @@ export function FormularioContrasena({ onCancelar, onGuardar, guardando }: Formu
       />
       <AccionesFormulario
         onCancelar={onCancelar}
-        onGuardar={handleSubmit(onGuardar)}
+        onGuardar={guardar}
         guardando={guardando}
         etiquetaGuardar="CAMBIAR CONTRASEÑA"
       />

@@ -1,17 +1,13 @@
-import { router } from 'expo-router';
-import { useForm } from 'react-hook-form';
 import { Modal, Pressable, Text, View } from 'react-native';
 
-import { useSession } from '@/session/context';
 import Button from '@/components/Button';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
+import { useLoginModal } from '@/shared/hooks/useLoginModal';
 
 import { IconoNav } from './IconoNav';
 import { SelloP } from './SelloP';
-
-type LoginForm = { email: string; password: string };
 
 type LoginModalProps = {
   visible: boolean;
@@ -19,30 +15,15 @@ type LoginModalProps = {
 };
 
 export function LoginModal({ visible, onClose }: LoginModalProps) {
-  const { signIn } = useSession();
-  const { control, handleSubmit, reset, setError, formState } = useForm<LoginForm>({
-    defaultValues: { email: '', password: '' },
-  });
-
-  const close = () => {
-    reset();
-    onClose();
-  };
-
-  const submit = async ({ email, password }: LoginForm) => {
-    try {
-      await signIn(email, password);
-      close();
-      router.replace('/perfil');
-    } catch (error) {
-      setError('root', { message: (error as Error).message });
-    }
-  };
+  const { control, close, entrar, irARecuperar, irARegistro, error, enviando } =
+    useLoginModal(onClose);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
       <EvitarTeclado offset={0}>
-        <Pressable onPress={close} className="flex-1 items-center justify-center bg-marca-oscura/70 px-5">
+        <Pressable
+          onPress={close}
+          className="flex-1 items-center justify-center bg-marca-oscura/70 px-5">
           <Pressable onPress={() => {}} className="w-full overflow-hidden bg-marca-oscura">
             <View className="h-1 w-full bg-oro" />
             <View className="p-6">
@@ -54,8 +35,10 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
 
               <View className="mb-6 items-center pt-3">
                 <SelloP size="lg" />
-                <Text className="mt-4 text-[11px] tracking-[4px] text-oro">INICIAR SESIÓN</Text>
-                <Text className="mt-1 text-3xl font-extrabold text-crema">Bienvenido</Text>
+                <Text className="mt-4 font-roboto text-[11px] tracking-[4px] text-oro">
+                  INICIAR SESIÓN
+                </Text>
+                <Text className="mt-1 font-roboto-extrabold text-3xl text-crema">Bienvenido</Text>
               </View>
 
               <View className="bg-crema px-4 py-5">
@@ -87,32 +70,25 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                   />
                 </View>
 
-                <MensajeError className="mt-3" texto={formState.errors.root?.message} />
+                <MensajeError className="mt-3" texto={error} />
 
                 <Button
                   className="mt-5"
-                  text={formState.isSubmitting ? 'ENTRANDO…' : 'ENTRAR'}
-                  onPress={handleSubmit(submit)}
-                  disabled={formState.isSubmitting}
+                  text={enviando ? 'ENTRANDO…' : 'ENTRAR'}
+                  onPress={entrar}
+                  disabled={enviando}
                 />
               </View>
 
-              <Pressable
-                onPress={() => {
-                  close();
-                  router.push('/recuperar-contrasena');
-                }}
-                className="mb-5 mt-4 self-end">
-                <Text className="text-xs tracking-wide text-oro">¿Olvidaste tu contraseña?</Text>
+              <Pressable onPress={irARecuperar} className="mb-5 mt-4 self-end">
+                <Text className="font-roboto text-xs tracking-wide text-oro">
+                  ¿Olvidaste tu contraseña?
+                </Text>
               </Pressable>
 
-              <Pressable
-                onPress={() => {
-                  close();
-                  router.push('/registro');
-                }}>
-                <Text className="text-center text-crema/70">
-                  ¿Primera vez? <Text className="font-bold text-oro">Regístrate</Text>
+              <Pressable onPress={irARegistro}>
+                <Text className="text-center font-roboto text-crema/70">
+                  ¿Primera vez? <Text className="font-roboto-bold text-oro">Regístrate</Text>
                 </Text>
               </Pressable>
             </View>

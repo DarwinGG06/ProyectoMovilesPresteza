@@ -15,9 +15,11 @@ export function CtaInicio() {
       <MarcaCurso numero="V" nombre="RESERVAS" />
 
       <View className="border border-oro/15 bg-crema px-5 py-6">
-        <Text className="text-[10px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
-        <Text className="mt-2 text-3xl font-light text-marca-oscura">¿Cuántos vienen?</Text>
-        <Text className="mt-1 text-sm text-texto/55">Te esperamos en Milán, Manizales.</Text>
+        <Text className="font-roboto text-[10px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
+        <Text className="mt-2 font-roboto-light text-3xl text-marca-oscura">¿Cuántos vienen?</Text>
+        <Text className="mt-1 font-roboto text-sm text-texto/55">
+          Te esperamos en Milán, Manizales.
+        </Text>
 
         <View className="my-5">
           <PuntosTicket />

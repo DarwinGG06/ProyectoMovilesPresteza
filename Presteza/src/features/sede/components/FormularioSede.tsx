@@ -1,17 +1,10 @@
-import { router } from 'expo-router';
-import { useForm } from 'react-hook-form';
-import { Linking, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { MarcaCurso, PuntosTicket } from '@/features/inicio/components/MesaDecor';
 
 import Button from '@/components/Button';
 import Field from '@/components/Field';
-import { SEDE } from '../data';
-
-type VisitaSede = {
-  nombre: string;
-  personas: string;
-};
+import { useFormularioSede } from '../hooks/useFormularioSede';
 
 export function FormularioSede() {
   const { control, handleSubmit } = useForm<VisitaSede>({
@@ -21,16 +14,21 @@ export function FormularioSede() {
   const reservar = handleSubmit(() => {
     router.push('/home/reservas');
   });
+  const { control, reservar, verMenu, llamar } = useFormularioSede();
 
   return (
     <View className="px-5 pb-14">
       <MarcaCurso numero="V" nombre="RESERVAS" />
-      <Text className="mb-6 text-sm text-crema/55">Nombre y cuántas personas van a la sede.</Text>
+      <Text className="mb-6 font-roboto text-sm text-crema/55">
+        Nombre y cuántas personas van a la sede.
+      </Text>
 
       <View className="border border-oro/20 bg-crema px-5 py-6">
-        <Text className="text-[10px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
-        <Text className="mt-2 text-3xl font-light text-marca-oscura">¿Vienes a Milán?</Text>
-        <Text className="mt-1 text-sm text-texto/55">Te esperamos en Torre Plaza 70.</Text>
+        <Text className="font-roboto text-[10px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
+        <Text className="mt-2 font-roboto-light text-3xl text-marca-oscura">¿Vienes a Milán?</Text>
+        <Text className="mt-1 font-roboto text-sm text-texto/55">
+          Te esperamos en Torre Plaza 70.
+        </Text>
 
         <View className="my-5">
           <PuntosTicket />
@@ -65,6 +63,8 @@ export function FormularioSede() {
       <View className="mt-6 flex-row gap-3">
         <Button text="VER MENÚ" onPress={() => router.push('/home/menu')} variant="ghost" className="flex-1" />
         <Button text="LLAMAR" onPress={() => Linking.openURL(`tel:${SEDE.telefono}`)} variant="gold" className="flex-1" />
+        <Button text="VER MENÚ" onPress={verMenu} variant="ghost" className="flex-1" />
+        <Button text="LLAMAR" onPress={llamar} variant="gold" className="flex-1" />
       </View>
     </View>
   );

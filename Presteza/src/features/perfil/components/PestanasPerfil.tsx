@@ -25,7 +25,10 @@ type PestanasPerfilProps = {
 export function PestanasPerfil({ activa, onChange, contadores }: PestanasPerfilProps) {
   return (
     <View className="border-b border-oro/15 bg-marca-oscura">
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-5">
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerClassName="px-5">
         {PESTANAS.map((pestana) => {
           const seleccionada = activa === pestana.id;
           const conteo = contadores?.[pestana.id];
@@ -33,11 +36,16 @@ export function PestanasPerfil({ activa, onChange, contadores }: PestanasPerfilP
           return (
             <Pressable key={pestana.id} onPress={() => onChange(pestana.id)} className="mr-7 py-4">
               <View className="flex-row items-center gap-1.5">
-                <IconoNav name={pestana.icono} size={14} className={seleccionada ? 'text-oro' : 'text-crema/35'} />
-                <Text className={`text-[11px] tracking-[2px] ${seleccionada ? 'text-crema' : 'text-crema/35'}`}>
+                <IconoNav
+                  name={pestana.icono}
+                  size={14}
+                  className={seleccionada ? 'text-oro' : 'text-crema/35'}
+                />
+                <Text
+                  className={`font-roboto text-[11px] tracking-[2px] ${seleccionada ? 'text-crema' : 'text-crema/35'}`}>
                   {pestana.etiqueta.toUpperCase()}
                 </Text>
-                {conteo ? <Text className="text-[10px] text-oro">{conteo}</Text> : null}
+                {conteo ? <Text className="font-roboto text-[10px] text-oro">{conteo}</Text> : null}
               </View>
               <View className={`mt-2 h-px w-10 ${seleccionada ? 'bg-oro' : 'bg-transparent'}`} />
             </Pressable>

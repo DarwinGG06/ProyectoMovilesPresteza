@@ -51,13 +51,16 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
               indice={index}
               titulo={direccion.name}
               sello={direccion.is_primary ? 'PRINCIPAL' : undefined}>
-              <Text className="mt-1 text-sm text-crema/70">{direccion.address}</Text>
-              <Text className="mt-1 text-sm text-crema/45">
+              <Text className="mt-1 font-roboto text-sm text-crema/70">{direccion.address}</Text>
+              <Text className="mt-1 font-roboto text-sm text-crema/45">
                 {direccion.neighborhood} · {direccion.city}
               </Text>
               <AccionesFila>
                 {!direccion.is_primary ? (
-                  <EnlaceAccion etiqueta="PRINCIPAL" onPress={() => direcciones.marcarPrincipal(index)} />
+                  <EnlaceAccion
+                    etiqueta="PRINCIPAL"
+                    onPress={() => direcciones.marcarPrincipal(index)}
+                  />
                 ) : null}
                 <EnlaceAccion etiqueta="EDITAR" onPress={() => direcciones.editar(index)} />
                 <EnlaceAccion

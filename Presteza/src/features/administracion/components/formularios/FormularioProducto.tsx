@@ -1,11 +1,14 @@
-import { useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import Select from '@/components/Select';
+
+import { useFormularioProducto } from '../../hooks/useFormularioProducto';
 import type { CategoriaAdmin, ProductoForm } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesForm } from './AccionesForm';
+import { CampoImagenProducto } from './CampoImagenProducto';
 
 type FormularioProductoProps = {
   valores: ProductoForm;
@@ -22,12 +25,12 @@ export function FormularioProducto({
   onGuardar,
   guardando,
 }: FormularioProductoProps) {
-  const { control, handleSubmit } = useForm<ProductoForm>({ defaultValues: valores });
+  const formulario = useFormularioProducto({ valores, onGuardar, guardando });
 
   return (
     <View className="gap-4">
       <Field
-        control={control}
+        control={formulario.control}
         name="name"
         label="Nombre"
         placeholder="Nombre del plato"
@@ -40,7 +43,7 @@ export function FormularioProducto({
         }}
       />
       <Field
-        control={control}
+        control={formulario.control}
         name="description"
         label="Descripción"
         placeholder="Ingredientes y preparación"
@@ -52,32 +55,40 @@ export function FormularioProducto({
         }}
       />
       <Field
-        control={control}
+        control={formulario.control}
         name="price"
         label="Precio"
         placeholder="Precio"
         keyboardType="numeric"
         rules={{ required: 'Escribe el precio' }}
       />
-      <Field
-        control={control}
+      <Controller
+        control={formulario.control}
         name="imageUrl"
-        label="Imagen (URL)"
-        placeholder="https://..."
-        maxLength={500}
-        rules={{
-          required: 'Pega la URL de la foto',
-          maxLength: { value: 500, message: 'Máximo 500 caracteres' },
-        }}
+        render={({ fieldState: { error } }) => (
+          <CampoImagenProducto
+            uri={formulario.preview}
+            error={error?.message}
+            disabled={formulario.ocupado}
+            onCamara={formulario.tomarDesdeCamara}
+            onGaleria={formulario.tomarDesdeGaleria}
+            onArchivo={formulario.tomarDesdeArchivo}
+          />
+        )}
       />
       <Select
-        control={control}
+        control={formulario.control}
         name="categoryId"
         label="Categoría"
         options={categorias.map((categoria) => ({ value: idDe(categoria), label: categoria.name }))}
         rules={{ required: 'Elige una categoría' }}
       />
-      <AccionesForm onCancelar={onCancelar} onGuardar={handleSubmit(onGuardar)} guardando={guardando} />
+      <AccionesForm
+        onCancelar={onCancelar}
+        onGuardar={formulario.guardar}
+        guardando={formulario.ocupado}
+        etiqueta={formulario.subiendo ? 'SUBIENDO…' : 'GUARDAR'}
+      />
     </View>
   );
 }

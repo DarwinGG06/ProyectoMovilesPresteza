@@ -53,7 +53,7 @@ export default function Select<T extends FieldValues>({
       rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <View className="gap-1.5">
-          <Text className="font-semibold text-marca-oscura">{label}</Text>
+          <Text className="font-roboto-semibold text-marca-oscura">{label}</Text>
           <View className="flex-row flex-wrap gap-2">
             {options.map((option) => {
               const opcion = valorDe(option);
@@ -63,14 +63,15 @@ export default function Select<T extends FieldValues>({
                   key={claveDe(opcion)}
                   onPress={() => onChange(opcion)}
                   className={`px-3 py-2 ${active ? 'bg-marca-oscura' : 'border border-marca/20'}`}>
-                  <Text className={`text-[12px] ${active ? 'text-crema' : 'text-marca-oscura'}`}>
+                  <Text
+                    className={`font-roboto text-[12px] ${active ? 'text-crema' : 'text-marca-oscura'}`}>
                     {etiquetaDe(option)}
                   </Text>
                 </Pressable>
               );
             })}
           </View>
-          {!!error && <Text className="text-xs text-red-600">{error.message}</Text>}
+          {!!error && <Text className="font-roboto text-xs text-red-600">{error.message}</Text>}
         </View>
       )}
     />

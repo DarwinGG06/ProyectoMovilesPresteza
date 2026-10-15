@@ -27,7 +27,13 @@ type TabAdicionalesProps = {
   onEliminar: (adicional: AdicionalAdmin) => void;
 };
 
-export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, onEliminar }: TabAdicionalesProps) {
+export function TabAdicionales({
+  adicionales,
+  guardando,
+  onGuardar,
+  onAlternar,
+  onEliminar,
+}: TabAdicionalesProps) {
   const tab = useTabAdicionales(adicionales, onGuardar);
 
   return (
@@ -45,14 +51,30 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
         />
         {tab.filtrosAbiertos ? (
           <FilaFiltros>
-            <ChipFiltro etiqueta="TODOS" activo={tab.filtro === 'all'} onPress={() => tab.setFiltro('all')} />
-            <ChipFiltro etiqueta="DISPONIBLES" activo={tab.filtro === 'on'} onPress={() => tab.setFiltro('on')} />
-            <ChipFiltro etiqueta="OCULTOS" activo={tab.filtro === 'off'} onPress={() => tab.setFiltro('off')} />
+            <ChipFiltro
+              etiqueta="TODOS"
+              activo={tab.filtro === 'all'}
+              onPress={() => tab.setFiltro('all')}
+            />
+            <ChipFiltro
+              etiqueta="DISPONIBLES"
+              activo={tab.filtro === 'on'}
+              onPress={() => tab.setFiltro('on')}
+            />
+            <ChipFiltro
+              etiqueta="OCULTOS"
+              activo={tab.filtro === 'off'}
+              onPress={() => tab.setFiltro('off')}
+            />
           </FilaFiltros>
         ) : null}
 
         {tab.lista.length === 0 ? (
-          <EstadoVacioAdmin icono="add-circle-outline" titulo="Sin adicionales" texto="Crea extras para personalizar los platos." />
+          <EstadoVacioAdmin
+            icono="add-circle-outline"
+            titulo="Sin adicionales"
+            texto="Crea extras para personalizar los platos."
+          />
         ) : tab.vista === 'lista' ? (
           <View>
             <EncabezadoTabla
@@ -65,7 +87,7 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
             {tab.lista.map((adicional) => (
               <FilaTabla key={idDe(adicional)}>
                 <CeldaTabla flex={1.3}>
-                  <Text className="text-sm font-light text-white" numberOfLines={2}>
+                  <Text className="font-roboto-light text-sm text-white" numberOfLines={2}>
                     {adicional.name}
                   </Text>
                   <AccionesAdmin>
@@ -74,16 +96,22 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
                       etiqueta={adicional.available === false ? 'ACTIVAR' : 'OCULTAR'}
                       onPress={() => onAlternar(adicional)}
                     />
-                    <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(adicional)} />
+                    <EnlaceAdmin
+                      etiqueta="ELIMINAR"
+                      peligro
+                      onPress={() => onEliminar(adicional)}
+                    />
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla ancho={78}>
-                  <Text className="text-[10px] tracking-[1px] text-oro">
+                  <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
                     {adicional.available === false ? 'OCULTO' : 'ACTIVO'}
                   </Text>
                 </CeldaTabla>
                 <CeldaTabla ancho={82} derecha>
-                  <Text className="text-right text-sm text-oro">{formatCOP(adicional.price || 0)}</Text>
+                  <Text className="text-right font-roboto text-sm text-oro">
+                    {formatCOP(adicional.price || 0)}
+                  </Text>
                 </CeldaTabla>
               </FilaTabla>
             ))}
@@ -92,13 +120,15 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
           <GrillaAdmin>
             {tab.lista.map((adicional) => (
               <CajaCuadricula key={idDe(adicional)}>
-                <Text className="text-[10px] tracking-[1px] text-oro">
+                <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
                   {adicional.available === false ? 'OCULTO' : 'DISPONIBLE'}
                 </Text>
-                <Text className="mt-1 text-base font-light text-white" numberOfLines={2}>
+                <Text className="mt-1 font-roboto-light text-base text-white" numberOfLines={2}>
                   {adicional.name}
                 </Text>
-                <Text className="mt-2 text-lg text-oro">{formatCOP(adicional.price || 0)}</Text>
+                <Text className="mt-2 font-roboto text-lg text-oro">
+                  {formatCOP(adicional.price || 0)}
+                </Text>
                 <AccionesCarta
                   onEditar={() => tab.abrir(adicional)}
                   onAlternar={() => onAlternar(adicional)}
@@ -111,7 +141,10 @@ export function TabAdicionales({ adicionales, guardando, onGuardar, onAlternar, 
         )}
       </TarjetaPerfil>
 
-      <ModalAdmin visible={tab.abierto} titulo={tab.editando ? 'Editar adicional' : 'Nuevo adicional'} onCerrar={tab.cerrar}>
+      <ModalAdmin
+        visible={tab.abierto}
+        titulo={tab.editando ? 'Editar adicional' : 'Nuevo adicional'}
+        onCerrar={tab.cerrar}>
         <FormularioAdicional
           valores={tab.valoresFormulario}
           onCancelar={tab.cerrar}

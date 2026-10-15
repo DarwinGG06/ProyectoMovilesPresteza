@@ -29,7 +29,7 @@ export default function CampoBusqueda({
       placeholder={placeholder}
       placeholderTextColor={variant === 'oscuro' ? '#d4af7788' : '#a3a3a3'}
       autoCapitalize="none"
-      className={`${clases} ${className ?? ''}`}
+      className={`font-roboto ${clases} ${className ?? ''}`}
     />
   );
 }

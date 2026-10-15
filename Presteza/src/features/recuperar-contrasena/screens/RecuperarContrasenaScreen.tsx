@@ -12,7 +12,7 @@ export function RecuperarContrasenaScreen() {
 
   return (
     <ContenedorPantalla titulo="Recuperar contraseña">
-      <Text className="mt-3 text-base text-texto/70">
+      <Text className="mt-3 font-roboto text-base text-texto/70">
         Escribe tu correo. Si está registrado, te llega un enlace para cambiar la clave.
       </Text>
 
@@ -32,7 +32,11 @@ export function RecuperarContrasenaScreen() {
         />
 
         <MensajeError texto={error ?? undefined} />
-        {listo ? <Text className="rounded-lg bg-emerald-50 p-3 text-center text-emerald-800">{listo}</Text> : null}
+        {listo ? (
+          <Text className="rounded-lg bg-emerald-50 p-3 text-center font-roboto text-emerald-800">
+            {listo}
+          </Text>
+        ) : null}
 
         <Button text="ENVIAR" onPress={enviar} />
       </View>

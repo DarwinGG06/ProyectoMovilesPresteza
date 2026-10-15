@@ -51,10 +51,10 @@ export function MarcaCurso({ numero, nombre }: { numero: string; nombre: string 
   return (
     <View className="mb-6 flex-row items-center">
       <View className="h-8 w-8 items-center justify-center rounded-full border border-oro">
-        <Text className="text-[10px] text-oro">{numero}</Text>
+        <Text className="font-roboto text-[10px] text-oro">{numero}</Text>
       </View>
       <View className="ml-3 h-px flex-1 bg-oro/35" />
-      <Text className="ml-3 text-[11px] tracking-[3px] text-oro">{nombre}</Text>
+      <Text className="ml-3 font-roboto text-[11px] tracking-[3px] text-oro">{nombre}</Text>
     </View>
   );
 }

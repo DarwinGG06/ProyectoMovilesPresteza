@@ -2,9 +2,22 @@
 
 ## Tipografía
 
-**Familia definida para el diseño: Roboto**, de tipo sans-serif. Se utilizará en títulos, párrafos, botones, etiquetas y campos de formulario.
+**Familia definida para el diseño: Roboto**, de tipo sans-serif. Se utiliza en títulos, párrafos, botones, etiquetas y campos de formulario.
 
-**Estado de implementación:** pendiente de cargar y aplicar Roboto en la app.
+**Estado de implementación:** aplicada. Las fuentes vienen de `@expo-google-fonts/roboto` y se cargan en `useFuentes`, que sostiene la pantalla de carga hasta que están listas.
+
+En React Native cada grosor es un archivo de fuente distinto, así que no sirven las clases `font-bold` o `font-light` de Tailwind: hay una familia por peso.
+
+| Clase | Familia | Peso |
+|---|---|---|
+| `font-roboto` | `Roboto_400Regular` | 400, el texto normal |
+| `font-roboto-light` | `Roboto_300Light` | 300, cifras y títulos finos |
+| `font-roboto-medium` | `Roboto_500Medium` | 500 |
+| `font-roboto-semibold` | `Roboto_600SemiBold` | 600, etiquetas de formulario |
+| `font-roboto-bold` | `Roboto_700Bold` | 700 |
+| `font-roboto-extrabold` | `Roboto_800ExtraBold` | 800, títulos grandes |
+
+Todo `Text` y `TextInput` lleva una de estas clases. En los estilos creados con `StyleSheet` se usa `fontFamily` directamente, no `fontWeight`.
 
 ## 1. Paleta central
 

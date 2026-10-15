@@ -22,13 +22,19 @@ export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps
       badge="PAGOS"
       titulo="Métodos guardados"
       accion={
-        pagos.formularioAbierto ? undefined : { etiqueta: 'AGREGAR', onPress: pagos.abrirFormulario }
+        pagos.formularioAbierto
+          ? undefined
+          : { etiqueta: 'AGREGAR', onPress: pagos.abrirFormulario }
       }>
       {pagos.error ? <Mensaje texto={pagos.error} error /> : null}
 
       {pagos.formularioAbierto ? (
         <Comanda>
-          <FormularioPago onCancelar={pagos.cancelar} onGuardar={pagos.guardar} guardando={pagos.guardando} />
+          <FormularioPago
+            onCancelar={pagos.cancelar}
+            onGuardar={pagos.guardar}
+            guardando={pagos.guardando}
+          />
         </Comanda>
       ) : perfil.paymentCards.length === 0 ? (
         <EstadoVacio
@@ -45,15 +51,20 @@ export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps
               indice={index}
               titulo={`${tarjeta.brand} · ${tarjeta.last_four_digits}`}
               sello={tarjeta.is_primary ? 'PRINCIPAL' : undefined}>
-              <Text className="mt-1 text-sm text-crema/70">{tarjeta.name}</Text>
-              <Text className="mt-1 text-sm text-crema/45">
-                {tarjeta.cardholder_name} · {tarjeta.type === 'debit' ? 'Débito' : 'Crédito'} · {tarjeta.expiry_date}
+              <Text className="mt-1 font-roboto text-sm text-crema/70">{tarjeta.name}</Text>
+              <Text className="mt-1 font-roboto text-sm text-crema/45">
+                {tarjeta.cardholder_name} · {tarjeta.type === 'debit' ? 'Débito' : 'Crédito'} ·{' '}
+                {tarjeta.expiry_date}
               </Text>
               <AccionesFila>
                 {!tarjeta.is_primary ? (
                   <EnlaceAccion etiqueta="PRINCIPAL" onPress={() => pagos.marcarPrincipal(index)} />
                 ) : null}
-                <EnlaceAccion etiqueta="ELIMINAR" onPress={() => pagos.eliminar(index, tarjeta.name)} peligro />
+                <EnlaceAccion
+                  etiqueta="ELIMINAR"
+                  onPress={() => pagos.eliminar(index, tarjeta.name)}
+                  peligro
+                />
               </AccionesFila>
             </LineaCuenta>
           ))}

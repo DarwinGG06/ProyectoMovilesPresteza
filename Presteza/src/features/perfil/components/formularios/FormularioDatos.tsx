@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { PerfilForm } from '../../types';
 import { AccionesFormulario } from '../elementos';
 
@@ -13,9 +13,7 @@ type FormularioDatosProps = {
 };
 
 export function FormularioDatos({ valores, onCancelar, onGuardar, guardando }: FormularioDatosProps) {
-  const { control, handleSubmit } = useForm<PerfilForm>({
-    defaultValues: valores,
-  });
+  const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
     <View className="gap-4">
@@ -54,7 +52,7 @@ export function FormularioDatos({ valores, onCancelar, onGuardar, guardando }: F
       />
       <AccionesFormulario
         onCancelar={onCancelar}
-        onGuardar={handleSubmit(onGuardar)}
+        onGuardar={guardar}
         guardando={guardando}
         etiquetaGuardar="GUARDAR CAMBIOS"
       />

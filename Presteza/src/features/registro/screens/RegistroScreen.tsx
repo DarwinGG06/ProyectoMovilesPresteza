@@ -14,7 +14,7 @@ export function RegistroScreen() {
 
   return (
     <ContenedorPantalla titulo="Registro">
-      <Text className="mt-3 text-base text-texto/70">
+      <Text className="mt-3 font-roboto text-base text-texto/70">
         Crea tu cuenta. Se guarda en Presteza (nombre, correo y teléfono).
       </Text>
 
@@ -84,7 +84,11 @@ export function RegistroScreen() {
 
         <MensajeError texto={error} />
 
-        <Button text={enviando ? 'CREANDO…' : 'CREAR CUENTA'} onPress={crearCuenta} disabled={enviando} />
+        <Button
+          text={enviando ? 'CREANDO…' : 'CREAR CUENTA'}
+          onPress={crearCuenta}
+          disabled={enviando}
+        />
 
         <Link href="/iniciar-sesion" className="text-center text-sm text-marca">
           ¿Ya tienes cuenta? Inicia sesión

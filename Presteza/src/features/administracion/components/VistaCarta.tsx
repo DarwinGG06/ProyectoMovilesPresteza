@@ -44,10 +44,25 @@ export function InterruptorVista({
   return (
     <View className="mb-1 flex-row">
       {onFiltros ? (
-        <BotonIcono icono="filter-outline" etiqueta="Filtros" activo={filtrosAbiertos} onPress={onFiltros} />
+        <BotonIcono
+          icono="filter-outline"
+          etiqueta="Filtros"
+          activo={filtrosAbiertos}
+          onPress={onFiltros}
+        />
       ) : null}
-      <BotonIcono icono="list-outline" etiqueta="Lista" activo={vista === 'lista'} onPress={() => onChange('lista')} />
-      <BotonIcono icono="grid-outline" etiqueta="Cuadrícula" activo={vista === 'cuadricula'} onPress={() => onChange('cuadricula')} />
+      <BotonIcono
+        icono="list-outline"
+        etiqueta="Lista"
+        activo={vista === 'lista'}
+        onPress={() => onChange('lista')}
+      />
+      <BotonIcono
+        icono="grid-outline"
+        etiqueta="Cuadrícula"
+        activo={vista === 'cuadricula'}
+        onPress={() => onChange('cuadricula')}
+      />
     </View>
   );
 }
@@ -61,7 +76,9 @@ export function GrillaAdmin({ children }: { children: ReactNode }) {
 }
 
 export function CajaCuadricula({ children }: { children: ReactNode }) {
-  return <View className="mb-4 w-[48%] border border-oro/20 bg-marca/30 px-3 py-3">{children}</View>;
+  return (
+    <View className="mb-4 w-[48%] border border-oro/20 bg-marca/30 px-3 py-3">{children}</View>
+  );
 }
 
 export type ColumnaTabla = {
@@ -77,12 +94,12 @@ function estiloColumna(columna: { flex?: number; ancho?: number }) {
 
 export function EncabezadoTabla({ columnas }: { columnas: ColumnaTabla[] }) {
   return (
-    <View className="mb-1 flex-row items-center bg-marca px-3 py-3">
+    <View className="mb-2 flex-row items-center px-1 pb-2">
       {columnas.map((columna) => (
         <Text
           key={columna.texto}
           style={estiloColumna(columna)}
-          className={`text-[10px] tracking-[2px] text-oro ${columna.derecha ? 'text-right' : ''}`}>
+          className={`font-roboto text-[10px] tracking-[2px] text-oro/70 ${columna.derecha ? 'text-right' : ''}`}>
           {columna.texto}
         </Text>
       ))}
@@ -91,7 +108,11 @@ export function EncabezadoTabla({ columnas }: { columnas: ColumnaTabla[] }) {
 }
 
 export function FilaTabla({ children }: { children: ReactNode }) {
-  return <View className="flex-row items-center border-b border-oro/15 px-3 py-3">{children}</View>;
+  return (
+    <View className="mb-3 border border-oro/20 bg-marca/25 px-3.5 py-3.5">
+      <View className="flex-row items-center">{children}</View>
+    </View>
+  );
 }
 
 export function CeldaTabla({
@@ -159,7 +180,9 @@ export function AccionesCarta({
   return (
     <AccionesAdmin>
       <EnlaceAdmin etiqueta="EDITAR" onPress={onEditar} />
-      {onAlternar && etiquetaAlternar ? <EnlaceAdmin etiqueta={etiquetaAlternar} onPress={onAlternar} /> : null}
+      {onAlternar && etiquetaAlternar ? (
+        <EnlaceAdmin etiqueta={etiquetaAlternar} onPress={onAlternar} />
+      ) : null}
       <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={onEliminar} />
     </AccionesAdmin>
   );

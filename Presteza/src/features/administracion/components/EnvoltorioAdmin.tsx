@@ -33,7 +33,7 @@ export function EnvoltorioAdmin({ children }: EnvoltorioAdminProps) {
         <View className="mt-6">
           <ActivityIndicator color="#d4af77" />
         </View>
-        <Text className="mt-3 text-sm text-crema/70">Abriendo la casa...</Text>
+        <Text className="mt-3 font-roboto text-sm text-crema/70">Abriendo la casa...</Text>
       </View>
     );
   }

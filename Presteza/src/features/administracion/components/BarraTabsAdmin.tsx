@@ -17,7 +17,7 @@ export function BarraTabsAdmin() {
       activa={activa}
       onChange={(id) => {
         if (id === activa) return;
-        router.push(hrefAdmin(id));
+        router.replace(hrefAdmin(id));
       }}
       contadores={{
         pedidos: admin.stats.pendingOrders,

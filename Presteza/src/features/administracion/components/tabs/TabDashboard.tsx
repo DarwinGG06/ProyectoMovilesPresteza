@@ -31,8 +31,8 @@ function Mosaic({
     <Pressable
       onPress={onPress}
       className={`mb-3 border border-oro/20 bg-marca/35 px-4 py-5 ${ancho === 'completo' ? 'w-full' : 'w-[48%]'}`}>
-      <Text className="text-[10px] tracking-[2px] text-oro">{etiqueta}</Text>
-      <Text className="mt-2 text-[32px] font-light leading-[36px] text-white">{valor}</Text>
+      <Text className="font-roboto text-[10px] tracking-[2px] text-oro">{etiqueta}</Text>
+      <Text className="mt-2 font-roboto-light text-[32px] leading-[36px] text-white">{valor}</Text>
     </Pressable>
   );
 }
@@ -44,43 +44,82 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
 
   return (
     <View>
-      <Text className="mb-4 text-[10px] tracking-[3px] text-oro">RESUMEN</Text>
+      <Text className="mb-4 font-roboto text-[10px] tracking-[3px] text-oro">RESUMEN</Text>
 
       <View className="flex-row flex-wrap justify-between">
-        <Mosaic etiqueta="INGRESOS" valor={formatCOP(stats.totalRevenue)} onPress={() => irA('pedidos')} ancho="completo" />
-        <Mosaic etiqueta="PEDIDOS" valor={String(stats.totalOrders)} onPress={() => irA('pedidos')} />
-        <Mosaic etiqueta="PENDIENTES" valor={String(stats.pendingOrders)} onPress={() => irA('pedidos')} />
-        <Mosaic etiqueta="CATEGORÍAS" valor={String(stats.totalCategorias)} onPress={() => irA('categorias')} />
-        <Mosaic etiqueta="INVENTARIO" valor={String(stats.totalInsumos)} onPress={() => irA('inventario')} />
-        <Mosaic etiqueta="ADICIONALES" valor={String(stats.totalAdicionales)} onPress={() => irA('adicionales')} />
-        <Mosaic etiqueta="CLIENTES" valor={String(stats.totalCustomers)} onPress={() => irA('clientes')} />
-        <Mosaic etiqueta="PRODUCTOS" valor={String(stats.totalProducts)} onPress={() => irA('productos')} />
+        <Mosaic
+          etiqueta="INGRESOS"
+          valor={formatCOP(stats.totalRevenue)}
+          onPress={() => irA('pedidos')}
+          ancho="completo"
+        />
+        <Mosaic
+          etiqueta="PEDIDOS"
+          valor={String(stats.totalOrders)}
+          onPress={() => irA('pedidos')}
+        />
+        <Mosaic
+          etiqueta="PENDIENTES"
+          valor={String(stats.pendingOrders)}
+          onPress={() => irA('pedidos')}
+        />
+        <Mosaic
+          etiqueta="CATEGORÍAS"
+          valor={String(stats.totalCategorias)}
+          onPress={() => irA('categorias')}
+        />
+        <Mosaic
+          etiqueta="INVENTARIO"
+          valor={String(stats.totalInsumos)}
+          onPress={() => irA('inventario')}
+        />
+        <Mosaic
+          etiqueta="ADICIONALES"
+          valor={String(stats.totalAdicionales)}
+          onPress={() => irA('adicionales')}
+        />
+        <Mosaic
+          etiqueta="CLIENTES"
+          valor={String(stats.totalCustomers)}
+          onPress={() => irA('clientes')}
+        />
+        <Mosaic
+          etiqueta="PRODUCTOS"
+          valor={String(stats.totalProducts)}
+          onPress={() => irA('productos')}
+        />
       </View>
 
       <Pressable onPress={() => irA('pedidos')} className="mb-10 mt-2 border-y border-oro/25 py-5">
         <View className="flex-row items-end justify-between">
-          <Text className="text-[11px] tracking-[2px] text-crema">ÚLTIMOS PEDIDOS</Text>
-          <Text className="text-[11px] tracking-[2px] text-oro">VER PEDIDOS →</Text>
+          <Text className="font-roboto text-[11px] tracking-[2px] text-crema">ÚLTIMOS PEDIDOS</Text>
+          <Text className="font-roboto text-[11px] tracking-[2px] text-oro">VER PEDIDOS →</Text>
         </View>
 
         {recientes.length === 0 ? (
-          <Text className="mt-4 text-sm text-crema/55">Todavía no hay pedidos.</Text>
+          <Text className="mt-4 font-roboto text-sm text-crema/55">Todavía no hay pedidos.</Text>
         ) : (
           recientes.map((pedido) => (
             <View key={idDe(pedido)} className="mt-4 flex-row items-baseline">
-              <Text className="w-16 text-[11px] text-oro">#{idDe(pedido).slice(-4).toUpperCase()}</Text>
-              <Text className="flex-1 text-sm text-white" numberOfLines={1}>
+              <Text className="w-16 font-roboto text-[11px] text-oro">
+                #{idDe(pedido).slice(-4).toUpperCase()}
+              </Text>
+              <Text className="flex-1 font-roboto text-sm text-white" numberOfLines={1}>
                 {pedido.user_name || 'Cliente'}
               </Text>
-              <Text className="ml-2 text-[10px] tracking-[1px] text-crema/50">
+              <Text className="ml-2 font-roboto text-[10px] tracking-[1px] text-crema/50">
                 {textoEstadoPedido(pedido.status).toUpperCase()}
               </Text>
-              <Text className="ml-3 text-sm text-oro">{formatCOP(pedido.total || 0)}</Text>
+              <Text className="ml-3 font-roboto text-sm text-oro">
+                {formatCOP(pedido.total || 0)}
+              </Text>
             </View>
           ))
         )}
         {recientes[0] ? (
-          <Text className="mt-4 text-[11px] text-crema/40">{formatoFechaHora(recientes[0].createdAt)}</Text>
+          <Text className="mt-4 font-roboto text-[11px] text-crema/40">
+            {formatoFechaHora(recientes[0].createdAt)}
+          </Text>
         ) : null}
       </Pressable>
     </View>

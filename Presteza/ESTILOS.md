@@ -68,19 +68,19 @@ text-[10px] tracking-[4px] text-oro
 text-[11px] tracking-[3px] text-oro
   sello PRESTEZA  →  Badge variant="sello"
 
-text-4xl font-extrabold leading-tight text-marca-oscura
+text-4xl font-roboto-extrabold leading-tight text-marca-oscura
   título de pantalla clara  →  Pantalla
 
-text-4xl font-extrabold tracking-[4px] text-crema
+text-4xl font-roboto-extrabold tracking-[4px] text-crema
   título de carta sobre vino (inicio)
 
-text-3xl font-light text-marca-oscura
+text-3xl font-roboto-light text-marca-oscura
   pregunta de reserva (¿Cuántos vienen?)
 
 text-base text-texto/70
   apoyo bajo el título
 
-text-lg font-semibold text-marca-oscura
+text-lg font-roboto-semibold text-marca-oscura
   plato / valor / dato
 
 text-sm text-texto/70
@@ -151,7 +151,7 @@ Bloque: `gap-4` o `gap-5`. Campos sobre crema (modales admin y login).
 `src/components/Field.tsx`
 
 ```
-etiqueta:  font-semibold text-marca-oscura
+etiqueta:  font-roboto-semibold text-marca-oscura
 input:     border bg-white p-3.5
 ok:        border-linea
 error:     border-red-600
@@ -232,8 +232,8 @@ Guardar / Cancelar salen de `AccionesForm` y `AccionesFormulario`. No copies
 
 ```
 pill:   self-start rounded-full bg-marca/10 px-3 py-1
-        text-[11px] font-semibold tracking-[2px] text-marca
-sello:  text-[11px] font-semibold tracking-[3px] text-oro
+        text-[11px] font-roboto-semibold tracking-[2px] text-marca
+sello:  text-[11px] font-roboto-semibold tracking-[3px] text-oro
 ```
 
 `pill` = CARTA, MILÁN, EN MESA. `sello` = PRESTEZA, WHATSAPP, MEDIOS.
@@ -293,7 +293,7 @@ Padding      px-6 pb-12 pt-8
 Raya         mb-3 h-px w-12 bg-oro
 Sello        text-[11px] tracking-[3px] text-oro
 Eyebrow      text-[10px] tracking-[4px] text-oro
-Título       text-4xl font-extrabold leading-tight text-marca-oscura
+Título       text-4xl font-roboto-extrabold leading-tight text-marca-oscura
 Apoyo        mt-3 text-base text-texto/70
 Tarjeta      border border-linea bg-white p-5
 Campo ok     border border-linea bg-white p-3.5

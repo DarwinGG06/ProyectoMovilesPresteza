@@ -20,7 +20,6 @@ export function TabReservas({ onCambio }: TabReservasProps) {
       numero="I"
       badge="RESERVAS"
       titulo="Tus mesas"
-      accion={{ etiqueta: 'NUEVA', onPress: () => router.push('/home/reservas') }}>
       accion={{ etiqueta: 'NUEVA', onPress: reservas.irAReservas }}>
       {reservas.error ? <Mensaje texto={reservas.error} error /> : null}
 
@@ -41,7 +40,6 @@ export function TabReservas({ onCambio }: TabReservasProps) {
           icono="calendar-outline"
           titulo="No tienes reservas"
           texto="Reserva una mesa en Milán cuando quieras."
-          accion={{ etiqueta: 'RESERVAR', onPress: () => router.push('/home/reservas') }}
           accion={{ etiqueta: 'RESERVAR', onPress: reservas.irAReservas }}
         />
       ) : (

@@ -7,13 +7,6 @@ import Field from '@/components/Field';
 import { useFormularioSede } from '../hooks/useFormularioSede';
 
 export function FormularioSede() {
-  const { control, handleSubmit } = useForm<VisitaSede>({
-    defaultValues: { nombre: '', personas: '' },
-  });
-
-  const reservar = handleSubmit(() => {
-    router.push('/home/reservas');
-  });
   const { control, reservar, verMenu, llamar } = useFormularioSede();
 
   return (
@@ -61,8 +54,6 @@ export function FormularioSede() {
       </View>
 
       <View className="mt-6 flex-row gap-3">
-        <Button text="VER MENÚ" onPress={() => router.push('/home/menu')} variant="ghost" className="flex-1" />
-        <Button text="LLAMAR" onPress={() => Linking.openURL(`tel:${SEDE.telefono}`)} variant="gold" className="flex-1" />
         <Button text="VER MENÚ" onPress={verMenu} variant="ghost" className="flex-1" />
         <Button text="LLAMAR" onPress={llamar} variant="gold" className="flex-1" />
       </View>

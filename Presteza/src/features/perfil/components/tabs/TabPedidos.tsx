@@ -22,27 +22,6 @@ type TabPedidosProps = {
 };
 
 export function TabPedidos({ pedidos }: TabPedidosProps) {
-  const { addItem } = useCart();
-  const [abiertos, setAbiertos] = useState<string[]>([]);
-
-  const lista = [...pedidos].sort((a, b) => {
-    return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
-  });
-
-  const toggle = (id: string) => {
-    setAbiertos((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
-  };
-
-  const repetir = (pedido: Pedido) => {
-    pedido.products?.forEach((item) => {
-      addItem({
-        id: item.dishId,
-        productName: item.name,
-        unitPrice: item.unit_price,
-      });
-    });
-    router.push('/home/menu');
-  };
   const { lista, estaAbierto, alternarDetalle, repetir, irAlMenu } = usePedidosPerfil(pedidos);
 
   return (
@@ -52,7 +31,6 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
           icono="receipt-outline"
           titulo="No tienes pedidos"
           texto="Cuando pidas, el seguimiento aparece aquí."
-          accion={{ etiqueta: 'VER MENÚ', onPress: () => router.push('/home/menu') }}
           accion={{ etiqueta: 'VER MENÚ', onPress: irAlMenu }}
         />
       ) : (

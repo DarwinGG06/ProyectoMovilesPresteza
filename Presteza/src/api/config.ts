@@ -41,19 +41,18 @@ function resolverApiUrl(): { url: string; origen: string } {
   const lan = hostDesdeMetro();
 
   // Un backend remoto configurado también tiene prioridad al ejecutar en web.
-  if (desdeEnv && hostEnv && !esIpPrivada(hostEnv) && hostEnv !== 'localhost' && hostEnv !== '127.0.0.1') {
+  if (
+    desdeEnv &&
+    hostEnv &&
+    !esIpPrivada(hostEnv) &&
+    hostEnv !== 'localhost' &&
+    hostEnv !== '127.0.0.1'
+  ) {
     return { url: desdeEnv, origen: 'env-remoto' };
   }
-  const esRemoto = (host: string) =>
-    !esIpPrivada(host) && host !== 'localhost' && host !== '127.0.0.1';
 
   if (Platform.OS === 'web') {
     const url = `http://localhost:${PUERTO_API}`;
-    // Un dominio público (el backend desplegado) funciona igual desde el
-    // navegador, así que se respeta antes de caer a localhost.
-    if (desdeEnv && hostEnv && esRemoto(hostEnv)) {
-      return { url: desdeEnv, origen: 'env-remoto' };
-    }
     if (
       desdeEnv &&
       (hostEnv === 'localhost' || hostEnv === '127.0.0.1' || (lan && hostEnv === lan))
@@ -68,9 +67,6 @@ function resolverApiUrl(): { url: string; origen: string } {
 
   if (lan) {
     const urlLan = `http://${lan}:${PUERTO_API}`;
-    if (desdeEnv && hostEnv && esRemoto(hostEnv)) {
-      return { url: desdeEnv, origen: 'env-remoto' };
-    }
     if (desdeEnv && hostEnv && hostEnv !== lan) {
       logWarn(
         'api',

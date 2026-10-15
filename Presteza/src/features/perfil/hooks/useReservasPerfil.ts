@@ -50,6 +50,6 @@ export function useReservasPerfil(onCambio?: (reservas: Reserva[]) => void) {
     editar: setEditando,
     cancelar: () => setEditando(null),
     guardar,
-    irAReservas: () => router.push('/reservas'),
+    irAReservas: () => router.push('/home/reservas'),
   };
 }

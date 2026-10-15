@@ -16,9 +16,9 @@ export function useFormularioSede() {
   return {
     control,
     reservar: handleSubmit(() => {
-      router.push('/reservas');
+      router.push('/home/reservas');
     }),
-    verMenu: () => router.push('/menu'),
+    verMenu: () => router.push('/home/menu'),
     llamar: () => void Linking.openURL(`tel:${SEDE.telefono}`),
   };
 }

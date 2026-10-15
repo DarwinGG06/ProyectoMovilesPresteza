@@ -10,7 +10,7 @@ export function usePedidosPerfil(pedidos: Pedido[]) {
   const [abiertos, setAbiertos] = useState<string[]>([]);
 
   const lista = [...pedidos].sort(
-    (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime(),
+    (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
   );
 
   const alternarDetalle = (id: string) => {
@@ -25,7 +25,7 @@ export function usePedidosPerfil(pedidos: Pedido[]) {
         unitPrice: item.unit_price,
       });
     });
-    router.push('/menu');
+    router.push('/home/menu');
   };
 
   return {
@@ -33,6 +33,6 @@ export function usePedidosPerfil(pedidos: Pedido[]) {
     estaAbierto: (id: string) => abiertos.includes(id),
     alternarDetalle,
     repetir,
-    irAlMenu: () => router.push('/menu'),
+    irAlMenu: () => router.push('/home/menu'),
   };
 }

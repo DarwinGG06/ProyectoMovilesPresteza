@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { listarProductos } from '@/api/productos'; 
+import { listarProductos } from '@/api/productos';
 import { listarCategorias } from '@/api/categorias';
 
 // Usa los tipos Producto y Categoria exportados en tu archivo de tipos
-import type { Producto, Categoria } from '@/types'; 
+import type { Producto, Categoria } from '@/types';
 
 export function useMenuPublico() {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -19,18 +19,14 @@ export function useMenuPublico() {
         setCargando(true);
         setError(null);
 
-        const [resProds, resCats] = await Promise.all([
-          listarProductos('' as any), 
-          listarCategorias('' as any)
+        const [listaProductos, listaCategorias] = await Promise.all([
+          listarProductos(),
+          listarCategorias(),
         ]);
-        
-        // Garantiza que la respuesta sea un arreglo, incluso si la API responde { data: [...] }
-        const listaProductos: Producto[] = Array.isArray(resProds) ? resProds : resProds?.data || [];
-        const listaCategorias: Categoria[] = Array.isArray(resCats) ? resCats : resCats?.data || [];
 
         if (montado) {
           const productosDisponibles = listaProductos.filter((p) => p.available !== false);
-          
+
           setProductos(productosDisponibles);
           setCategorias(listaCategorias);
         }

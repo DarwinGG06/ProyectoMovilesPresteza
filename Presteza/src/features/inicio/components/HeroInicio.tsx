@@ -78,16 +78,13 @@ export function HeroInicio() {
             Cocina de Presteza, hecha con calma.
           </Text>
           <View className="mt-4 flex-row gap-2">
-            <Pressable onPress={() => router.push('/home/menu')} className="bg-marca-oscura px-5 py-2.5">
-              <Text className="text-[11px] tracking-[2px] text-crema">VER MENÚ</Text>
-            </Pressable>
-            <Pressable onPress={() => router.push('/home/reservas')} className="border border-marca-oscura px-4 py-2.5">
-              <Text className="text-[11px] tracking-[2px] text-marca-oscura">RESERVAR</Text>
-            <Pressable onPress={() => router.push('/menu')} className="bg-marca-oscura px-5 py-2.5">
+            <Pressable
+              onPress={() => router.push('/home/menu')}
+              className="bg-marca-oscura px-5 py-2.5">
               <Text className="font-roboto text-[11px] tracking-[2px] text-crema">VER MENÚ</Text>
             </Pressable>
             <Pressable
-              onPress={() => router.push('/reservas')}
+              onPress={() => router.push('/home/reservas')}
               className="border border-marca-oscura px-4 py-2.5">
               <Text className="font-roboto text-[11px] tracking-[2px] text-marca-oscura">
                 RESERVAR

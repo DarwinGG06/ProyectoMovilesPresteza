@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { Dimensions, Pressable, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
 
 import { CATEGORIAS } from '../data';
 import { useGiroCategorias } from '../hooks/useGiroCategorias';
@@ -92,7 +92,7 @@ export function CategoriasInicio() {
   );
 }
 
-function RadioOro({ index, giro }: { index: number; giro: Animated.SharedValue<number> }) {
+function RadioOro({ index, giro }: { index: number; giro: SharedValue<number> }) {
   const base = (index / CATEGORIAS.length) * 360 - 90;
 
   const estilo = useAnimatedStyle(() => ({
@@ -118,7 +118,7 @@ function RadioOro({ index, giro }: { index: number; giro: Animated.SharedValue<n
   );
 }
 
-function PuntoOrbita({ giro }: { giro: Animated.SharedValue<number> }) {
+function PuntoOrbita({ giro }: { giro: SharedValue<number> }) {
   const estilo = useAnimatedStyle(() => {
     const rad = ((giro.value - 90) * Math.PI) / 180;
     return {
@@ -151,7 +151,7 @@ function Satelite({
 }: {
   categoria: (typeof CATEGORIAS)[number];
   index: number;
-  giro: Animated.SharedValue<number>;
+  giro: SharedValue<number>;
 }) {
   const base = (index / CATEGORIAS.length) * Math.PI * 2 - Math.PI / 2;
 

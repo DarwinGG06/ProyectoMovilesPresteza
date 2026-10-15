@@ -3,7 +3,8 @@ import { Pressable, Text, View } from 'react-native';
 
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
-export type RutaFooter = '/' | '/home/contacto' | '/home/nosotros' | '/home/menu' | '/home/reservas' | '/home/sede';
+export type RutaFooter =
+  '/' | '/home/contacto' | '/home/nosotros' | '/home/menu' | '/home/reservas' | '/home/sede';
 
 const ENLACES_RAPIDOS: { etiqueta: string; ruta: RutaFooter }[] = [
   { etiqueta: 'Inicio', ruta: '/' },
@@ -36,15 +37,8 @@ export function Footer() {
           ))}
         </View>
 
-        <Text className="mb-2 text-[10px] tracking-[3px] text-oro">VISÍTANOS</Text>
-        <Enlace onPress={() => router.push('/home/sede')}>Sede Manizales – Milán</Enlace>
-
-        <View className="mt-8 flex-row gap-4">
-          <IconoSocial nombre="facebook" url={facebookUrl} />
-          <IconoSocial nombre="instagram" url={instagramUrl} />
-        </View>
         <Text className="mb-2 font-roboto text-[10px] tracking-[3px] text-oro">VISÍTANOS</Text>
-        <Enlace onPress={() => router.push('/sede')}>Sede Manizales – Milán</Enlace>
+        <Enlace onPress={() => router.push('/home/sede')}>Sede Manizales – Milán</Enlace>
       </View>
     </View>
   );

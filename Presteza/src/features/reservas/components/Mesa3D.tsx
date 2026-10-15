@@ -231,7 +231,7 @@ const estilos = StyleSheet.create({
     overflow: 'hidden',
   },
   relleno: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   brillo: {
     position: 'absolute',

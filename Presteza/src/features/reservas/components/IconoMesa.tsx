@@ -1,93 +1,171 @@
-import Svg, { Circle, G, Path } from 'react-native-svg';
+import Svg, { Circle, Ellipse, G, Rect } from 'react-native-svg';
 
 type IconoMesaProps = {
   ocupada: boolean;
+  seleccionada?: boolean;
+  capacidad?: number;
 };
 
-const VERDE = '#22c55e';
-const ROJO = '#e53935';
+const PALETA = {
+  libre: {
+    respaldo: '#4e1430',
+    asiento: '#6b1d3d',
+    brillo: 'rgba(255,255,255,0.24)',
+    aro: '#c6a15e',
+    mantel: '#fbf7f2',
+    plato: '#ffffff',
+    bordePlato: '#e4d3c0',
+    aroInterior: 'rgba(198,161,94,0.7)',
+    centro: '#d4af77',
+  },
+  seleccionada: {
+    respaldo: '#4e1430',
+    asiento: '#7a2348',
+    brillo: 'rgba(255,255,255,0.32)',
+    aro: '#e0c48a',
+    mantel: '#fffaf3',
+    plato: '#ffffff',
+    bordePlato: '#e8d5a3',
+    aroInterior: '#d4af77',
+    centro: '#c6a15e',
+  },
+  ocupada: {
+    respaldo: '#8d807c',
+    asiento: '#b3a7a3',
+    brillo: 'rgba(255,255,255,0.2)',
+    aro: '#d5cdc6',
+    mantel: '#f3eeea',
+    plato: '#faf7f5',
+    bordePlato: '#e3dbd4',
+    aroInterior: 'rgba(180,170,162,0.8)',
+    centro: '#c8beb6',
+  },
+} as const;
 
-export function IconoMesa({ ocupada }: IconoMesaProps) {
-  const color = ocupada ? ROJO : VERDE;
+function medidas(capacidad: number) {
+  if (capacidad <= 1) return { radio: 17, ancho: 20, altoAsiento: 11, altoRespaldo: 6, hueco: 3.5 };
+  if (capacidad === 2) return { radio: 18, ancho: 18, altoAsiento: 10, altoRespaldo: 5.5, hueco: 3.5 };
+  if (capacidad <= 4) return { radio: 19, ancho: 16, altoAsiento: 9, altoRespaldo: 5, hueco: 3 };
+  return { radio: 20, ancho: 13, altoAsiento: 8, altoRespaldo: 4.5, hueco: 2.5 };
+}
+
+export function IconoMesa({ ocupada, seleccionada = false, capacidad = 4 }: IconoMesaProps) {
+  const tono = ocupada ? PALETA.ocupada : seleccionada ? PALETA.seleccionada : PALETA.libre;
+  const { radio, ancho, altoAsiento, altoRespaldo, hueco } = medidas(capacidad);
+  const sillas = Math.min(Math.max(capacidad, 1), 8);
+  const yAsiento = 50 - radio - hueco - altoAsiento;
+  const yRespaldo = yAsiento - altoRespaldo - 0.7;
+  const inicio = sillas === 1 ? 180 : sillas === 2 ? 90 : 0;
 
   return (
-    <Svg width={82} height={76} viewBox="0 0 100 92">
-      {ocupada ? <Personas color={color} /> : <Paloma color={color} />}
-      <MesaYSillas color={color} />
+    <Svg width={92} height={92} viewBox="0 0 100 100">
+      {seleccionada && !ocupada ? (
+        <Circle cx={50} cy={50} r={47} fill="rgba(212,175,119,0.16)" stroke="#d4af77" strokeWidth={1.25} />
+      ) : null}
+
+      {Array.from({ length: sillas }, (_, index) => (
+        <Silla
+          key={index}
+          angulo={inicio + (360 / sillas) * index}
+          ancho={ancho}
+          altoAsiento={altoAsiento}
+          altoRespaldo={altoRespaldo}
+          yAsiento={yAsiento}
+          yRespaldo={yRespaldo}
+          asiento={tono.asiento}
+          respaldo={tono.respaldo}
+          brillo={tono.brillo}
+        />
+      ))}
+
+      <Circle cx={51.2} cy={51.8} r={radio} fill="rgba(58,12,32,0.07)" />
+      <Circle cx={50} cy={50} r={radio} fill={tono.aro} />
+      <Circle cx={50} cy={50} r={radio - 2.4} fill={tono.mantel} />
+      <Ellipse
+        cx={50 - radio * 0.18}
+        cy={50 - radio * 0.22}
+        rx={radio * 0.34}
+        ry={radio * 0.16}
+        fill="rgba(255,255,255,0.72)"
+      />
+      <Circle
+        cx={50}
+        cy={50}
+        r={radio - 5.2}
+        fill="none"
+        stroke={tono.aroInterior}
+        strokeWidth={0.75}
+      />
+      <Circle
+        cx={50}
+        cy={50}
+        r={radio * 0.34}
+        fill={tono.plato}
+        stroke={tono.bordePlato}
+        strokeWidth={0.7}
+      />
+      <Circle
+        cx={50}
+        cy={50}
+        r={radio * 0.18}
+        fill="none"
+        stroke={tono.bordePlato}
+        strokeWidth={0.45}
+      />
+      <Circle cx={50} cy={50} r={1.35} fill={tono.centro} />
     </Svg>
   );
 }
 
-function Paloma({ color }: { color: string }) {
-  return (
-    <>
-      <Circle cx="50" cy="13" r="10" fill="none" stroke={color} strokeWidth={2.5} />
-      <Path
-        d="M44.2 13.3 L48.3 17.4 L56.5 8.7"
-        fill="none"
-        stroke={color}
-        strokeWidth={2.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </>
-  );
-}
-
-function Personas({ color }: { color: string }) {
-  return (
-    <>
-      <Busto cx={33} cabezaY={14.5} radio={3.2} hombros={13} color={color} />
-      <Busto cx={67} cabezaY={14.5} radio={3.2} hombros={13} color={color} />
-      <Busto cx={50} cabezaY={11} radio={4.5} hombros={21} color={color} />
-    </>
-  );
-}
-
-function Busto({
-  cx,
-  cabezaY,
-  radio,
-  hombros,
-  color,
+function Silla({
+  angulo,
+  ancho,
+  altoAsiento,
+  altoRespaldo,
+  yAsiento,
+  yRespaldo,
+  asiento,
+  respaldo,
+  brillo,
 }: {
-  cx: number;
-  cabezaY: number;
-  radio: number;
-  hombros: number;
-  color: string;
+  angulo: number;
+  ancho: number;
+  altoAsiento: number;
+  altoRespaldo: number;
+  yAsiento: number;
+  yRespaldo: number;
+  asiento: string;
+  respaldo: string;
+  brillo: string;
 }) {
-  const cuello = cabezaY + radio + 0.6;
-  const base = cuello + radio * 1.55;
-  const medio = hombros / 2;
+  const anchoRespaldo = ancho - 3.2;
 
   return (
-    <>
-      <Circle cx={cx} cy={cabezaY} r={radio} fill={color} />
-      <Path
-        d={`M ${cx - medio} ${base} Q ${cx - medio} ${cuello} ${cx} ${cuello} Q ${cx + medio} ${cuello} ${cx + medio} ${base} Z`}
-        fill={color}
+    <G transform={`rotate(${angulo} 50 50)`}>
+      <Rect
+        x={50 - anchoRespaldo / 2}
+        y={yRespaldo}
+        width={anchoRespaldo}
+        height={altoRespaldo}
+        rx={altoRespaldo / 2}
+        fill={respaldo}
       />
-    </>
-  );
-}
-
-function MesaYSillas({ color }: { color: string }) {
-  return (
-    <G stroke={color} strokeWidth={4.5} fill="none" strokeLinecap="round">
-      <Path d="M14 36 C12 43 12 53 13 62" />
-      <Path d="M13 62 L30 62" />
-      <Path d="M14 62 L14 84" />
-      <Path d="M29 62 L29 84" />
-
-      <Path d="M86 36 C88 43 88 53 87 62" />
-      <Path d="M87 62 L70 62" />
-      <Path d="M86 62 L86 84" />
-      <Path d="M71 62 L71 84" />
-
-      <Path d="M33 52 L67 52" />
-      <Path d="M50 52 L50 82" />
-      <Path d="M40 82 L60 82" />
+      <Rect
+        x={50 - ancho / 2}
+        y={yAsiento}
+        width={ancho}
+        height={altoAsiento}
+        rx={Math.min(4, altoAsiento / 2)}
+        fill={asiento}
+      />
+      <Rect
+        x={50 - ancho / 2 + 1.6}
+        y={yAsiento + 1.2}
+        width={ancho - 3.2}
+        height={1.5}
+        rx={0.75}
+        fill={brillo}
+      />
     </G>
   );
 }

@@ -38,13 +38,13 @@ function mensajeError(data: unknown, fallback: string) {
  *
  * - Sin `body` y sin `method` -> GET.
  * - Si hay sesión activa, adjunta `Authorization: Bearer <token>`.
- * - Si el servidor responde con error, lanza un Error con SU mensaje.
+ * - Si el servidor responde con error, conserva el detalle en el log y muestra un mensaje legible.
  *
  * @param path Ruta relativa a la API, empezando por "/". Ej: "/auth/login".
  */
 export async function request<T>(
   path: string,
-  options?: { method?: string; body?: unknown; token?: string | null },
+  options?: { method?: string; body?: unknown; token?: string | null }
 ): Promise<T> {
   const method = options?.method ?? (options?.body === undefined ? 'GET' : 'POST');
   const jwt = options?.token !== undefined ? options.token : token;
@@ -56,7 +56,9 @@ export async function request<T>(
 
   logInfo('api', `${method} ${url}`, {
     body: redactarCuerpo(
-      options?.body && typeof options.body === 'object' ? (options.body as Record<string, unknown>) : undefined,
+      options?.body && typeof options.body === 'object'
+        ? (options.body as Record<string, unknown>)
+        : undefined
     ),
     conToken: Boolean(jwt),
   });
@@ -96,11 +98,25 @@ export async function request<T>(
 
   if (!response.ok) {
     const message = mensajeError(data, `Error ${response.status} al llamar ${path}`);
+    const esHtml = /<!doctype\s+html\b|<html\b/i.test(message);
+    const detalle = esHtml
+      ? (
+          message.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() || 'Respuesta HTML de error'
+        ).slice(0, 200)
+      : message;
     logError('api', `${method} ${url} -> ${response.status}`, {
-      mensaje: message,
-      cuerpo: redactarRespuesta(data),
+      mensaje: detalle,
+      cuerpo: esHtml ? { formato: 'html', longitud: message.length } : redactarRespuesta(data),
     });
-    throw new Error(message);
+    const servicioNoDisponible =
+      esHtml ||
+      /^(?:(?:TypeError:\s*)?fetch failed|bad gateway|service unavailable|gateway timeout|web server is down)$/i.test(
+        message.trim()
+      );
+    const mensajeUsuario = servicioNoDisponible
+      ? 'El servidor no pudo conectarse con uno de sus servicios. Inténtalo de nuevo más tarde.'
+      : message;
+    throw new Error(mensajeUsuario);
   }
 
   logInfo('api', `${method} ${url} -> ${response.status}`, redactarRespuesta(data));

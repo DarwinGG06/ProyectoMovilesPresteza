@@ -25,7 +25,10 @@ function decodificarBase64Url(valor: string) {
   const binario = globalThis.atob(padded);
   try {
     return decodeURIComponent(
-      Array.from(binario, (caracter) => `%${caracter.charCodeAt(0).toString(16).padStart(2, '0')}`).join(''),
+      Array.from(
+        binario,
+        (caracter) => `%${caracter.charCodeAt(0).toString(16).padStart(2, '0')}`
+      ).join('')
     );
   } catch {
     return binario;
@@ -41,44 +44,48 @@ export function decodificarToken(jwt: string): User {
   const parte = jwt.split('.')[1];
   if (!parte) throw new Error('Token inválido');
 
+  let payload: {
+    userId?: string;
+    email?: string;
+    name?: string;
+    phone_number?: string;
+    role?: string;
+    exp?: number;
+  };
   try {
-    const payload = JSON.parse(decodificarBase64Url(parte)) as {
-      userId?: string;
-      email?: string;
-      name?: string;
-      phone_number?: string;
-      role?: string;
-      exp?: number;
-    };
-
-    if (payload.exp !== undefined && (!Number.isFinite(payload.exp) || payload.exp <= Date.now() / 1000)) {
-      throw new Error('La sesión ha expirado');
+    payload = JSON.parse(decodificarBase64Url(parte));
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      throw new Error('Payload inválido');
     }
-    if (!payload.userId || !payload.email) {
-      throw new Error('El token no contiene un usuario válido');
-    }
-
-    const usuario: User = {
-      id: payload.userId ?? '',
-      name: payload.name ?? payload.email?.split('@')[0] ?? 'Invitado',
-      email: payload.email ?? '',
-      phone: payload.phone_number ?? '',
-      role: payload.role === 'admin' ? 'admin' : 'client',
-    };
-
-    logInfo('auth', 'token decodificado', {
-      id: usuario.id,
-      email: usuario.email,
-      role: usuario.role,
-    });
-
-    return usuario;
-  } catch (error) {
-    logError('auth', 'no se pudo decodificar el JWT', {
-      error: error instanceof Error ? error.message : error,
-    });
+  } catch {
     throw new Error('El servidor devolvió un token inválido');
   }
+
+  if (
+    payload.exp !== undefined &&
+    (!Number.isFinite(payload.exp) || payload.exp <= Date.now() / 1000)
+  ) {
+    throw new Error('La sesión ha expirado');
+  }
+  if (!payload.userId || !payload.email) {
+    throw new Error('El token no contiene un usuario válido');
+  }
+
+  const usuario: User = {
+    id: payload.userId ?? '',
+    name: payload.name ?? payload.email?.split('@')[0] ?? 'Invitado',
+    email: payload.email ?? '',
+    phone: payload.phone_number ?? '',
+    role: payload.role === 'admin' ? 'admin' : 'client',
+  };
+
+  logInfo('auth', 'token decodificado', {
+    id: usuario.id,
+    email: usuario.email,
+    role: usuario.role,
+  });
+
+  return usuario;
 }
 
 /** POST /auth/login -> token de sesión y usuario que entró. */
@@ -165,20 +172,26 @@ export function listarUsuarios(jwt: string) {
   }, [] as Cliente[]);
 }
 
-export async function crearCliente(datos: { name: string; email: string; phone: string; password: string }) {
-  const respuesta = await request<{ message?: string; userId?: string; user?: { id?: string; _id?: string } }>(
-    '/auth/register',
-    {
-      method: 'POST',
-      body: {
-        complete_name: datos.name,
-        email: datos.email,
-        phone_number: datos.phone,
-        password: datos.password,
-        role: 'client',
-      },
+export async function crearCliente(datos: {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+}) {
+  const respuesta = await request<{
+    message?: string;
+    userId?: string;
+    user?: { id?: string; _id?: string };
+  }>('/auth/register', {
+    method: 'POST',
+    body: {
+      complete_name: datos.name,
+      email: datos.email,
+      phone_number: datos.phone,
+      password: datos.password,
+      role: 'client',
     },
-  );
+  });
 
   return {
     id: respuesta.userId || idDe(respuesta.user) || datos.email,
@@ -192,7 +205,7 @@ export async function crearCliente(datos: { name: string; email: string; phone: 
 export async function actualizarCliente(
   jwt: string,
   id: string,
-  datos: { name?: string; email?: string; phone?: string; password?: string },
+  datos: { name?: string; email?: string; phone?: string; password?: string }
 ) {
   const body: Record<string, unknown> = {};
   if (datos.name !== undefined) body.complete_name = datos.name;

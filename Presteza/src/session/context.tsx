@@ -6,7 +6,14 @@
  * exponemos las tres acciones que lo cambian: entrar, registrarse y salir.
  */
 
-import React, { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type PropsWithChildren,
+} from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 
 import * as api from '../api/auth';
@@ -54,6 +61,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
           usuario = api.decodificarToken(guardado);
         } catch {
           await writeSessionToken(null);
+          logInfo('auth', 'Sesión guardada vencida o inválida; se requiere iniciar sesión');
           return;
         }
 
@@ -70,7 +78,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
     };
 
     void restaurar();
-    return () => { activo = false; };
+    return () => {
+      activo = false;
+    };
   }, []);
 
   const actualizarUsuario = useCallback((parcial: Partial<User>) => {
@@ -105,7 +115,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
     setToken(session.token);
     setTokenState(session.token);
     setUser(session.user);
-    logInfo('auth', 'login OK', { id: session.user.id, email: session.user.email, role: session.user.role });
+    logInfo('auth', 'login OK', {
+      id: session.user.id,
+      email: session.user.email,
+      role: session.user.role,
+    });
   };
 
   return (
@@ -137,7 +151,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
           <ActivityIndicator color="#3a0c20" />
           <Text className="mt-3 text-marca-oscura">Cargando sesión...</Text>
         </View>
-      ) : children}
+      ) : (
+        children
+      )}
     </SessionContext.Provider>
   );
 }

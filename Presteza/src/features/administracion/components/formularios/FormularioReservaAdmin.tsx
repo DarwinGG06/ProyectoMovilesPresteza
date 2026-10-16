@@ -5,11 +5,11 @@ import Select from '@/components/Select';
 import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { MesaAdmin, ReservaFormAdmin } from '../../types';
 import { AccionesForm } from './AccionesForm';
+import { CampoStepper } from './CampoStepper';
 
 export function FormularioReservaAdmin({
   valores,
   mesas,
-  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -23,12 +23,13 @@ export function FormularioReservaAdmin({
   const mesasActivas = mesas.filter((item) => item.active !== false);
 
   return (
-    <View className="gap-4">
+    <View className="gap-5">
       {mesasActivas.length > 0 ? (
         <Select
           control={control}
           name="tableNumber"
           label="Mesa"
+          variante="fila"
           options={mesasActivas.map((item) => ({
             value: item.number,
             label: `${item.number} · ${item.capacity}`,
@@ -41,6 +42,7 @@ export function FormularioReservaAdmin({
           name="tableNumber"
           label="Mesa"
           placeholder="T1"
+          variante="linea"
           rules={{ required: 'Elige la mesa' }}
         />
       )}
@@ -49,29 +51,30 @@ export function FormularioReservaAdmin({
         name="date"
         label="Fecha"
         placeholder="DD/MM/AAAA"
+        variante="linea"
         rules={{
           required: 'Escribe la fecha',
           pattern: { value: /^\d{2}\/\d{2}\/\d{4}$/, message: 'Usa DD/MM/AAAA' },
         }}
       />
-      <Field control={control} name="time" label="Hora" placeholder="7:30 p. m." rules={{ required: 'Escribe la hora' }} />
       <Field
         control={control}
-        name="numberOfPeople"
-        label="Personas"
-        keyboardType="number-pad"
-        rules={{
-          required: 'Indica cuántas personas',
-          validate: (valor) => {
-            const numero = Number(valor);
-            if (!numero || numero < 1) return 'Mínimo 1 persona';
-            if (numero > 20) return 'Máximo 20 personas';
-            return true;
-          },
-        }}
+        name="time"
+        label="Hora"
+        placeholder="7:30 p. m."
+        variante="linea"
+        rules={{ required: 'Escribe la hora' }}
       />
-      <Field control={control} name="specialRequests" label="Notas" placeholder="Opcional" autoCapitalize="sentences" />
-      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
+      <CampoStepper control={control} name="numberOfPeople" label="Personas" minimo={1} maximo={20} />
+      <Field
+        control={control}
+        name="specialRequests"
+        label="Notas"
+        placeholder="Opcional"
+        autoCapitalize="sentences"
+        variante="linea"
+      />
+      <AccionesForm onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

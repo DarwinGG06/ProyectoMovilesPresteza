@@ -7,7 +7,6 @@ import { AccionesForm } from './AccionesForm';
 
 export function FormularioMensaje({
   valores,
-  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -19,25 +18,47 @@ export function FormularioMensaje({
   const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
-    <View className="gap-4">
+    <View className="gap-5">
       <Field
         control={control}
         name="name"
         label="Nombre"
         autoCapitalize="words"
+        variante="linea"
         rules={{ required: 'Escribe el nombre' }}
       />
-      <Field control={control} name="email" label="Correo" keyboardType="email-address" rules={{ required: 'Escribe el correo' }} />
-      <Field control={control} name="phone" label="Teléfono" keyboardType="phone-pad" rules={{ required: 'Escribe el teléfono' }} />
-      <Field control={control} name="subject" label="Asunto" rules={{ required: 'Escribe el asunto' }} />
+      <Field
+        control={control}
+        name="email"
+        label="Correo"
+        keyboardType="email-address"
+        variante="linea"
+        rules={{ required: 'Escribe el correo' }}
+      />
+      <Field
+        control={control}
+        name="phone"
+        label="Teléfono"
+        keyboardType="phone-pad"
+        variante="linea"
+        rules={{ required: 'Escribe el teléfono' }}
+      />
+      <Field
+        control={control}
+        name="subject"
+        label="Asunto"
+        variante="linea"
+        rules={{ required: 'Escribe el asunto' }}
+      />
       <Field
         control={control}
         name="message"
         label="Mensaje"
         multiline
+        variante="linea"
         rules={{ required: 'Escribe el mensaje' }}
       />
-      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
+      <AccionesForm onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

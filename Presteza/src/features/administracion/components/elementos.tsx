@@ -78,21 +78,22 @@ export function ModalAdmin({
   children: ReactNode;
 }) {
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCerrar}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onCerrar}>
       <EvitarTeclado offset={0}>
-        <Pressable onPress={onCerrar} className="flex-1 justify-end bg-marca-oscura/80">
-          <Pressable onPress={() => {}} className="max-h-[88%] bg-crema px-5 pb-8 pt-6">
-            <View className="mb-4 flex-row items-center justify-between">
-              <Text className="flex-1 font-roboto-light text-2xl text-marca-oscura">{titulo}</Text>
-              <Pressable onPress={onCerrar} className="h-10 w-10 items-center justify-center">
-                <IconoNav name="close" size={20} className="text-marca-oscura" />
+        <View className="flex-1 justify-end bg-marca-oscura/55">
+          <View className="max-h-[88%] bg-crema px-6 pb-10 pt-3">
+            <View className="mb-5 h-1 w-10 self-center bg-oro/50" />
+            <View className="mb-6 flex-row items-end justify-between">
+              <Text className="flex-1 font-roboto-light text-[26px] text-marca-oscura">{titulo}</Text>
+              <Pressable onPress={onCerrar} hitSlop={8} className="pb-1">
+                <IconoNav name="close" size={18} className="text-texto/40" />
               </Pressable>
             </View>
             <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
               {children}
             </ScrollView>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </EvitarTeclado>
     </Modal>
   );

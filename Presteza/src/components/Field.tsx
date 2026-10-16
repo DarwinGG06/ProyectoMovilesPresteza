@@ -28,6 +28,8 @@ type Props<T extends FieldValues> = TextInputProps & {
   label: string;
   /** Reglas de validación: required, minLength, pattern, validate... */
   rules?: RegisterOptions<T, Path<T>>;
+  /** `linea` es el de admin: sin caja, solo el subrayado. */
+  variante?: 'caja' | 'linea';
 };
 
 export default function Field<T extends FieldValues>({
@@ -37,9 +39,11 @@ export default function Field<T extends FieldValues>({
   rules,
   className,
   secureTextEntry,
+  variante = 'caja',
   ...input
 }: Props<T>) {
   const contrasena = useVerContrasena(secureTextEntry);
+  const linea = variante === 'linea';
 
   return (
     <Controller
@@ -47,8 +51,15 @@ export default function Field<T extends FieldValues>({
       name={name}
       rules={rules}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-        <View className="gap-1.5">
-          <Text className="font-roboto-semibold text-marca-oscura">{label}</Text>
+        <View className={linea ? 'gap-0.5' : 'gap-1.5'}>
+          <Text
+            className={
+              linea
+                ? 'font-roboto text-[10px] tracking-[2px] text-marca'
+                : 'font-roboto-semibold text-marca-oscura'
+            }>
+            {label}
+          </Text>
           <View className="relative justify-center">
             <TextInput
               // Android no refresca los puntos al quitar `secureTextEntry` si
@@ -60,8 +71,12 @@ export default function Field<T extends FieldValues>({
               }
               // El `className` que llegue desde fuera se suma al de aquí; si se
               // pasara dentro de `...input` reemplazaría estos estilos base.
-              className={`border bg-white p-3.5 font-roboto ${
-                error ? 'border-red-600' : 'border-linea'
+              className={`${
+                linea
+                  ? `border-b bg-transparent px-0 py-3 font-roboto-light text-lg text-marca-oscura ${
+                      error ? 'border-red-600' : 'border-marca/20'
+                    }`
+                  : `border bg-white p-3.5 font-roboto ${error ? 'border-red-600' : 'border-linea'}`
               } ${contrasena.esContrasena ? 'pr-12' : ''} ${className ?? ''}`}
               value={value ?? ''}
               onChangeText={onChange}

@@ -7,6 +7,7 @@ import { useFormularioPedido } from '../../hooks/useFormularioPedido';
 import type { ClienteAdmin, PedidoForm, ProductoAdmin } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesForm } from './AccionesForm';
+import { Paso } from './CampoStepper';
 
 const PAGOS = [
   { value: 'cash', label: 'Efectivo' },
@@ -15,7 +16,7 @@ const PAGOS = [
 
 const ESTADOS = [
   { value: 'pendiente', label: 'Pendiente' },
-  { value: 'Preparando', label: 'Preparando' },
+  { value: 'Preparando', label: 'Prep.' },
   { value: 'listo', label: 'Listo' },
   { value: 'entregado', label: 'Entregado' },
 ];
@@ -24,7 +25,7 @@ export function FormularioPedido({
   valores,
   clientes,
   productos,
-  onCancelar,
+  onCancelar: _onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -41,12 +42,13 @@ export function FormularioPedido({
   );
 
   return (
-    <View className="gap-4">
+    <View>
       {clientes.length > 0 ? (
         <Select
           control={control}
           name="userId"
           label="Cliente"
+          variante="fila"
           options={clientes.map((cliente) => ({ value: cliente.id, label: cliente.name }))}
           rules={{ required: 'Elige un cliente' }}
         />
@@ -54,70 +56,73 @@ export function FormularioPedido({
         <Text className="font-roboto text-sm text-texto/55">No hay clientes registrados.</Text>
       )}
 
-      <Select
-        control={control}
-        name="payment_method"
-        label="Pago"
-        options={PAGOS}
-        rules={{ required: 'Elige el medio de pago' }}
-      />
-      <Select
-        control={control}
-        name="status"
-        label="Estado"
-        options={ESTADOS}
-        rules={{ required: 'Elige el estado' }}
-      />
-
-      <View>
-        <Text className="mb-2 font-roboto-semibold text-marca-oscura">Platos</Text>
-        {productos.length === 0 ? (
-          <Text className="font-roboto text-sm text-texto/55">No hay platos en la carta.</Text>
-        ) : (
-          <View className="flex-row flex-wrap gap-2">
-            {productos.map((producto) => (
-              <Pressable
-                key={idDe(producto)}
-                onPress={() => agregar(producto)}
-                className="border border-marca/20 px-3 py-2">
-                <Text className="font-roboto text-[12px] text-marca-oscura">{producto.name}</Text>
-              </Pressable>
-            ))}
-          </View>
-        )}
-        {lineas.map((linea) => (
-          <View
-            key={linea.dishId}
-            className="mt-3 flex-row items-center justify-between border-b border-marca/10 pb-2">
-            <View className="flex-1 pr-3">
-              <Text className="font-roboto text-sm text-marca-oscura">{linea.name}</Text>
-              <Text className="font-roboto text-[12px] text-texto/55">
-                {formatCOP(linea.unit_price)}
-              </Text>
-            </View>
-            <View className="flex-row items-center gap-3">
-              <Pressable onPress={() => cambiarCantidad(linea.dishId, linea.quantity - 1)}>
-                <Text className="font-roboto text-lg text-marca-oscura">−</Text>
-              </Pressable>
-              <Text className="w-6 text-center font-roboto text-sm text-marca-oscura">
-                {linea.quantity}
-              </Text>
-              <Pressable onPress={() => cambiarCantidad(linea.dishId, linea.quantity + 1)}>
-                <Text className="font-roboto text-lg text-marca-oscura">+</Text>
-              </Pressable>
-            </View>
-          </View>
-        ))}
-        <Text className="mt-3 font-roboto text-base text-marca-oscura">
-          Total {formatCOP(total)}
-        </Text>
+      <View className="mt-6">
+        <Select
+          control={control}
+          name="payment_method"
+          label="Pago"
+          variante="barra"
+          options={PAGOS}
+          rules={{ required: 'Elige el medio de pago' }}
+        />
       </View>
 
-      <AccionesForm
-        onCancelar={onCancelar}
-        onGuardar={guardar}
-        guardando={guardando}
-      />
+      <View className="mt-6">
+        <Select
+          control={control}
+          name="status"
+          label="Estado"
+          variante="barra"
+          options={ESTADOS}
+          rules={{ required: 'Elige el estado' }}
+        />
+      </View>
+
+      <View className="mt-8">
+        <Text className="mb-1 font-roboto text-[10px] tracking-[2px] text-marca">Carta</Text>
+        {productos.length === 0 ? (
+          <Text className="py-3 font-roboto text-sm text-texto/55">No hay platos en la carta.</Text>
+        ) : (
+          productos.map((producto) => {
+            const id = idDe(producto);
+            const linea = lineas.find((item) => item.dishId === id);
+            return (
+              <View
+                key={id}
+                className="flex-row items-center border-b border-marca/10 py-3">
+                <Pressable onPress={() => agregar(producto)} className="flex-1 pr-3">
+                  <Text className="font-roboto-light text-base text-marca-oscura">
+                    {producto.name}
+                  </Text>
+                  <Text className="font-roboto text-[11px] text-texto/45">
+                    {formatCOP(producto.price || 0)}
+                  </Text>
+                </Pressable>
+                {linea ? (
+                  <Paso
+                    valor={linea.quantity}
+                    onCambio={(cantidad) => cambiarCantidad(id, cantidad)}
+                    minimo={0}
+                  />
+                ) : (
+                  <Pressable
+                    onPress={() => agregar(producto)}
+                    hitSlop={8}
+                    className="h-9 w-9 items-center justify-center">
+                    <Text className="font-roboto-light text-2xl text-oro">+</Text>
+                  </Pressable>
+                )}
+              </View>
+            );
+          })
+        )}
+        <View className="mt-4 flex-row items-baseline justify-between">
+          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">Total</Text>
+          <Text className="font-roboto-light text-2xl text-marca-oscura">{formatCOP(total)}</Text>
+        </View>
+      </View>
+
+      <AccionesForm onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

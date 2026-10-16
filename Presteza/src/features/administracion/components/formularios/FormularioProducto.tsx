@@ -21,20 +21,20 @@ type FormularioProductoProps = {
 export function FormularioProducto({
   valores,
   categorias,
-  onCancelar,
   onGuardar,
   guardando,
 }: FormularioProductoProps) {
   const formulario = useFormularioProducto({ valores, onGuardar, guardando });
 
   return (
-    <View className="gap-4">
+    <View className="gap-5">
       <Field
         control={formulario.control}
         name="name"
         label="Nombre"
         placeholder="Nombre del plato"
         autoCapitalize="words"
+        variante="linea"
         maxLength={80}
         rules={{
           required: 'Escribe el nombre',
@@ -48,6 +48,7 @@ export function FormularioProducto({
         label="Descripción"
         placeholder="Ingredientes y preparación"
         multiline
+        variante="linea"
         maxLength={400}
         rules={{
           required: 'Escribe una descripción',
@@ -58,8 +59,9 @@ export function FormularioProducto({
         control={formulario.control}
         name="price"
         label="Precio"
-        placeholder="Precio"
+        placeholder="0"
         keyboardType="numeric"
+        variante="linea"
         rules={{ required: 'Escribe el precio' }}
       />
       <Controller
@@ -80,14 +82,14 @@ export function FormularioProducto({
         control={formulario.control}
         name="categoryId"
         label="Categoría"
+        variante="fila"
         options={categorias.map((categoria) => ({ value: idDe(categoria), label: categoria.name }))}
         rules={{ required: 'Elige una categoría' }}
       />
       <AccionesForm
-        onCancelar={onCancelar}
         onGuardar={formulario.guardar}
         guardando={formulario.ocupado}
-        etiqueta={formulario.subiendo ? 'SUBIENDO…' : 'GUARDAR'}
+        etiqueta={formulario.subiendo ? 'SUBIENDO' : 'LISTO'}
       />
     </View>
   );

@@ -1,12 +1,9 @@
-import { View } from 'react-native';
-
-import Button from '@/components/Button';
+import { Pressable, Text, View } from 'react-native';
 
 export function AccionesForm({
-  onCancelar,
   onGuardar,
   guardando,
-  etiqueta = 'GUARDAR',
+  etiqueta = 'LISTO',
 }: {
   onCancelar?: () => void;
   onGuardar: () => void;
@@ -14,9 +11,14 @@ export function AccionesForm({
   etiqueta?: string;
 }) {
   return (
-    <View className="mt-5 gap-2">
-      <Button text={guardando ? 'GUARDANDO…' : etiqueta} onPress={onGuardar} disabled={guardando} />
-      {onCancelar ? <Button text="CANCELAR" onPress={onCancelar} secondary /> : null}
-    </View>
+    <Pressable
+      onPress={onGuardar}
+      disabled={guardando}
+      className="mt-8 items-center py-2 active:opacity-60 disabled:opacity-40">
+      <Text className="font-roboto text-[11px] tracking-[4px] text-marca-oscura">
+        {guardando ? 'GUARDANDO' : etiqueta}
+      </Text>
+      <View className="mt-2 h-px w-12 bg-oro" />
+    </Pressable>
   );
 }

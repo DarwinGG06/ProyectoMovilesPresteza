@@ -7,7 +7,6 @@ import { AccionesForm } from './AccionesForm';
 
 export function FormularioCategoria({
   valores,
-  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -19,7 +18,7 @@ export function FormularioCategoria({
   const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
-    <View className="gap-4">
+    <View className="gap-5">
       <Field
         control={control}
         name="name"
@@ -27,6 +26,7 @@ export function FormularioCategoria({
         placeholder="Nombre"
         autoCapitalize="words"
         maxLength={60}
+        variante="linea"
         rules={{
           required: 'Escribe el nombre',
           maxLength: { value: 60, message: 'Máximo 60 caracteres' },
@@ -38,13 +38,20 @@ export function FormularioCategoria({
         label="Descripción"
         placeholder="Descripción"
         maxLength={300}
+        variante="linea"
         rules={{
           required: 'Escribe una descripción',
           maxLength: { value: 300, message: 'Máximo 300 caracteres' },
         }}
       />
-      <Field control={control} name="imageUrl" label="Imagen (URL)" placeholder="https://..." />
-      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
+      <Field
+        control={control}
+        name="imageUrl"
+        label="Imagen"
+        placeholder="https://…"
+        variante="linea"
+      />
+      <AccionesForm onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

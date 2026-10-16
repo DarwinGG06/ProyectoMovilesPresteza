@@ -7,7 +7,6 @@ import { AccionesForm } from './AccionesForm';
 
 export function FormularioAdicional({
   valores,
-  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -19,24 +18,26 @@ export function FormularioAdicional({
   const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
-    <View className="gap-4">
+    <View className="gap-5">
       <Field
         control={control}
         name="name"
         label="Nombre"
         placeholder="Nombre"
         autoCapitalize="words"
+        variante="linea"
         rules={{ required: 'Escribe el nombre' }}
       />
       <Field
         control={control}
         name="price"
         label="Precio"
-        placeholder="Precio"
+        placeholder="0"
         keyboardType="numeric"
+        variante="linea"
         rules={{ required: 'Escribe el precio' }}
       />
-      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
+      <AccionesForm onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

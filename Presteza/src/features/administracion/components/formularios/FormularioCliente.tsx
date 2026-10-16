@@ -8,7 +8,6 @@ import { AccionesForm } from './AccionesForm';
 export function FormularioCliente({
   valores,
   editando,
-  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -21,12 +20,13 @@ export function FormularioCliente({
   const { control, enviar, getValues } = useFormularioCliente(valores, onGuardar);
 
   return (
-    <View className="gap-4">
+    <View className="gap-5">
       <Field
         control={control}
         name="name"
         label="Nombre"
         autoCapitalize="words"
+        variante="linea"
         maxLength={80}
         rules={{
           required: 'Escribe el nombre',
@@ -39,6 +39,7 @@ export function FormularioCliente({
         name="email"
         label="Correo"
         keyboardType="email-address"
+        variante="linea"
         maxLength={120}
         rules={{
           required: 'Escribe el correo',
@@ -51,6 +52,7 @@ export function FormularioCliente({
         name="phone"
         label="Teléfono"
         keyboardType="phone-pad"
+        variante="linea"
         maxLength={20}
         rules={{
           required: 'Escribe el teléfono',
@@ -62,6 +64,7 @@ export function FormularioCliente({
         name="password"
         label={editando ? 'Nueva contraseña (opcional)' : 'Contraseña'}
         secureTextEntry
+        variante="linea"
         maxLength={72}
         rules={
           editando
@@ -92,13 +95,14 @@ export function FormularioCliente({
           name="confirmation"
           label="Confirmar nueva contraseña"
           secureTextEntry
+          variante="linea"
           maxLength={72}
           rules={{
             validate: (value) => value === getValues('password') || 'Las contraseñas no coinciden',
           }}
         />
       ) : null}
-      <AccionesForm onCancelar={onCancelar} onGuardar={enviar} guardando={guardando} />
+      <AccionesForm onGuardar={enviar} guardando={guardando} />
     </View>
   );
 }

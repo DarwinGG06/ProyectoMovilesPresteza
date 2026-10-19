@@ -9,6 +9,7 @@ type NombreIcono = ComponentProps<typeof IconoNav>['name'];
 
 const PESTANAS: { id: PestanaId; etiqueta: string; icono: NombreIcono }[] = [
   { id: 'cuenta', etiqueta: 'Cuenta', icono: 'person-outline' },
+  { id: 'puntos', etiqueta: 'Puntos', icono: 'star-outline' },
   { id: 'pedidos', etiqueta: 'Pedidos', icono: 'receipt-outline' },
   { id: 'direcciones', etiqueta: 'Direcciones', icono: 'location-outline' },
   { id: 'pagos', etiqueta: 'Pagos', icono: 'card-outline' },

@@ -21,6 +21,11 @@ function extraerUsuario(data: RespuestaUsuario | UsuarioPerfil): UsuarioPerfil {
   return normalizarUsuario(data as UsuarioPerfil);
 }
 
+function cifra(valor: unknown) {
+  const n = Number(valor);
+  return Number.isFinite(n) ? n : 0;
+}
+
 function normalizarUsuario(user: UsuarioPerfil): UsuarioPerfil {
   return {
     ...user,
@@ -28,6 +33,11 @@ function normalizarUsuario(user: UsuarioPerfil): UsuarioPerfil {
     addresses: user.addresses ?? [],
     paymentCards: user.paymentCards ?? [],
     favoriteDishes: user.favoriteDishes ?? [],
+    points: cifra(user.points),
+    pointsEarned: cifra(user.pointsEarned),
+    pointsRedeemed: cifra(user.pointsRedeemed),
+    completedOrders: cifra(user.completedOrders),
+    loyaltyTier: user.loyaltyTier || 'Bronce',
   };
 }
 

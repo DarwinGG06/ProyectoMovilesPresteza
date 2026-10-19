@@ -8,9 +8,11 @@ type HeroPerfilProps = {
   nombre: string;
   email: string;
   miembroDesde?: string;
+  puntos?: number;
+  nivel?: string;
 };
 
-export function HeroPerfil({ nombre, email, miembroDesde }: HeroPerfilProps) {
+export function HeroPerfil({ nombre, email, miembroDesde, puntos, nivel }: HeroPerfilProps) {
   const estilo = useEntradaHero();
   const corto = primerNombre(nombre);
 
@@ -31,6 +33,12 @@ export function HeroPerfil({ nombre, email, miembroDesde }: HeroPerfilProps) {
           {miembroDesde ? (
             <Text className="mt-5 font-roboto text-[11px] tracking-[1px] text-crema/80">
               Cliente desde {miembroDesde}
+            </Text>
+          ) : null}
+
+          {typeof puntos === 'number' ? (
+            <Text className="mt-2 font-roboto text-[11px] tracking-[1px] text-oro">
+              {puntos} pts{nivel ? ` · ${nivel}` : ''}
             </Text>
           ) : null}
         </View>

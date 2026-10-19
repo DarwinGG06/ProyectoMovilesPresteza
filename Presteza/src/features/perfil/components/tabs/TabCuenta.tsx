@@ -51,6 +51,8 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
               { etiqueta: 'NOMBRE', valor: perfil.complete_name || 'Sin nombre' },
               { etiqueta: 'CORREO', valor: perfil.email || 'Sin correo' },
               { etiqueta: 'TELÉFONO', valor: perfil.phone_number || 'Sin teléfono' },
+              { etiqueta: 'PUNTOS', valor: String(perfil.points ?? 0) },
+              { etiqueta: 'NIVEL', valor: perfil.loyaltyTier || 'Bronce' },
               { etiqueta: 'DESDE', valor: formatFecha(perfil.created_at) },
             ]}
           />

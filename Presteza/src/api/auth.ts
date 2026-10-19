@@ -168,6 +168,8 @@ export function listarUsuarios(jwt: string) {
       email: texto(usuario.email) || undefined,
       phone: texto(usuario.phone_number) || undefined,
       role: texto(usuario.role) || undefined,
+      points: Number(usuario.points) || 0,
+      loyaltyTier: texto(usuario.loyaltyTier) || undefined,
     })) as Cliente[];
   }, [] as Cliente[]);
 }

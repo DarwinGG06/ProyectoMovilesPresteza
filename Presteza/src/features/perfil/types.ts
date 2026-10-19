@@ -28,6 +28,63 @@ export type UsuarioPerfil = {
   paymentCards: TarjetaPago[];
   favoriteDishes: string[];
   created_at?: string;
+  points?: number;
+  pointsEarned?: number;
+  pointsRedeemed?: number;
+  completedOrders?: number;
+  loyaltyTier?: string;
+};
+
+export type NivelFidelidad = {
+  id: string;
+  name: string;
+  multiplier: number;
+  discountPercent: number;
+  benefits: string[];
+};
+
+export type HistorialPuntos = {
+  id: string;
+  type: 'earn' | 'redeem' | 'refund';
+  points: number;
+  orderId: string | null;
+  description: string | null;
+  discountCop: number;
+  createdAt?: string;
+};
+
+export type ProgramaFidelidad = {
+  userId: string;
+  points: number;
+  pointsEarned: number;
+  pointsRedeemed: number;
+  completedOrders: number;
+  tier: NivelFidelidad;
+  nextTier: {
+    id: string;
+    name: string;
+    pointsNeeded: number;
+    ordersNeeded: number;
+  } | null;
+  rules: {
+    pointCopUnit: number;
+    pointValueCop: number;
+    minRedeemPoints: number;
+    maxRedeemPercent: number;
+  };
+  history: HistorialPuntos[];
+};
+
+export type CotizacionPuntos = {
+  subtotal: number;
+  tier: NivelFidelidad;
+  tierDiscount: number;
+  pointsRedeemed: number;
+  pointsDiscount: number;
+  discount: number;
+  total: number;
+  estimatedPoints: number;
+  maxRedeemable: number;
 };
 
 export type PlatoFavorito = {
@@ -61,7 +118,14 @@ export type Pedido = {
 
 export type { Reserva } from '@/types';
 
-export type PestanaId = 'cuenta' | 'pedidos' | 'direcciones' | 'pagos' | 'reservas' | 'ajustes';
+export type PestanaId =
+  | 'cuenta'
+  | 'puntos'
+  | 'pedidos'
+  | 'direcciones'
+  | 'pagos'
+  | 'reservas'
+  | 'ajustes';
 
 export type DireccionForm = {
   name: string;

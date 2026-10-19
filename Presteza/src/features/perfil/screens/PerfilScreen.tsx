@@ -12,6 +12,7 @@ import { TabCuenta } from '../components/tabs/TabCuenta';
 import { TabDirecciones } from '../components/tabs/TabDirecciones';
 import { TabPagos } from '../components/tabs/TabPagos';
 import { TabPedidos } from '../components/tabs/TabPedidos';
+import { TabPuntos } from '../components/tabs/TabPuntos';
 import { TabReservas } from '../components/tabs/TabReservas';
 import { usePerfil } from '../hooks/usePerfil';
 import { formatFecha } from '../utils';
@@ -71,11 +72,14 @@ export function PerfilScreen() {
             nombre={perfil.complete_name || user.name}
             email={perfil.email || user.email}
             miembroDesde={formatFecha(perfil.created_at)}
+            puntos={perfil.points}
+            nivel={perfil.loyaltyTier}
           />
           <PestanasPerfil
             activa={pestana}
             onChange={setPestana}
             contadores={{
+              puntos: perfil.points ?? 0,
               pedidos: pedidos.length,
               direcciones: perfil.addresses.length,
               pagos: perfil.paymentCards.length,
@@ -94,6 +98,7 @@ export function PerfilScreen() {
                 onActualizado={setPerfil}
               />
             ) : null}
+            {pestana === 'puntos' ? <TabPuntos userId={user.id} /> : null}
             {pestana === 'pedidos' ? <TabPedidos pedidos={pedidos} /> : null}
             {pestana === 'direcciones' ? (
               <TabDirecciones userId={user.id} perfil={perfil} onActualizado={setPerfil} />

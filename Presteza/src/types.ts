@@ -36,6 +36,8 @@ export type Cliente = {
   totalOrders?: number;
   totalReservations?: number;
   totalSpent?: number;
+  points?: number;
+  loyaltyTier?: string;
 };
 
 // --- Productos (platos) ----------------------------------------------------

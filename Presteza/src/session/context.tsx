@@ -28,7 +28,13 @@ interface Session {
   token: string | null;
   isAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (name: string, email: string, password: string, phone: string) => Promise<void>;
+  signUp: (
+    name: string,
+    email: string,
+    password: string,
+    phone: string,
+    birthDate: string,
+  ) => Promise<void>;
   signOut: () => void;
   logout: () => void;
   actualizarUsuario: (parcial: Partial<User>) => void;
@@ -130,10 +136,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
         isAuthenticated: Boolean(user && token),
         signIn,
         // El registro NO devuelve token, así que enseguida iniciamos sesión.
-        signUp: async (name, email, password, phone) => {
+        signUp: async (name, email, password, phone, birthDate) => {
           logInfo('auth', 'registro iniciado', { email: email.trim().toLowerCase() });
           try {
-            await api.register(name, email, password, phone);
+            await api.register(name, email, password, phone, birthDate);
           } catch (error) {
             logError('auth', 'registro falló', {
               error: error instanceof Error ? error.message : error,

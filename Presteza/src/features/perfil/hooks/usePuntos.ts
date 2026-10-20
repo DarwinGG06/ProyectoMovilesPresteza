@@ -10,7 +10,7 @@ function etiquetaMovimiento(item: HistorialPuntos) {
   return 'Acumulado';
 }
 
-export function usePuntos(userId: string) {
+export function usePuntos(userId: string, token?: string) {
   const [programa, setPrograma] = useState<ProgramaFidelidad | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);

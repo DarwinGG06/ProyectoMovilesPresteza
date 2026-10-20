@@ -98,17 +98,25 @@ export function normalizarCotizacion(crudo: unknown): CotizacionPuntos {
     total: numero(fuente.total),
     estimatedPoints: numero(fuente.estimatedPoints),
     maxRedeemable: numero(fuente.maxRedeemable),
+    birthdayDiscount: numero(fuente.birthdayDiscount),
+    birthdayApplied: Boolean(fuente.birthdayApplied),
+    birthdayEligible: Boolean(fuente.birthdayEligible),
   };
 }
 
-export async function obtenerPrograma(userId: string) {
-  const data = await request(`/loyalty/${userId}`);
+export async function obtenerPrograma(userId: string, jwt?: string) {
+  const data = await request(`/loyalty/${userId}`, { token: jwt });
   return normalizarPrograma(data);
 }
 
-export async function cotizarPuntos(userId: string, total: number, pointsToRedeem = 0) {
+export async function cotizarPuntos(
+  userId: string,
+  total: number,
+  pointsToRedeem = 0,
+  aplicarCumpleanos = true,
+) {
   const data = await request(
-    `/loyalty/${userId}/quote?total=${Math.max(0, Math.round(total))}&pointsToRedeem=${Math.max(0, Math.floor(pointsToRedeem))}`,
+    `/loyalty/${userId}/quote?total=${Math.max(0, Math.round(total))}&pointsToRedeem=${Math.max(0, Math.floor(pointsToRedeem))}&applyBirthday=${aplicarCumpleanos ? '1' : '0'}`,
   );
   return normalizarCotizacion(data);
 }

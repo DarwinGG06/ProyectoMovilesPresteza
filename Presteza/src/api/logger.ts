@@ -29,7 +29,7 @@ export function redactarCuerpo(cuerpo?: Record<string, unknown>) {
 
   const copia: Record<string, unknown> = { ...cuerpo };
   for (const clave of Object.keys(copia)) {
-    if (/password|token|authorization/i.test(clave)) {
+    if (/password|token|authorization|cedula|birth|document|tarjeta|card/i.test(clave)) {
       copia[clave] = '***';
     }
   }

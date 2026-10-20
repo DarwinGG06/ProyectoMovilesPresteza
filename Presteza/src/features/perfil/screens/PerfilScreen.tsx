@@ -98,7 +98,9 @@ export function PerfilScreen() {
                 onActualizado={setPerfil}
               />
             ) : null}
-            {pestana === 'puntos' ? <TabPuntos userId={user.id} /> : null}
+            {pestana === 'puntos' ? (
+              <TabPuntos userId={user.id} token={token} perfil={perfil} />
+            ) : null}
             {pestana === 'pedidos' ? <TabPedidos pedidos={pedidos} /> : null}
             {pestana === 'direcciones' ? (
               <TabDirecciones userId={user.id} perfil={perfil} onActualizado={setPerfil} />

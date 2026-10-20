@@ -38,6 +38,9 @@ export type Cliente = {
   totalSpent?: number;
   points?: number;
   loyaltyTier?: string;
+  birthDate?: string | null;
+  birthdayEligible?: boolean;
+  birthdayInWindow?: boolean;
 };
 
 // --- Productos (platos) ----------------------------------------------------

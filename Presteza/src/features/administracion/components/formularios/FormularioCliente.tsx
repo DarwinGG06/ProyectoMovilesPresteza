@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 
+import CampoFecha from '@/components/CampoFecha';
 import Field from '@/components/Field';
 import { useFormularioCliente } from '../../hooks/useFormularioCliente';
 import type { ClienteForm } from '../../types';
@@ -59,6 +60,14 @@ export function FormularioCliente({
           maxLength: { value: 20, message: 'Máximo 20 caracteres' },
         }}
       />
+      {editando ? null : (
+        <CampoFecha
+          control={control}
+          name="birthDate"
+          label="Fecha de nacimiento"
+          variante="linea"
+        />
+      )}
       <Field
         control={control}
         name="password"

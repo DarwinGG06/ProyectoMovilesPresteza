@@ -4,6 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { Plato } from '@/features/inicio/components/MesaDecor';
 import { PRODUCTOS_DESTACADOS } from '@/features/inicio/data';
 import { formatCOP, useCart } from '@/services/cart/CartContext';
+import { formatearFechaLarga } from '@/shared/fechaNacimiento';
 
 import { useCuenta } from '../../hooks/useCuenta';
 import type { PlatoFavorito, UsuarioPerfil } from '../../types';
@@ -53,6 +54,7 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
               { etiqueta: 'TELÉFONO', valor: perfil.phone_number || 'Sin teléfono' },
               { etiqueta: 'PUNTOS', valor: String(perfil.points ?? 0) },
               { etiqueta: 'NIVEL', valor: perfil.loyaltyTier || 'Bronce' },
+              { etiqueta: 'CUMPLE', valor: perfil.birthDate ? formatearFechaLarga(perfil.birthDate) || perfil.birthDate : 'Sin fecha' },
               { etiqueta: 'DESDE', valor: formatFecha(perfil.created_at) },
             ]}
           />

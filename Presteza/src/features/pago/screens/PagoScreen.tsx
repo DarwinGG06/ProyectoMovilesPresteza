@@ -71,6 +71,15 @@ export function PagoScreen() {
                       </Text>
                     </View>
                   ) : null}
+                  {(cotizacion?.birthdayDiscount ?? 0) > 0 ? (
+                    <View className="flex-row items-baseline">
+                      <Text className="font-roboto text-sm text-texto/70">Cumpleaños</Text>
+                      <View className="mx-2 mb-1 h-px flex-1 bg-oro/35" />
+                      <Text className="font-roboto text-marca-oscura">
+                        −{formatCOP(cotizacion?.birthdayDiscount ?? 0)}
+                      </Text>
+                    </View>
+                  ) : null}
                   {(cotizacion?.pointsDiscount ?? 0) > 0 ? (
                     <View className="flex-row items-baseline">
                       <Text className="font-roboto text-sm text-texto/70">
@@ -83,9 +92,26 @@ export function PagoScreen() {
                     </View>
                   ) : null}
 
+                  {pago.cumpleDisponible ? (
+                    <Text className="font-roboto text-xs leading-5 text-texto/55">
+                      Hoy solo puedes elegir uno: 15% de cumpleaños o canje de puntos.
+                    </Text>
+                  ) : null}
+
+                  {pago.cumpleDisponible ? (
+                    <Pressable
+                      onPress={() => pago.setCanjear(false)}
+                      disabled={pago.cotizando || pago.enviando}
+                      className={`mt-1 border px-4 py-3 ${!pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
+                      <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
+                        15% CUMPLEAÑOS
+                      </Text>
+                    </Pressable>
+                  ) : null}
+
                   {pago.puedeCanjear ? (
                     <Pressable
-                      onPress={() => pago.setCanjear(!pago.canjear)}
+                      onPress={() => pago.setCanjear(true)}
                       disabled={pago.cotizando || pago.enviando}
                       className={`mt-1 border px-4 py-3 ${pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
                       <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
@@ -94,11 +120,11 @@ export function PagoScreen() {
                           : `USAR PUNTOS (máx. ${cotizacion?.maxRedeemable ?? 0})`}
                       </Text>
                     </Pressable>
-                  ) : (
+                  ) : !pago.cumpleDisponible ? (
                     <Text className="font-roboto text-xs leading-5 text-texto/55">
                       El canje mínimo es 50 puntos y no puede superar la mitad del pedido.
                     </Text>
-                  )}
+                  ) : null}
 
                   {cotizacion?.estimatedPoints ? (
                     <Text className="font-roboto text-xs text-texto/55">

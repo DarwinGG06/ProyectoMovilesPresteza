@@ -35,12 +35,15 @@ export function usePago() {
     setCotizando(true);
     setError(null);
     try {
-      const base = await cotizarPuntos(user.id, totalPrice, 0);
+      const aplicarCumple = !canjear;
+      const base = await cotizarPuntos(user.id, totalPrice, 0, aplicarCumple);
       const minimo = CANJE_MINIMO;
       const puedeCanjear = canjear && base.maxRedeemable >= minimo;
 
       if (puedeCanjear) {
-        setCotizacion(await cotizarPuntos(user.id, totalPrice, base.maxRedeemable));
+        setCotizacion(
+          await cotizarPuntos(user.id, totalPrice, base.maxRedeemable, false),
+        );
         return;
       }
 
@@ -113,6 +116,11 @@ export function usePago() {
 
   const minimo = CANJE_MINIMO;
   const puedeCanjear = (cotizacion?.maxRedeemable ?? 0) >= minimo || canjear;
+  const cumpleDisponible = Boolean(cotizacion?.birthdayEligible || cotizacion?.birthdayApplied);
+
+  const elegirCanje = (usarPuntos: boolean) => {
+    setCanjear(usarPuntos);
+  };
 
   return {
     items,
@@ -121,8 +129,9 @@ export function usePago() {
     setMetodo,
     metodos: METODOS,
     canjear,
-    setCanjear,
+    setCanjear: elegirCanje,
     puedeCanjear,
+    cumpleDisponible,
     cotizacion,
     cotizando,
     enviando,

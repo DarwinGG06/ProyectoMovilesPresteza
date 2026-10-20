@@ -26,7 +26,12 @@ type TabClientesProps = {
   onEliminar: (cliente: ClienteAdmin) => void;
 };
 
-export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabClientesProps) {
+export function TabClientes({
+  clientes,
+  guardando,
+  onGuardar,
+  onEliminar,
+}: TabClientesProps) {
   const tab = useTabClientes(clientes, onGuardar);
 
   return (
@@ -173,6 +178,17 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
             </Text>
             <Text className="font-roboto text-sm text-texto/70">
               {tab.detalle.phone || 'Sin teléfono'}
+            </Text>
+            <Text className="font-roboto text-sm text-texto/70">
+              Nacimiento: {tab.detalle.birthDate || 'Sin fecha'}
+            </Text>
+            <Text className="font-roboto text-sm text-texto/70">
+              Cumpleaños:{' '}
+              {tab.detalle.birthdayEligible
+                ? 'Beneficio activo esta semana'
+                : tab.detalle.birthdayInWindow
+                  ? 'Ya usado este año'
+                  : 'Fuera de la semana de cumpleaños'}
             </Text>
             <Text className="font-roboto text-base text-marca-oscura">
               {tab.detalle.totalOrders ?? 0} pedidos

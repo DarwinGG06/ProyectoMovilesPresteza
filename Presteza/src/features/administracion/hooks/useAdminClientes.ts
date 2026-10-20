@@ -34,7 +34,13 @@ export function useAdminClientes() {
           setLista((prev) => fusionar(prev, editando, visibles));
           aviso.ok('Cliente editado', `${name} fue actualizado.`);
         } else {
-          const creado = await crearCliente({ name, email, phone, password });
+          const creado = await crearCliente({
+            name,
+            email,
+            phone,
+            password,
+            birthDate: datos.birthDate,
+          });
           setLista((prev) => [creado, ...prev]);
           aviso.ok('Cliente creado', `${creado.name} ya está en la casa.`);
         }

@@ -3,6 +3,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import Button from '@/components/Button';
+import CampoFecha from '@/components/CampoFecha';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
 import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
@@ -15,7 +16,8 @@ export function RegistroScreen() {
   return (
     <ContenedorPantalla titulo="Registro">
       <Text className="mt-3 font-roboto text-base text-texto/70">
-        Crea tu cuenta. Se guarda en Presteza (nombre, correo y teléfono).
+        Crea tu cuenta. La fecha de nacimiento sirve para el 15% de cumpleaños; debes tener al menos
+        15 años.
       </Text>
 
       <View className="mt-8 gap-5">
@@ -57,6 +59,7 @@ export function RegistroScreen() {
             maxLength: { value: 20, message: 'Máximo 20 caracteres' },
           }}
         />
+        <CampoFecha control={control} name="birthDate" label="Fecha de nacimiento" />
         <Field
           control={control}
           name="password"

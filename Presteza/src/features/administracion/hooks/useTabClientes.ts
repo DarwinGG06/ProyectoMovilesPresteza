@@ -24,13 +24,17 @@ export function useTabClientes(
         [cliente.name, cliente.email, cliente.phone].filter(Boolean).some((campo) => campo!.toLowerCase().includes(texto));
       const coincideActividad =
         filtro === 'all' ||
-        (filtro === 'pedidos' ? (cliente.totalOrders ?? 0) > 0 : (cliente.totalReservations ?? 0) > 0);
+        (filtro === 'pedidos'
+          ? (cliente.totalOrders ?? 0) > 0
+          : (cliente.totalReservations ?? 0) > 0);
       return coincideTexto && coincideActividad;
     });
   }, [busqueda, clientes, filtro]);
 
   useEffect(() => {
-    if (detalle && !clientes.some((item) => item.id === detalle.id)) setDetalle(null);
+    if (detalle && !clientes.some((item) => item.id === detalle.id)) {
+      setDetalle(null);
+    }
   }, [clientes, detalle]);
 
   const abrir = (cliente?: ClienteAdmin) => {
@@ -55,7 +59,7 @@ export function useTabClientes(
     setFiltrosAbiertos,
     abierto,
     editando,
-    detalle,
+    detalle: detalle ? (clientes.find((item) => item.id === detalle.id) ?? detalle) : null,
     setDetalle,
     lista,
     abrir,
@@ -66,6 +70,7 @@ export function useTabClientes(
       email: editando?.email ?? '',
       phone: editando?.phone ?? '',
       password: '',
+      birthDate: editando?.birthDate ?? '',
     } satisfies ClienteForm,
   };
 }

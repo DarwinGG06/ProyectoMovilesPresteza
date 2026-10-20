@@ -103,6 +103,7 @@ export type ClienteForm = {
   email: string;
   phone: string;
   password: string;
+  birthDate: string;
 };
 
 export type LineaPedido = {

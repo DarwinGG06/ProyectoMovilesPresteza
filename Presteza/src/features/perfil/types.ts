@@ -33,6 +33,10 @@ export type UsuarioPerfil = {
   pointsRedeemed?: number;
   completedOrders?: number;
   loyaltyTier?: string;
+  birthDate?: string | null;
+  birthdayBenefitYear?: number | null;
+  birthdayInWindow?: boolean;
+  birthdayEligible?: boolean;
 };
 
 export type NivelFidelidad = {
@@ -85,6 +89,9 @@ export type CotizacionPuntos = {
   total: number;
   estimatedPoints: number;
   maxRedeemable: number;
+  birthdayDiscount?: number;
+  birthdayApplied?: boolean;
+  birthdayEligible?: boolean;
 };
 
 export type PlatoFavorito = {

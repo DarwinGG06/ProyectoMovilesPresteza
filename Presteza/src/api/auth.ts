@@ -114,19 +114,27 @@ export async function login(email: string, password: string) {
 }
 
 /** POST /auth/register -> el usuario creado. Ojo: NO devuelve token. */
-export async function register(name: string, email: string, password: string, phone: string) {
+export async function register(
+  name: string,
+  email: string,
+  password: string,
+  phone: string,
+  birthDate: string,
+) {
   const payload = {
     complete_name: name.trim(),
     email: email.trim().toLowerCase(),
     phone_number: phone.trim(),
     password,
     role: 'client',
+    birth_date: birthDate.trim(),
   };
 
   logInfo('auth', 'register()', {
     email: payload.email,
     complete_name: payload.complete_name,
     phone_number: payload.phone_number,
+    birth_date: payload.birth_date,
   });
 
   try {
@@ -170,6 +178,9 @@ export function listarUsuarios(jwt: string) {
       role: texto(usuario.role) || undefined,
       points: Number(usuario.points) || 0,
       loyaltyTier: texto(usuario.loyaltyTier) || undefined,
+      birthDate: texto(usuario.birthDate) || null,
+      birthdayEligible: Boolean(usuario.birthdayEligible),
+      birthdayInWindow: Boolean(usuario.birthdayInWindow),
     })) as Cliente[];
   }, [] as Cliente[]);
 }
@@ -179,6 +190,7 @@ export async function crearCliente(datos: {
   email: string;
   phone: string;
   password: string;
+  birthDate: string;
 }) {
   const respuesta = await request<{
     message?: string;
@@ -192,6 +204,7 @@ export async function crearCliente(datos: {
       phone_number: datos.phone,
       password: datos.password,
       role: 'client',
+      birth_date: datos.birthDate.trim(),
     },
   });
 

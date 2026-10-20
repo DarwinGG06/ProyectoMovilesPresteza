@@ -1,18 +1,35 @@
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { formatCOP } from '@/services/cart/CartContext';
+import { formatearFechaLarga } from '@/shared/fechaNacimiento';
 
 import { usePuntos } from '../../hooks/usePuntos';
+import type { UsuarioPerfil } from '../../types';
 import { formatFecha } from '../../utils';
 import { CuentaEscrita } from '../CuentaEscrita';
 import { EstadoVacio, Mensaje, TarjetaPerfil } from '../TarjetaPerfil';
 
 type TabPuntosProps = {
   userId: string;
+  token: string;
+  perfil: UsuarioPerfil;
 };
 
-export function TabPuntos({ userId }: TabPuntosProps) {
-  const { programa, historial, cargando, error, recargar } = usePuntos(userId);
+function textoCumpleanos(perfil: UsuarioPerfil) {
+  if (!perfil.birthDate) {
+    return 'La fecha de nacimiento se captura al registrarte y no se puede cambiar.';
+  }
+  if (perfil.birthdayEligible) {
+    return 'Esta semana tienes 15% de cumpleaños en caja. Se usa una vez al año y no se combina con puntos.';
+  }
+  if (perfil.birthdayInWindow) {
+    return 'Ya usaste el 15% de cumpleaños este año.';
+  }
+  return 'En la semana de tu cumpleaños hay 15% extra, una vez al año. No se combina con canje de puntos.';
+}
+
+export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
+  const { programa, historial, cargando, error, recargar } = usePuntos(userId, token);
 
   if (cargando && !programa) {
     return (
@@ -73,7 +90,22 @@ export function TabPuntos({ userId }: TabPuntosProps) {
         )}
       </TarjetaPerfil>
 
-      <TarjetaPerfil numero="II" badge="MESA" titulo="Beneficios">
+      <TarjetaPerfil numero="II" badge="CUMPLE" titulo="Cumpleaños">
+        <Text className="font-roboto text-sm leading-5 text-crema/70">{textoCumpleanos(perfil)}</Text>
+        <Text className="mt-4 font-roboto text-[10px] tracking-[2px] text-oro">
+          FECHA DE NACIMIENTO
+        </Text>
+        <Text className="mt-1 font-roboto text-base text-crema">
+          {perfil.birthDate
+            ? formatearFechaLarga(perfil.birthDate) || perfil.birthDate
+            : 'Quedó fijada en el registro'}
+        </Text>
+        <Text className="mt-4 font-roboto text-[11px] leading-5 text-crema/45">
+          No se puede editar. El 15% se activa en la semana de tu cumpleaños, una vez al año.
+        </Text>
+      </TarjetaPerfil>
+
+      <TarjetaPerfil numero="III" badge="MESA" titulo="Beneficios">
         {programa.tier.benefits.map((beneficio) => (
           <View key={beneficio} className="flex-row items-start border-b border-oro/20 py-3.5">
             <Text className="mr-3 font-roboto text-[10px] text-oro">●</Text>
@@ -83,11 +115,11 @@ export function TabPuntos({ userId }: TabPuntosProps) {
         <Text className="mt-5 font-roboto text-[11px] leading-5 text-crema/45">
           1 punto por cada {formatCOP(programa.rules.pointCopUnit)} pagados. Canje mínimo:{' '}
           {programa.rules.minRedeemPoints} puntos. Máximo {programa.rules.maxRedeemPercent}% del
-          pedido.
+          pedido. En la semana del cumpleaños hay 15% extra, una vez al año.
         </Text>
       </TarjetaPerfil>
 
-      <TarjetaPerfil numero="III" badge="CUENTA" titulo="Movimientos">
+      <TarjetaPerfil numero="IV" badge="CUENTA" titulo="Movimientos">
         {historial.length === 0 ? (
           <EstadoVacio
             icono="star-outline"

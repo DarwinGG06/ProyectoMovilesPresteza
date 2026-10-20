@@ -7,6 +7,7 @@ export type RegisterForm = {
   name: string;
   email: string;
   phone: string;
+  birthDate: string;
   password: string;
   confirmation: string;
 };
@@ -14,13 +15,13 @@ export type RegisterForm = {
 export function useRegistro() {
   const { signUp } = useSession();
   const { control, handleSubmit, setError, getValues, formState } = useForm<RegisterForm>({
-    defaultValues: { name: '', email: '', phone: '', password: '', confirmation: '' },
+    defaultValues: { name: '', email: '', phone: '', birthDate: '', password: '', confirmation: '' },
   });
 
   // `confirmation` no se envía: solo sirve para verificar que no hubo errata.
-  const crearCuenta = handleSubmit(async ({ name, email, phone, password }) => {
+  const crearCuenta = handleSubmit(async ({ name, email, phone, password, birthDate }) => {
     try {
-      await signUp(name, email, password, phone);
+      await signUp(name, email, password, phone, birthDate);
       router.replace('/perfil');
     } catch (error) {
       setError('root', { message: error instanceof Error ? error.message : 'No se pudo crear la cuenta.' });

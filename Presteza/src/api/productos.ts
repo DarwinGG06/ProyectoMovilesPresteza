@@ -23,6 +23,7 @@ function normalizarProducto(crudo: Record<string, unknown>): Producto {
         ? texto((categoria as { name?: unknown }).name)
         : texto(categoria) || undefined,
     imageUrl: texto(crudo.imageUrl) || texto(crudo.image),
+    modelUrl: texto(crudo.modelUrl) || texto(crudo.model_url) || undefined,
     type: texto(crudo.type) || 'principal',
     available: crudo.available !== false,
   };

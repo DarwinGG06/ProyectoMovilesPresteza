@@ -24,6 +24,11 @@ export function IniciarSesionScreen() {
           name="email"
           label="Correo"
           keyboardType="email-address"
+          // Autocompletar: Android (Google / gestor de contraseñas) y iOS (Llavero)
+          // reconocen este campo como el usuario de la cuenta.
+          autoComplete="email"
+          textContentType="username"
+          importantForAutofill="yes"
           placeholder="tu@email.com"
           maxLength={120}
           rules={{
@@ -37,6 +42,9 @@ export function IniciarSesionScreen() {
           name="password"
           label="Contraseña"
           secureTextEntry
+          autoComplete="current-password"
+          textContentType="password"
+          importantForAutofill="yes"
           placeholder="••••••••"
           maxLength={72}
           rules={{

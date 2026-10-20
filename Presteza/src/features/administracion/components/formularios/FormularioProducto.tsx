@@ -3,12 +3,14 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import Select from '@/components/Select';
+import { ModelViewerModal } from '@/features/menu/components/ModelViewerModal';
 
 import { useFormularioProducto } from '../../hooks/useFormularioProducto';
 import type { CategoriaAdmin, ProductoForm } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesForm } from './AccionesForm';
 import { CampoImagenProducto } from './CampoImagenProducto';
+import { CampoModelo3d } from './CampoModelo3d';
 
 type FormularioProductoProps = {
   valores: ProductoForm;
@@ -77,6 +79,27 @@ export function FormularioProducto({
             onArchivo={formulario.tomarDesdeArchivo}
           />
         )}
+      />
+      <Controller
+        control={formulario.control}
+        name="modelUrl"
+        render={({ fieldState: { error } }) => (
+          <CampoModelo3d
+            nombre={formulario.modelo3d.nombre}
+            pendiente={formulario.modelo3d.pendiente}
+            error={error?.message}
+            disabled={formulario.ocupado}
+            onElegir={formulario.modelo3d.elegir}
+            onVer={formulario.modelo3d.abrirVisor}
+            onQuitar={formulario.modelo3d.quitar}
+          />
+        )}
+      />
+      <ModelViewerModal
+        isVisible={formulario.modelo3d.visorAbierto}
+        onClose={formulario.modelo3d.cerrarVisor}
+        modelUrl={formulario.modelo3d.fuente}
+        productName={formulario.modelo3d.nombre}
       />
       <Select
         control={formulario.control}

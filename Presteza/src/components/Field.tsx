@@ -7,7 +7,7 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Controller,
   type Control,
@@ -45,6 +45,22 @@ export default function Field<T extends FieldValues>({
   const contrasena = useVerContrasena(secureTextEntry);
   const linea = variante === 'linea';
 
+  // En Android el input de contraseña se vuelve a montar al tocar el ojito (ver
+  // la `key` más abajo). Al desmontarse, Android le pasa el foco al campo de
+  // arriba (el correo). Por eso, si estaba enfocado, se le devuelve el foco al
+  // input nuevo y el cursor se pone al final del texto.
+  const remonta = Platform.OS === 'android' && contrasena.esContrasena;
+  const inputRef = useRef<TextInput>(null);
+  const reenfocar = useRef<number | null>(null); // largo del texto, o null si no hay que reenfocar
+
+  useEffect(() => {
+    const largo = reenfocar.current;
+    if (largo === null) return;
+    reenfocar.current = null;
+    inputRef.current?.focus();
+    inputRef.current?.setSelection(largo, largo);
+  }, [contrasena.oculto]);
+
   return (
     <Controller
       control={control}
@@ -62,13 +78,10 @@ export default function Field<T extends FieldValues>({
           </Text>
           <View className="relative justify-center">
             <TextInput
+              ref={inputRef}
               // Android no refresca los puntos al quitar `secureTextEntry` si
               // el mismo input sigue montado; la `key` fuerza el remount.
-              key={
-                Platform.OS === 'android' && contrasena.esContrasena
-                  ? String(contrasena.oculto)
-                  : undefined
-              }
+              key={remonta ? String(contrasena.oculto) : undefined}
               // El `className` que llegue desde fuera se suma al de aquí; si se
               // pasara dentro de `...input` reemplazaría estos estilos base.
               className={`${
@@ -88,7 +101,12 @@ export default function Field<T extends FieldValues>({
             />
             {contrasena.esContrasena ? (
               <Pressable
-                onPress={contrasena.alternar}
+                onPress={() => {
+                  if (remonta && inputRef.current?.isFocused()) {
+                    reenfocar.current = (value ?? '').length;
+                  }
+                  contrasena.alternar();
+                }}
                 hitSlop={8}
                 accessibilityRole="button"
                 accessibilityLabel={contrasena.etiqueta}

@@ -135,11 +135,15 @@ export function MenuScreen() {
                         </View>
                       )}
 
-                      <TouchableOpacity
-                        className="absolute bottom-1 right-1 rounded-full border border-[#d4af77]/50 bg-black/70 p-1.5"
-                        onPress={() => menu.abrirVisor(producto)}>
-                        <Ionicons name="cube-outline" size={16} color="#d4af77" />
-                      </TouchableOpacity>
+                      {menu.tieneModelo(producto) ? (
+                        <TouchableOpacity
+                          className="absolute bottom-1 right-1 rounded-full border border-[#d4af77]/50 bg-black/70 p-1.5"
+                          onPress={() => menu.abrirVisor(producto)}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Ver ${producto.name} en 3D`}>
+                          <Ionicons name="cube-outline" size={16} color="#d4af77" />
+                        </TouchableOpacity>
+                      ) : null}
                     </View>
 
                     <View className="flex-1 justify-center">

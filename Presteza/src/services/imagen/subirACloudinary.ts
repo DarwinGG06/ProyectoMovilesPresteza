@@ -7,6 +7,20 @@ const NUBE = process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME?.trim();
 const PRESET = process.env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET?.trim();
 const TIMEOUT_MS = 60000;
 
+/** Lo mínimo que necesita Cloudinary para recibir un archivo. */
+export type ArchivoSubida = {
+  uri: string;
+  mime: string;
+  nombre: string;
+};
+
+/**
+ * Tipo de recurso de Cloudinary:
+ * - `image`: fotos (Cloudinary puede transformarlas).
+ * - `raw`: cualquier otro archivo, se guarda tal cual (p. ej. modelos 3D .glb).
+ */
+export type TipoRecurso = 'image' | 'raw';
+
 function mensajeCloudinary(crudo?: string) {
   const texto = (crudo ?? '').toLowerCase();
 
@@ -18,7 +32,11 @@ function mensajeCloudinary(crudo?: string) {
     return 'El upload preset no existe o no es Unsigned. Créalo en Settings → Upload → Upload presets.';
   }
 
-  return crudo?.trim() || 'No se pudo subir la imagen.';
+  if (texto.includes('file size too large')) {
+    return 'El archivo supera el tamaño máximo que permite Cloudinary.';
+  }
+
+  return crudo?.trim() || 'No se pudo subir el archivo.';
 }
 
 type RespuestaCloudinary = {
@@ -26,7 +44,10 @@ type RespuestaCloudinary = {
   error?: { message?: string };
 };
 
-export async function subirImagenACloudinary(archivo: ArchivoImagen): Promise<string> {
+export async function subirACloudinary(
+  archivo: ArchivoSubida,
+  tipo: TipoRecurso = 'image',
+): Promise<string> {
   if (!NUBE || !PRESET) {
     throw new Error('Falta la configuración de Cloudinary en el entorno.');
   }
@@ -50,14 +71,11 @@ export async function subirImagenACloudinary(archivo: ArchivoImagen): Promise<st
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   try {
-    const respuesta = await fetch(
-      `https://api.cloudinary.com/v1_1/${NUBE}/image/upload`,
-      {
-        method: 'POST',
-        body: form,
-        signal: controller.signal,
-      }
-    );
+    const respuesta = await fetch(`https://api.cloudinary.com/v1_1/${NUBE}/${tipo}/upload`, {
+      method: 'POST',
+      body: form,
+      signal: controller.signal,
+    });
 
     const cuerpo = (await respuesta.json()) as RespuestaCloudinary;
 
@@ -68,11 +86,15 @@ export async function subirImagenACloudinary(archivo: ArchivoImagen): Promise<st
     return cuerpo.secure_url;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('La subida tardó demasiado. Intenta con una imagen más liviana.');
+      throw new Error('La subida tardó demasiado. Intenta con un archivo más liviano.');
     }
 
     throw error;
   } finally {
     clearTimeout(timeout);
   }
+}
+
+export function subirImagenACloudinary(archivo: ArchivoImagen): Promise<string> {
+  return subirACloudinary(archivo, 'image');
 }

@@ -49,6 +49,9 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                     label="Correo"
                     placeholder="tu@email.com"
                     keyboardType="email-address"
+                    autoComplete="email"
+                    textContentType="username"
+                    importantForAutofill="yes"
                     rules={{
                       required: 'El correo es obligatorio',
                       pattern: { value: /^\S+@\S+\.\S+$/, message: 'Correo inválido' },
@@ -62,6 +65,9 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                     label="Contraseña"
                     placeholder="••••••••"
                     secureTextEntry
+                    autoComplete="current-password"
+                    textContentType="password"
+                    importantForAutofill="yes"
                     rules={{
                       required: 'La contraseña es obligatoria',
                       maxLength: { value: 72, message: 'Máximo 72 caracteres' },

@@ -20,7 +20,7 @@ export function EncabezadoSeccion({
         {badge}
       </Text>
       <Text
-        className={`mt-1 font-roboto-light text-3xl ${claro ? 'text-crema' : 'text-marca-oscura'}`}>
+        className={`mt-1 font-serif-light text-[34px] leading-9 ${claro ? 'text-crema' : 'text-marca-oscura'}`}>
         {titulo}
       </Text>
       <Text

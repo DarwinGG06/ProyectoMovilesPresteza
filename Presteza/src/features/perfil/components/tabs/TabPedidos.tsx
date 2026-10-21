@@ -25,7 +25,7 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
   const { lista, estaAbierto, alternarDetalle, repetir, irAlMenu } = usePedidosPerfil(pedidos);
 
   return (
-    <TarjetaPerfil numero="I" badge="PEDIDOS" titulo="Historial">
+    <TarjetaPerfil numero="I" badge="PEDIDOS" titulo="Historial" compacto>
       {lista.length === 0 ? (
         <EstadoVacio
           icono="receipt-outline"
@@ -46,11 +46,11 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
                 indice={index}
                 titulo={`#${id.slice(-8).toUpperCase()}`}
                 sello={textoEstadoPedido(pedido.status).toUpperCase()}>
-                <Text className="mt-1 font-roboto text-sm text-crema/55">
+                <Text className="mt-1 font-roboto text-sm text-tinta/50">
                   {formatFecha(pedido.createdAt)}
                 </Text>
                 <View className="mt-2 flex-row items-baseline">
-                  <Text className="font-roboto text-sm text-crema/55">
+                  <Text className="font-roboto text-sm text-tinta/50">
                     {totalItemsPedido(pedido)}{' '}
                     {totalItemsPedido(pedido) === 1 ? 'producto' : 'productos'}
                   </Text>
@@ -67,7 +67,7 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
                         />
                         <Text
                           className={`mt-2 text-center font-roboto text-[10px] ${
-                            pasoIndex <= paso ? 'text-oro' : 'text-crema/30'
+                            pasoIndex <= paso ? 'text-oro' : 'text-tinta/30'
                           }`}>
                           {nombre}
                         </Text>
@@ -90,7 +90,7 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
                       <View
                         key={`${item.dishId}-${itemIndex}`}
                         className="flex-row items-baseline py-1.5">
-                        <Text className="flex-1 font-roboto text-sm text-crema/80">
+                        <Text className="flex-1 font-roboto text-sm text-tinta/70">
                           {item.name} × {item.quantity}
                         </Text>
                         <Text className="font-roboto text-sm text-oro">
@@ -98,7 +98,7 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
                         </Text>
                       </View>
                     ))}
-                    <Text className="mt-2 font-roboto text-xs text-crema/45">
+                    <Text className="mt-2 font-roboto text-xs text-tinta/40">
                       Pago: {metodoPagoNombre(pedido.payment_method)}
                     </Text>
                   </View>

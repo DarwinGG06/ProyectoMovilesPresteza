@@ -68,14 +68,7 @@ export default function Field<T extends FieldValues>({
       rules={rules}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
         <View className={linea ? 'gap-0.5' : 'gap-1.5'}>
-          <Text
-            className={
-              linea
-                ? 'font-roboto text-[10px] tracking-[2px] text-marca'
-                : 'font-roboto-semibold text-marca-oscura'
-            }>
-            {label}
-          </Text>
+          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
           <View className="relative justify-center">
             <TextInput
               ref={inputRef}
@@ -89,7 +82,9 @@ export default function Field<T extends FieldValues>({
                   ? `border-b bg-transparent px-0 py-3 font-roboto-light text-lg text-marca-oscura ${
                       error ? 'border-red-600' : 'border-marca/20'
                     }`
-                  : `border bg-white p-3.5 font-roboto ${error ? 'border-red-600' : 'border-linea'}`
+                  : `border-b bg-transparent px-0 py-3 font-roboto-light text-[17px] text-tinta ${
+                      error ? 'border-red-600' : 'border-madera/25'
+                    }`}
               } ${contrasena.esContrasena ? 'pr-12' : ''} ${className ?? ''}`}
               value={value ?? ''}
               onChangeText={onChange}

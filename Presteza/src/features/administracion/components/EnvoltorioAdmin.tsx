@@ -20,20 +20,20 @@ export function EnvoltorioAdmin({ children }: EnvoltorioAdminProps) {
 
   if (user.role !== 'admin') {
     return (
-      <View className="flex-1 items-center justify-center bg-marca-oscura">
-        <ActivityIndicator color="#d4af77" />
+      <View className="flex-1 items-center justify-center bg-crema">
+        <ActivityIndicator color="#6b1d3d" />
       </View>
     );
   }
 
   if (admin.cargando && !admin.pedidos.length && !admin.productos.length) {
     return (
-      <View className="flex-1 items-center justify-center bg-marca-oscura">
+      <View className="flex-1 items-center justify-center bg-crema">
         <SelloP size="lg" />
         <View className="mt-6">
-          <ActivityIndicator color="#d4af77" />
+          <ActivityIndicator color="#6b1d3d" />
         </View>
-        <Text className="mt-3 font-roboto text-sm text-crema/70">Abriendo la casa...</Text>
+        <Text className="mt-3 font-roboto text-sm text-tinta/50">Abriendo la casa...</Text>
       </View>
     );
   }
@@ -42,5 +42,5 @@ export function EnvoltorioAdmin({ children }: EnvoltorioAdminProps) {
     return <InvitadoPerfil />;
   }
 
-  return <View className="flex-1 bg-marca-oscura">{children}</View>;
+  return <View className="flex-1 bg-crema">{children}</View>;
 }

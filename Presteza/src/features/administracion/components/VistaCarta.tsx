@@ -24,8 +24,8 @@ function BotonIcono({
     <Pressable
       onPress={onPress}
       accessibilityLabel={etiqueta}
-      className={`mb-2 mr-2 h-10 w-10 items-center justify-center ${activo ? 'bg-oro' : 'border border-oro/30'}`}>
-      <IconoNav name={icono} size={16} className={activo ? 'text-marca-oscura' : 'text-oro'} />
+      className={`mb-2 mr-2 h-10 w-10 items-center justify-center rounded-full ${activo ? 'bg-marca' : 'border border-madera/20'}`}>
+      <IconoNav name={icono} size={16} className={activo ? 'text-crema' : 'text-marca'} />
     </Pressable>
   );
 }
@@ -42,7 +42,7 @@ export function InterruptorVista({
   onFiltros?: () => void;
 }) {
   return (
-    <View className="mb-1 flex-row">
+    <View className="mb-3 flex-row">
       {onFiltros ? (
         <BotonIcono
           icono="filter-outline"
@@ -68,17 +68,47 @@ export function InterruptorVista({
 }
 
 export function FilaFiltros({ children }: { children: ReactNode }) {
-  return <View className="mb-3 flex-row flex-wrap items-center">{children}</View>;
+  return <View className="mb-4 flex-row flex-wrap items-center">{children}</View>;
 }
 
 export function GrillaAdmin({ children }: { children: ReactNode }) {
   return <View className="flex-row flex-wrap justify-between">{children}</View>;
 }
 
-export function CajaCuadricula({ children }: { children: ReactNode }) {
-  return (
-    <View className="mb-4 w-[48%] border border-oro/20 bg-marca/30 px-3 py-3">{children}</View>
+export function CajaCuadricula({
+  children,
+  onPress,
+  onLongPress,
+  seleccionada,
+}: {
+  children: ReactNode;
+  onPress?: () => void;
+  onLongPress?: () => void;
+  seleccionada?: boolean;
+}) {
+  const cuerpo = (
+    <View
+      className={`rounded-[22px] bg-white px-4 py-4 ${seleccionada ? 'border-2 border-marca' : ''}`}
+      style={{
+        shadowColor: '#3a0c20',
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 2,
+      }}>
+      {children}
+    </View>
   );
+
+  if (onPress || onLongPress) {
+    return (
+      <Pressable onPress={onPress} onLongPress={onLongPress} className="mb-3 w-[48%] active:opacity-85">
+        {cuerpo}
+      </Pressable>
+    );
+  }
+
+  return <View className="mb-3 w-[48%]">{cuerpo}</View>;
 }
 
 export type ColumnaTabla = {
@@ -99,7 +129,7 @@ export function EncabezadoTabla({ columnas }: { columnas: ColumnaTabla[] }) {
         <Text
           key={columna.texto}
           style={estiloColumna(columna)}
-          className={`font-roboto text-[10px] tracking-[2px] text-oro/70 ${columna.derecha ? 'text-right' : ''}`}>
+          className={`font-roboto text-[10px] tracking-[2px] text-tinta/35 ${columna.derecha ? 'text-right' : ''}`}>
           {columna.texto}
         </Text>
       ))}
@@ -107,12 +137,40 @@ export function EncabezadoTabla({ columnas }: { columnas: ColumnaTabla[] }) {
   );
 }
 
-export function FilaTabla({ children }: { children: ReactNode }) {
-  return (
-    <View className="mb-3 border border-oro/20 bg-marca/25 px-3.5 py-3.5">
+export function FilaTabla({
+  children,
+  onPress,
+  onLongPress,
+  seleccionada,
+}: {
+  children: ReactNode;
+  onPress?: () => void;
+  onLongPress?: () => void;
+  seleccionada?: boolean;
+}) {
+  const cuerpo = (
+    <View
+      className={`rounded-[22px] bg-white px-4 py-4 ${seleccionada ? 'border-2 border-marca' : ''}`}
+      style={{
+        shadowColor: '#3a0c20',
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 2,
+      }}>
       <View className="flex-row items-center">{children}</View>
     </View>
   );
+
+  if (onPress || onLongPress) {
+    return (
+      <Pressable onPress={onPress} onLongPress={onLongPress} className="mb-3 active:opacity-85">
+        {cuerpo}
+      </Pressable>
+    );
+  }
+
+  return <View className="mb-3">{cuerpo}</View>;
 }
 
 export function CeldaTabla({

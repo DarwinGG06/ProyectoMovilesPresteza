@@ -4,6 +4,7 @@ import Button from '@/components/Button';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
+import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { useLoginModal } from '@/shared/hooks/useLoginModal';
 
 import { IconoNav } from './IconoNav';
@@ -24,24 +25,23 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
         <Pressable
           onPress={close}
           className="flex-1 items-center justify-center bg-marca-oscura/70 px-5">
-          <Pressable onPress={() => {}} className="w-full overflow-hidden bg-marca-oscura">
-            <View className="h-1 w-full bg-oro" />
-            <View className="p-6">
-              <Pressable
-                onPress={close}
-                className="absolute right-5 top-5 z-10 h-9 w-9 items-center justify-center rounded-full border border-oro/40">
-                <IconoNav name="close" size={16} className="text-oro" />
-              </Pressable>
+          <Pressable onPress={() => {}} className="w-full overflow-hidden">
+            <Pergamino>
+              <View className="p-6">
+                <Pressable
+                  onPress={close}
+                  className="absolute right-5 top-5 z-10 h-9 w-9 items-center justify-center border border-madera/25">
+                  <IconoNav name="close" size={16} className="text-tinta" />
+                </Pressable>
 
-              <View className="mb-6 items-center pt-3">
-                <SelloP size="lg" />
-                <Text className="mt-4 font-roboto text-[11px] tracking-[4px] text-oro">
-                  INICIAR SESIÓN
-                </Text>
-                <Text className="mt-1 font-roboto-extrabold text-3xl text-crema">Bienvenido</Text>
-              </View>
+                <View className="mb-8 items-center pt-4">
+                  <SelloP size="md" />
+                  <Text className="mt-5 font-roboto text-[10px] tracking-[4px] text-marca">
+                    INICIAR SESIÓN
+                  </Text>
+                  <Text className="mt-2 font-serif-light text-3xl text-tinta">Bienvenido</Text>
+                </View>
 
-              <View className="bg-crema px-4 py-5">
                 <View className="gap-4">
                   <Field
                     control={control}
@@ -79,25 +79,26 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                 <MensajeError className="mt-3" texto={error} />
 
                 <Button
-                  className="mt-5"
+                  className="mt-8"
+                  variant="gold"
                   text={enviando ? 'ENTRANDO…' : 'ENTRAR'}
                   onPress={entrar}
                   disabled={enviando}
                 />
+
+                <Pressable onPress={irARecuperar} className="mb-5 mt-4 self-end">
+                  <Text className="font-roboto text-xs tracking-wide text-marca">
+                    ¿Olvidaste tu contraseña?
+                  </Text>
+                </Pressable>
+
+                <Pressable onPress={irARegistro}>
+                  <Text className="text-center font-roboto text-tinta/60">
+                    ¿Primera vez? <Text className="font-roboto-bold text-marca">Regístrate</Text>
+                  </Text>
+                </Pressable>
               </View>
-
-              <Pressable onPress={irARecuperar} className="mb-5 mt-4 self-end">
-                <Text className="font-roboto text-xs tracking-wide text-oro">
-                  ¿Olvidaste tu contraseña?
-                </Text>
-              </Pressable>
-
-              <Pressable onPress={irARegistro}>
-                <Text className="text-center font-roboto text-crema/70">
-                  ¿Primera vez? <Text className="font-roboto-bold text-oro">Regístrate</Text>
-                </Text>
-              </Pressable>
-            </View>
+            </Pergamino>
           </Pressable>
         </Pressable>
       </EvitarTeclado>

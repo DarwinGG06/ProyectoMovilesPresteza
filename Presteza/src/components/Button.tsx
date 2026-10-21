@@ -1,47 +1,71 @@
 import React from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { PlacaOro } from '@/shared/components/materiales/PlacaOro';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'gold';
 
 interface Props {
   text: string;
   onPress: () => void;
-  /** Se ve apagado y deja de responder. Útil mientras se envía un formulario. */
   disabled?: boolean;
-  /**
-   * `primary` fondo marca oscura (formularios).
-   * `secondary` borde oro sobre fondo claro.
-   * `ghost` borde oro sobre fondo oscuro.
-   * `gold` fondo oro.
-   */
   variant?: Variant;
-  /** Alias de `variant="secondary"`. */
   secondary?: boolean;
+  compact?: boolean;
   className?: string;
 }
 
-export default function Button({ text, onPress, disabled, variant, secondary, className }: Props) {
+export default function Button({
+  text,
+  onPress,
+  disabled,
+  variant,
+  secondary,
+  compact,
+  className,
+}: Props) {
   const tono: Variant = variant ?? (secondary ? 'secondary' : 'primary');
+  const letra = compact ? 'text-[10px] tracking-[1.2px]' : 'text-[11px] tracking-[3px]';
+  const alto = compact ? 40 : 54;
+
+  if (tono === 'gold') {
+    return (
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        accessibilityRole="button"
+        style={{ height: alto }}
+        className={`active:opacity-80 disabled:opacity-40 ${className ?? ''}`}>
+        <PlacaOro compact={compact}>
+          <Text numberOfLines={1} className={`text-center font-roboto ${letra} text-marca-oscura`}>
+            {text}
+          </Text>
+        </PlacaOro>
+      </Pressable>
+    );
+  }
+
+  const caja =
+    tono === 'primary'
+      ? 'bg-marca-oscura'
+      : tono === 'ghost'
+        ? 'border border-oro/50'
+        : 'border border-marca-oscura/25';
+  const texto =
+    tono === 'ghost' ? 'text-oro' : tono === 'primary' ? 'text-crema' : 'text-marca-oscura';
 
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      className={`items-center py-4 active:opacity-80 disabled:opacity-50 ${
-        tono === 'secondary'
-          ? 'border border-oro bg-transparent'
-          : tono === 'ghost'
-            ? 'border border-oro bg-transparent'
-            : tono === 'gold'
-              ? 'bg-oro'
-              : 'bg-marca-oscura'
-      } ${className ?? ''}`}>
-      <Text
-        className={`text-center font-roboto text-[11px] tracking-[3px] ${
-          tono === 'ghost' ? 'text-oro' : tono === 'primary' ? 'text-crema' : 'text-marca-oscura'
-        }`}>
-        {text}
-      </Text>
+      accessibilityRole="button"
+      style={{ height: alto }}
+      className={`active:opacity-80 disabled:opacity-45 ${className ?? ''}`}>
+      <View className={`h-full w-full items-center justify-center ${caja}`}>
+        <Text numberOfLines={1} className={`text-center font-roboto ${letra} ${texto}`}>
+          {text}
+        </Text>
+      </View>
     </Pressable>
   );
 }

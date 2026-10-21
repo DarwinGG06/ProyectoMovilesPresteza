@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { actualizarCategoria, crearCategoria, eliminarCategoria, listarCategorias } from '@/api/categorias';
 import type { CategoriaAdmin, CategoriaForm } from '../types';
 import { cambiosDe, idDe } from '../utils';
-import { fusionar, useListaAdmin } from './adminComun';
+import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminCategorias() {
   const { lista: categorias, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
@@ -71,5 +71,14 @@ export function useAdminCategorias() {
     [aviso, conToken, setLista],
   );
 
-  return { categorias, cargando, guardando, error, recargar, guardar, eliminar };
+  const eliminarVarios = useCallback(
+    (items: CategoriaAdmin[], alTerminar?: () => void) => {
+      const sesion = conToken();
+      if (!sesion) return;
+      borrarVarios(aviso, sesion, setLista, eliminarCategoria, items, 'categorías', 'CARTA', { alTerminar });
+    },
+    [aviso, conToken, setLista],
+  );
+
+  return { categorias, cargando, guardando, error, recargar, guardar, eliminar, eliminarVarios };
 }

@@ -1,11 +1,10 @@
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import { MarcaCurso } from '@/features/inicio/components/MesaDecor';
+import Button from '@/components/Button';
 import { Footer } from '@/shared/components/footer';
 import { LoginModal } from '@/shared/components/nav-bar/LoginModal';
 
 import { useInvitado } from '../hooks/useInvitado';
-import { BotonPerfil } from './elementos';
 
 export function InvitadoPerfil() {
   const invitado = useInvitado();
@@ -13,32 +12,25 @@ export function InvitadoPerfil() {
   return (
     <View className="flex-1 bg-marca-oscura">
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="px-5 pb-10 pt-8">
-          <MarcaCurso numero="I" nombre="TU MESA" />
-          <Text className="font-roboto-light text-4xl text-crema">Inicia sesión</Text>
-          <Text className="mt-3 font-roboto text-base leading-6 text-crema/65">
-            Entra para ver tus pedidos, direcciones, reservas y datos de cuenta.
-          </Text>
+        <View className="px-6 pb-12 pt-8">
+          <Text className="font-roboto text-[10px] tracking-[4px] text-oro">MI CUENTA</Text>
+          <View className="mt-2 h-px w-10 bg-oro" />
 
-          <View className="mt-8 border border-oro/20 bg-crema px-5 py-6">
-            <Text className="font-roboto text-[10px] tracking-[3px] text-marca">
-              CUENTA PRESTEZA
+          <View className="mt-6 overflow-hidden rounded-[32px] bg-marca px-6 py-9">
+            <Text className="text-center font-serif-light text-[34px] leading-[38px] text-crema">
+              Inicia sesión
             </Text>
-            <Text className="mt-2 font-roboto-light text-2xl text-marca-oscura">
-              Tu mesa te espera
+            <Text className="mt-3 text-center font-roboto text-[15px] leading-6 text-crema/70">
+              Pedidos, reservas y tus datos, en un solo folio.
             </Text>
-            <Text className="mt-2 font-roboto text-sm text-texto/55">Milán, Manizales.</Text>
-            <View className="mt-6 gap-2">
-              <BotonPerfil etiqueta="INICIAR SESIÓN" onPress={invitado.abrirLogin} />
-              <BotonPerfil
-                etiqueta="CREAR CUENTA"
-                onPress={invitado.irARegistro}
-                variante="outline"
-              />
-            </View>
           </View>
 
-          <Pressable onPress={invitado.irAlInicio} className="mt-6 py-3">
+          <View className="mt-8 gap-3">
+            <Button text="INICIAR SESIÓN" variant="gold" onPress={invitado.abrirLogin} />
+            <Button text="CREAR CUENTA" variant="ghost" onPress={invitado.irARegistro} />
+          </View>
+
+          <Pressable onPress={invitado.irAlInicio} className="mt-8 py-3">
             <Text className="text-center font-roboto text-sm text-oro">Volver al inicio</Text>
           </Pressable>
         </View>

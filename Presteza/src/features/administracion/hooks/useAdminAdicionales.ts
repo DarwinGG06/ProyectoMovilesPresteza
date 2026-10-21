@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { actualizarAdicional, crearAdicional, eliminarAdicional, listarAdicionales } from '@/api/admin';
 import type { AdicionalAdmin, AdicionalForm } from '../types';
 import { idDe } from '../utils';
-import { fusionar, useListaAdmin } from './adminComun';
+import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminAdicionales() {
   const { lista: adicionales, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
@@ -80,5 +80,14 @@ export function useAdminAdicionales() {
     [aviso, conToken, setLista],
   );
 
-  return { adicionales, cargando, guardando, error, recargar, guardar, alternar, eliminar };
+  const eliminarVarios = useCallback(
+    (items: AdicionalAdmin[], alTerminar?: () => void) => {
+      const sesion = conToken();
+      if (!sesion) return;
+      borrarVarios(aviso, sesion, setLista, eliminarAdicional, items, 'adicionales', 'EXTRAS', { alTerminar });
+    },
+    [aviso, conToken, setLista],
+  );
+
+  return { adicionales, cargando, guardando, error, recargar, guardar, alternar, eliminar, eliminarVarios };
 }

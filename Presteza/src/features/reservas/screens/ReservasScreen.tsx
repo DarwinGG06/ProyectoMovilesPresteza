@@ -2,6 +2,7 @@ import { ScrollView, View } from 'react-native';
 
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { Footer } from '@/shared/components/footer';
+import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { LoginModal } from '@/shared/components/nav-bar/LoginModal';
 
 import { FormularioNuevaReserva } from '../components/FormularioNuevaReserva';
@@ -15,48 +16,51 @@ export function ReservasScreen() {
 
   return (
     <>
-    <EvitarTeclado>
-      <View className="flex-1 bg-crema">
-        <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-        <HeroReservas />
+      <EvitarTeclado>
+        <View className="flex-1">
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag">
+            <HeroReservas />
+            <Pergamino>
+              <View className="px-4 py-6">
+                <PlanoMesas
+                  mesas={reserva.mesas}
+                  mesaId={reserva.mesaId}
+                  barra={reserva.barra}
+                  personalizada={reserva.personalizada}
+                  onMesa={reserva.elegirMesa}
+                  onBarra={reserva.elegirBarra}
+                  onPersonalizada={reserva.elegirPersonalizada}
+                />
 
-        <View className="px-4 py-6">
-          <PlanoMesas
-            mesas={reserva.mesas}
-            mesaId={reserva.mesaId}
-            barra={reserva.barra}
-            personalizada={reserva.personalizada}
-            onMesa={reserva.elegirMesa}
-            onBarra={reserva.elegirBarra}
-            onPersonalizada={reserva.elegirPersonalizada}
-          />
+                {reserva.mostrarCapacidad ? (
+                  <SelectorCapacidad
+                    valor={reserva.personas}
+                    onCambiar={reserva.cambiarPersonas}
+                    detalle={reserva.detalleCapacidad}
+                  />
+                ) : null}
 
-          {reserva.mostrarCapacidad ? (
-            <SelectorCapacidad
-              valor={reserva.personas}
-              onCambiar={reserva.cambiarPersonas}
-              detalle={reserva.detalleCapacidad}
-            />
-          ) : null}
-
-          <FormularioNuevaReserva
-            control={reserva.control}
-            subtitulo={reserva.subtitulo}
-            fecha={reserva.date}
-            hora={reserva.time}
-            onHora={reserva.elegirHora}
-            onEnviar={reserva.enviar}
-            guardando={reserva.guardando}
-            deshabilitado={reserva.deshabilitado}
-            etiqueta={reserva.etiqueta}
-            exito={reserva.exito}
-          />
+                <FormularioNuevaReserva
+                  control={reserva.control}
+                  subtitulo={reserva.subtitulo}
+                  fecha={reserva.date}
+                  hora={reserva.time}
+                  onHora={reserva.elegirHora}
+                  onEnviar={reserva.enviar}
+                  guardando={reserva.guardando}
+                  deshabilitado={reserva.deshabilitado}
+                  etiqueta={reserva.etiqueta}
+                  exito={reserva.exito}
+                />
+              </View>
+            </Pergamino>
+            <Footer />
+          </ScrollView>
         </View>
-
-        <Footer />
-        </ScrollView>
-      </View>
-    </EvitarTeclado>
+      </EvitarTeclado>
       <LoginModal visible={reserva.loginAbierto} onClose={reserva.cerrarLogin} />
     </>
   );

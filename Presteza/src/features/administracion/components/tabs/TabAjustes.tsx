@@ -17,7 +17,7 @@ type TabAjustesProps = {
 export function TabAjustes({ user, guardando, onGuardar, onSalir }: TabAjustesProps) {
   return (
     <View>
-      <TarjetaPerfil numero="I" badge="CUENTA" titulo="Tu usuario">
+      <TarjetaPerfil compacto numero="I" badge="CUENTA" titulo="Tu usuario">
         <Comanda>
           <FormularioAjustes
             key={`${user.id}-${user.email}-${user.phone}`}
@@ -30,7 +30,7 @@ export function TabAjustes({ user, guardando, onGuardar, onSalir }: TabAjustesPr
         </Comanda>
       </TarjetaPerfil>
 
-      <TarjetaPerfil numero="II" badge="SESIÓN" titulo="Salir">
+      <TarjetaPerfil compacto numero="II" badge="SESIÓN" titulo="Salir">
         <BotonPerfil etiqueta="CERRAR SESIÓN" onPress={onSalir} variante="peligro" />
       </TarjetaPerfil>
     </View>

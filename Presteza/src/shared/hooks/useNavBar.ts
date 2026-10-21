@@ -11,10 +11,11 @@ const usarNativo = Platform.OS !== 'web';
 export function useNavBar() {
   const { user, isAuthenticated } = useSession();
   const { totalItems } = useCart();
-  const { alternar: alternarDrawer } = useControlDrawerHome();
+  const { alternar: alternarDrawerNativo, disponible: drawerListo } = useControlDrawerHome();
   const [loginAbierto, setLoginAbierto] = useState(false);
   const [usuarioAbierto, setUsuarioAbierto] = useState(false);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false);
   const pulso = useRef(new Animated.Value(1)).current;
 
   // El contador del carrito late mientras haya algo dentro.
@@ -48,7 +49,15 @@ export function useNavBar() {
     totalItems,
     pulso,
     irAlInicio: () => router.push('/home'),
-    alternarDrawer,
+    alternarDrawer: () => {
+      if (drawerListo) {
+        alternarDrawerNativo();
+        return;
+      }
+      setMenuAbierto((abierto) => !abierto);
+    },
+    menuAbierto,
+    cerrarMenu: () => setMenuAbierto(false),
     abrirCuenta,
     loginAbierto,
     cerrarLogin: () => setLoginAbierto(false),

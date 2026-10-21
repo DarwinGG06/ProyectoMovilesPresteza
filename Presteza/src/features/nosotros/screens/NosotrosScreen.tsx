@@ -16,7 +16,7 @@ export function NosotrosScreen() {
       <View className="mt-8 gap-4">
         {VALORES.map((valor) => (
           <Tarjeta key={valor.titulo}>
-            <Text className="font-roboto-semibold text-lg text-marca-oscura">{valor.titulo}</Text>
+            <Text className="font-serif-semibold text-lg text-tinta">{valor.titulo}</Text>
             <Text className="mt-2 font-roboto text-sm leading-5 text-texto/70">{valor.texto}</Text>
           </Tarjeta>
         ))}

@@ -15,12 +15,12 @@ export function RegistroScreen() {
 
   return (
     <ContenedorPantalla titulo="Registro">
-      <Text className="mt-3 font-roboto text-base text-texto/70">
+      <Text className="mt-4 font-roboto text-base leading-6 text-tinta/55">
         Crea tu cuenta. La fecha de nacimiento sirve para el 15% de cumpleaños; debes tener al menos
         15 años.
       </Text>
 
-      <View className="mt-8 gap-5">
+      <View className="mt-10 gap-6">
         <Field
           control={control}
           name="name"
@@ -88,14 +88,21 @@ export function RegistroScreen() {
         <MensajeError texto={error} />
 
         <Button
+          className="mt-2"
+          variant="gold"
           text={enviando ? 'CREANDO…' : 'CREAR CUENTA'}
           onPress={crearCuenta}
           disabled={enviando}
         />
 
-        <Link href="/iniciar-sesion" className="text-center text-sm text-marca">
-          ¿Ya tienes cuenta? Inicia sesión
-        </Link>
+        <View className="mt-4 items-center">
+          <View className="mb-4 h-px w-10 bg-marca/25" />
+          <Link href="/iniciar-sesion">
+            <Text className="text-center font-roboto text-sm text-tinta/50">
+              ¿Ya tienes cuenta? <Text className="font-roboto text-marca">Inicia sesión</Text>
+            </Text>
+          </Link>
+        </View>
       </View>
     </ContenedorPantalla>
   );

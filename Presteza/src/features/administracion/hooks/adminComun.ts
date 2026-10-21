@@ -1,9 +1,40 @@
-import { useCallback, useEffect, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from 'react';
 
 import { useSession } from '@/session/context';
 import { useAviso } from '@/shared/components/aviso';
 
 import { idDe } from '../utils';
+
+type Identificable = { _id?: string; id?: string };
+
+export function borrarVarios<T extends Identificable>(
+  aviso: ReturnType<typeof useAviso>,
+  token: string,
+  setLista: Dispatch<SetStateAction<T[]>>,
+  api: (token: string, id: string) => Promise<void>,
+  items: T[],
+  unidad: string,
+  sello: string,
+  opciones?: { idDe?: (item: T) => string; alTerminar?: () => void },
+) {
+  if (!items.length) return;
+  const n = items.length;
+  const extraer = opciones?.idDe ?? idDe;
+  aviso.confirmar({
+    sello,
+    titulo: n === 1 ? `Eliminar ${unidad}` : `Eliminar ${n} ${unidad}`,
+    texto: n === 1 ? '¿Eliminar este registro?' : `¿Eliminar ${n} ${unidad} de una vez?`,
+    confirmar: 'ELIMINAR',
+    peligro: true,
+    exito: { titulo: 'Listo', texto: n === 1 ? 'Eliminado.' : `${n} eliminados.` },
+    onConfirmar: async () => {
+      const ids = items.map((item) => extraer(item));
+      for (const id of ids) await api(token, id);
+      setLista((prev) => prev.filter((item) => !ids.includes(extraer(item))));
+      opciones?.alTerminar?.();
+    },
+  });
+}
 
 export function fusionar<T extends { _id?: string; id?: string }>(lista: T[], actual: T, extra: Partial<T>) {
   const id = idDe(actual);

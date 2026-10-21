@@ -19,8 +19,8 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
   });
 
   return (
-    <View className="overflow-hidden rounded-2xl bg-[#6b1d3d] px-4 py-4">
-      <Text className="font-roboto-semibold text-[10px] tracking-[2px] text-oro">HORA</Text>
+    <View className="bg-marca-oscura px-4 py-4">
+      <Text className="font-roboto text-[10px] tracking-[2px] text-oro">HORA</Text>
       <Text className="mt-1 font-roboto text-xs text-crema/70">
         {etiquetaDias} · {etiquetaHorario}
       </Text>
@@ -28,12 +28,12 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
       <View className="mt-4 flex-row items-center justify-between">
         <Pressable
           onPress={() => mover(-1)}
-          className="h-12 w-12 items-center justify-center rounded-full bg-white/10">
-          <IconoNav name="chevron-back" size={26} className="text-crema" />
+          className="h-10 w-10 items-center justify-center border border-oro/30">
+          <IconoNav name="chevron-back" size={22} className="text-crema" />
         </Pressable>
 
         <View className="items-center px-2">
-          <Text className="font-roboto-light text-3xl text-crema">{hora || '--:--'}</Text>
+          <Text className="font-serif-light text-3xl text-crema">{hora || '--:--'}</Text>
           <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-oro">
             {hora ? 'DENTRO DEL HORARIO' : 'ELIGE CON LAS FLECHAS'}
           </Text>
@@ -41,8 +41,8 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
 
         <Pressable
           onPress={() => mover(1)}
-          className="h-12 w-12 items-center justify-center rounded-full bg-white/10">
-          <IconoNav name="chevron-forward" size={26} className="text-crema" />
+          className="h-10 w-10 items-center justify-center border border-oro/30">
+          <IconoNav name="chevron-forward" size={22} className="text-crema" />
         </Pressable>
       </View>
 
@@ -53,7 +53,7 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
             <Pressable
               key={item}
               onPress={() => elegir(item)}
-              className={`rounded-full px-2.5 py-1 ${activa ? 'bg-oro' : 'bg-white/10'}`}>
+              className={`px-2.5 py-1 ${activa ? 'bg-oro' : 'border border-oro/25'}`}>
               <Text
                 className={`font-roboto text-[10px] ${activa ? 'text-marca-oscura' : 'text-crema/80'}`}>
                 {item}
@@ -64,9 +64,7 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
       </View>
 
       {aviso || error ? (
-        <Text className="mt-3 text-center font-roboto-semibold text-xs text-[#ffd0a8]">
-          {aviso ?? error}
-        </Text>
+        <Text className="mt-3 text-center font-roboto text-xs text-oro">{aviso ?? error}</Text>
       ) : null}
     </View>
   );

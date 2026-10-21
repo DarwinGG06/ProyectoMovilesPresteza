@@ -15,10 +15,9 @@ export function HeroReservas() {
       />
       <View className="items-center px-6">
         <Text className="font-roboto text-[10px] tracking-[4px] text-oro">PRESTEZA · MILÁN</Text>
-        <Text className="mt-3 text-center font-roboto-extrabold text-5xl uppercase tracking-[5px] text-white">
-          Reservas
-        </Text>
-        <Text className="mt-3 text-center font-roboto text-base text-white/90">
+        <Text className="mt-3 text-center font-serif-light text-5xl text-white">Reservas</Text>
+        <View className="mt-3 h-px w-12 bg-oro/70" />
+        <Text className="mt-3 text-center font-serif-italic text-base text-white/80">
           Selecciona tu mesa y reserva tu experiencia
         </Text>
       </View>

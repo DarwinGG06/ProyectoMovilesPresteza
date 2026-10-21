@@ -7,7 +7,7 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { useTabProductos } from '../../hooks/useTabProductos';
 import type { CategoriaAdmin, ProductoAdmin, ProductoForm } from '../../types';
 import { idDe } from '../../utils';
-import { ChipFiltro, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import { BotonAgregarAdmin, ChipFiltro, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioProducto } from '../formularios/FormularioProducto';
 import {
   AccionesCarta,
@@ -43,12 +43,13 @@ export function TabProductos({
         numero="I"
         badge="CARTA"
         titulo="Platos"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
+        compacto>
+        <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <CampoBusqueda
           value={tab.busqueda}
           onChangeText={tab.setBusqueda}
           placeholder="Buscar plato..."
-          variant="oscuro"
+          variant="claro"
         />
 
         <InterruptorVista
@@ -102,7 +103,7 @@ export function TabProductos({
                   <View className="ml-3 flex-1">
                     <View className="flex-row items-start justify-between gap-2">
                       <Text
-                        className="flex-1 font-roboto-light text-base text-white"
+                        className="flex-1 font-roboto-light text-base text-tinta"
                         numberOfLines={2}>
                         {producto.name}
                       </Text>
@@ -110,7 +111,7 @@ export function TabProductos({
                         {formatCOP(producto.price || 0)}
                       </Text>
                     </View>
-                    <Text className="mt-1 font-roboto text-[10px] tracking-[1.4px] text-crema/50">
+                    <Text className="mt-1 font-roboto text-[10px] tracking-[1.4px] text-tinta/45">
                       {tab.nombreCategoria(producto.categoryId).toUpperCase()}
                       {'  ·  '}
                       {producto.available === false ? 'OCULTO' : 'EN CARTA'}
@@ -129,19 +130,28 @@ export function TabProductos({
         ) : (
           <GrillaAdmin>
             {tab.lista.map((producto) => (
-              <View key={idDe(producto)} className="mb-5 w-[48%] border border-oro/20 bg-marca/30">
+              <View
+                key={idDe(producto)}
+                className="mb-5 w-[48%] overflow-hidden rounded-[22px] bg-white"
+                style={{
+                  shadowColor: '#3a0c20',
+                  shadowOpacity: 0.06,
+                  shadowRadius: 10,
+                  shadowOffset: { width: 0, height: 3 },
+                  elevation: 2,
+                }}>
                 <FotoCarta uri={producto.imageUrl} alto={132} ancha />
                 <View className="px-3 py-3">
-                  <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                  <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
                     {tab.nombreCategoria(producto.categoryId).toUpperCase()}
                   </Text>
-                  <Text className="mt-1 font-roboto-light text-base text-white" numberOfLines={2}>
+                  <Text className="mt-1 font-roboto-light text-base text-tinta" numberOfLines={2}>
                     {producto.name}
                   </Text>
-                  <Text className="mt-2 font-roboto text-lg text-oro">
+                  <Text className="mt-2 font-roboto text-lg text-marca">
                     {formatCOP(producto.price || 0)}
                   </Text>
-                  <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-crema/45">
+                  <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/40">
                     {producto.available === false ? 'OCULTO' : 'EN CARTA'}
                   </Text>
                   <AccionesCarta

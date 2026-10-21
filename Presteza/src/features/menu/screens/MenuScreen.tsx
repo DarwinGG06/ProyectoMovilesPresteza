@@ -1,20 +1,14 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-  ActivityIndicator,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
 
+import { ChipCategoria } from '@/components/ChipCategoria';
 import { Footer } from '@/shared/components/footer';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
+import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
-import { ModelViewerModal } from '@/features/menu/components/ModelViewerModal';
 
+import { ModelViewerModal } from '../components/ModelViewerModal';
+import { TarjetaPlato } from '../components/TarjetaPlato';
 import { useMenu } from '../hooks/useMenu';
 
 export function MenuScreen() {
@@ -22,158 +16,104 @@ export function MenuScreen() {
 
   if (menu.mostrarCarga) {
     return (
-      <View className="flex-1 items-center justify-center bg-marca-oscura">
+      <View className="flex-1 items-center justify-center bg-pergamino">
         <SelloP size="lg" />
         <View className="mt-6">
-          <ActivityIndicator color="#d4af77" />
+          <ActivityIndicator color="#6b1d3d" />
         </View>
-        <Text className="mt-3 font-roboto text-sm text-crema/70">Preparando el menú...</Text>
+        <Text className="mt-3 font-roboto text-sm text-tinta/60">Abriendo la carta...</Text>
       </View>
     );
   }
 
   return (
     <EvitarTeclado>
-      <View className="flex-1 bg-marca-oscura">
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="on-drag">
-          <View className="items-center px-5 pb-6 pt-10">
-            <SelloP size="md" />
-            <Text className="mt-4 font-roboto-bold text-3xl text-[#d4af77]">Nuestro Menú</Text>
-            <Text className="mt-2 text-center font-roboto text-crema/70">
-              Descubre nuestros deliciosos platos y acompañantes.
-            </Text>
-          </View>
-
-          <View className="px-5 pb-10">
-            {menu.error && (
-              <Text className="mb-4 text-center font-roboto text-sm text-red-300">
-                {menu.error}
+      <Pergamino fill>
+        <View className="flex-1">
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag">
+            <View className="items-center px-8 pb-8 pt-14">
+              <Text className="font-roboto text-[10px] tracking-[4px] text-marca">
+                PRESTEZA · MILÁN
               </Text>
-            )}
+              <Text className="mt-3 font-serif-light text-[44px] leading-[46px] text-tinta">
+                La carta
+              </Text>
+              <View className="mt-5 h-px w-10 bg-marca/35" />
+              <Text className="mt-5 max-w-[260px] text-center font-serif-italic text-[17px] text-tinta/55">
+                Lo que sale de cocina, escrito a mano.
+              </Text>
+            </View>
 
-            {/* Buscador */}
-            <View className="mb-6">
+            <View className="px-6 pb-12">
+              {menu.error ? (
+                <Text className="mb-4 text-center font-roboto text-sm text-red-800">
+                  {menu.error}
+                </Text>
+              ) : null}
+
               <TextInput
-                className="rounded-lg border border-[#d4af77]/30 bg-black/30 px-4 py-3 font-roboto text-crema"
-                placeholder="Buscar un plato, ingrediente..."
-                placeholderTextColor="rgba(212, 175, 119, 0.5)"
+                className="mb-6 border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
+                placeholder="Buscar un plato..."
+                placeholderTextColor="rgba(42, 24, 16, 0.4)"
                 value={menu.busqueda}
                 onChangeText={menu.setBusqueda}
               />
-            </View>
 
-            {/* Categorías */}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              className="mb-6"
-              contentContainerStyle={{ gap: 10 }}>
-              <TouchableOpacity
-                onPress={() => menu.elegirCategoria(null)}
-                className={`rounded-full border px-4 py-2 ${
-                  menu.categoriaActiva === null
-                    ? 'border-[#d4af77] bg-[#d4af77]'
-                    : 'border-[#d4af77]/50 bg-transparent'
-                }`}>
-                <Text
-                  className={
-                    menu.categoriaActiva === null
-                      ? 'font-roboto-bold text-black'
-                      : 'font-roboto text-[#d4af77]'
-                  }>
-                  Todos
-                </Text>
-              </TouchableOpacity>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                className="mb-2"
+                contentContainerStyle={{ gap: 8, paddingBottom: 8 }}>
+                <ChipCategoria
+                  etiqueta="Todos"
+                  activo={menu.categoriaActiva === null}
+                  onPress={() => menu.elegirCategoria(null)}
+                />
+                {menu.categorias.map((cat) => {
+                  const id = cat.id || cat._id || null;
+                  return (
+                    <ChipCategoria
+                      key={id}
+                      etiqueta={cat.name}
+                      activo={menu.categoriaActiva === id}
+                      onPress={() => menu.elegirCategoria(id)}
+                    />
+                  );
+                })}
+              </ScrollView>
 
-              {menu.categorias.map((cat) => (
-                <TouchableOpacity
-                  key={cat.id || cat._id}
-                  onPress={() => menu.elegirCategoria(cat.id || cat._id || null)}
-                  className={`rounded-full border px-4 py-2 ${
-                    menu.categoriaActiva === (cat.id || cat._id)
-                      ? 'border-[#d4af77] bg-[#d4af77]'
-                      : 'border-[#d4af77]/50 bg-transparent'
-                  }`}>
-                  <Text
-                    className={
-                      menu.categoriaActiva === (cat.id || cat._id)
-                        ? 'font-roboto-bold text-black'
-                        : 'font-roboto text-[#d4af77]'
-                    }>
-                    {cat.name}
+              {menu.productos.length === 0 ? (
+                <View className="items-center py-12">
+                  <Text className="font-serif-italic text-lg text-tinta/55">
+                    No hay platos en esta página.
                   </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            {/* Lista de productos */}
-            {menu.productos.length === 0 ? (
-              <View className="items-center py-10">
-                <Text className="font-roboto text-crema/70">
-                  No encontramos productos que coincidan.
-                </Text>
-              </View>
-            ) : (
-              <View className="flex-col gap-4">
-                {menu.productos.map((producto) => (
-                  <View
+                </View>
+              ) : (
+                menu.productos.map((producto, index) => (
+                  <TarjetaPlato
                     key={producto.id || producto._id}
-                    className="flex-row items-center rounded-xl border border-white/5 bg-black/20 p-4">
-                    <View className="relative mr-4 h-24 w-24">
-                      {producto.imageUrl ? (
-                        <Image
-                          source={{ uri: producto.imageUrl }}
-                          className="h-full w-full rounded-lg bg-black/50"
-                          resizeMode="cover"
-                        />
-                      ) : (
-                        <View className="h-full w-full items-center justify-center rounded-lg bg-black/50">
-                          <SelloP size="sm" />
-                        </View>
-                      )}
+                    producto={producto}
+                    indice={index}
+                    tieneModelo={menu.tieneModelo(producto)}
+                    onVerModelo={() => menu.abrirVisor(producto)}
+                  />
+                ))
+              )}
+            </View>
+            <Footer />
+          </ScrollView>
+        </View>
+      </Pergamino>
 
-                      {menu.tieneModelo(producto) ? (
-                        <TouchableOpacity
-                          className="absolute bottom-1 right-1 rounded-full border border-[#d4af77]/50 bg-black/70 p-1.5"
-                          onPress={() => menu.abrirVisor(producto)}
-                          accessibilityRole="button"
-                          accessibilityLabel={`Ver ${producto.name} en 3D`}>
-                          <Ionicons name="cube-outline" size={16} color="#d4af77" />
-                        </TouchableOpacity>
-                      ) : null}
-                    </View>
-
-                    <View className="flex-1 justify-center">
-                      <Text className="mb-1 font-roboto-bold text-lg text-crema">
-                        {producto.name}
-                      </Text>
-                      {producto.description && (
-                        <Text className="mb-2 font-roboto text-sm text-crema/60" numberOfLines={2}>
-                          {producto.description}
-                        </Text>
-                      )}
-                      <Text className="font-roboto-bold text-base text-[#d4af77]">
-                        ${(Number(producto.price) || 0).toLocaleString('es-CO')}
-                      </Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
-          <Footer />
-        </ScrollView>
-
-        <ModelViewerModal
-          isVisible={menu.visorAbierto}
-          onClose={menu.cerrarVisor}
-          modelUrl={menu.modeloUrl}
-          productName={menu.nombreProducto}
-        />
-      </View>
+      <ModelViewerModal
+        isVisible={menu.visorAbierto}
+        onClose={menu.cerrarVisor}
+        modelUrl={menu.modeloUrl}
+        productName={menu.nombreProducto}
+      />
     </EvitarTeclado>
   );
 }

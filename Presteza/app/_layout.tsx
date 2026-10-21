@@ -26,7 +26,7 @@ export default function RootLayout() {
           <SafeAreaProvider>
             <AvisoProvider>
               <ControlDrawerHomeProvider>
-                <View className="flex-1 bg-crema">
+                <View className="flex-1 bg-pergamino">
                   <NavBar />
                   <View className="flex-1">
                     <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>

@@ -153,7 +153,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         actualizarUsuario,
       }}>
       {restaurando ? (
-        <View className="flex-1 items-center justify-center bg-crema">
+        <View className="flex-1 items-center justify-center bg-pergamino">
           <ActivityIndicator color="#3a0c20" />
           <Text className="mt-3 text-marca-oscura">Cargando sesión...</Text>
         </View>

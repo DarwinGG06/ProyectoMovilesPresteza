@@ -1,5 +1,4 @@
-import { router } from 'expo-router';
-import { createContext, useCallback, useContext, useMemo, useRef, type PropsWithChildren } from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type PropsWithChildren } from 'react';
 
 type ApiDrawer = {
   abrir: () => void;
@@ -9,6 +8,7 @@ type ApiDrawer = {
 
 type ControlDrawerHome = {
   registrar: (api: ApiDrawer | null) => void;
+  disponible: boolean;
   abrir: () => void;
   cerrar: () => void;
   alternar: () => void;
@@ -20,31 +20,21 @@ const DrawerHomeContext = createContext<ControlDrawerHome | null>(null);
 
 export function ControlDrawerHomeProvider({ children }: PropsWithChildren) {
   const api = useRef<ApiDrawer>(vacio);
-  const montado = useRef(false);
-  const pendiente = useRef(false);
+  const [disponible, setDisponible] = useState(false);
 
   const registrar = useCallback((siguiente: ApiDrawer | null) => {
     if (siguiente) {
       api.current = siguiente;
-      montado.current = true;
-      if (pendiente.current) {
-        pendiente.current = false;
-        requestAnimationFrame(() => siguiente.abrir());
-      }
+      setDisponible(true);
       return;
     }
 
     api.current = vacio;
-    montado.current = false;
+    setDisponible(false);
   }, []);
 
   const abrir = useCallback(() => {
-    if (montado.current) {
-      api.current.abrir();
-      return;
-    }
-    pendiente.current = true;
-    router.push('/home');
+    api.current.abrir();
   }, []);
 
   const cerrar = useCallback(() => {
@@ -52,15 +42,13 @@ export function ControlDrawerHomeProvider({ children }: PropsWithChildren) {
   }, []);
 
   const alternar = useCallback(() => {
-    if (montado.current) {
-      api.current.alternar();
-      return;
-    }
-    pendiente.current = true;
-    router.push('/home');
+    api.current.alternar();
   }, []);
 
-  const value = useMemo(() => ({ registrar, abrir, cerrar, alternar }), [abrir, alternar, cerrar, registrar]);
+  const value = useMemo(
+    () => ({ registrar, disponible, abrir, cerrar, alternar }),
+    [abrir, alternar, cerrar, disponible, registrar],
+  );
 
   return <DrawerHomeContext.Provider value={value}>{children}</DrawerHomeContext.Provider>;
 }

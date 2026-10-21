@@ -6,7 +6,7 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { useTabInventario } from '../../hooks/useTabInventario';
 import type { InsumoAdmin, InsumoForm } from '../../types';
 import { idDe } from '../../utils';
-import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioInsumo } from '../formularios/FormularioInsumo';
 import {
   AccionesCarta,
@@ -32,35 +32,29 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
   return (
     <View>
       <TarjetaPerfil
+        compacto
         numero="I"
         badge="BODEGA"
-        titulo="Inventario"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
-        <InterruptorVista
-          vista={tab.vista}
-          onChange={tab.setVista}
-          filtrosAbiertos={tab.filtrosAbiertos}
-          onFiltros={() => tab.setFiltrosAbiertos((abierto) => !abierto)}
-        />
-        {tab.filtrosAbiertos ? (
-          <FilaFiltros>
-            <ChipFiltro
-              etiqueta="TODOS"
-              activo={tab.filtro === 'all'}
-              onPress={() => tab.setFiltro('all')}
-            />
-            <ChipFiltro
-              etiqueta="BAJO"
-              activo={tab.filtro === 'low'}
-              onPress={() => tab.setFiltro('low')}
-            />
-            <ChipFiltro
-              etiqueta="AGOTADOS"
-              activo={tab.filtro === 'out'}
-              onPress={() => tab.setFiltro('out')}
-            />
-          </FilaFiltros>
-        ) : null}
+        titulo="Inventario">
+        <BotonAgregarAdmin onPress={() => tab.abrir()} />
+        <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
+        <FilaFiltros>
+          <ChipFiltro
+            etiqueta="TODOS"
+            activo={tab.filtro === 'all'}
+            onPress={() => tab.setFiltro('all')}
+          />
+          <ChipFiltro
+            etiqueta="BAJO"
+            activo={tab.filtro === 'low'}
+            onPress={() => tab.setFiltro('low')}
+          />
+          <ChipFiltro
+            etiqueta="AGOTADOS"
+            activo={tab.filtro === 'out'}
+            onPress={() => tab.setFiltro('out')}
+          />
+        </FilaFiltros>
 
         {tab.lista.length === 0 ? (
           <EstadoVacioAdmin
@@ -80,10 +74,10 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
             {tab.lista.map((insumo) => (
               <FilaTabla key={idDe(insumo)}>
                 <CeldaTabla flex={1.3}>
-                  <Text className="font-roboto-light text-sm text-white" numberOfLines={1}>
+                  <Text className="font-roboto-light text-sm text-tinta" numberOfLines={1}>
                     {insumo.name}
                   </Text>
-                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/45" numberOfLines={1}>
+                  <Text className="mt-0.5 font-roboto text-[11px] text-tinta/45" numberOfLines={1}>
                     {tab.sello(insumo.quantity)}
                   </Text>
                   <AccionesAdmin>
@@ -92,7 +86,7 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla ancho={56} derecha>
-                  <Text className="text-right font-roboto text-sm text-crema">
+                  <Text className="text-right font-roboto text-sm text-tinta">
                     {insumo.quantity}
                   </Text>
                 </CeldaTabla>
@@ -111,11 +105,11 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
                 <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
                   {tab.sello(insumo.quantity)}
                 </Text>
-                <Text className="mt-1 font-roboto-light text-base text-white" numberOfLines={2}>
+                <Text className="mt-1 font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {insumo.name}
                 </Text>
                 <Text className="mt-2 font-roboto-light text-2xl text-oro">{insumo.quantity}</Text>
-                <Text className="font-roboto text-[11px] text-crema/50">
+                <Text className="font-roboto text-[11px] text-tinta/50">
                   {formatCOP(insumo.unit_price || 0)} / ud
                 </Text>
                 <AccionesCarta

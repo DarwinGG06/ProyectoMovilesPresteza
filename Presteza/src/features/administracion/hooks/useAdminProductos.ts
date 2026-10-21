@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { actualizarProducto, crearProducto, eliminarProducto, listarProductos } from '@/api/productos';
 import type { ProductoAdmin, ProductoForm } from '../types';
 import { cambiosDe, idDe } from '../utils';
-import { fusionar, useListaAdmin } from './adminComun';
+import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminProductos() {
   const { lista: productos, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
@@ -115,5 +115,14 @@ export function useAdminProductos() {
     [aviso, conToken, setLista],
   );
 
-  return { productos, cargando, guardando, error, recargar, guardar, alternar, eliminar };
+  const eliminarVarios = useCallback(
+    (items: ProductoAdmin[], alTerminar?: () => void) => {
+      const sesion = conToken();
+      if (!sesion) return;
+      borrarVarios(aviso, sesion, setLista, eliminarProducto, items, 'platos', 'CARTA', { alTerminar });
+    },
+    [aviso, conToken, setLista],
+  );
+
+  return { productos, cargando, guardando, error, recargar, guardar, alternar, eliminar, eliminarVarios };
 }

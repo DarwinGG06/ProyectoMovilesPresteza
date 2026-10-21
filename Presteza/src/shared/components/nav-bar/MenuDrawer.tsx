@@ -12,7 +12,7 @@ import { SelloP } from './SelloP';
 type NombreIcono = ComponentProps<typeof IconoNav>['name'];
 
 const ENLACES: { etiqueta: string; ruta: Href; icono: NombreIcono; numero: string }[] = [
-  { etiqueta: 'Inicio', ruta: '/', icono: 'home-outline', numero: '01' },
+  { etiqueta: 'Inicio', ruta: '/home', icono: 'home-outline', numero: '01' },
   { etiqueta: 'Menú', ruta: '/home/menu', icono: 'restaurant-outline', numero: '02' },
   { etiqueta: 'Nuestra Sede', ruta: '/home/sede', icono: 'location-outline', numero: '03' },
   { etiqueta: 'Nosotros', ruta: '/home/nosotros', icono: 'heart-outline', numero: '04' },
@@ -43,15 +43,12 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 bg-marca-oscura">
-        <View className="absolute -right-24 top-20 h-72 w-72 rounded-full border-[40px] border-oro/10" />
-        <View className="absolute -left-16 bottom-24 h-56 w-56 rounded-full bg-marca/50" />
-
         <SafeAreaView className="flex-1">
           <View className="flex-row items-center justify-between px-6 pt-4">
             <SelloP size="md" />
             <Pressable
               onPress={onClose}
-              className="h-12 w-12 items-center justify-center rounded-full border border-oro/50">
+              className="h-12 w-12 items-center justify-center border border-oro/50">
               <IconoNav name="close" size={22} className="text-oro" />
             </Pressable>
           </View>
@@ -60,7 +57,7 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
             <Text className="font-roboto text-[11px] tracking-[4px] text-oro">
               CARTA DE NAVEGACIÓN
             </Text>
-            <Text className="mt-1 font-roboto-extrabold text-4xl tracking-[6px] text-crema">
+            <Text className="mt-1 font-serif-light text-4xl tracking-[6px] text-crema">
               PRESTEZA
             </Text>
             <View className="mt-3 h-px w-24 bg-oro" />

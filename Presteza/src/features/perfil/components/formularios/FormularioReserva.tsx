@@ -1,6 +1,8 @@
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import { CampoFechaReserva } from '@/features/reservas/components/CampoFechaReserva';
+import { CampoHoraReserva } from '@/features/reservas/components/CampoHoraReserva';
 import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { ReservaForm } from '../../types';
 import { AccionesFormulario } from '../elementos';
@@ -13,27 +15,13 @@ type FormularioReservaProps = {
 };
 
 export function FormularioReserva({ valores, onCancelar, onGuardar, guardando }: FormularioReservaProps) {
-  const { control, guardar } = useFormulario(valores, onGuardar);
+  const { control, guardar, watch } = useFormulario(valores, onGuardar);
+  const fecha = watch('date');
 
   return (
     <View className="gap-4">
-      <Field
-        control={control}
-        name="date"
-        label="Fecha"
-        placeholder="DD/MM/AAAA"
-        rules={{
-          required: 'Escribe la fecha',
-          pattern: { value: /^\d{2}\/\d{2}\/\d{4}$/, message: 'Usa el formato DD/MM/AAAA' },
-        }}
-      />
-      <Field
-        control={control}
-        name="time"
-        label="Hora"
-        placeholder="Ej: 7:30 p. m."
-        rules={{ required: 'Escribe la hora' }}
-      />
+      <CampoFechaReserva control={control} name="date" />
+      <CampoHoraReserva control={control} name="time" fecha={fecha} />
       <Field
         control={control}
         name="numberOfPeople"

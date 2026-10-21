@@ -1,21 +1,21 @@
+import { router } from 'expo-router';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
+import Button from '@/components/Button';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { Footer } from '@/shared/components/footer';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
 import { HeroPerfil } from '../components/HeroPerfil';
 import { InvitadoPerfil } from '../components/InvitadoPerfil';
-import { PestanasPerfil } from '../components/PestanasPerfil';
+import { EncabezadoSeccion, PestanasPerfil } from '../components/PestanasPerfil';
 import { TabAjustes } from '../components/tabs/TabAjustes';
-import { TabCuenta } from '../components/tabs/TabCuenta';
 import { TabDirecciones } from '../components/tabs/TabDirecciones';
 import { TabPagos } from '../components/tabs/TabPagos';
 import { TabPedidos } from '../components/tabs/TabPedidos';
 import { TabPuntos } from '../components/tabs/TabPuntos';
 import { TabReservas } from '../components/tabs/TabReservas';
 import { usePerfil } from '../hooks/usePerfil';
-import { formatFecha } from '../utils';
 
 export function PerfilScreen() {
   const {
@@ -28,7 +28,6 @@ export function PerfilScreen() {
     pedidos,
     reservas,
     setReservas,
-    favoritos,
     cargando,
     error,
     pestana,
@@ -42,11 +41,11 @@ export function PerfilScreen() {
   if (cargando && !perfil) {
     return (
       <View className="flex-1 items-center justify-center bg-marca-oscura">
-        <SelloP size="lg" />
+        <SelloP size="md" />
         <View className="mt-6">
           <ActivityIndicator color="#d4af77" />
         </View>
-        <Text className="mt-3 font-roboto text-sm text-crema/70">Cargando tu mesa...</Text>
+        <Text className="mt-3 font-roboto text-sm text-crema/50">Cargando tu mesa...</Text>
       </View>
     );
   }
@@ -61,6 +60,8 @@ export function PerfilScreen() {
     );
   }
 
+  const enMesa = pestana === 'cuenta';
+
   return (
     <EvitarTeclado>
       <View className="flex-1 bg-marca-oscura">
@@ -68,57 +69,74 @@ export function PerfilScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag">
-          <HeroPerfil
-            nombre={perfil.complete_name || user.name}
-            email={perfil.email || user.email}
-            miembroDesde={formatFecha(perfil.created_at)}
-            puntos={perfil.points}
-            nivel={perfil.loyaltyTier}
-          />
-          <PestanasPerfil
-            activa={pestana}
-            onChange={setPestana}
-            contadores={{
-              puntos: perfil.points ?? 0,
-              pedidos: pedidos.length,
-              direcciones: perfil.addresses.length,
-              pagos: perfil.paymentCards.length,
-              reservas: reservas.length,
-            }}
-          />
+          {enMesa ? (
+            <HeroPerfil
+              nombre={perfil.complete_name || user.name}
+              email={perfil.email || user.email}
+              puntos={perfil.points}
+              nivel={perfil.loyaltyTier}
+              onAjustes={() => setPestana('ajustes')}
+            />
+          ) : (
+            <EncabezadoSeccion
+              pestana={pestana}
+              onVolver={() => setPestana('cuenta')}
+              contador={
+                pestana === 'pedidos'
+                  ? pedidos.length
+                  : pestana === 'reservas'
+                    ? reservas.length
+                    : undefined
+              }
+            />
+          )}
 
-          <View className="px-5 pb-10 pt-6">
-            {error ? <Text className="mb-4 font-roboto text-sm text-red-300">{error}</Text> : null}
+          <View className="px-6 pb-12 pt-2">
+            {error ? <Text className="mb-4 font-roboto text-sm text-crema">{error}</Text> : null}
 
-            {pestana === 'cuenta' ? (
-              <TabCuenta
-                userId={user.id}
-                perfil={perfil}
-                favoritos={favoritos}
-                onActualizado={setPerfil}
-              />
+            {enMesa ? (
+              <>
+                <PestanasPerfil
+                  onChange={setPestana}
+                  contadores={{
+                    pedidos: pedidos.length,
+                    reservas: reservas.length,
+                  }}
+                />
+                <Button
+                  text="VER LA CARTA"
+                  variant="gold"
+                  className="mt-4"
+                  onPress={() => router.push('/home/menu')}
+                />
+              </>
             ) : null}
-            {pestana === 'puntos' ? (
-              <TabPuntos userId={user.id} token={token} perfil={perfil} />
-            ) : null}
-            {pestana === 'pedidos' ? <TabPedidos pedidos={pedidos} /> : null}
-            {pestana === 'direcciones' ? (
-              <TabDirecciones userId={user.id} perfil={perfil} onActualizado={setPerfil} />
-            ) : null}
-            {pestana === 'pagos' ? (
-              <TabPagos userId={user.id} token={token} perfil={perfil} onActualizado={setPerfil} />
-            ) : null}
-            {pestana === 'reservas' ? (
-              <TabReservas onCambio={(lista) => setReservas(lista)} />
-            ) : null}
-            {pestana === 'ajustes' ? (
-              <TabAjustes
-                userId={user.id}
-                perfil={perfil}
-                onActualizado={setPerfil}
-                onCerrarSesion={logout}
-              />
-            ) : null}
+
+            {enMesa ? null : (
+              <View className="mt-6">
+                {pestana === 'puntos' ? (
+                  <TabPuntos userId={user.id} token={token} perfil={perfil} />
+                ) : null}
+                {pestana === 'pedidos' ? <TabPedidos pedidos={pedidos} /> : null}
+                {pestana === 'direcciones' ? (
+                  <TabDirecciones userId={user.id} perfil={perfil} onActualizado={setPerfil} />
+                ) : null}
+                {pestana === 'pagos' ? (
+                  <TabPagos userId={user.id} token={token} perfil={perfil} onActualizado={setPerfil} />
+                ) : null}
+                {pestana === 'reservas' ? (
+                  <TabReservas onCambio={(lista) => setReservas(lista)} />
+                ) : null}
+                {pestana === 'ajustes' ? (
+                  <TabAjustes
+                    userId={user.id}
+                    perfil={perfil}
+                    onActualizado={setPerfil}
+                    onCerrarSesion={logout}
+                  />
+                ) : null}
+              </View>
+            )}
           </View>
           <Footer />
         </ScrollView>

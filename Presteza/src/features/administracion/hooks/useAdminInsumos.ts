@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { actualizarInsumo, crearInsumo, eliminarInsumo, listarInsumos } from '@/api/admin';
 import type { InsumoAdmin, InsumoForm } from '../types';
 import { idDe } from '../utils';
-import { fusionar, useListaAdmin } from './adminComun';
+import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminInsumos() {
   const { lista: insumos, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
@@ -62,5 +62,14 @@ export function useAdminInsumos() {
     [aviso, conToken, setLista],
   );
 
-  return { insumos, cargando, guardando, error, recargar, guardar, eliminar };
+  const eliminarVarios = useCallback(
+    (items: InsumoAdmin[], alTerminar?: () => void) => {
+      const sesion = conToken();
+      if (!sesion) return;
+      borrarVarios(aviso, sesion, setLista, eliminarInsumo, items, 'insumos', 'BODEGA', { alTerminar });
+    },
+    [aviso, conToken, setLista],
+  );
+
+  return { insumos, cargando, guardando, error, recargar, guardar, eliminar, eliminarVarios };
 }

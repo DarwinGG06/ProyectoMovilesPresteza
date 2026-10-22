@@ -26,6 +26,7 @@ function load(file, mocks = {}, globals = {}) {
     code,
     {
       exports,
+      Error,
       require: (name) => (Object.hasOwn(mocks, name) ? mocks[name] : require(name)),
       atob,
       ...globals,
@@ -54,31 +55,34 @@ const auth = load('src/api/auth.ts', {
   './logger': logger,
 });
 
-function storage(platform, initial = null) {
-  let value = initial;
+function storage(platform, initial = null, protectedUser = null) {
+  const values = new Map([
+    ['presteza.session.token', initial],
+    ['presteza.session.biometric-user', protectedUser],
+  ]);
   const store = load(
     'src/session/storage.ts',
     {
       'react-native': { Platform: { OS: platform } },
       'expo-secure-store': {
-        getItemAsync: async () => value,
-        setItemAsync: async (_key, token) => {
-          value = token;
+        getItemAsync: async (key) => values.get(key) ?? null,
+        setItemAsync: async (key, token) => {
+          values.set(key, token);
         },
-        deleteItemAsync: async () => {
-          value = null;
+        deleteItemAsync: async (key) => {
+          values.delete(key);
         },
       },
     },
     {
       window: {
         localStorage: {
-          getItem: () => value,
-          setItem: (_key, token) => {
-            value = token;
+          getItem: (key) => values.get(key) ?? null,
+          setItem: (key, token) => {
+            values.set(key, token);
           },
-          removeItem: () => {
-            value = null;
+          removeItem: (key) => {
+            values.delete(key);
           },
         },
       },
@@ -87,13 +91,22 @@ function storage(platform, initial = null) {
   return store;
 }
 
-async function mount(store, authApi = auth) {
+async function mount(store, authApi = auth, options = {}) {
   let current;
   let apiToken = null;
+  const listeners = new Set();
+  const appState = {
+    currentState: 'active',
+    addEventListener: (_event, listener) => {
+      listeners.add(listener);
+      return { remove: () => listeners.delete(listener) };
+    },
+  };
   const { SessionProvider, useSession } = load('src/session/context.tsx', {
     '../api/auth': {
       ...authApi,
-      login: async () => ({ token: jwt(), user: authApi.decodificarToken(jwt()) }),
+      login:
+        options.login ?? (async () => ({ token: jwt(), user: authApi.decodificarToken(jwt()) })),
     },
     '../api/client': {
       setToken: (token) => {
@@ -102,11 +115,30 @@ async function mount(store, authApi = auth) {
     },
     '../api/logger': logger,
     './storage': store,
-    'react-native': { View: 'View', Text: 'Text', ActivityIndicator: 'ActivityIndicator' },
+    './biometrics': {
+      getBiometricSupport:
+        options.getSupport ??
+        (async () => ({ available: true, label: 'Huella digital', reason: '' })),
+      authenticateDevice: options.authenticate ?? (async () => {}),
+    },
+    './SessionLockScreen': { SessionLockScreen: (props) => React.createElement('Lock', props) },
+    'react-native': {
+      View: 'View',
+      Text: 'Text',
+      ActivityIndicator: 'ActivityIndicator',
+      Platform: { OS: options.platform ?? 'android' },
+      AppState: appState,
+    },
   });
   function Screen() {
     current = useSession();
-    return null;
+    React.useEffect(
+      () => () => {
+        current = undefined;
+      },
+      []
+    );
+    return React.createElement('Content');
   }
   let tree;
   await act(async () => {
@@ -119,6 +151,17 @@ async function mount(store, authApi = auth) {
     get apiToken() {
       return apiToken;
     },
+    get lock() {
+      return tree.root.findAllByType('Lock')[0]?.props;
+    },
+    get contentMounted() {
+      return tree.root.findAllByType('Content').length > 0;
+    },
+    background: (state) =>
+      act(async () => {
+        appState.currentState = state;
+        listeners.forEach((listener) => listener(state));
+      }),
     unmount: () =>
       act(async () => {
         tree.unmount();
@@ -129,7 +172,7 @@ async function mount(store, authApi = auth) {
 for (const platform of ['web', 'android']) {
   test(`${platform}: login sobrevive al desmontaje y logout no reaparece al reiniciar`, async () => {
     const store = storage(platform);
-    const first = await mount(store);
+    const first = await mount(store, auth, { platform });
     assert.equal(first.session.isAuthenticated, false);
     await act(async () => {
       await first.session.signIn('test@example.com', 'test-only');
@@ -138,7 +181,7 @@ for (const platform of ['web', 'android']) {
     assert.ok(await store.readSessionToken());
     await first.unmount();
 
-    const second = await mount(store);
+    const second = await mount(store, auth, { platform });
     assert.equal(second.session.user.id, 'test-user');
     assert.equal(second.session.isAuthenticated, true);
     assert.equal(second.apiToken, await store.readSessionToken());
@@ -148,7 +191,7 @@ for (const platform of ['web', 'android']) {
     assert.equal(await store.readSessionToken(), null);
     await second.unmount();
 
-    const third = await mount(store);
+    const third = await mount(store, auth, { platform });
     assert.equal(third.session.isAuthenticated, false);
     await third.unmount();
   });
@@ -262,7 +305,7 @@ test('espera la restauración antes de montar pantallas que usan autenticación'
   const pending = new Promise((resolve) => {
     resolveRead = resolve;
   });
-  const app = await mount({ readSessionToken: () => pending });
+  const app = await mount({ readSessionToken: () => pending, readBiometricUser: async () => null });
   assert.equal(app.session, undefined);
   await act(async () => {
     resolveRead(jwt());
@@ -283,6 +326,238 @@ test('un fallo de lectura no borra la sesión almacenada', async () => {
   });
   assert.equal(app.session.isAuthenticated, false);
   assert.equal(deletes, 0);
+  await app.unmount();
+});
+
+test('sesión protegida: no monta pantallas ni publica el JWT hasta verificar la huella', async () => {
+  const token = jwt();
+  const app = await mount(storage('android', token, 'test-user'));
+  assert.equal(app.contentMounted, false);
+  assert.equal(app.apiToken, null);
+  assert.ok(app.lock);
+  await act(async () => {
+    await app.lock.onUnlock();
+  });
+  assert.equal(app.session.isAuthenticated, true);
+  assert.equal(app.apiToken, token);
+  assert.equal(app.lock, undefined);
+  await app.unmount();
+});
+
+test('cancelar el diálogo conserva la sesión guardada pero nunca la desbloquea', async () => {
+  const token = jwt();
+  const store = storage('android', token, 'test-user');
+  const app = await mount(store, auth, {
+    authenticate: async () => {
+      throw new Error('Verificación cancelada');
+    },
+  });
+  await act(async () => {
+    await app.lock.onUnlock();
+  });
+  assert.equal(app.contentMounted, false);
+  assert.equal(app.apiToken, null);
+  assert.match(app.lock.error, /cancelada/);
+  assert.equal(await store.readSessionToken(), token);
+  await app.unmount();
+});
+
+test('segundo plano bloquea, regresar no desbloquea y el diálogo no crea un bucle', async () => {
+  const app = await mount(storage('android', jwt(), 'test-user'));
+  await act(async () => {
+    await app.lock.onUnlock();
+  });
+  await app.background('inactive');
+  assert.equal(app.contentMounted, false);
+  assert.equal(app.apiToken, null);
+  await app.background('background');
+  await app.background('active');
+  assert.ok(app.lock);
+  await act(async () => {
+    await app.lock.onUnlock();
+  });
+  assert.equal(app.session.isAuthenticated, true);
+  await app.unmount();
+});
+
+test('la inactividad producida por el diálogo nativo no vuelve a bloquear un desbloqueo válido', async () => {
+  let resolvePrompt;
+  const app = await mount(storage('android', jwt(), 'test-user'), auth, {
+    authenticate: () =>
+      new Promise((resolve) => {
+        resolvePrompt = resolve;
+      }),
+  });
+  let unlocking;
+  await act(async () => {
+    unlocking = app.lock.onUnlock();
+  });
+  await app.background('inactive');
+  await app.background('active');
+  await act(async () => {
+    resolvePrompt();
+    await unlocking;
+  });
+  assert.equal(app.session.isAuthenticated, true);
+  assert.equal(app.lock, undefined);
+  await app.unmount();
+});
+
+test('cerrar sesión mientras hay un diálogo pendiente impide restaurar el acceso después', async () => {
+  let resolvePrompt;
+  const store = storage('android', jwt(), 'test-user');
+  const app = await mount(store, auth, {
+    authenticate: () =>
+      new Promise((resolve) => {
+        resolvePrompt = resolve;
+      }),
+  });
+  let unlocking;
+  await act(async () => {
+    unlocking = app.lock.onUnlock();
+  });
+  await act(async () => {
+    app.lock.onSignOut();
+  });
+  await act(async () => {
+    resolvePrompt();
+    await unlocking;
+  });
+  assert.equal(app.session.isAuthenticated, false);
+  assert.equal(app.apiToken, null);
+  assert.equal(await store.readSessionToken(), null);
+  assert.equal(await store.readBiometricUser(), null);
+  await app.unmount();
+});
+
+test('la contraseña alternativa se valida en login; una incorrecta no permite entrar', async () => {
+  let received;
+  const fresh = jwt();
+  const app = await mount(storage('android', jwt(), 'test-user'), auth, {
+    login: async (email, password) => {
+      received = { email, password };
+      if (password !== 'correcta') throw new Error('Contraseña incorrecta');
+      return { token: fresh, user: auth.decodificarToken(fresh) };
+    },
+  });
+  await act(async () => {
+    await assert.rejects(app.lock.onPassword('incorrecta'), /incorrecta/);
+  });
+  assert.equal(app.apiToken, null);
+  assert.ok(app.lock);
+  await act(async () => {
+    await app.lock.onPassword('correcta');
+  });
+  assert.deepEqual(received, { email: 'test@example.com', password: 'correcta' });
+  assert.equal(app.session.isAuthenticated, true);
+  assert.equal(app.session.biometricEnabled, true);
+  await app.unmount();
+});
+
+test('activar requiere verificación y persiste la preferencia solo para esa cuenta', async () => {
+  let accept = false;
+  const store = storage('android', jwt());
+  const app = await mount(store, auth, {
+    authenticate: async () => {
+      if (!accept) throw new Error('Cancelado');
+    },
+  });
+  await act(async () => {
+    await assert.rejects(app.session.setBiometricEnabled(true), /Cancelado/);
+  });
+  assert.equal(app.session.biometricEnabled, false);
+  assert.equal(await store.readBiometricUser(), null);
+  accept = true;
+  await act(async () => {
+    await app.session.setBiometricEnabled(true);
+  });
+  assert.equal(app.session.biometricEnabled, true);
+  assert.equal(await store.readBiometricUser(), 'test-user');
+  await app.unmount();
+  const reopened = await mount(store);
+  assert.ok(reopened.lock);
+  await reopened.unmount();
+});
+
+test('no permite activar sin biometría y no modifica el token', async () => {
+  const token = jwt();
+  const store = storage('android', token);
+  let prompts = 0;
+  const app = await mount(store, auth, {
+    getSupport: async () => ({ available: false, label: 'Huella', reason: 'Registra una huella' }),
+    authenticate: async () => {
+      prompts++;
+    },
+  });
+  await act(async () => {
+    await assert.rejects(app.session.setBiometricEnabled(true), /Registra/);
+  });
+  assert.equal(prompts, 0);
+  assert.equal(await store.readBiometricUser(), null);
+  assert.equal(await store.readSessionToken(), token);
+  await app.unmount();
+});
+
+test('desactivar exige verificación y deja de bloquear al regresar', async () => {
+  const store = storage('android', jwt(), 'test-user');
+  const app = await mount(store);
+  await act(async () => {
+    await app.lock.onUnlock();
+  });
+  await act(async () => {
+    await app.session.setBiometricEnabled(false);
+  });
+  assert.equal(await store.readBiometricUser(), null);
+  await app.background('background');
+  await app.background('active');
+  assert.equal(app.session.isAuthenticated, true);
+  assert.equal(app.lock, undefined);
+  await app.unmount();
+});
+
+test('una cuenta diferente no hereda la activación biométrica de la anterior', async () => {
+  const store = storage('android', null, 'otro-usuario');
+  const app = await mount(store);
+  await act(async () => {
+    await app.session.signIn('test@example.com', 'correcta');
+  });
+  assert.equal(app.session.biometricEnabled, false);
+  assert.equal(await store.readBiometricUser(), null);
+  await app.unmount();
+});
+
+test('si el token vence mientras se verifica la huella, permanece bloqueado', async () => {
+  let expired = false;
+  const decoder = {
+    ...auth,
+    decodificarToken: (token) => {
+      if (expired) throw new Error('La sesión ha expirado');
+      return auth.decodificarToken(token);
+    },
+  };
+  const app = await mount(storage('android', jwt(), 'test-user'), decoder, {
+    authenticate: async () => {
+      expired = true;
+    },
+  });
+  await act(async () => {
+    await app.lock.onUnlock();
+  });
+  assert.equal(app.apiToken, null);
+  assert.equal(app.contentMounted, false);
+  assert.match(app.lock.error, /expirado/);
+  await app.unmount();
+});
+
+test('un fallo al leer la preferencia no restaura una sesión sin verificarla', async () => {
+  const store = storage('android', jwt(), 'test-user');
+  store.readBiometricUser = async () => {
+    throw new Error('storage unavailable');
+  };
+  const app = await mount(store);
+  assert.equal(app.apiToken, null);
+  assert.equal(app.session.isAuthenticated, false);
+  assert.ok(await store.readSessionToken());
   await app.unmount();
 });
 

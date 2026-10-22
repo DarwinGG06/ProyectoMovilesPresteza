@@ -44,6 +44,12 @@
       "expo-router",
       "expo-asset",
       "expo-secure-store",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Presteza usa Face ID para desbloquear tu cuenta en este dispositivo."
+        }
+      ],
       "expo-font",
       [
         "expo-image-picker",

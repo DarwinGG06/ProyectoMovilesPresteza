@@ -132,7 +132,41 @@ Las pantallas **no son wrappers vacíos**: el formulario está en la ruta.
 Validación de cada campo: `required` y `maxLength` (correo también con `pattern`).
 El error del servidor usa el componente `MensajeError`.
 
-La sesión **no se guarda en disco**: al recargar la pestaña hay que volver a entrar.
+La sesión se conserva con `expo-secure-store` en Android/iOS y `localStorage` en web.
+Un token vencido requiere volver a iniciar sesión.
+
+### Desbloqueo con huella o rostro (Android/iOS)
+
+1. Registra una huella o rostro en los ajustes de seguridad del teléfono.
+2. Entra a Presteza con correo y contraseña.
+3. Ve a **Perfil → Ajustes → Contraseña → Huella o rostro**. En administración,
+   la opción está en **Ajustes → Acceso al dispositivo**.
+4. Pulsa **ACTIVAR HUELLA O ROSTRO** y completa el diálogo del sistema.
+5. Sal de la app y regresa, o ciérrala y vuelve a abrirla. Se mostrará el bloqueo
+   de Presteza; pulsa el botón para verificarte con el sensor del teléfono.
+
+La preferencia queda asociada a esa cuenta en ese teléfono. Cerrar sesión la
+desactiva y borra el token local. Cancelar o fallar la verificación mantiene
+la app bloqueada. También se permite el código de bloqueo del teléfono según
+el sistema, o el botón **Usar contraseña de Presteza**, que verifica la contraseña
+contra `/auth/login`. En web se mantiene el inicio de sesión habitual.
+
+La biometría desbloquea una sesión existente: no crea cuentas ni extiende la
+vigencia del JWT. Si vence, usa la contraseña. No se almacenan contraseñas,
+huellas ni imágenes del rostro; el servidor sigue validando el JWT habitual.
+El token se conserva en SecureStore y la app comprueba la identidad local antes
+de restaurarlo en el contexto y el cliente HTTP. Es un bloqueo local de la app,
+no una credencial biométrica ni un segundo factor validado por el backend.
+
+Para probar el diálogo real se necesita un dispositivo compatible. Reinicia
+Metro tras instalar las dependencias. En una APK existente hay que generar
+una nueva compilación para incluir el módulo nativo y su configuración.
+Face ID en iOS requiere una compilación de desarrollo o propia; no funciona
+en Expo Go. Referencia: https://docs.expo.dev/versions/latest/sdk/local-authentication/
+
+Prueba manual: activación, cancelación, huella válida, segundo plano, cierre y
+reapertura, contraseña alternativa incorrecta/correcta, sesión vencida y cierre
+de sesión. Comprueba también un teléfono sin biometría registrada y el navegador.
 
 Para el CRUD de la rúbrica entra con **admin** y ve a `/administracion`.
 

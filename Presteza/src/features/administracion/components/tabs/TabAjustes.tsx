@@ -1,5 +1,7 @@
 import { View } from 'react-native';
 
+import { BiometricSettings } from '@/session/BiometricSettings';
+
 import type { Usuario } from '@/types';
 import { BotonPerfil, Comanda } from '@/features/perfil/components/elementos';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
@@ -30,7 +32,11 @@ export function TabAjustes({ user, guardando, onGuardar, onSalir }: TabAjustesPr
         </Comanda>
       </TarjetaPerfil>
 
-      <TarjetaPerfil numero="II" badge="SESIÓN" titulo="Salir">
+      <TarjetaPerfil numero="II" badge="SEGURIDAD" titulo="Acceso al dispositivo">
+        <BiometricSettings />
+      </TarjetaPerfil>
+
+      <TarjetaPerfil numero="III" badge="SESIÓN" titulo="Salir">
         <BotonPerfil etiqueta="CERRAR SESIÓN" onPress={onSalir} variante="peligro" />
       </TarjetaPerfil>
     </View>

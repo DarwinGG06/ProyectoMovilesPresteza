@@ -1,5 +1,7 @@
 import { View } from 'react-native';
 
+import { BiometricSettings } from '@/session/BiometricSettings';
+
 import { useAjustes } from '../../hooks/useAjustes';
 import type { UsuarioPerfil } from '../../types';
 import { CuentaEscrita } from '../CuentaEscrita';
@@ -58,8 +60,13 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
             />
           </Comanda>
         ) : (
-          <BotonPerfil etiqueta="CAMBIAR CONTRASEÑA" onPress={ajustes.empezarClave} variante="outline" />
+          <BotonPerfil
+            etiqueta="CAMBIAR CONTRASEÑA"
+            onPress={ajustes.empezarClave}
+            variante="outline"
+          />
         )}
+        <BiometricSettings />
       </TarjetaPerfil>
 
       <TarjetaPerfil numero="III" badge="SESIÓN" titulo="Salir">

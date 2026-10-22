@@ -105,7 +105,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
                       <Text className="mt-1 font-roboto text-sm text-tinta/50">
                         {reserva.date} · {reserva.time}
                       </Text>
-                      <Text className="mt-0.5 font-roboto text-[11px] text-tinta/40">
+                      <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70">
                         {reserva.numberOfPeople} personas
                       </Text>
                     </View>

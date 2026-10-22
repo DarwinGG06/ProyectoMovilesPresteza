@@ -109,7 +109,7 @@ export function TabPedidos({
                       <Text className="mt-1 font-roboto text-sm text-tinta/60" numberOfLines={1}>
                         {pedido.user_name || 'Cliente'}
                       </Text>
-                      <Text className="mt-0.5 font-roboto text-[11px] text-tinta/40">
+                      <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70">
                         {formatoFechaHora(pedido.createdAt)}
                       </Text>
                     </View>
@@ -135,7 +135,7 @@ export function TabPedidos({
                 <Text className="mt-1 font-roboto text-sm text-tinta/55" numberOfLines={1}>
                   {pedido.user_name || 'Cliente'}
                 </Text>
-                <Text className="mt-1 font-roboto text-[11px] text-tinta/40">
+                <Text className="mt-1 font-roboto text-[11px] text-tinta/70">
                   {formatoFechaHora(pedido.createdAt)}
                 </Text>
                 <Text className="mt-2 font-roboto text-lg text-marca">

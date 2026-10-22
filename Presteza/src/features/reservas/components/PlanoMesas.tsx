@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, Text, View } from 'react-native';
 
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
@@ -36,33 +37,38 @@ export function PlanoMesas({
         <Text className="mt-1 text-center font-serif-light text-2xl text-crema">
           Elige tu mesa
         </Text>
-        <Text className="mb-4 mt-1 text-center font-roboto text-sm text-crema/60">
-          Toca una mesa libre.
+        <Text className="mb-4 mt-1 text-center font-roboto text-sm text-crema">
+          Mesas de madera. Toca una libre.
         </Text>
         <LeyendaMesas />
       </View>
 
-      <View className="bg-pergamino px-2 pb-2 pt-4">
-        {grupos.map((grupo) => (
-          <View key={grupo.capacity} className="mb-4">
-            <Text className="mb-2 text-center font-roboto text-[10px] tracking-[3px] text-marca">
-              {etiquetaCapacidad(grupo.capacity)}
-            </Text>
-            <View className="flex-row flex-wrap">
-              {grupo.mesas.map((mesa) => (
-                <TarjetaMesa
-                  key={mesa.id}
-                  mesa={mesa}
-                  seleccionada={mesaId === mesa.id}
-                  onPress={() => {
-                    if (mesa.available) onMesa(mesa);
-                  }}
-                />
-              ))}
+      <LinearGradient
+        colors={['#e8d7b8', '#d4bc93', '#c4a574']}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}>
+        <View className="px-2 pb-2 pt-4">
+          {grupos.map((grupo) => (
+            <View key={grupo.capacity} className="mb-4">
+              <Text className="mb-2 text-center font-roboto text-[10px] tracking-[3px] text-marca">
+                {etiquetaCapacidad(grupo.capacity)}
+              </Text>
+              <View className="flex-row flex-wrap">
+                {grupo.mesas.map((mesa) => (
+                  <TarjetaMesa
+                    key={mesa.id}
+                    mesa={mesa}
+                    seleccionada={mesaId === mesa.id}
+                    onPress={() => {
+                      if (mesa.available) onMesa(mesa);
+                    }}
+                  />
+                ))}
+              </View>
             </View>
-          </View>
-        ))}
-      </View>
+          ))}
+        </View>
+      </LinearGradient>
 
       <View className="px-4 py-5">
         <Text className="mb-3 font-roboto text-[11px] tracking-[3px] text-oro">OTRAS OPCIONES</Text>

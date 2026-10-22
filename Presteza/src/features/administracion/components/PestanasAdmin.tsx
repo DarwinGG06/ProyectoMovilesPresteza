@@ -65,7 +65,7 @@ export function MenuAdmin({ activa, onChange, contadores, children }: MenuAdminP
     <>
       <Pressable onPress={() => setAbierto(true)} hitSlop={8}>
         {children ?? (
-          <Text className="font-roboto text-[10px] tracking-[3px] text-tinta/40">ADMINISTRACIÓN</Text>
+          <Text className="font-roboto text-[10px] tracking-[3px] text-tinta/70">ADMINISTRACIÓN</Text>
         )}
       </Pressable>
 
@@ -133,7 +133,7 @@ export function EncabezadoSeccionAdmin({
   return (
     <View className="bg-crema px-6 pb-3 pt-6">
       <Pressable onPress={onVolver} hitSlop={8} className="self-start py-1">
-        <Text className="font-roboto text-[10px] tracking-[3px] text-tinta/40">←  ADMINISTRACIÓN</Text>
+        <Text className="font-roboto text-[10px] tracking-[3px] text-tinta/70">←  ADMINISTRACIÓN</Text>
       </Pressable>
       <View className="mt-2">
         <MenuAdmin activa={pestana} onChange={onChange} contadores={contadores}>

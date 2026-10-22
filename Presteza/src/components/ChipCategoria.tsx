@@ -11,7 +11,7 @@ export function ChipCategoria({ etiqueta, activo, onPress }: ChipCategoriaProps)
     <Pressable onPress={onPress} accessibilityRole="button" className="mr-1 py-2 active:opacity-70">
       <Text
         className={`font-roboto text-[10px] tracking-[2px] ${
-          activo ? 'text-tinta' : 'text-tinta/40'
+          activo ? 'text-tinta' : 'text-tinta/70'
         }`}>
         {etiqueta.toUpperCase()}
       </Text>

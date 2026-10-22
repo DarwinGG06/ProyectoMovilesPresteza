@@ -93,7 +93,7 @@ export default function CampoFecha<T extends FieldValues>({
           {error ? (
             <Text className="font-roboto text-xs text-red-600">{error.message}</Text>
           ) : (
-            <Text className="font-roboto text-[11px] text-tinta/40">
+            <Text className="font-roboto text-[11px] text-tinta/70">
               Debes tener al menos {EDAD_MINIMA_REGISTRO} años. Esta fecha no se cambia después.
             </Text>
           )}

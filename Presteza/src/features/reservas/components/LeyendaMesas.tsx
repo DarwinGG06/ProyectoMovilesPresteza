@@ -14,7 +14,7 @@ export function LeyendaMesas() {
           key={item.etiqueta}
           className="flex-row items-center gap-2 rounded-full border border-oro/25 bg-white/5 px-3 py-1.5">
           <View className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-          <Text className="font-roboto-semibold text-[11px] text-crema/80">{item.etiqueta}</Text>
+          <Text className="font-roboto-semibold text-[11px] text-crema">{item.etiqueta}</Text>
         </View>
       ))}
     </View>

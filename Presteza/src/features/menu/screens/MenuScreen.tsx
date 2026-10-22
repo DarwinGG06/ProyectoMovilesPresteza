@@ -21,7 +21,7 @@ export function MenuScreen() {
         <View className="mt-6">
           <ActivityIndicator color="#6b1d3d" />
         </View>
-        <Text className="mt-3 font-roboto text-sm text-tinta/60">Abriendo la carta...</Text>
+        <Text className="mt-3 font-roboto text-sm text-tinta/70">Abriendo la carta...</Text>
       </View>
     );
   }

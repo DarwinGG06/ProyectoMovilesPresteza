@@ -71,7 +71,7 @@ export function HeroInicio() {
             <View className="px-5 py-5">
               <Text className="font-roboto text-[10px] tracking-[3px] text-marca">LA CASA</Text>
               <Text className="mt-1 font-serif text-xl text-tinta">
-                Cocina de Presteza, hecha con calma.
+                La carta de la casa, servida en mesa.
               </Text>
               <View className="mt-4 flex-row items-stretch">
                 <Button

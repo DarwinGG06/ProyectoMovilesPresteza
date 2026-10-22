@@ -34,6 +34,7 @@ export default function Button({
         onPress={onPress}
         disabled={disabled}
         accessibilityRole="button"
+        accessibilityState={{ disabled: Boolean(disabled) }}
         style={{ height: alto }}
         className={`active:opacity-80 disabled:opacity-40 ${className ?? ''}`}>
         <PlacaOro compact={compact}>
@@ -59,6 +60,7 @@ export default function Button({
       onPress={onPress}
       disabled={disabled}
       accessibilityRole="button"
+      accessibilityState={{ disabled: Boolean(disabled) }}
       style={{ height: alto }}
       className={`active:opacity-80 disabled:opacity-45 ${className ?? ''}`}>
       <View className={`h-full w-full items-center justify-center ${caja}`}>

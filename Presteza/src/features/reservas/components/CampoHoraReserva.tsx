@@ -61,9 +61,9 @@ export function CampoHoraReserva<T extends FieldValues>({
             {error ? (
               <Text className="font-roboto text-xs text-red-600">{error.message}</Text>
             ) : fechaValida ? (
-              <Text className="font-roboto text-[11px] text-tinta/40">{horario.etiqueta}</Text>
+              <Text className="font-roboto text-[11px] text-tinta/70">{horario.etiqueta}</Text>
             ) : (
-              <Text className="font-roboto text-[11px] text-tinta/40">Elige primero la fecha</Text>
+              <Text className="font-roboto text-[11px] text-tinta/70">Elige primero la fecha</Text>
             )}
           </View>
         );

@@ -151,7 +151,7 @@ export function TabProductos({
                   <Text className="mt-2 font-roboto text-lg text-marca">
                     {formatCOP(producto.price || 0)}
                   </Text>
-                  <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/40">
+                  <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70">
                     {producto.available === false ? 'OCULTO' : 'EN CARTA'}
                   </Text>
                   <AccionesCarta

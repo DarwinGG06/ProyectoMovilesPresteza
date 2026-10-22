@@ -7,7 +7,14 @@ const TELEFONO_WHATSAPP = '573104941839';
 
 export function WhatsAppFloat() {
   const ruta = usePathname();
-  if (ruta.includes('perfil') || ruta.includes('admin')) return null;
+  if (
+    ruta.includes('perfil') ||
+    ruta.includes('admin') ||
+    ruta.includes('plato') ||
+    ruta.includes('seguimiento')
+  ) {
+    return null;
+  }
 
   return (
     <Pressable

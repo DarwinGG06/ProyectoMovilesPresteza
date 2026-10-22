@@ -28,7 +28,7 @@ export function PagoScreen() {
             <Badge text="BANDEJA" variant="sello" />
             <Text className="font-serif-light text-2xl text-marca-oscura">Aún no hay platos</Text>
             <Pressable onPress={pago.irAlMenu} className="mt-2 self-start">
-              <Text className="font-roboto text-[11px] tracking-[2px] text-oro">IR AL MENÚ →</Text>
+              <Text className="font-roboto text-[11px] tracking-[2px] text-marca">IR AL MENÚ →</Text>
             </Pressable>
           </Tarjeta>
         ) : (
@@ -41,7 +41,7 @@ export function PagoScreen() {
                     {item.quantity} × {item.productName}
                   </Text>
                   <View className="mx-2 mb-1 h-px flex-1 bg-oro/35" />
-                  <Text className="font-roboto text-oro">{formatCOP(item.totalPrice)}</Text>
+                  <Text className="font-roboto text-marca">{formatCOP(item.totalPrice)}</Text>
                 </View>
               ))}
             </Tarjeta>
@@ -156,7 +156,7 @@ export function PagoScreen() {
             </Tarjeta>
 
             <View className="mt-8 flex-row items-end justify-between">
-              <Text className="font-roboto text-[11px] tracking-[2px] text-oro">A PAGAR</Text>
+              <Text className="font-roboto text-[11px] tracking-[2px] text-marca">A PAGAR</Text>
               <Text className="font-serif-light text-3xl text-marca-oscura">
                 {formatCOP(totalAPagar)}
               </Text>

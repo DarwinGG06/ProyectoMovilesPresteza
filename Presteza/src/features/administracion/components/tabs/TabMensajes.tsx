@@ -70,7 +70,7 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
                   <Text className="font-roboto text-sm text-tinta/60" numberOfLines={1}>
                     {mensaje.name}
                   </Text>
-                  <Text className="mt-0.5 font-roboto text-[11px] text-tinta/40" numberOfLines={1}>
+                  <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70" numberOfLines={1}>
                     {formatoFechaHora(mensaje.createdAt)}
                   </Text>
                 </CeldaTabla>

@@ -44,13 +44,21 @@ test('los destinos estáticos de navegación corresponden a pantallas de Expo Ro
       if (!node) return;
       if (ts.isAsExpression(node) || ts.isParenthesizedExpression(node))
         return check(node.expression);
+      if (ts.isObjectLiteralExpression(node)) {
+        const pathname = node.properties.find(
+          (property) =>
+            ts.isPropertyAssignment(property) && property.name.getText(source) === 'pathname'
+        );
+        if (pathname) check(pathname.initializer);
+        return;
+      }
       if (ts.isConditionalExpression(node)) {
         check(node.whenTrue);
         check(node.whenFalse);
       } else if (ts.isStringLiteral(node) && node.text.startsWith('/')) {
         checked++;
         assert.ok(
-          routes.has(node.text),
+          routes.has(node.text.split(/[?#]/, 1)[0]),
           `${path.relative(root, filename)} navega a una ruta inexistente: ${node.text}`
         );
       }

@@ -67,13 +67,12 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
             />
           </Comanda>
         ) : (
-          <BotonPerfil
-            etiqueta="CAMBIAR CONTRASEÑA"
-            onPress={ajustes.empezarClave}
-            variante="outline"
-          />
           <TarjetaFolio>
-            <BotonPerfil etiqueta="CAMBIAR CONTRASEÑA" onPress={ajustes.empezarClave} variante="outline" />
+            <BotonPerfil
+              etiqueta="CAMBIAR CONTRASEÑA"
+              onPress={ajustes.empezarClave}
+              variante="outline"
+            />
           </TarjetaFolio>
         )}
         <BiometricSettings />

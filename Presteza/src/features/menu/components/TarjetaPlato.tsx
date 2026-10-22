@@ -20,7 +20,7 @@ export function TarjetaPlato({ producto, indice, tieneModelo, onVerModelo }: Tar
 
   return (
     <Pressable
-      onPress={() => id && router.push(`/plato/${id}`)}
+      onPress={() => id && router.push({ pathname: '/plato/[id]', params: { id } })}
       accessibilityRole="button"
       accessibilityLabel={`Ver ${producto.name}`}
       className="flex-row items-start border-b border-madera/20 py-5 active:opacity-80">
@@ -55,7 +55,9 @@ export function TarjetaPlato({ producto, indice, tieneModelo, onVerModelo }: Tar
       </View>
 
       <View className="min-w-0 flex-1">
-        <Text className="font-serif-semibold text-[22px] leading-6 text-tinta">{producto.name}</Text>
+        <Text className="font-serif-semibold text-[22px] leading-6 text-tinta">
+          {producto.name}
+        </Text>
         {producto.description ? (
           <Text className="mt-1 font-roboto text-[13px] leading-5 text-tinta/70" numberOfLines={2}>
             {producto.description}

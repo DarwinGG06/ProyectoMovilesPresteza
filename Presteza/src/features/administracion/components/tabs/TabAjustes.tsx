@@ -32,12 +32,11 @@ export function TabAjustes({ user, guardando, onGuardar, onSalir }: TabAjustesPr
         </Comanda>
       </TarjetaPerfil>
 
-      <TarjetaPerfil numero="II" badge="SEGURIDAD" titulo="Acceso al dispositivo">
+      <TarjetaPerfil compacto numero="II" badge="SEGURIDAD" titulo="Acceso al dispositivo">
         <BiometricSettings />
       </TarjetaPerfil>
 
-      <TarjetaPerfil numero="III" badge="SESIÓN" titulo="Salir">
-      <TarjetaPerfil compacto numero="II" badge="SESIÓN" titulo="Salir">
+      <TarjetaPerfil compacto numero="III" badge="SESIÓN" titulo="Salir">
         <BotonPerfil etiqueta="CERRAR SESIÓN" onPress={onSalir} variante="peligro" />
       </TarjetaPerfil>
     </View>

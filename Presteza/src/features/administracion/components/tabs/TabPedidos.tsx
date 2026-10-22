@@ -8,7 +8,14 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { FILTROS_PEDIDOS, useTabPedidos } from '../../hooks/useTabPedidos';
 import type { ClienteAdmin, PedidoAdmin, PedidoForm, ProductoAdmin } from '../../types';
 import { estadoPedidoBackend, formatoFechaHora, idDe, textoEstadoPedido } from '../../utils';
-import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import {
+  AccionesAdmin,
+  BotonAgregarAdmin,
+  ChipFiltro,
+  EnlaceAdmin,
+  EstadoVacioAdmin,
+  ModalAdmin,
+} from '../elementos';
 import { FormularioPedido } from '../formularios/FormularioPedido';
 import {
   CajaCuadricula,
@@ -46,11 +53,12 @@ export function TabPedidos({
   onEliminar,
 }: TabPedidosProps) {
   const tab = useTabPedidos(pedidos, clientes, onGuardar);
+  const { detalle, setFiltro } = tab;
   const params = useLocalSearchParams<{ filtro?: string }>();
 
   useEffect(() => {
-    if (params.filtro === 'pending') tab.setFiltro('pending');
-  }, [params.filtro, tab.setFiltro]);
+    if (params.filtro === 'pending') setFiltro('pending');
+  }, [params.filtro, setFiltro]);
 
   const accionesFila = (pedido: PedidoAdmin) => (
     <AccionesAdmin>
@@ -62,11 +70,7 @@ export function TabPedidos({
 
   return (
     <View>
-      <TarjetaPerfil
-        compacto
-        numero="I"
-        badge="COMANDA"
-        titulo="Pedidos">
+      <TarjetaPerfil compacto numero="I" badge="COMANDA" titulo="Pedidos">
         <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <InterruptorVista
           vista={tab.vista}
@@ -165,27 +169,25 @@ export function TabPedidos({
       </ModalAdmin>
 
       <ModalAdmin
-        visible={Boolean(tab.detalle)}
-        titulo={tab.detalle ? `#${idDe(tab.detalle).slice(-8).toUpperCase()}` : 'Pedido'}
+        visible={Boolean(detalle)}
+        titulo={detalle ? `#${idDe(detalle).slice(-8).toUpperCase()}` : 'Pedido'}
         onCerrar={tab.cerrarDetalle}>
-        {tab.detalle ? (
+        {detalle ? (
           <View className="gap-3">
             <Text className="font-roboto text-sm text-tinta/70">
-              {tab.detalle.user_name || 'Cliente'}
+              {detalle.user_name || 'Cliente'}
             </Text>
             <Text className="font-roboto text-sm text-tinta/55">
-              {formatoFechaHora(tab.detalle.createdAt)}
+              {formatoFechaHora(detalle.createdAt)}
             </Text>
-            {(tab.detalle.products ?? []).map((producto, index) => (
+            {(detalle.products ?? []).map((producto, index) => (
               <Text
                 key={`${producto.dishId}-${index}`}
                 className="font-roboto text-base text-tinta">
                 {producto.quantity} × {producto.name}
               </Text>
             ))}
-            <Text className="font-roboto text-lg text-marca">
-              {formatCOP(tab.detalle.total || 0)}
-            </Text>
+            <Text className="font-roboto text-lg text-marca">{formatCOP(detalle.total || 0)}</Text>
 
             <Text className="mt-2 font-roboto text-[10px] tracking-[2px] text-marca">ESTADO</Text>
             <AccionesAdmin>
@@ -193,11 +195,10 @@ export function TabPedidos({
                 <EnlaceAdmin
                   key={estado.id}
                   etiqueta={estado.etiqueta}
-                  activo={estadoPedidoBackend(tab.detalle.status) === estadoPedidoBackend(estado.id)}
+                  activo={estadoPedidoBackend(detalle.status) === estadoPedidoBackend(estado.id)}
                   peligro={estado.id === 'cancelled'}
                   onPress={() => {
-                    if (!tab.detalle) return;
-                    onCambiarEstado(tab.detalle, estado.id);
+                    onCambiarEstado(detalle, estado.id);
                     tab.cerrarDetalle();
                   }}
                 />
@@ -206,11 +207,7 @@ export function TabPedidos({
 
             <AccionesAdmin>
               <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
-              <EnlaceAdmin
-                etiqueta="ELIMINAR"
-                peligro
-                onPress={() => tab.detalle && onEliminar(tab.detalle)}
-              />
+              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
             </AccionesAdmin>
           </View>
         ) : null}

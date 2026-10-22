@@ -28,6 +28,7 @@ export function FormularioPedido({
   onCancelar: _onCancelar,
   onGuardar,
   guardando,
+  bloquearCliente,
 }: {
   valores: PedidoForm;
   clientes: ClienteAdmin[];
@@ -35,15 +36,24 @@ export function FormularioPedido({
   onCancelar: () => void;
   onGuardar: (datos: PedidoForm) => Promise<void>;
   guardando?: boolean;
+  bloquearCliente?: boolean;
 }) {
   const { control, guardar, lineas, total, agregar, cambiarCantidad } = useFormularioPedido(
     valores,
     onGuardar,
   );
+  const clienteFijo = clientes.find((cliente) => cliente.id === valores.userId);
 
   return (
     <View>
-      {clientes.length > 0 ? (
+      {bloquearCliente ? (
+        <View className="mb-2">
+          <Text className="mb-1 font-roboto text-[10px] tracking-[2px] text-marca">Cliente</Text>
+          <Text className="font-roboto text-base text-tinta">
+            {clienteFijo?.name || 'Cliente'}
+          </Text>
+        </View>
+      ) : clientes.length > 0 ? (
         <Select
           control={control}
           name="userId"

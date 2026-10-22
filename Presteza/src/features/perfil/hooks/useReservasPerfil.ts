@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { useReservas } from '@/features/reservas/hooks/useReservas';
 import type { Reserva } from '@/features/reservas/types';
+import { sePuedeEditarCliente, visibleEnPerfil } from '@/features/reservas/utils';
 
 import type { ReservaForm } from '../types';
 
@@ -39,12 +40,12 @@ export function useReservasPerfil(onCambio?: (reservas: Reserva[]) => void) {
     : null;
 
   return {
-    lista: reservas.lista,
+    lista: reservas.lista.filter(visibleEnPerfil),
     error: reservas.error,
     guardando: reservas.guardando,
     idDe: reservas.idDe,
     textoEstado: reservas.textoEstado,
-    sePuedeEditar: reservas.sePuedeEditar,
+    sePuedeEditar: sePuedeEditarCliente,
     eliminar: reservas.eliminar,
     edicion,
     editar: setEditando,

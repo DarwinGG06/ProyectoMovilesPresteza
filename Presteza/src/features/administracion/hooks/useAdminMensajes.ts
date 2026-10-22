@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { actualizarMensaje, crearMensaje, eliminarMensaje, listarMensajes } from '@/api/admin';
 import type { MensajeAdmin, MensajeForm } from '../types';
 import { idDe } from '../utils';
-import { fusionar, useListaAdmin } from './adminComun';
+import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminMensajes() {
   const { lista: mensajes, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
@@ -70,5 +70,14 @@ export function useAdminMensajes() {
     [aviso, conToken, setLista],
   );
 
-  return { mensajes, cargando, guardando, error, recargar, guardar, eliminar };
+  const eliminarVarios = useCallback(
+    (items: MensajeAdmin[], alTerminar?: () => void) => {
+      const sesion = conToken();
+      if (!sesion) return;
+      borrarVarios(aviso, sesion, setLista, eliminarMensaje, items, 'mensajes', 'CORREO', { alTerminar });
+    },
+    [aviso, conToken, setLista],
+  );
+
+  return { mensajes, cargando, guardando, error, recargar, guardar, eliminar, eliminarVarios };
 }

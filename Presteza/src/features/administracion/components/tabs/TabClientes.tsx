@@ -7,7 +7,7 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { useTabClientes } from '../../hooks/useTabClientes';
 import type { ClienteAdmin, ClienteForm } from '../../types';
 import { iniciales } from '../../utils';
-import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioCliente } from '../formularios/FormularioCliente';
 import {
   CajaCuadricula,
@@ -40,12 +40,13 @@ export function TabClientes({
         numero="I"
         badge="MESA"
         titulo="Clientes"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
+        compacto>
+        <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <CampoBusqueda
           value={tab.busqueda}
           onChangeText={tab.setBusqueda}
           placeholder="Buscar cliente..."
-          variant="oscuro"
+          variant="claro"
         />
         <InterruptorVista
           vista={tab.vista}
@@ -90,12 +91,12 @@ export function TabClientes({
             {tab.lista.map((cliente) => (
               <FilaTabla key={cliente.id}>
                 <CeldaTabla flex={1.4}>
-                  <Text className="font-roboto-light text-sm text-white" numberOfLines={1}>
+                  <Text className="font-roboto-light text-sm text-tinta" numberOfLines={1}>
                     {cliente.name}
                   </Text>
                   {cliente.email ? (
                     <Text
-                      className="mt-0.5 font-roboto text-[11px] text-crema/45"
+                      className="mt-0.5 font-roboto text-[11px] text-tinta/45"
                       numberOfLines={1}>
                       {cliente.email}
                     </Text>
@@ -107,12 +108,12 @@ export function TabClientes({
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla ancho={68} derecha>
-                  <Text className="text-right font-roboto text-sm text-crema">
+                  <Text className="text-right font-roboto text-sm text-tinta">
                     {cliente.totalOrders ?? 0}
                   </Text>
                 </CeldaTabla>
                 <CeldaTabla ancho={72} derecha>
-                  <Text className="text-right font-roboto text-sm text-crema">
+                  <Text className="text-right font-roboto text-sm text-tinta">
                     {cliente.totalReservations ?? 0}
                   </Text>
                 </CeldaTabla>
@@ -126,15 +127,15 @@ export function TabClientes({
                 <View className="mb-2 h-10 w-10 items-center justify-center border border-oro/40">
                   <Text className="font-roboto text-sm text-oro">{iniciales(cliente.name)}</Text>
                 </View>
-                <Text className="font-roboto-light text-base text-white" numberOfLines={2}>
+                <Text className="font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {cliente.name}
                 </Text>
                 {cliente.email ? (
-                  <Text className="mt-1 font-roboto text-[11px] text-crema/50" numberOfLines={1}>
+                  <Text className="mt-1 font-roboto text-[11px] text-tinta/45" numberOfLines={1}>
                     {cliente.email}
                   </Text>
                 ) : null}
-                <Text className="mt-2 font-roboto text-sm text-crema/65">
+                <Text className="mt-2 font-roboto text-sm text-tinta/55">
                   {cliente.totalOrders ?? 0} pedidos · {cliente.totalReservations ?? 0} reservas
                 </Text>
                 {cliente.totalSpent ? (

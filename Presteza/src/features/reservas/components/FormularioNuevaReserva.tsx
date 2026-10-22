@@ -1,11 +1,12 @@
 import { Controller, type Control } from 'react-hook-form';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import Button from '@/components/Button';
 import Field from '@/components/Field';
-import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
 import { horaEnHorario } from '../data';
 import type { ReservaForm } from '../types';
+import { CampoFechaReserva } from './CampoFechaReserva';
 import { SelectorHora } from './SelectorHora';
 
 type FormularioNuevaReservaProps = {
@@ -34,36 +35,22 @@ export function FormularioNuevaReserva({
   exito,
 }: FormularioNuevaReservaProps) {
   return (
-    <View className="mt-6 rounded-[24px] bg-white px-5 py-6 shadow-lg shadow-marca/20">
-      <View className="mb-5 items-center">
-        <View className="mb-3 h-16 w-16 items-center justify-center rounded-full bg-marca/10">
-          <IconoNav name="calendar" size={30} className="text-marca" />
-        </View>
-        <Text className="text-center font-roboto-bold text-2xl uppercase tracking-[1px] text-marca">
-          Completa tu reserva
-        </Text>
-        <Text className="mt-2 text-center font-roboto text-sm text-marca-clara">{subtitulo}</Text>
-      </View>
+    <View className="mt-8">
+      <View className="mb-3 h-px w-10 bg-marca/40" />
+      <Text className="font-roboto text-[10px] tracking-[4px] text-marca">NUEVA RESERVA</Text>
+      <Text className="mt-2 font-serif-light text-3xl text-tinta">Completa tu reserva</Text>
+      <Text className="mt-2 font-roboto text-sm text-tinta/55">{subtitulo}</Text>
 
       {exito ? (
-        <View className="mb-5 rounded-2xl bg-[#28a745] px-4 py-3">
-          <Text className="text-center font-roboto-semibold text-sm text-white">
-            ¡Reserva realizada! Te esperamos en Presteza.
+        <View className="mb-5 mt-5 border border-marca/20 bg-marca/5 px-4 py-3">
+          <Text className="text-center font-roboto text-sm text-marca">
+            Reserva realizada. Te esperamos en Presteza.
           </Text>
         </View>
       ) : null}
 
-      <View className="gap-4">
-        <Field
-          control={control}
-          name="date"
-          label="Fecha"
-          placeholder="DD/MM/AAAA"
-          rules={{
-            required: 'La fecha es requerida',
-            pattern: { value: /^\d{2}\/\d{2}\/\d{4}$/, message: 'Usa DD/MM/AAAA' },
-          }}
-        />
+      <View className="mt-5 gap-4">
+        <CampoFechaReserva control={control} name="date" />
 
         <Controller
           control={control}
@@ -113,14 +100,13 @@ export function FormularioNuevaReserva({
         />
       </View>
 
-      <Pressable
+      <Button
+        className="mt-6"
+        text={guardando ? 'PROCESANDO...' : etiqueta}
         onPress={onEnviar}
         disabled={guardando || deshabilitado}
-        className={`mt-6 rounded-full py-4 ${guardando || deshabilitado ? 'bg-marca/40' : 'bg-marca'}`}>
-        <Text className="text-center font-roboto-bold text-[12px] tracking-[2px] text-white">
-          {guardando ? 'PROCESANDO...' : etiqueta}
-        </Text>
-      </Pressable>
+        variant="gold"
+      />
     </View>
   );
 }

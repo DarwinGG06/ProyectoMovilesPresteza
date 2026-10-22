@@ -7,6 +7,7 @@ import { usePuntos } from '../../hooks/usePuntos';
 import type { UsuarioPerfil } from '../../types';
 import { formatFecha } from '../../utils';
 import { CuentaEscrita } from '../CuentaEscrita';
+import { TarjetaFolio } from '../elementos';
 import { EstadoVacio, Mensaje, TarjetaPerfil } from '../TarjetaPerfil';
 
 type TabPuntosProps = {
@@ -35,7 +36,7 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
     return (
       <View className="items-center py-10">
         <ActivityIndicator color="#d4af77" />
-        <Text className="mt-3 font-roboto text-sm text-crema/70">Cargando tus puntos...</Text>
+        <Text className="mt-3 font-roboto text-sm text-crema/50">Cargando tus puntos...</Text>
       </View>
     );
   }
@@ -45,7 +46,7 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
       <TarjetaPerfil numero="I" badge="PUNTOS" titulo="Fidelidad">
         <Mensaje texto={error || 'No se pudo cargar el programa.'} error />
         <Pressable onPress={() => void recargar()} className="self-start">
-          <Text className="font-roboto text-[11px] tracking-[2px] text-oro">REINTENTAR →</Text>
+          <Text className="font-roboto text-[11px] tracking-[2px] text-oro">REINTENTAR</Text>
         </Pressable>
       </TarjetaPerfil>
     );
@@ -59,10 +60,11 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
       {error ? <Mensaje texto={error} error /> : null}
 
       <TarjetaPerfil numero="I" badge="SALDO" titulo={programa.tier.name}>
-        <Text className="font-roboto-light text-[42px] leading-[46px] text-oro">
+        <TarjetaFolio>
+        <Text className="font-serif-light text-[42px] leading-[46px] text-tinta">
           {programa.points}
         </Text>
-        <Text className="mt-1 font-roboto text-sm text-crema/60">
+        <Text className="mt-1 font-roboto text-sm text-tinta/50">
           {formatCOP(valorSaldo)} para canjear en caja
         </Text>
 
@@ -79,44 +81,49 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
         </View>
 
         {siguiente ? (
-          <Text className="mt-5 font-roboto text-sm leading-5 text-crema/70">
+          <Text className="mt-5 font-roboto text-sm leading-5 text-tinta/55">
             Te faltan {siguiente.pointsNeeded} puntos o {siguiente.ordersNeeded} pedidos para{' '}
             {siguiente.name}.
           </Text>
         ) : (
-          <Text className="mt-5 font-roboto text-sm text-crema/70">
+          <Text className="mt-5 font-roboto text-sm text-tinta/55">
             Estás en el nivel más alto de la casa.
           </Text>
         )}
+        </TarjetaFolio>
       </TarjetaPerfil>
 
       <TarjetaPerfil numero="II" badge="CUMPLE" titulo="Cumpleaños">
-        <Text className="font-roboto text-sm leading-5 text-crema/70">{textoCumpleanos(perfil)}</Text>
+        <TarjetaFolio>
+        <Text className="font-roboto text-sm leading-5 text-tinta/55">{textoCumpleanos(perfil)}</Text>
         <Text className="mt-4 font-roboto text-[10px] tracking-[2px] text-oro">
           FECHA DE NACIMIENTO
         </Text>
-        <Text className="mt-1 font-roboto text-base text-crema">
+        <Text className="mt-1 font-roboto text-base text-tinta">
           {perfil.birthDate
             ? formatearFechaLarga(perfil.birthDate) || perfil.birthDate
             : 'Quedó fijada en el registro'}
         </Text>
-        <Text className="mt-4 font-roboto text-[11px] leading-5 text-crema/45">
+        <Text className="mt-4 font-roboto text-[11px] leading-5 text-tinta/70">
           No se puede editar. El 15% se activa en la semana de tu cumpleaños, una vez al año.
         </Text>
+        </TarjetaFolio>
       </TarjetaPerfil>
 
       <TarjetaPerfil numero="III" badge="MESA" titulo="Beneficios">
+        <TarjetaFolio>
         {programa.tier.benefits.map((beneficio) => (
-          <View key={beneficio} className="flex-row items-start border-b border-oro/20 py-3.5">
+          <View key={beneficio} className="flex-row items-start border-b border-madera/15 py-3.5">
             <Text className="mr-3 font-roboto text-[10px] text-oro">●</Text>
-            <Text className="flex-1 font-roboto text-sm leading-5 text-crema">{beneficio}</Text>
+            <Text className="flex-1 font-roboto text-sm leading-5 text-tinta">{beneficio}</Text>
           </View>
         ))}
-        <Text className="mt-5 font-roboto text-[11px] leading-5 text-crema/45">
+        <Text className="mt-5 font-roboto text-[11px] leading-5 text-tinta/70">
           1 punto por cada {formatCOP(programa.rules.pointCopUnit)} pagados. Canje mínimo:{' '}
           {programa.rules.minRedeemPoints} puntos. Máximo {programa.rules.maxRedeemPercent}% del
           pedido. En la semana del cumpleaños hay 15% extra, una vez al año.
         </Text>
+        </TarjetaFolio>
       </TarjetaPerfil>
 
       <TarjetaPerfil numero="IV" badge="CUENTA" titulo="Movimientos">
@@ -127,30 +134,32 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
             texto="Los puntos se acreditan cuando un pedido queda entregado."
           />
         ) : (
-          historial.map((item, index) => (
-            <View key={item.id || `${item.createdAt}-${index}`} className="border-b border-oro/20 py-4">
-              <View className="flex-row items-baseline">
-                <Text className="w-7 font-roboto text-[10px] text-oro">
-                  {String(index + 1).padStart(2, '0')}
+          <TarjetaFolio>
+            {historial.map((item, index) => (
+              <View key={item.id || `${item.createdAt}-${index}`} className="border-b border-madera/15 py-4">
+                <View className="flex-row items-baseline">
+                  <Text className="w-7 font-roboto text-[10px] text-oro">
+                    {String(index + 1).padStart(2, '0')}
+                  </Text>
+                  <Text className="font-roboto text-lg text-tinta">{item.etiqueta}</Text>
+                  <View className="mx-2 mb-1 h-px flex-1 bg-madera/20" />
+                  <Text className="font-roboto text-oro">
+                    {item.signo}
+                    {item.points}
+                  </Text>
+                </View>
+                <Text className="ml-7 mt-1 font-roboto text-xs text-tinta/45">
+                  {formatFecha(item.createdAt)}
+                  {item.discountCop > 0 ? ` · ${formatCOP(item.discountCop)}` : ''}
                 </Text>
-                <Text className="font-roboto-light text-lg text-crema">{item.etiqueta}</Text>
-                <View className="mx-2 mb-1 h-px flex-1 bg-oro/35" />
-                <Text className="font-roboto text-oro">
-                  {item.signo}
-                  {item.points}
-                </Text>
+                {item.description ? (
+                  <Text className="ml-7 mt-1 font-roboto text-xs leading-4 text-tinta/35">
+                    {item.description}
+                  </Text>
+                ) : null}
               </View>
-              <Text className="ml-7 mt-1 font-roboto text-xs text-crema/50">
-                {formatFecha(item.createdAt)}
-                {item.discountCop > 0 ? ` · ${formatCOP(item.discountCop)}` : ''}
-              </Text>
-              {item.description ? (
-                <Text className="ml-7 mt-1 font-roboto text-xs leading-4 text-crema/40">
-                  {item.description}
-                </Text>
-              ) : null}
-            </View>
-          ))
+            ))}
+          </TarjetaFolio>
         )}
       </TarjetaPerfil>
     </View>

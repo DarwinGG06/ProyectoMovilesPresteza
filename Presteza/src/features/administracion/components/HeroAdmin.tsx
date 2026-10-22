@@ -1,62 +1,56 @@
-import { Text, View } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { Pressable, Text, View } from 'react-native';
+import Svg, { Circle, Polyline } from 'react-native-svg';
 
 import { formatCOP } from '@/services/cart/CartContext';
 
-import { useEntradaCifra } from '../hooks/useEntradaCifra';
-import type { StatsAdmin } from '../types';
+import type { PedidoAdmin, StatsAdmin } from '../types';
 
 type HeroAdminProps = {
-  nombre: string;
   stats: StatsAdmin;
+  pedidos: PedidoAdmin[];
+  onPress: () => void;
 };
 
-export function HeroAdmin({ nombre, stats }: HeroAdminProps) {
-  const cifra = useEntradaCifra();
+function Sparkline({ valores }: { valores: number[] }) {
+  const serie = valores.length > 1 ? valores.slice(-8) : [4, 6, 5, 8, 7, 10, 9, 12];
+  const ancho = 92;
+  const alto = 40;
+  const max = Math.max(...serie, 1);
+  const min = Math.min(...serie);
+  const puntos = serie
+    .map((valor, index) => {
+      const x = (index / (serie.length - 1)) * ancho;
+      const y = alto - 6 - ((valor - min) / (max - min || 1)) * (alto - 12);
+      return `${x},${y}`;
+    })
+    .join(' ');
+  const ultimo = puntos.split(' ').at(-1)?.split(',') ?? ['0', '0'];
 
   return (
-    <View className="overflow-hidden bg-marca-oscura px-6 pb-8 pt-7">
-      <View
-        pointerEvents="none"
-        className="absolute -right-16 top-4 h-52 w-52 rounded-full border-[28px] border-oro/10"
-      />
-      <View
-        pointerEvents="none"
-        className="absolute -left-10 bottom-0 h-36 w-36 rounded-full bg-marca/50"
-      />
+    <Svg width={ancho} height={alto}>
+      <Polyline points={puntos} fill="none" stroke="#d4af77" strokeWidth={1.6} />
+      <Circle cx={Number(ultimo[0])} cy={Number(ultimo[1])} r={2.4} fill="#d4af77" />
+    </Svg>
+  );
+}
 
-      <Text className="font-roboto text-[10px] tracking-[3px] text-oro">ADMINISTRACIÓN</Text>
-      <Text className="mt-2 font-roboto text-sm text-crema/70">{nombre}</Text>
+export function HeroAdmin({ stats, pedidos, onPress }: HeroAdminProps) {
+  const curva = [...pedidos]
+    .sort((a, b) => new Date(a.createdAt ?? 0).getTime() - new Date(b.createdAt ?? 0).getTime())
+    .map((pedido) => pedido.total || 0);
 
-      <Animated.View style={cifra}>
-        <Text className="mt-6 font-roboto text-[11px] tracking-[3px] text-crema/70">INGRESOS</Text>
-        <Text className="mt-1 font-roboto-light text-[42px] leading-[46px] text-white">
-          {formatCOP(stats.totalRevenue)}
-        </Text>
-      </Animated.View>
-
-      <View className="mt-6 flex-row">
-        <View className="mr-8">
-          <Text className="font-roboto-light text-[28px] text-oro">{stats.pendingOrders}</Text>
-          <Text className="font-roboto text-[10px] tracking-[2px] text-crema/60">
-            PEDIDOS PENDIENTES
+  return (
+    <Pressable onPress={onPress} className="overflow-hidden rounded-[28px] bg-marca-oscura px-5 py-6">
+      <View className="flex-row items-start justify-between">
+        <View className="flex-1 pr-3">
+          <Text className="font-roboto text-[10px] tracking-[2px] text-crema/55">INGRESOS DEL MES</Text>
+          <Text className="mt-2 font-serif-light text-[34px] leading-[38px] text-crema">
+            {formatCOP(stats.totalRevenue)}
           </Text>
+          <Text className="mt-3 font-roboto text-[12px] text-crema/50">Resumen de actividad →</Text>
         </View>
-        <View className="mr-8">
-          <Text className="font-roboto-light text-[28px] text-white">
-            {stats.pendingReservations}
-          </Text>
-          <Text className="font-roboto text-[10px] tracking-[2px] text-crema/60">
-            RESERVAS PENDIENTES
-          </Text>
-        </View>
-        <View>
-          <Text className="font-roboto-light text-[28px] text-white">{stats.unreadMessages}</Text>
-          <Text className="font-roboto text-[10px] tracking-[2px] text-crema/60">
-            MENSAJES NUEVOS
-          </Text>
-        </View>
+        <Sparkline valores={curva} />
       </View>
-    </View>
+    </Pressable>
   );
 }

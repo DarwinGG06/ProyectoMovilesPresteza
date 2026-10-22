@@ -2,6 +2,8 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import Select from '@/components/Select';
+import { CampoFechaReserva } from '@/features/reservas/components/CampoFechaReserva';
+import { CampoHoraReserva } from '@/features/reservas/components/CampoHoraReserva';
 import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { MesaAdmin, ReservaFormAdmin } from '../../types';
 import { AccionesForm } from './AccionesForm';
@@ -19,7 +21,8 @@ export function FormularioReservaAdmin({
   onGuardar: (datos: ReservaFormAdmin) => Promise<void>;
   guardando?: boolean;
 }) {
-  const { control, guardar } = useFormulario(valores, onGuardar);
+  const { control, guardar, watch } = useFormulario(valores, onGuardar);
+  const fecha = watch('date');
   const mesasActivas = mesas.filter((item) => item.active !== false);
 
   return (
@@ -46,25 +49,8 @@ export function FormularioReservaAdmin({
           rules={{ required: 'Elige la mesa' }}
         />
       )}
-      <Field
-        control={control}
-        name="date"
-        label="Fecha"
-        placeholder="DD/MM/AAAA"
-        variante="linea"
-        rules={{
-          required: 'Escribe la fecha',
-          pattern: { value: /^\d{2}\/\d{2}\/\d{4}$/, message: 'Usa DD/MM/AAAA' },
-        }}
-      />
-      <Field
-        control={control}
-        name="time"
-        label="Hora"
-        placeholder="7:30 p. m."
-        variante="linea"
-        rules={{ required: 'Escribe la hora' }}
-      />
+      <CampoFechaReserva control={control} name="date" />
+      <CampoHoraReserva control={control} name="time" fecha={fecha} />
       <CampoStepper control={control} name="numberOfPeople" label="Personas" minimo={1} maximo={20} />
       <Field
         control={control}

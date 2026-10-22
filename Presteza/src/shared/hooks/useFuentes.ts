@@ -16,6 +16,12 @@ export function useFuentes() {
     Roboto_600SemiBold: require('@expo-google-fonts/roboto/600SemiBold/Roboto_600SemiBold.ttf'),
     Roboto_700Bold: require('@expo-google-fonts/roboto/700Bold/Roboto_700Bold.ttf'),
     Roboto_800ExtraBold: require('@expo-google-fonts/roboto/800ExtraBold/Roboto_800ExtraBold.ttf'),
+    // Serifa de carta (Historical Manuscript + luxury editorial). El cuerpo sigue en Roboto.
+    CormorantGaramond_300Light: require('@expo-google-fonts/cormorant-garamond/300Light/CormorantGaramond_300Light.ttf'),
+    CormorantGaramond_400Regular: require('@expo-google-fonts/cormorant-garamond/400Regular/CormorantGaramond_400Regular.ttf'),
+    CormorantGaramond_400Regular_Italic: require('@expo-google-fonts/cormorant-garamond/400Regular_Italic/CormorantGaramond_400Regular_Italic.ttf'),
+    CormorantGaramond_600SemiBold: require('@expo-google-fonts/cormorant-garamond/600SemiBold/CormorantGaramond_600SemiBold.ttf'),
+    CormorantGaramond_700Bold: require('@expo-google-fonts/cormorant-garamond/700Bold/CormorantGaramond_700Bold.ttf'),
   });
 
   const listo = cargadas || error !== null;

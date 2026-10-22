@@ -14,7 +14,7 @@ export function IniciarSesionScreen() {
 
   return (
     <ContenedorPantalla titulo="Iniciar sesión">
-      <Text className="mt-3 font-roboto text-base text-texto/70">
+      <Text className="mt-4 font-roboto text-base leading-6 text-tinta/55">
         Entra con el correo que registraste.
       </Text>
 
@@ -24,6 +24,11 @@ export function IniciarSesionScreen() {
           name="email"
           label="Correo"
           keyboardType="email-address"
+          // Autocompletar: Android (Google / gestor de contraseñas) y iOS (Llavero)
+          // reconocen este campo como el usuario de la cuenta.
+          autoComplete="email"
+          textContentType="username"
+          importantForAutofill="yes"
           placeholder="tu@email.com"
           maxLength={120}
           rules={{
@@ -37,6 +42,9 @@ export function IniciarSesionScreen() {
           name="password"
           label="Contraseña"
           secureTextEntry
+          autoComplete="current-password"
+          textContentType="password"
+          importantForAutofill="yes"
           placeholder="••••••••"
           maxLength={72}
           rules={{
@@ -47,14 +55,27 @@ export function IniciarSesionScreen() {
 
         <MensajeError texto={error} />
 
-        <Button text={enviando ? 'ENTRANDO…' : 'ENTRAR'} onPress={entrar} disabled={enviando} />
+        <Button
+          className="mt-2"
+          variant="gold"
+          text={enviando ? 'ENTRANDO…' : 'ENTRAR'}
+          onPress={entrar}
+          disabled={enviando}
+        />
 
-        <Link href="/recuperar-contrasena" className="text-center text-sm text-marca">
-          ¿Olvidaste tu contraseña?
-        </Link>
-        <Link href="/registro" className="text-center text-sm text-marca">
-          ¿No tienes cuenta? Regístrate
-        </Link>
+        <View className="mt-4 items-center gap-3">
+          <View className="mb-1 h-px w-10 bg-marca/25" />
+          <Link href="/recuperar-contrasena">
+            <Text className="text-center font-roboto text-sm text-marca">
+              ¿Olvidaste tu contraseña?
+            </Text>
+          </Link>
+          <Link href="/registro">
+            <Text className="text-center font-roboto text-sm text-tinta/50">
+              ¿No tienes cuenta? <Text className="font-roboto text-marca">Regístrate</Text>
+            </Text>
+          </Link>
+        </View>
       </View>
     </ContenedorPantalla>
   );

@@ -53,7 +53,7 @@ export function ProductosInicio() {
             className="flex-row items-baseline justify-between border-b border-oro/20 py-3">
             <View className="flex-1 pr-3">
               <Text className="font-roboto text-[10px] text-oro/70">{producto.badge}</Text>
-              <Text className="font-roboto-light text-lg text-crema">{producto.name}</Text>
+              <Text className="font-serif text-lg text-crema">{producto.name}</Text>
             </View>
             <Text className="font-roboto text-oro">{formatCOP(producto.price)}</Text>
             <Text className="ml-3 font-roboto text-[10px] text-crema/40">0{index + 1}</Text>

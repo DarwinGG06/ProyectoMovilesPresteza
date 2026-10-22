@@ -44,7 +44,7 @@ export function InfoContacto({
     <View className="bg-marca-oscura">
       <View className="px-6 pb-4 pt-10">
         <Text className="font-roboto text-[10px] tracking-[4px] text-oro">LA CASA</Text>
-        <Text className="mt-2 font-roboto-light text-3xl text-crema">Cómo encontrarnos</Text>
+        <Text className="mt-2 font-serif-light text-3xl text-crema">Cómo encontrarnos</Text>
         <Text className="mt-2 font-roboto text-sm leading-5 text-crema/55">
           Torre Plaza 70, Milán. Una llamada, un correo o la mesa.
         </Text>
@@ -74,12 +74,12 @@ export function InfoContacto({
         <View className="flex-row gap-3">
           <View className="flex-1 border border-oro/25 px-4 py-5">
             <Text className="font-roboto text-[10px] tracking-[2px] text-oro">01 · SEMANA</Text>
-            <Text className="mt-3 font-roboto-light text-3xl text-oro">11–22</Text>
+            <Text className="mt-3 font-serif-light text-3xl text-oro">11–22</Text>
             <Text className="mt-2 font-roboto text-sm text-crema/70">Lunes a viernes</Text>
           </View>
           <View className="flex-1 border border-oro/25 px-4 py-5">
             <Text className="font-roboto text-[10px] tracking-[2px] text-oro">02 · FINDE</Text>
-            <Text className="mt-3 font-roboto-light text-3xl text-oro">12–23</Text>
+            <Text className="mt-3 font-serif-light text-3xl text-oro">12–23</Text>
             <Text className="mt-2 font-roboto text-sm text-crema/70">Sábado y domingo</Text>
           </View>
         </View>

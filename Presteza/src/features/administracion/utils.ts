@@ -24,6 +24,26 @@ export function formatoFechaHora(valor?: string) {
   });
 }
 
+export function siguientesEstadosPedido(status: string) {
+  const clave = estadoPedidoBackend(status);
+  if (clave === 'pendiente') {
+    return [
+      { id: 'preparing', etiqueta: 'PREPARAR' },
+      { id: 'cancelled', etiqueta: 'CANCELAR', peligro: true },
+    ];
+  }
+  if (clave === 'Preparando') {
+    return [
+      { id: 'ready', etiqueta: 'LISTO' },
+      { id: 'cancelled', etiqueta: 'CANCELAR', peligro: true },
+    ];
+  }
+  if (clave === 'listo') {
+    return [{ id: 'delivered', etiqueta: 'ENTREGAR' }];
+  }
+  return [];
+}
+
 export function textoEstadoPedido(status: string) {
   const mapa: Record<string, string> = {
     pending: 'Pendiente',
@@ -71,7 +91,7 @@ export function estadoPedidoBackend(status: string) {
 }
 
 export function esPendientePedido(status: string) {
-  return ['pending', 'pendiente', 'preparing', 'en_proceso', 'Preparando'].includes(status);
+  return ['pending', 'pendiente'].includes(status);
 }
 
 export function esPendienteReserva(status: string) {

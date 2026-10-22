@@ -20,6 +20,7 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
       numero="I"
       badge="DIRECCIONES"
       titulo="Tus destinos"
+      compacto
       accion={
         direcciones.mostrarAccion
           ? { etiqueta: 'AGREGAR', onPress: direcciones.abrirFormulario }
@@ -51,8 +52,8 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
               indice={index}
               titulo={direccion.name}
               sello={direccion.is_primary ? 'PRINCIPAL' : undefined}>
-              <Text className="mt-1 font-roboto text-sm text-crema/70">{direccion.address}</Text>
-              <Text className="mt-1 font-roboto text-sm text-crema/45">
+              <Text className="mt-1 font-roboto text-sm text-tinta/60">{direccion.address}</Text>
+              <Text className="mt-1 font-roboto text-sm text-tinta/45">
                 {direccion.neighborhood} · {direccion.city}
               </Text>
               <AccionesFila>

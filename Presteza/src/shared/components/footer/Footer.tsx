@@ -17,10 +17,10 @@ const ENLACES_RAPIDOS: { etiqueta: string; ruta: RutaFooter }[] = [
 export function Footer() {
   return (
     <View className="bg-marca-oscura">
-      <View className="h-1 bg-oro" />
-      <View className="items-center px-8 pb-14 pt-10">
-        <SelloP size="md" />
-        <Text className="mt-4 font-roboto-extrabold text-2xl tracking-[6px] text-crema">
+      <View className="h-px bg-oro/50" />
+      <View className="items-center px-8 pb-16 pt-12">
+        <SelloP size="sm" />
+        <Text className="mt-5 font-serif-light text-[28px] tracking-[8px] text-crema">
           PRESTEZA
         </Text>
         <Text className="mt-1 font-roboto text-[11px] tracking-[3px] text-oro">

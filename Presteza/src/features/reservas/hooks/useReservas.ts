@@ -229,6 +229,28 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
     [aplicar, aviso, token],
   );
 
+  const eliminarVarios = useCallback(
+    (items: Reserva[], alTerminar?: () => void) => {
+      if (!token || !items.length) return;
+      const n = items.length;
+      aviso.confirmar({
+        sello: 'MESAS',
+        titulo: n === 1 ? 'Eliminar reserva' : `Eliminar ${n} reservas`,
+        texto: n === 1 ? '¿Eliminar esta reserva?' : `¿Eliminar ${n} reservas de una vez?`,
+        confirmar: 'ELIMINAR',
+        peligro: true,
+        exito: { titulo: 'Listo', texto: n === 1 ? 'Reserva eliminada.' : `${n} reservas eliminadas.` },
+        onConfirmar: async () => {
+          const ids = items.map((item) => idReserva(item));
+          for (const id of ids) await eliminarReserva(token, id);
+          aplicar((prev) => prev.filter((item) => !ids.includes(idReserva(item))));
+          alTerminar?.();
+        },
+      });
+    },
+    [aplicar, aviso, token],
+  );
+
   return {
     user,
     token,
@@ -248,6 +270,7 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
     editar,
     guardar,
     eliminar,
+    eliminarVarios,
     cambiarEstado,
     cancelar: (reserva: Reserva) => cambiarEstado(reserva, 'cancelled'),
     confirmar: (reserva: Reserva) => cambiarEstado(reserva, 'confirmed'),

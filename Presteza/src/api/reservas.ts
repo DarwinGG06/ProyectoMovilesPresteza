@@ -11,12 +11,21 @@ export function normalizarReserva(crudo: Record<string, unknown>): Reserva {
     time: texto(crudo.time),
     numberOfPeople: Number(crudo.numberOfPeople ?? crudo.number_of_people) || 0,
     specialRequests: texto(crudo.specialRequests) || texto(crudo.special_requests) || undefined,
-    status: texto(crudo.status) || 'pending',
+    status: estadoDe(texto(crudo.status)),
     userId: texto(crudo.userId) || texto(crudo.user_id) || undefined,
     userName: texto(crudo.userName) || texto(crudo.user_name) || undefined,
     userEmail: texto(crudo.userEmail) || texto(crudo.user_email) || undefined,
     createdAt: texto(crudo.createdAt) || texto(crudo.created_at) || undefined,
   };
+}
+
+function estadoDe(valor: string) {
+  const clave = valor.trim().toLowerCase();
+  if (clave === 'pendiente' || clave === 'pending') return 'pending';
+  if (clave === 'confirmada' || clave === 'confirmed') return 'confirmed';
+  if (clave === 'cancelada' || clave === 'cancelled' || clave === 'canceled') return 'cancelled';
+  if (clave === 'completada' || clave === 'completed' || clave === 'complete') return 'completed';
+  return clave || 'pending';
 }
 
 function normalizarMesa(crudo: Record<string, unknown>): Mesa {

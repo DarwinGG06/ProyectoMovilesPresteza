@@ -6,7 +6,7 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { useTabAdicionales } from '../../hooks/useTabAdicionales';
 import type { AdicionalAdmin, AdicionalForm } from '../../types';
 import { idDe } from '../../utils';
-import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioAdicional } from '../formularios/FormularioAdicional';
 import {
   AccionesCarta,
@@ -39,35 +39,29 @@ export function TabAdicionales({
   return (
     <View>
       <TarjetaPerfil
+        compacto
         numero="I"
         badge="EXTRAS"
-        titulo="Adicionales"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
-        <InterruptorVista
-          vista={tab.vista}
-          onChange={tab.setVista}
-          filtrosAbiertos={tab.filtrosAbiertos}
-          onFiltros={() => tab.setFiltrosAbiertos((abierto) => !abierto)}
-        />
-        {tab.filtrosAbiertos ? (
-          <FilaFiltros>
-            <ChipFiltro
-              etiqueta="TODOS"
-              activo={tab.filtro === 'all'}
-              onPress={() => tab.setFiltro('all')}
-            />
-            <ChipFiltro
-              etiqueta="DISPONIBLES"
-              activo={tab.filtro === 'on'}
-              onPress={() => tab.setFiltro('on')}
-            />
-            <ChipFiltro
-              etiqueta="OCULTOS"
-              activo={tab.filtro === 'off'}
-              onPress={() => tab.setFiltro('off')}
-            />
-          </FilaFiltros>
-        ) : null}
+        titulo="Adicionales">
+        <BotonAgregarAdmin onPress={() => tab.abrir()} />
+        <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
+        <FilaFiltros>
+          <ChipFiltro
+            etiqueta="TODOS"
+            activo={tab.filtro === 'all'}
+            onPress={() => tab.setFiltro('all')}
+          />
+          <ChipFiltro
+            etiqueta="DISPONIBLES"
+            activo={tab.filtro === 'on'}
+            onPress={() => tab.setFiltro('on')}
+          />
+          <ChipFiltro
+            etiqueta="OCULTOS"
+            activo={tab.filtro === 'off'}
+            onPress={() => tab.setFiltro('off')}
+          />
+        </FilaFiltros>
 
         {tab.lista.length === 0 ? (
           <EstadoVacioAdmin
@@ -87,7 +81,7 @@ export function TabAdicionales({
             {tab.lista.map((adicional) => (
               <FilaTabla key={idDe(adicional)}>
                 <CeldaTabla flex={1.3}>
-                  <Text className="font-roboto-light text-sm text-white" numberOfLines={2}>
+                  <Text className="font-roboto-light text-sm text-tinta" numberOfLines={2}>
                     {adicional.name}
                   </Text>
                   <AccionesAdmin>
@@ -123,7 +117,7 @@ export function TabAdicionales({
                 <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
                   {adicional.available === false ? 'OCULTO' : 'DISPONIBLE'}
                 </Text>
-                <Text className="mt-1 font-roboto-light text-base text-white" numberOfLines={2}>
+                <Text className="mt-1 font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {adicional.name}
                 </Text>
                 <Text className="mt-2 font-roboto text-lg text-oro">

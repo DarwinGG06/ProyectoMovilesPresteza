@@ -14,20 +14,16 @@ export function HeroContacto() {
         colors={['rgba(107,29,61,0.55)', 'rgba(58,12,32,0.94)']}
         style={StyleSheet.absoluteFill}
       />
-      <View
-        pointerEvents="none"
-        className="absolute -right-16 top-12 h-56 w-56 rounded-full border-[28px] border-oro/10"
-      />
       <View className="flex-1 justify-end px-6 pb-10 pt-16">
         <Animated.View style={entrada}>
           <Text className="font-roboto text-[10px] tracking-[4px] text-oro">
             PRESTEZA · MILÁN · MANIZALES
           </Text>
-          <Text className="mt-3 font-roboto-light text-[42px] leading-[46px] text-crema">
+          <Text className="mt-3 font-serif-light text-[42px] leading-[46px] text-crema">
             Hablemos.
           </Text>
           <View className="mt-4 h-px w-14 bg-oro" />
-          <Text className="mt-4 max-w-[280px] font-roboto text-[15px] leading-6 text-crema/75">
+          <Text className="mt-4 max-w-[260px] font-serif-italic text-[17px] leading-6 text-crema/70">
             Una duda, un evento o un comentario. Te respondemos desde la casa.
           </Text>
         </Animated.View>

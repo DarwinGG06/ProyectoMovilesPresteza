@@ -1,9 +1,9 @@
 import { Text, View } from 'react-native';
 
 import type { Reserva } from '@/features/reservas/types';
+import { estadoReserva } from '@/features/reservas/utils';
 
 import { useReservasPerfil } from '../../hooks/useReservasPerfil';
-import { formatFecha } from '../../utils';
 import { AccionesFila, Comanda, EnlaceAccion, LineaCuenta } from '../elementos';
 import { FormularioReserva } from '../formularios/FormularioReserva';
 import { EstadoVacio, Mensaje, TarjetaPerfil } from '../TarjetaPerfil';
@@ -20,6 +20,7 @@ export function TabReservas({ onCambio }: TabReservasProps) {
       numero="I"
       badge="RESERVAS"
       titulo="Tus mesas"
+      compacto
       accion={{ etiqueta: 'NUEVA', onPress: reservas.irAReservas }}>
       {reservas.error ? <Mensaje texto={reservas.error} error /> : null}
 
@@ -38,8 +39,7 @@ export function TabReservas({ onCambio }: TabReservasProps) {
       ) : reservas.lista.length === 0 ? (
         <EstadoVacio
           icono="calendar-outline"
-          titulo="No tienes reservas"
-          texto="Reserva una mesa en Milán cuando quieras."
+          texto="Todavía no tienes una mesa reservada."
           accion={{ etiqueta: 'RESERVAR', onPress: reservas.irAReservas }}
         />
       ) : (
@@ -50,25 +50,25 @@ export function TabReservas({ onCambio }: TabReservasProps) {
               indice={index}
               titulo={`Mesa ${reserva.tableNumber}`}
               sello={reservas.textoEstado(reserva.status).toUpperCase()}>
-              <Text className="mt-1 font-roboto text-sm text-crema/70">
+              <Text className="mt-1 font-roboto text-sm text-tinta/60">
                 {reserva.date} · {reserva.time}
               </Text>
-              <Text className="mt-1 font-roboto text-sm text-crema/45">
+              <Text className="mt-1 font-roboto text-sm text-tinta/45">
                 {reserva.numberOfPeople} {reserva.numberOfPeople === 1 ? 'persona' : 'personas'}
               </Text>
               {reserva.specialRequests ? (
-                <Text className="mt-2 font-roboto text-sm italic text-crema/50">
+                <Text className="mt-2 font-roboto text-sm italic text-tinta/45">
                   {reserva.specialRequests}
                 </Text>
               ) : null}
-              {reserva.createdAt ? (
-                <Text className="mt-2 font-roboto text-xs text-crema/35">
-                  Hecha el {formatFecha(reserva.createdAt)}
+              {estadoReserva(reserva.status) === 'cancelled' ? (
+                <Text className="mt-2 font-roboto text-sm text-red-600">
+                  Esta reserva fue cancelada.
                 </Text>
               ) : null}
-              {reserva.status === 'cancelled' ? (
-                <Text className="mt-2 font-roboto text-sm text-red-300">
-                  Esta reserva fue cancelada.
+              {estadoReserva(reserva.status) === 'completed' ? (
+                <Text className="mt-2 font-roboto text-sm text-marca">
+                  Esta reserva ya se cumplió. El restaurante la marcó como completada.
                 </Text>
               ) : null}
               {reservas.sePuedeEditar(reserva) ? (

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
@@ -5,7 +7,7 @@ import type { CasaReservas } from '@/features/reservas/hooks/useReservas';
 import type { Reserva } from '@/features/reservas/types';
 
 import { useTabReservas } from '../../hooks/useTabReservas';
-import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioReservaAdmin } from '../formularios/FormularioReservaAdmin';
 import {
   CajaCuadricula,
@@ -29,6 +31,11 @@ type TabReservasProps = {
 
 export function TabReservas({ reservas }: TabReservasProps) {
   const tab = useTabReservas(reservas);
+  const params = useLocalSearchParams<{ filtro?: string }>();
+
+  useEffect(() => {
+    if (params.filtro === 'pending') reservas.setFiltro('pending');
+  }, [params.filtro, reservas.setFiltro]);
 
   const acciones = (reserva: Reserva) => (
     <AccionesAdmin>
@@ -52,7 +59,8 @@ export function TabReservas({ reservas }: TabReservasProps) {
         numero="I"
         badge="MESAS"
         titulo="Reservas"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
+        compacto>
+        <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <InterruptorVista
           vista={tab.vista}
           onChange={tab.setVista}
@@ -88,16 +96,16 @@ export function TabReservas({ reservas }: TabReservasProps) {
                       <Text className="font-roboto text-[10px] tracking-[1.4px] text-oro">
                         {reservas.textoEstado(reserva.status).toUpperCase()}
                       </Text>
-                      <Text className="mt-1 font-roboto-light text-xl text-white">
+                      <Text className="mt-1 font-roboto-light text-xl text-tinta">
                         Mesa {reserva.tableNumber}
                       </Text>
-                      <Text className="mt-1 font-roboto text-sm text-crema/70" numberOfLines={1}>
+                      <Text className="mt-1 font-roboto text-sm text-tinta/60" numberOfLines={1}>
                         {reserva.userName || 'Cliente'}
                       </Text>
-                      <Text className="mt-1 font-roboto text-sm text-crema/55">
+                      <Text className="mt-1 font-roboto text-sm text-tinta/50">
                         {reserva.date} · {reserva.time}
                       </Text>
-                      <Text className="mt-0.5 font-roboto text-[11px] text-crema/45">
+                      <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70">
                         {reserva.numberOfPeople} personas
                       </Text>
                     </View>
@@ -114,16 +122,16 @@ export function TabReservas({ reservas }: TabReservasProps) {
                 <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
                   {reservas.textoEstado(reserva.status).toUpperCase()}
                 </Text>
-                <Text className="mt-1 font-roboto-light text-xl text-white">
+                <Text className="mt-1 font-roboto-light text-xl text-tinta">
                   Mesa {reserva.tableNumber}
                 </Text>
-                <Text className="mt-1 font-roboto text-sm text-crema/55">
+                <Text className="mt-1 font-roboto text-sm text-tinta/50">
                   {reserva.date} · {reserva.time}
                 </Text>
-                <Text className="mt-1 font-roboto text-sm text-crema">
+                <Text className="mt-1 font-roboto text-sm text-tinta">
                   {reserva.numberOfPeople} personas
                 </Text>
-                <Text className="mt-2 font-roboto text-sm text-crema/70" numberOfLines={1}>
+                <Text className="mt-2 font-roboto text-sm text-tinta/60" numberOfLines={1}>
                   {reserva.userName || 'Cliente'}
                 </Text>
                 {acciones(reserva)}

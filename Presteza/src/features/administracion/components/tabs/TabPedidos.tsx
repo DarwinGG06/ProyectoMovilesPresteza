@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 import { Text, View } from 'react-native';
 
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
@@ -5,8 +7,8 @@ import { formatCOP } from '@/services/cart/CartContext';
 
 import { FILTROS_PEDIDOS, useTabPedidos } from '../../hooks/useTabPedidos';
 import type { ClienteAdmin, PedidoAdmin, PedidoForm, ProductoAdmin } from '../../types';
-import { formatoFechaHora, idDe, textoEstadoPedido } from '../../utils';
-import { AccionesAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import { estadoPedidoBackend, formatoFechaHora, idDe, textoEstadoPedido } from '../../utils';
+import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioPedido } from '../formularios/FormularioPedido';
 import {
   CajaCuadricula,
@@ -44,34 +46,28 @@ export function TabPedidos({
   onEliminar,
 }: TabPedidosProps) {
   const tab = useTabPedidos(pedidos, clientes, onGuardar);
+  const params = useLocalSearchParams<{ filtro?: string }>();
 
-  const acciones = (pedido: PedidoAdmin) => (
-    <View>
-      <AccionesAdmin>
-        <EnlaceAdmin etiqueta="VER" onPress={() => tab.verDetalle(pedido)} />
-        <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(pedido)} />
-        <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(pedido)} />
-      </AccionesAdmin>
-      <AccionesAdmin>
-        {ESTADOS.map((estado) => (
-          <EnlaceAdmin
-            key={estado.id}
-            etiqueta={estado.etiqueta}
-            peligro={estado.id === 'cancelled'}
-            onPress={() => onCambiarEstado(pedido, estado.id)}
-          />
-        ))}
-      </AccionesAdmin>
-    </View>
+  useEffect(() => {
+    if (params.filtro === 'pending') tab.setFiltro('pending');
+  }, [params.filtro, tab.setFiltro]);
+
+  const accionesFila = (pedido: PedidoAdmin) => (
+    <AccionesAdmin>
+      <EnlaceAdmin etiqueta="VER" onPress={() => tab.verDetalle(pedido)} />
+      <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(pedido)} />
+      <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(pedido)} />
+    </AccionesAdmin>
   );
 
   return (
     <View>
       <TarjetaPerfil
+        compacto
         numero="I"
         badge="COMANDA"
-        titulo="Pedidos"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
+        titulo="Pedidos">
+        <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <InterruptorVista
           vista={tab.vista}
           onChange={tab.setVista}
@@ -100,28 +96,28 @@ export function TabPedidos({
         ) : tab.vista === 'lista' ? (
           <View>
             {tab.lista.map((pedido) => (
-              <FilaTabla key={idDe(pedido)}>
+              <FilaTabla key={idDe(pedido)} onPress={() => tab.verDetalle(pedido)}>
                 <View className="flex-1">
                   <View className="flex-row items-start justify-between gap-2">
                     <View className="flex-1">
-                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-oro">
+                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-marca">
                         {textoEstadoPedido(pedido.status).toUpperCase()}
                       </Text>
-                      <Text className="mt-1 font-roboto-light text-base text-white">
+                      <Text className="mt-1 font-serif text-[20px] text-tinta">
                         #{idDe(pedido).slice(-8).toUpperCase()}
                       </Text>
-                      <Text className="mt-1 font-roboto text-sm text-crema/60" numberOfLines={1}>
+                      <Text className="mt-1 font-roboto text-sm text-tinta/60" numberOfLines={1}>
                         {pedido.user_name || 'Cliente'}
                       </Text>
-                      <Text className="mt-0.5 font-roboto text-[11px] text-crema/40">
+                      <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70">
                         {formatoFechaHora(pedido.createdAt)}
                       </Text>
                     </View>
-                    <Text className="font-roboto text-base text-oro">
+                    <Text className="font-roboto text-base text-marca">
                       {formatCOP(pedido.total || 0)}
                     </Text>
                   </View>
-                  {acciones(pedido)}
+                  {accionesFila(pedido)}
                 </View>
               </FilaTabla>
             ))}
@@ -130,22 +126,22 @@ export function TabPedidos({
           <GrillaAdmin>
             {tab.lista.map((pedido) => (
               <CajaCuadricula key={idDe(pedido)}>
-                <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
                   {textoEstadoPedido(pedido.status).toUpperCase()}
                 </Text>
-                <Text className="mt-1 font-roboto-light text-base text-white">
+                <Text className="mt-1 font-serif text-[18px] text-tinta">
                   #{idDe(pedido).slice(-8).toUpperCase()}
                 </Text>
-                <Text className="mt-1 font-roboto text-sm text-crema/55" numberOfLines={1}>
+                <Text className="mt-1 font-roboto text-sm text-tinta/55" numberOfLines={1}>
                   {pedido.user_name || 'Cliente'}
                 </Text>
-                <Text className="mt-1 font-roboto text-[11px] text-crema/40">
+                <Text className="mt-1 font-roboto text-[11px] text-tinta/70">
                   {formatoFechaHora(pedido.createdAt)}
                 </Text>
-                <Text className="mt-2 font-roboto text-lg text-oro">
+                <Text className="mt-2 font-roboto text-lg text-marca">
                   {formatCOP(pedido.total || 0)}
                 </Text>
-                {acciones(pedido)}
+                {accionesFila(pedido)}
               </CajaCuadricula>
             ))}
           </GrillaAdmin>
@@ -161,6 +157,7 @@ export function TabPedidos({
           valores={tab.valoresFormulario}
           clientes={clientes}
           productos={productos}
+          bloquearCliente={Boolean(tab.editando)}
           onCancelar={tab.cerrar}
           onGuardar={tab.guardar}
           guardando={guardando}
@@ -173,25 +170,40 @@ export function TabPedidos({
         onCerrar={tab.cerrarDetalle}>
         {tab.detalle ? (
           <View className="gap-3">
-            <Text className="font-roboto text-sm text-texto/70">
+            <Text className="font-roboto text-sm text-tinta/70">
               {tab.detalle.user_name || 'Cliente'}
             </Text>
-            <Text className="font-roboto text-sm text-texto/55">
-              {textoEstadoPedido(tab.detalle.status)}
-            </Text>
-            <Text className="font-roboto text-sm text-texto/55">
+            <Text className="font-roboto text-sm text-tinta/55">
               {formatoFechaHora(tab.detalle.createdAt)}
             </Text>
             {(tab.detalle.products ?? []).map((producto, index) => (
               <Text
                 key={`${producto.dishId}-${index}`}
-                className="font-roboto text-base text-marca-oscura">
+                className="font-roboto text-base text-tinta">
                 {producto.quantity} × {producto.name}
               </Text>
             ))}
             <Text className="font-roboto text-lg text-marca">
               {formatCOP(tab.detalle.total || 0)}
             </Text>
+
+            <Text className="mt-2 font-roboto text-[10px] tracking-[2px] text-marca">ESTADO</Text>
+            <AccionesAdmin>
+              {ESTADOS.map((estado) => (
+                <EnlaceAdmin
+                  key={estado.id}
+                  etiqueta={estado.etiqueta}
+                  activo={estadoPedidoBackend(tab.detalle.status) === estadoPedidoBackend(estado.id)}
+                  peligro={estado.id === 'cancelled'}
+                  onPress={() => {
+                    if (!tab.detalle) return;
+                    onCambiarEstado(tab.detalle, estado.id);
+                    tab.cerrarDetalle();
+                  }}
+                />
+              ))}
+            </AccionesAdmin>
+
             <AccionesAdmin>
               <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
               <EnlaceAdmin

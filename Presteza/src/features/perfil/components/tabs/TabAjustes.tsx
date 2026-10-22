@@ -1,11 +1,10 @@
 import { View } from 'react-native';
-
 import { BiometricSettings } from '@/session/BiometricSettings';
-
+import { formatearFechaLarga } from '@/shared/fechaNacimiento';
 import { useAjustes } from '../../hooks/useAjustes';
 import type { UsuarioPerfil } from '../../types';
 import { CuentaEscrita } from '../CuentaEscrita';
-import { BotonPerfil, Comanda } from '../elementos';
+import { BotonPerfil, Comanda, TarjetaFolio } from '../elementos';
 import { FormularioContrasena } from '../formularios/FormularioContrasena';
 import { FormularioDatos } from '../formularios/FormularioDatos';
 import { Mensaje, TarjetaPerfil } from '../TarjetaPerfil';
@@ -39,14 +38,22 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
             />
           </Comanda>
         ) : (
-          <CuentaEscrita
-            animar={false}
-            filas={[
-              { etiqueta: 'NOMBRE', valor: perfil.complete_name },
-              { etiqueta: 'CORREO', valor: perfil.email },
-              { etiqueta: 'TELÉFONO', valor: perfil.phone_number || 'Sin teléfono' },
-            ]}
-          />
+          <TarjetaFolio>
+            <CuentaEscrita
+              animar={false}
+              filas={[
+                { etiqueta: 'NOMBRE', valor: perfil.complete_name },
+                { etiqueta: 'CORREO', valor: perfil.email },
+                { etiqueta: 'TELÉFONO', valor: perfil.phone_number || 'Sin teléfono' },
+                {
+                  etiqueta: 'CUMPLE',
+                  valor: perfil.birthDate
+                    ? formatearFechaLarga(perfil.birthDate) || perfil.birthDate
+                    : 'Sin fecha',
+                },
+              ]}
+            />
+          </TarjetaFolio>
         )}
       </TarjetaPerfil>
 
@@ -65,12 +72,17 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
             onPress={ajustes.empezarClave}
             variante="outline"
           />
+          <TarjetaFolio>
+            <BotonPerfil etiqueta="CAMBIAR CONTRASEÑA" onPress={ajustes.empezarClave} variante="outline" />
+          </TarjetaFolio>
         )}
         <BiometricSettings />
       </TarjetaPerfil>
 
       <TarjetaPerfil numero="III" badge="SESIÓN" titulo="Salir">
-        <BotonPerfil etiqueta="CERRAR SESIÓN" onPress={ajustes.cerrarSesion} variante="peligro" />
+        <TarjetaFolio>
+          <BotonPerfil etiqueta="CERRAR SESIÓN" onPress={ajustes.cerrarSesion} variante="peligro" />
+        </TarjetaFolio>
       </TarjetaPerfil>
     </View>
   );

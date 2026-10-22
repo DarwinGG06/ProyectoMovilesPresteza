@@ -1,12 +1,33 @@
 # Estilos Presteza
 
-Identidad visual de la casa: vino, oro y crema, letras de ticket, recortes
-rectos. La guía sigue el orden de la entrega (paleta, pantalla, tipografía,
-listas, formularios, errores), pero las cadenas son las nuestras.
+## Elección de estilo (rúbrica)
 
-**Regla:** si una combinación se copia **tres veces**, vive en `src/components/`.
-Eso ya pasó con `Button`, `Field`, `Select` y `Badge` (como en la rúbrica), y
-con lo que se repitió aquí: `Pantalla`, `Tarjeta`, `MensajeError`, `CampoBusqueda`.
+Se eligió **Historical Manuscript** para las superficies claras, combinado con
+**minimalismo elegante**, **Luxury UI** y acentos **editoriales**.
+
+Buscábamos una presencia visual refinada: sobria, hospitalaria, con el peso
+de una carta impresa. No queríamos una app ruidosa ni un panel de cocina; el
+gesto debía parecer el de un menú de mesa. Historical
+Manuscript nos dio el papel: el pergamino se concibió como folio de marfil,
+no como un talón; el sello cierra el pedido como un lacre, no como un botón
+genérico. El minimalismo recorta lo accesorio —sin islas, sin círculos
+numerados, sin metal— para que quede una línea, una serifa, un oro. Luxury UI
+y lo editorial entran en la tipografía: Cormorant en los títulos, Roboto con
+tracking en los sellos, blanco entre líneas. El lujo es contenido —vino, oro,
+madera— y se reserva para acentos; el cuerpo se lee en tinta, con contraste
+alto. Así la interfaz se siente elegante sin ostentación.
+
+- **Pergamino** — marfil quieto, sin marco. El papel es el fondo.
+- **Minimalismo** — una línea, una serifa, un oro. Nada de islas, círculos
+  numerados ni placas de metal.
+- **Luxury / editorial** — Cormorant en títulos, Roboto con tracking en sellos.
+- **Oro** — champán plano (`PlacaOro`) o un hilo. Nunca un bloque plano `bg-oro`.
+- **Real-Wood** — piso y tapas de mesa en `#e8d7b8` → `#c4a574` en reservas.
+
+**Regla:** si una combinación se copia **tres veces**, vive en `src/components/`
+o `src/shared/components/materiales/`. Eso ya pasó con `Button`, `Field`,
+`Select`, `Badge`, `Pergamino`, `SelloLacre`, `ChipCategoria`, `TarjetaPlato`
+y `BarraEstadosPedido`.
 
 No pegues estas clases a mano en una pantalla nueva. Importa el componente.
 
@@ -20,16 +41,23 @@ No pegues estas clases a mano en una pantalla nueva. Importa el componente.
 | Vino claro | `marca-clara` | `#8b2d4f` | apoyo en reservas |
 | Vino oscuro | `marca-oscura` | `#3a0c20` | barra, botones, perfil, admin |
 | Oro | `oro` | `#d4af77` | líneas, eyebrows, CTAs |
-| Crema | `crema` | `#faf6f2` | fondo de carta / login |
+| Crema | `crema` | `#faf6f2` | texto sobre vino |
+| Pergamino | `pergamino` | `#f6f0e6` | folio (carta, login, pago, reservas) |
+| Pergamino oscuro | `pergamino-oscuro` | `#ebe3d4` | sombra del papel |
+| Tinta | `tinta` | `#2a1810` | texto sobre pergamino (contraste alto) |
+| Madera | `madera` | `#5c3d2e` | bordes de carta / reservas |
 | Texto | `texto` | `#222222` | cuerpo sobre crema (`/70` `/55`) |
 | Línea | `linea` | `#eee6dc` | borde de tarjeta y de campo |
 | WhatsApp | `whatsapp` | `#25d366` | botón flotante |
 | Error | `red-600` / `red-50` / `red-700` | — | campo y aviso de servidor |
 
-Dos lienzos:
+Tres lienzos:
 
-- **Carta / auth** — fondo `crema`, letra `marca-oscura`, acento `oro`.
-- **Perfil / admin** — fondo `marca-oscura`, letra `crema`, acento `oro`.
+- **Claros** — pergamino, tinta, serifa. Login, menú, detalle de plato, pago,
+  reservas, seguimiento.
+- **Oscuros** — vino, oro, crema. Inicio, perfil, barra y pie.
+- **Admin** — crema `#faf6f2`, baldosas blancas, ingresos en vino (`HeroAdmin`).
+  Los formularios van en `Pergamino` / `Comanda`.
 
 ---
 
@@ -38,9 +66,9 @@ Dos lienzos:
 Rutas claras (login, registro, menú, contacto, nosotros, pago, claves):
 
 ```
-flex-1 bg-crema
+Pergamino fill
 px-6 pb-12 pt-8
-mb-3 h-px w-12 bg-oro
+mb-3 h-px w-10 bg-marca/40
 ```
 
 Componente: `src/components/Pantalla.tsx`  
@@ -52,8 +80,8 @@ Las rutas siguen importando `ContenedorPantalla` (mismo archivo).
 </ContenedorPantalla>
 ```
 
-Perfil y administración **no** usan este marco: son el lienzo oscuro
-(`TarjetaPerfil`, `HeroAdmin`, comanda con puntos de ticket).
+Perfil **no** usa este marco: es el lienzo vino (`TarjetaPerfil`). Admin va en
+crema (`MarcoAdmin`, `HeroAdmin`). Los formularios van en `Comanda` (pergamino).
 
 ---
 
@@ -205,15 +233,16 @@ tarjeta del perfil (tipo / marca / principal), dirección (principal).
 
 `src/components/Button.tsx`
 
-Recorte de ticket: sin radio. Letras abiertas.
+Placa, sin radio. El oro nunca es un rectángulo plano: usa `PlacaOro`.
 
 ```
-caja:      items-center py-4
-primary:   bg-marca-oscura     texto crema     (ENTRAR, GUARDAR, RESERVAR)
-secondary: border border-oro   texto marca-oscura   (CANCELAR sobre crema)
-ghost:     border border-oro   texto oro            (VER MENÚ sobre vino)
-gold:      bg-oro              texto marca-oscura   (LLAMAR)
+primary:   vino + filete oro     texto crema     (ENTRAR, GUARDAR)
+secondary: placa hueca           texto marca     (CANCELAR sobre claro)
+ghost:     placa hueca           texto oro       (VER MENÚ sobre vino)
+gold:      placa metálica        texto marca     (LLAMAR, MAPA, ENVIAR)
 letra:     text-[11px] tracking-[3px]
+pressed:   `active:opacity-80`
+disabled:  `disabled:opacity-40` (gold) / `opacity-45` (resto)
 ```
 
 ```tsx
@@ -271,6 +300,9 @@ Login, registro, recuperar / restablecer y fallo de red del menú.
 | `border border-linea bg-white p-5` | `Tarjeta` | ítem / bloque |
 | `bg-red-50 … text-red-700` | `MensajeError` | error de servidor |
 | `border-b border-oro/30 py-3` (×3 admin) | `CampoBusqueda` | filtro de lista |
+| puntos Confirmado → Entregado | `BarraEstadosPedido` | perfil + seguimiento |
+| cubo 3D + línea de carta | `TarjetaPlato` | menú |
+| CTA bandeja en placa de oro | `SelloLacre` | cart sheet |
 
 ---
 
@@ -300,10 +332,50 @@ Campo ok     border border-linea bg-white p-3.5
 Campo error  border border-red-600 bg-white p-3.5
 Error campo  text-xs text-red-600
 Error API    bg-red-50 p-3 text-center text-red-700
-Botón        bg-marca-oscura py-4 + text-[11px] tracking-[3px] text-crema
-Botón 2      border border-oro + text-marca-oscura
+Botón        Button (primary / secondary / ghost / gold)
+Oro          PlacaOro — no pegues bg-oro a mano
 Chip on      bg-marca-oscura px-3 py-2 + text-crema
 Chip off     border border-marca/20 px-3 py-2 + text-marca-oscura
 Buscar admin mb-4 border-b border-oro/30 py-3 text-crema
 Badge pill   self-start rounded-full bg-marca/10 px-3 py-1 text-[11px] tracking-[2px] text-marca
 ```
+
+---
+
+## Contraste 4.5:1
+
+Cuerpo y precios van en tinta o vino. El oro es eyebrow o CTA sobre vino, no
+cuerpo sobre crema.
+
+| Superficie | Texto | Tokens | Relación (aprox.) |
+|---|---|---|---|
+| Pergamino `#f6f0e6` | Tinta | `text-tinta` | ~12:1 |
+| Pergamino | Cuerpo | `text-tinta/70` | ~5.5:1 |
+| Pergamino / crema | Precio | `text-marca` `#6b1d3d` | ~8:1 |
+| Crema `#faf6f2` | Admin | `text-tinta` / `text-tinta/70` | ≥4.5:1 |
+| Vino `#3a0c20` | Crema | `text-crema` | ~12:1 |
+| Vino | Oro (eyebrow) | `text-oro` | ~4.6:1 |
+| **No usar** | Oro sobre crema | `text-oro` en precios | ~1.8:1 |
+| **No usar** | Tinta al 40% | `text-tinta/40` | ~3:1 |
+
+Chips inactivos: `text-tinta/70`. Ayudas de campo: `text-tinta/70`.
+
+---
+
+## Pantallas de la rúbrica
+
+| Ítem | Dónde |
+|---|---|
+| Home | `app/home/index.tsx` — vino, serifa, pergamino en bloques |
+| Carta | `TarjetaPlato` + `ChipCategoria` |
+| Detalle + 3D | `app/plato/[id].tsx` → `DetallePlatoScreen` (`VER EN 3D`, `A LA BANDEJA`) |
+| Bandeja | `CartSheet` + `SelloLacre` |
+| Seguimiento | `app/seguimiento.tsx` + `BarraEstadosPedido` (tras pagar) |
+| Perfil | `app/perfil.tsx` — historial con la misma barra |
+| Reservas / Real-Wood | `PlanoMesas` piso madera + `IconoMesa` tapa `#d4bc93` |
+| Tokens | `tailwind.config.js` |
+| Base | `Button`, `Field`, `Select`, `Badge`, `Pergamino`, `Tarjeta` |
+
+Android e iOS: mismos tokens NativeWind. Hay que grabar las dos plataformas
+en el video de la entrega; el código no cambia por SO.
+

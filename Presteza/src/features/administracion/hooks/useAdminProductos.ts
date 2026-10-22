@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { actualizarProducto, crearProducto, eliminarProducto, listarProductos } from '@/api/productos';
 import type { ProductoAdmin, ProductoForm } from '../types';
 import { cambiosDe, idDe } from '../utils';
-import { fusionar, useListaAdmin } from './adminComun';
+import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminProductos() {
   const { lista: productos, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
@@ -14,12 +14,14 @@ export function useAdminProductos() {
       const sesion = conToken();
       if (!sesion) return false;
       const imagen = datos.imageUrl.trim();
+      const modelo = datos.modelUrl.trim();
       const actual = {
         name: datos.name.trim(),
         description: datos.description.trim(),
         price: Number(datos.price),
         categoryId: datos.categoryId,
         image: imagen,
+        modelUrl: modelo,
       };
 
       setGuardando(true);
@@ -31,7 +33,10 @@ export function useAdminProductos() {
             price: editando.price,
             categoryId: editando.categoryId ?? '',
             image: editando.imageUrl ?? '',
+            modelUrl: editando.modelUrl ?? '',
           };
+          // Solo se envía lo que cambió: si el modelo no se tocó, `modelUrl`
+          // ni siquiera viaja al backend.
           const cambios = cambiosDe(actual, original);
           if (!Object.keys(cambios).length) {
             aviso.ok('Sin cambios', 'No hay nada que guardar.');
@@ -39,12 +44,25 @@ export function useAdminProductos() {
           }
           const actualizado = await actualizarProducto(sesion, idDe(editando), cambios);
           setLista((prev) =>
-            fusionar(prev, { ...editando, ...actualizado }, { ...cambios, imageUrl: imagen }),
+            fusionar(
+              prev,
+              { ...editando, ...actualizado },
+              { ...cambios, imageUrl: imagen, modelUrl: modelo || undefined },
+            ),
           );
           aviso.ok('Plato editado', `${actual.name} fue editado.`);
         } else {
-          const creado = await crearProducto(sesion, { ...actual, type: 'principal', available: true });
-          setLista((prev) => [{ ...creado, ...actual, imageUrl: imagen, available: true }, ...prev]);
+          // Sin modelo, `modelUrl` va como undefined y JSON.stringify lo omite.
+          const creado = await crearProducto(sesion, {
+            ...actual,
+            modelUrl: modelo || undefined,
+            type: 'principal',
+            available: true,
+          });
+          setLista((prev) => [
+            { ...creado, ...actual, imageUrl: imagen, modelUrl: modelo || undefined, available: true },
+            ...prev,
+          ]);
           aviso.ok('Plato creado', `${actual.name} ya está en la carta.`);
         }
         return true;
@@ -97,5 +115,14 @@ export function useAdminProductos() {
     [aviso, conToken, setLista],
   );
 
-  return { productos, cargando, guardando, error, recargar, guardar, alternar, eliminar };
+  const eliminarVarios = useCallback(
+    (items: ProductoAdmin[], alTerminar?: () => void) => {
+      const sesion = conToken();
+      if (!sesion) return;
+      borrarVarios(aviso, sesion, setLista, eliminarProducto, items, 'platos', 'CARTA', { alTerminar });
+    },
+    [aviso, conToken, setLista],
+  );
+
+  return { productos, cargando, guardando, error, recargar, guardar, alternar, eliminar, eliminarVarios };
 }

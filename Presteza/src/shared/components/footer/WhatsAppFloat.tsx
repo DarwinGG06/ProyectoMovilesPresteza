@@ -1,3 +1,4 @@
+import { usePathname } from 'expo-router';
 import { Linking, Pressable } from 'react-native';
 
 import { Icono } from './Icono';
@@ -5,6 +6,16 @@ import { Icono } from './Icono';
 const TELEFONO_WHATSAPP = '573104941839';
 
 export function WhatsAppFloat() {
+  const ruta = usePathname();
+  if (
+    ruta.includes('perfil') ||
+    ruta.includes('admin') ||
+    ruta.includes('plato') ||
+    ruta.includes('seguimiento')
+  ) {
+    return null;
+  }
+
   return (
     <Pressable
       onPress={() => Linking.openURL(`https://wa.me/${TELEFONO_WHATSAPP}`)}

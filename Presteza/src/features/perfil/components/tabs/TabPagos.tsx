@@ -21,6 +21,7 @@ export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps
       numero="I"
       badge="PAGOS"
       titulo="Métodos guardados"
+      compacto
       accion={
         pagos.formularioAbierto
           ? undefined
@@ -51,8 +52,8 @@ export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps
               indice={index}
               titulo={`${tarjeta.brand} · ${tarjeta.last_four_digits}`}
               sello={tarjeta.is_primary ? 'PRINCIPAL' : undefined}>
-              <Text className="mt-1 font-roboto text-sm text-crema/70">{tarjeta.name}</Text>
-              <Text className="mt-1 font-roboto text-sm text-crema/45">
+              <Text className="mt-1 font-roboto text-sm text-tinta/60">{tarjeta.name}</Text>
+              <Text className="mt-1 font-roboto text-sm text-tinta/45">
                 {tarjeta.cardholder_name} · {tarjeta.type === 'debit' ? 'Débito' : 'Crédito'} ·{' '}
                 {tarjeta.expiry_date}
               </Text>

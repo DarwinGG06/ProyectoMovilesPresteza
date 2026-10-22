@@ -1,11 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Asset } from 'expo-asset';
+import { useMemo, useState } from 'react';
 
 import type { Producto } from '@/types';
 
 import { useMenuPublico } from './useMenuPublico';
-
-const MODELO_LOCAL_ASSET = require('@/assets/ice_cream.glb');
 
 export function useMenu() {
   const { productos, categorias, cargando, error } = useMenuPublico();
@@ -15,23 +12,6 @@ export function useMenu() {
   const [visorAbierto, setVisorAbierto] = useState(false);
   const [modeloUrl, setModeloUrl] = useState<string | null>(null);
   const [nombreProducto, setNombreProducto] = useState<string | null>(null);
-  const [modeloLocal, setModeloLocal] = useState<string | null>(null);
-
-  useEffect(() => {
-    let montado = true;
-
-    async function prepararAssetLocal() {
-      const asset = Asset.fromModule(MODELO_LOCAL_ASSET);
-      await asset.downloadAsync();
-      if (montado) setModeloLocal(asset.localUri || asset.uri);
-    }
-
-    prepararAssetLocal();
-
-    return () => {
-      montado = false;
-    };
-  }, []);
 
   const lista = useMemo(() => {
     return productos.filter((producto) => {
@@ -46,8 +26,12 @@ export function useMenu() {
     });
   }, [productos, busqueda, categoriaActiva]);
 
+  /** El modelo lo sube el admin en Productos; los platos sin modelo no muestran el cubo. */
+  const tieneModelo = (producto: Producto) => Boolean(producto.modelUrl);
+
   const abrirVisor = (producto: Producto) => {
-    setModeloUrl(producto.modelUrl || modeloLocal);
+    if (!producto.modelUrl) return;
+    setModeloUrl(producto.modelUrl);
     setNombreProducto(producto.name);
     setVisorAbierto(true);
   };
@@ -69,6 +53,7 @@ export function useMenu() {
     categoriaActiva,
     elegirCategoria: setCategoriaActiva,
     productos: lista,
+    tieneModelo,
     abrirVisor,
     cerrarVisor,
     visorAbierto,

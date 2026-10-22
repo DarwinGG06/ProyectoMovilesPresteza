@@ -5,7 +5,7 @@ import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { useTabMensajes } from '../../hooks/useTabMensajes';
 import type { MensajeAdmin, MensajeForm } from '../../types';
 import { formatoFechaHora, idDe } from '../../utils';
-import { AccionesAdmin, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import { AccionesAdmin, BotonAgregarAdmin, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioMensaje } from '../formularios/FormularioMensaje';
 import {
   CajaCuadricula,
@@ -37,10 +37,11 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
   return (
     <View>
       <TarjetaPerfil
+        compacto
         numero="I"
         badge="CORREO"
-        titulo="Mensajes"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
+        titulo="Mensajes">
+        <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
 
         {tab.lista.length === 0 ? (
@@ -58,18 +59,18 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
               ]}
             />
             {tab.lista.map((mensaje) => (
-              <FilaTabla key={idDe(mensaje)}>
+              <FilaTabla key={idDe(mensaje)} onPress={() => tab.verDetalle(mensaje)}>
                 <CeldaTabla flex={1.2}>
-                  <Text className="font-roboto-light text-sm text-white" numberOfLines={2}>
+                  <Text className="font-roboto-light text-sm text-tinta" numberOfLines={2}>
                     {mensaje.subject}
                   </Text>
                   {acciones(mensaje)}
                 </CeldaTabla>
                 <CeldaTabla flex={0.8}>
-                  <Text className="font-roboto text-sm text-crema/70" numberOfLines={1}>
+                  <Text className="font-roboto text-sm text-tinta/60" numberOfLines={1}>
                     {mensaje.name}
                   </Text>
-                  <Text className="mt-0.5 font-roboto text-[11px] text-crema/40" numberOfLines={1}>
+                  <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70" numberOfLines={1}>
                     {formatoFechaHora(mensaje.createdAt)}
                   </Text>
                 </CeldaTabla>
@@ -80,13 +81,13 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
           <GrillaAdmin>
             {tab.lista.map((mensaje) => (
               <CajaCuadricula key={idDe(mensaje)}>
-                <Text className="font-roboto-light text-base text-white" numberOfLines={2}>
+                <Text className="font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {mensaje.subject}
                 </Text>
-                <Text className="mt-1 font-roboto text-sm text-crema/70" numberOfLines={1}>
+                <Text className="mt-1 font-roboto text-sm text-tinta/60" numberOfLines={1}>
                   {mensaje.name}
                 </Text>
-                <Text className="mt-2 font-roboto text-sm text-crema/50" numberOfLines={3}>
+                <Text className="mt-2 font-roboto text-sm text-tinta/45" numberOfLines={3}>
                   {mensaje.message}
                 </Text>
                 {acciones(mensaje)}

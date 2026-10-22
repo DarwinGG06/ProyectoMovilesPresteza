@@ -4,6 +4,15 @@ export function idReserva(reserva?: { _id?: string; id?: string }) {
   return reserva?._id || reserva?.id || '';
 }
 
+export function estadoReserva(status: string) {
+  const clave = String(status || '').trim().toLowerCase();
+  if (clave === 'pendiente' || clave === 'pending') return 'pending';
+  if (clave === 'confirmada' || clave === 'confirmed') return 'confirmed';
+  if (clave === 'cancelada' || clave === 'cancelled' || clave === 'canceled') return 'cancelled';
+  if (clave === 'completada' || clave === 'completed' || clave === 'complete') return 'completed';
+  return clave;
+}
+
 export function textoEstadoReserva(status: string) {
   const mapa: Record<string, string> = {
     pending: 'Pendiente',
@@ -11,15 +20,35 @@ export function textoEstadoReserva(status: string) {
     cancelled: 'Cancelada',
     completed: 'Completada',
   };
-  return mapa[status] ?? status;
+  return mapa[estadoReserva(status)] ?? status;
+}
+
+export function esReservaPasada(reserva: Reserva) {
+  const fecha = parsearFechaReserva(reserva.date);
+  if (!fecha) return false;
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  return fecha.getTime() < hoy.getTime();
 }
 
 export function sePuedeEditar(reserva: Reserva) {
-  return reserva.status === 'pending' || reserva.status === 'confirmed';
+  const estado = estadoReserva(reserva.status);
+  return estado === 'pending' || estado === 'confirmed';
+}
+
+export function sePuedeEditarCliente(reserva: Reserva) {
+  return sePuedeEditar(reserva) && !esReservaPasada(reserva);
+}
+
+export function visibleEnPerfil(reserva: Reserva) {
+  const estado = estadoReserva(reserva.status);
+  if (estado === 'completed' || estado === 'cancelled') return true;
+  return !esReservaPasada(reserva);
 }
 
 export function estaActiva(reserva: Reserva) {
-  return reserva.status === 'pending' || reserva.status === 'confirmed';
+  const estado = estadoReserva(reserva.status);
+  return estado === 'pending' || estado === 'confirmed';
 }
 
 export function valoresReserva(reserva?: Reserva): ReservaForm {
@@ -42,10 +71,49 @@ export function datosDeFormulario(datos: ReservaForm): ReservaDatos {
   };
 }
 
+function fechaLocal(anio: number, mes: number, dia: number) {
+  const fecha = new Date(anio, mes - 1, dia);
+  if (fecha.getFullYear() !== anio || fecha.getMonth() !== mes - 1 || fecha.getDate() !== dia) {
+    return null;
+  }
+  return fecha;
+}
+
+export function parsearFechaReserva(valor: string): Date | null {
+  const limpia = String(valor || '').trim();
+  const dmy = limpia.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (dmy) return fechaLocal(Number(dmy[3]), Number(dmy[2]), Number(dmy[1]));
+  const iso = limpia.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return fechaLocal(Number(iso[1]), Number(iso[2]), Number(iso[3]));
+  return null;
+}
+
 function normalizarFecha(fecha: string) {
-  const iso = fecha.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
+  const parsed = parsearFechaReserva(fecha);
+  if (parsed) return formatearFechaReserva(parsed);
   return fecha.trim();
+}
+
+export function formatearFechaReserva(fecha: Date) {
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  return `${dia}/${mes}/${fecha.getFullYear()}`;
+}
+
+export function fechaTopeReserva(desde = new Date()) {
+  return new Date(desde.getFullYear(), desde.getMonth() + 6, desde.getDate());
+}
+
+export function mensajeFechaReserva(valor: string) {
+  const fecha = parsearFechaReserva(valor);
+  if (!fecha) return 'Elige una fecha del calendario';
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  if (fecha.getTime() < hoy.getTime()) return 'La fecha no puede ser anterior a hoy';
+  if (fecha.getTime() > fechaTopeReserva(hoy).getTime()) {
+    return 'Solo se reserva hasta 6 meses adelante';
+  }
+  return null;
 }
 
 function horaAmPm(hora: number, minutos: string) {
@@ -55,7 +123,7 @@ function horaAmPm(hora: number, minutos: string) {
   return `${hora}:${minutos} a. m.`;
 }
 
-function normalizarHora(hora: string) {
+export function normalizarHora(hora: string) {
   const limpia = hora.trim().toLowerCase().replace(/\s+/g, ' ');
   const formato24 = limpia.match(/^(\d{1,2}):(\d{2})$/);
   if (formato24) return horaAmPm(Number(formato24[1]), formato24[2]);

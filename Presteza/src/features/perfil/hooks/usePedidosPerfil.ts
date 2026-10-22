@@ -34,5 +34,6 @@ export function usePedidosPerfil(pedidos: Pedido[]) {
     alternarDetalle,
     repetir,
     irAlMenu: () => router.push('/home/menu'),
+    irASeguimiento: (id: string) => router.push(`/seguimiento?id=${id}`),
   };
 }

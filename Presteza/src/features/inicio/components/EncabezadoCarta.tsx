@@ -9,9 +9,7 @@ export function EncabezadoCarta({ etiqueta, titulo }: EncabezadoCartaProps) {
   return (
     <View className="mb-8">
       <Text className="font-roboto text-[11px] tracking-[4px] text-oro">{etiqueta}</Text>
-      <Text className="mt-1 font-roboto-extrabold text-4xl tracking-[4px] text-crema">
-        {titulo}
-      </Text>
+      <Text className="mt-1 font-serif-light text-4xl text-crema">{titulo}</Text>
       <View className="mt-3 h-px w-24 bg-oro" />
     </View>
   );

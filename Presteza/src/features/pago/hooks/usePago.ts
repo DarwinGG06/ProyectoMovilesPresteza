@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
+import { entidad, idDe } from '@/api/helpers';
 import { cotizarPuntos, crearPedidoConPuntos } from '@/api/loyalty';
 import type { CotizacionPuntos } from '@/features/perfil/types';
 import { formatCOP, useCart } from '@/services/cart/CartContext';
@@ -82,7 +83,7 @@ export function usePago() {
     setExito(null);
     try {
       const puntos = canjear ? (cotizacion?.pointsRedeemed ?? 0) : 0;
-      await crearPedidoConPuntos(token, {
+      const creado = await crearPedidoConPuntos(token, {
         usuarioId: user.id,
         user_name: user.name,
         payment_method: metodo,
@@ -99,14 +100,10 @@ export function usePago() {
           };
         }),
       });
-      const totalFinal = cotizacion?.total ?? totalPrice;
-      setExito(
-        puntos > 0
-          ? `Pedido enviado. Canjeaste ${puntos} puntos. A pagar ${formatCOP(totalFinal)}.`
-          : `Pedido enviado. A pagar ${formatCOP(totalFinal)}.`,
-      );
+      const pedido = entidad(creado, 'order', 'pedido');
+      const id = idDe(pedido);
       clearCart();
-      setTimeout(() => router.replace('/perfil'), 900);
+      router.replace(id ? `/seguimiento?id=${id}` : '/seguimiento');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo crear el pedido.');
     } finally {

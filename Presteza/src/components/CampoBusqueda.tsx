@@ -20,7 +20,7 @@ export default function CampoBusqueda({
   const clases =
     variant === 'oscuro'
       ? 'mb-4 border-b border-oro/30 py-3 text-crema'
-      : 'border border-linea bg-white px-4 py-3 text-texto';
+      : 'mb-4 rounded-full border border-linea bg-white px-4 py-3 text-texto';
 
   return (
     <TextInput

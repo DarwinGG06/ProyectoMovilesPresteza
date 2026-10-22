@@ -9,7 +9,7 @@ import {
 } from '@/api/admin';
 import type { ClienteAdmin, PedidoAdmin, PedidoForm } from '../types';
 import { estadoPedidoBackend, idDe, textoEstadoPedido } from '../utils';
-import { fusionar, useListaAdmin } from './adminComun';
+import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminPedidos() {
   const { lista: pedidos, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
@@ -125,5 +125,14 @@ export function useAdminPedidos() {
     [aviso, conToken, setLista],
   );
 
-  return { pedidos, cargando, guardando, error, recargar, guardar, cambiarEstado, eliminar };
+  const eliminarVarios = useCallback(
+    (items: PedidoAdmin[], alTerminar?: () => void) => {
+      const sesion = conToken();
+      if (!sesion) return;
+      borrarVarios(aviso, sesion, setLista, eliminarPedido, items, 'pedidos', 'PEDIDOS', { alTerminar });
+    },
+    [aviso, conToken, setLista],
+  );
+
+  return { pedidos, cargando, guardando, error, recargar, guardar, cambiarEstado, eliminar, eliminarVarios };
 }

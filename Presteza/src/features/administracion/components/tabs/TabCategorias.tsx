@@ -6,7 +6,7 @@ import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { useTabCategorias } from '../../hooks/useTabCategorias';
 import type { CategoriaAdmin, CategoriaForm } from '../../types';
 import { idDe } from '../../utils';
-import { EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import { BotonAgregarAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioCategoria } from '../formularios/FormularioCategoria';
 import {
   AccionesCarta,
@@ -38,15 +38,16 @@ export function TabCategorias({
         numero="I"
         badge="CARTA"
         titulo="Categorías"
-        accion={{ etiqueta: 'AGREGAR', onPress: () => tab.abrir() }}>
+        compacto>
+        <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <CampoBusqueda
           value={tab.busqueda}
           onChangeText={tab.setBusqueda}
           placeholder="Buscar categoría..."
-          variant="oscuro"
+          variant="claro"
         />
         <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
-        <Text className="mb-4 font-roboto text-sm text-crema/55">
+        <Text className="mb-4 font-roboto text-sm text-tinta/45">
           {tab.lista.length} en la carta
         </Text>
 
@@ -72,14 +73,14 @@ export function TabCategorias({
                       <View className="flex-row items-center">
                         <FotoCarta uri={categoria.imageUrl} alto={48} />
                         <Text
-                          className="ml-2 flex-1 font-roboto-light text-sm text-white"
+                          className="ml-2 flex-1 font-roboto-light text-sm text-tinta"
                           numberOfLines={2}>
                           {categoria.name}
                         </Text>
                       </View>
                     </CeldaTabla>
                     <CeldaTabla flex={1}>
-                      <Text className="font-roboto text-sm text-crema/55" numberOfLines={3}>
+                      <Text className="font-roboto text-sm text-tinta/50" numberOfLines={3}>
                         {categoria.description || 'Sin nota'}
                       </Text>
                     </CeldaTabla>
@@ -97,18 +98,25 @@ export function TabCategorias({
             {tab.lista.map((categoria) => (
               <View
                 key={idDe(categoria)}
-                className="mb-5 w-[48%] overflow-hidden border border-oro/25">
+                className="mb-5 w-[48%] overflow-hidden rounded-[22px] bg-white"
+                style={{
+                  shadowColor: '#3a0c20',
+                  shadowOpacity: 0.06,
+                  shadowRadius: 10,
+                  shadowOffset: { width: 0, height: 3 },
+                  elevation: 2,
+                }}>
                 <View className="relative">
                   <FotoCarta uri={categoria.imageUrl} alto={168} ancha />
                   <View className="absolute bottom-0 left-0 right-0 bg-marca-oscura/80 px-3 py-3">
                     <Text className="font-roboto text-[10px] tracking-[2px] text-oro">SECCIÓN</Text>
-                    <Text className="mt-1 font-roboto-light text-xl text-white">
+                    <Text className="mt-1 font-roboto-light text-xl text-crema">
                       {categoria.name}
                     </Text>
                   </View>
                 </View>
-                <View className="bg-marca/40 px-3 py-3">
-                  <Text className="font-roboto text-sm text-crema/60" numberOfLines={2}>
+                <View className="px-3 py-3">
+                  <Text className="font-roboto text-sm text-tinta/55" numberOfLines={2}>
                     {categoria.description || 'Sin nota'}
                   </Text>
                   <AccionesCarta

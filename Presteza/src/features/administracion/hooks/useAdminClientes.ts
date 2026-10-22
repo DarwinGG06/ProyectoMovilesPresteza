@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { actualizarCliente, crearCliente, eliminarCliente, listarUsuarios } from '@/api/auth';
 import type { ClienteAdmin, ClienteForm } from '../types';
-import { fusionar, useListaAdmin } from './adminComun';
+import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminClientes() {
   const { lista: usuarios, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
@@ -75,5 +75,14 @@ export function useAdminClientes() {
     [aviso, conToken, setLista],
   );
 
-  return { usuarios, cargando, guardando, error, recargar, guardar, eliminar };
+  const eliminarVarios = useCallback(
+    (items: ClienteAdmin[], alTerminar?: () => void) => {
+      const sesion = conToken();
+      if (!sesion) return;
+      borrarVarios(aviso, sesion, setLista, eliminarCliente, items, 'clientes', 'MESA', { alTerminar });
+    },
+    [aviso, conToken, setLista],
+  );
+
+  return { usuarios, cargando, guardando, error, recargar, guardar, eliminar, eliminarVarios };
 }

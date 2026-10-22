@@ -55,10 +55,6 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
 
   return (
     <View className="flex-1 bg-marca-oscura">
-      <View className="absolute -right-20 top-16 h-64 w-64 rounded-full border-[36px] border-oro/10" />
-      <View className="absolute -left-12 bottom-20 h-48 w-48 rounded-full bg-marca/50" />
-      <View className="absolute bottom-0 left-0 right-0 h-24 bg-oro/5" />
-
       <DrawerContentScrollView
         {...props}
         style={{ backgroundColor: 'transparent', flex: 1 }}
@@ -72,7 +68,7 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
           <SelloP size="md" />
           <Pressable
             onPress={() => props.navigation.closeDrawer()}
-            className="h-12 w-12 items-center justify-center rounded-full border border-oro/50">
+            className="h-12 w-12 items-center justify-center border border-oro/50">
             <IconoNav name="close" size={22} className="text-oro" />
           </Pressable>
         </View>
@@ -81,7 +77,7 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
           <Text className="font-roboto text-[11px] tracking-[4px] text-oro">
             CARTA DE NAVEGACIÓN
           </Text>
-          <Text className="mt-1 font-roboto-extrabold text-4xl tracking-[6px] text-crema">
+          <Text className="mt-1 font-serif-light text-4xl tracking-[6px] text-crema">
             PRESTEZA
           </Text>
           <View className="mt-3 h-px w-24 bg-oro" />

@@ -5,19 +5,17 @@ type SelloPProps = {
 };
 
 const MEDIDAS = {
-  sm: { caja: 'h-10 w-10', anillo: 'h-8 w-8', letra: 'text-base' },
-  md: { caja: 'h-14 w-14', anillo: 'h-11 w-11', letra: 'text-xl' },
-  lg: { caja: 'h-24 w-24', anillo: 'h-[76px] w-[76px]', letra: 'text-4xl' },
+  sm: { caja: 'h-9 w-9', letra: 'text-lg' },
+  md: { caja: 'h-12 w-12', letra: 'text-2xl' },
+  lg: { caja: 'h-16 w-16', letra: 'text-3xl' },
 };
 
 export function SelloP({ size = 'sm' }: SelloPProps) {
   const m = MEDIDAS[size];
 
   return (
-    <View className={`${m.caja} items-center justify-center rounded-full bg-oro`}>
-      <View className={`${m.anillo} items-center justify-center rounded-full bg-marca-oscura`}>
-        <Text className={`${m.letra} font-roboto-extrabold text-oro`}>P</Text>
-      </View>
+    <View className={`${m.caja} items-center justify-center rounded-full border border-oro/70`}>
+      <Text className={`${m.letra} font-serif text-oro`}>P</Text>
     </View>
   );
 }

@@ -27,10 +27,6 @@ export function FormularioCategoria({
         autoCapitalize="words"
         maxLength={60}
         variante="linea"
-        rules={{
-          required: 'Escribe el nombre',
-          maxLength: { value: 60, message: 'Máximo 60 caracteres' },
-        }}
       />
       <Field
         control={control}
@@ -39,10 +35,6 @@ export function FormularioCategoria({
         placeholder="Descripción"
         maxLength={300}
         variante="linea"
-        rules={{
-          required: 'Escribe una descripción',
-          maxLength: { value: 300, message: 'Máximo 300 caracteres' },
-        }}
       />
       <Field
         control={control}

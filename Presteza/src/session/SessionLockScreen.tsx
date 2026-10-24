@@ -15,6 +15,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Button from '@/components/Button';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 
+import { BiometricLoginButton } from './BiometricLoginButton';
+
 type Props = {
   email: string;
   label: string;
@@ -34,7 +36,7 @@ export function SessionLockScreen({
   onPassword,
   onSignOut,
 }: Props) {
-  const [passwordMode, setPasswordMode] = useState(false);
+  const [passwordMode, setPasswordMode] = useState(true);
   const [password, setPassword] = useState('');
   const [passwordBusy, setPasswordBusy] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -77,7 +79,13 @@ export function SessionLockScreen({
                     <ActivityIndicator size="large" color="#6b1d3d" />
                   ) : (
                     <Ionicons
-                      name={passwordMode ? 'lock-closed-outline' : 'finger-print-outline'}
+                      name={
+                        passwordMode
+                          ? 'lock-closed-outline'
+                          : label === 'Face ID'
+                            ? 'scan-outline'
+                            : 'finger-print-outline'
+                      }
                       size={40}
                       color="#6b1d3d"
                     />
@@ -86,12 +94,12 @@ export function SessionLockScreen({
                 <Text
                   accessibilityRole="header"
                   className="text-center font-serif-light text-[40px] leading-[44px] text-tinta">
-                  Desbloquea tu cuenta
+                  {passwordMode ? 'Iniciar sesión' : 'Desbloquea tu cuenta'}
                 </Text>
                 <View className="my-5 h-px w-12 bg-marca/30" />
                 <Text className="text-center font-roboto-light text-base leading-6 text-madera">
                   {passwordMode
-                    ? 'Ingresa tu contraseña de Presteza para continuar.'
+                    ? 'Continúa con tu contraseña o con el acceso biométrico de este dispositivo.'
                     : 'Usa tu huella, rostro o el bloqueo de pantalla del teléfono para continuar.'}
                 </Text>
               </View>
@@ -127,20 +135,24 @@ export function SessionLockScreen({
                     text={passwordBusy ? 'ENTRANDO...' : 'ENTRAR CON CONTRASEÑA'}
                   />
                 </View>
-              ) : (
-                <Button
-                  variant="gold"
+              ) : null}
+              <View className="mt-4">
+                <BiometricLoginButton
+                  label={label}
+                  busy={busy}
                   disabled={disabled}
-                  onPress={() => void onUnlock()}
-                  text={busy ? 'VERIFICANDO...' : `USAR ${label.toUpperCase()}`}
+                  onPress={() => {
+                    setPasswordError(null);
+                    void onUnlock();
+                  }}
                 />
-              )}
+              </View>
 
-              {(passwordMode ? passwordError : error) ? (
+              {passwordError || error ? (
                 <Text
                   accessibilityRole="alert"
                   className="mt-4 text-center font-roboto text-sm leading-5 text-red-700">
-                  {passwordMode ? passwordError : error}
+                  {passwordError || error}
                 </Text>
               ) : null}
               <Pressable
@@ -150,7 +162,7 @@ export function SessionLockScreen({
                 onPress={() => setPasswordMode(!passwordMode)}
                 className="mt-4 p-4 active:opacity-70 disabled:opacity-40">
                 <Text className="text-center font-roboto text-sm text-marca">
-                  {passwordMode ? 'Volver al desbloqueo biométrico' : 'Usar contraseña de Presteza'}
+                  {passwordMode ? 'Ocultar contraseña' : 'Usar contraseña de Presteza'}
                 </Text>
               </Pressable>
               <Pressable

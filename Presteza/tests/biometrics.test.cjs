@@ -16,7 +16,7 @@ function biometrics(platform, overrides = {}) {
     authenticateAsync: async () => ({ success: true }),
     ...overrides,
   };
-  const filename = path.join(__dirname, '../src/session/biometrics.ts');
+  const filename = path.join(path.dirname(module.filename), '../src/session/biometrics.ts');
   const code = ts.transpileModule(readFileSync(filename, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS },
   }).outputText;
@@ -58,7 +58,7 @@ test('exige sensor, enrolamiento y biometría fuerte en Android', async () => {
         supportedAuthenticationTypesAsync: async () => [2],
       }).getBiometricSupport()
     ).label,
-    'Reconocimiento facial'
+    'Face ID'
   );
 });
 
@@ -74,6 +74,15 @@ test('invoca el diálogo real con biometría fuerte y alternativa de bloqueo del
   assert.equal(received.promptMessage, 'Desbloquear Presteza');
   assert.equal(received.biometricsSecurityLevel, 'strong');
   assert.equal(received.disableDeviceFallback, false);
+});
+
+test('Face ID solo se anuncia en iOS con sensor facial; Touch ID sigue siendo huella', async () => {
+  assert.equal((await biometrics('ios').getBiometricSupport()).label, 'Huella digital');
+  const android = await biometrics('android', {
+    supportedAuthenticationTypesAsync: async () => [2],
+  }).getBiometricSupport();
+  assert.equal(android.label, 'Huella digital');
+  assert.equal(android.available, false);
 });
 
 test('cancelación, bloqueo del sensor y fallo nunca se aceptan como autenticación', async () => {

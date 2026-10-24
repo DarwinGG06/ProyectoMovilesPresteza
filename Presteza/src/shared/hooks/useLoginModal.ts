@@ -6,20 +6,38 @@ import { useSession } from '@/session/context';
 type LoginForm = { email: string; password: string };
 
 export function useLoginModal(onClose: () => void) {
-  const { signIn } = useSession();
-  const { control, handleSubmit, reset, setError, formState } = useForm<LoginForm>({
+  const { signIn, signInWithBiometrics, biometricSupport, biometricBusy, biometricEnabled } =
+    useSession();
+  const { control, handleSubmit, reset, setError, clearErrors, formState } = useForm<LoginForm>({
     defaultValues: { email: '', password: '' },
   });
 
   const close = () => {
+    if (biometricBusy || formState.isSubmitting) return;
     reset();
     onClose();
+  };
+
+  const entrarConBiometria = async () => {
+    if (biometricBusy || formState.isSubmitting) return;
+    clearErrors('root');
+    try {
+      await signInWithBiometrics();
+      reset();
+      onClose();
+      router.replace('/perfil');
+    } catch (error) {
+      setError('root', {
+        message: error instanceof Error ? error.message : 'No se pudo iniciar sesión.',
+      });
+    }
   };
 
   const entrar = handleSubmit(async ({ email, password }) => {
     try {
       await signIn(email, password);
-      close();
+      reset();
+      onClose();
       router.replace('/perfil');
     } catch (error) {
       setError('root', { message: (error as Error).message });
@@ -30,15 +48,21 @@ export function useLoginModal(onClose: () => void) {
     control,
     close,
     entrar,
+    entrarConBiometria,
+    biometricSupport,
+    biometricBusy,
+    biometricEnabled,
     irARecuperar: () => {
+      if (biometricBusy || formState.isSubmitting) return;
       close();
       router.push('/recuperar-contrasena');
     },
     irARegistro: () => {
+      if (biometricBusy || formState.isSubmitting) return;
       close();
       router.push('/registro');
     },
     error: formState.errors.root?.message,
-    enviando: formState.isSubmitting,
+    enviando: formState.isSubmitting || biometricBusy,
   };
 }

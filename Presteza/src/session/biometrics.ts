@@ -22,12 +22,22 @@ export async function getBiometricSupport(): Promise<BiometricSupport> {
     LocalAuthentication.supportedAuthenticationTypesAsync(),
   ]);
   const fingerprint = types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT);
-  const label = fingerprint ? 'Huella digital' : 'Reconocimiento facial';
+  const faceID =
+    Platform.OS === 'ios' &&
+    types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION);
+  const label = faceID ? 'Face ID' : 'Huella digital';
   if (!hardware) {
     return {
       available: false,
       label,
       reason: 'Este dispositivo no tiene un sensor biométrico compatible.',
+    };
+  }
+  if (Platform.OS === 'android' && !fingerprint) {
+    return {
+      available: false,
+      label,
+      reason: 'Este dispositivo no dispone de un sensor de huellas compatible.',
     };
   }
   if (!enrolled) {

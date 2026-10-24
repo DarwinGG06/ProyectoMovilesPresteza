@@ -5,12 +5,22 @@ import { Text, View } from 'react-native';
 import Button from '@/components/Button';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
+import { BiometricLoginButton } from '@/session/BiometricLoginButton';
 import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
 
 import { useIniciarSesion } from '../hooks/useIniciarSesion';
 
 export function IniciarSesionScreen() {
-  const { control, error, enviando, entrar } = useIniciarSesion();
+  const {
+    control,
+    error,
+    enviando,
+    entrar,
+    entrarConBiometria,
+    biometricSupport,
+    biometricBusy,
+    biometricEnabled,
+  } = useIniciarSesion();
 
   return (
     <ContenedorPantalla titulo="Iniciar sesión">
@@ -61,6 +71,13 @@ export function IniciarSesionScreen() {
           text={enviando ? 'ENTRANDO…' : 'ENTRAR'}
           onPress={entrar}
           disabled={enviando}
+        />
+        <BiometricLoginButton
+          label={biometricSupport.label}
+          busy={biometricBusy}
+          disabled={enviando}
+          onPress={() => void entrarConBiometria()}
+          showHint={!biometricEnabled}
         />
 
         <View className="mt-4 items-center gap-3">

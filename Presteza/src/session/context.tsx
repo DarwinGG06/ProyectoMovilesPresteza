@@ -25,8 +25,10 @@ import { authenticateDevice, getBiometricSupport, type BiometricSupport } from '
 import { SessionLockScreen } from './SessionLockScreen';
 import {
   readBiometricUser,
+  readBiometricToken,
   readSessionToken,
   writeBiometricUser,
+  writeBiometricAccess,
   writeSessionToken,
 } from './storage';
 
@@ -36,6 +38,7 @@ interface Session {
   token: string | null;
   isAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithBiometrics: () => Promise<void>;
   signUp: (
     name: string,
     email: string,
@@ -123,7 +126,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
     const restaurar = async () => {
       try {
         const guardado = await readSessionToken();
-        if (!activo || !guardado) return;
+        const protectedUser = await readBiometricUser();
+        if (!activo || operation !== version.current) return;
+        // La preferencia sobrevive al logout, pero no inicia una sesión por sí sola.
+        setBiometricEnabledState(Platform.OS !== 'web' && Boolean(protectedUser));
+        if (!guardado) return;
 
         let usuario: User;
         try {
@@ -134,9 +141,12 @@ export function SessionProvider({ children }: PropsWithChildren) {
           return;
         }
 
-        const protectedUser = await readBiometricUser();
-        if (!activo || operation !== version.current) return;
         const protect = Platform.OS !== 'web' && protectedUser === usuario.id;
+        if (protect && !(await readBiometricToken())) {
+          // Migra instalaciones que solo guardaban el token de la sesión activa.
+          await writeBiometricAccess(usuario.id, guardado);
+          if (!activo || operation !== version.current) return;
+        }
         savedSession.current = { user: usuario, token: guardado };
         setSessionEmail(usuario.email);
         enabledRef.current = protect;
@@ -197,24 +207,43 @@ export function SessionProvider({ children }: PropsWithChildren) {
    * servidor y la pantalla de login lo muestra: aquí no se atrapa.
    */
   const salir = () => {
+    const session = savedSession.current;
+    // La huella, Face ID y Touch ID no viven en el servidor: la credencial
+    // recordada tiene que seguir en el teléfono después de cerrar sesión.
+    const preserveBiometric = Platform.OS !== 'web' && enabledRef.current && Boolean(session);
     version.current++;
     savedSession.current = null;
     setSessionEmail('');
     enabledRef.current = false;
     setLocked(false);
-    setBiometricEnabledState(false);
     setBiometricError(null);
-    logInfo('auth', 'logout', { email: user?.email ?? null });
+    if (preserveBiometric) setBiometricEnabledState(true);
+    logInfo('auth', 'logout', { email: session?.user.email ?? user?.email ?? null });
     setToken(null);
     setTokenState(null);
     setUser(null);
-    void Promise.all([writeSessionToken(null), writeBiometricUser(null)]).catch(
-      (error: unknown) => {
-        logError('auth', 'No se pudo borrar la sesión guardada', {
-          error: error instanceof Error ? error.message : error,
-        });
+    const persist = async () => {
+      if (preserveBiometric && session) {
+        try {
+          api.decodificarToken(session.token);
+          await writeBiometricAccess(session.user.id, session.token);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : '';
+          const unusable = /expirado|inválido|usuario válido/i.test(message);
+          if (!unusable) {
+            logError('auth', 'No se pudo actualizar la credencial biométrica', {
+              error: message || error,
+            });
+          }
+        }
       }
-    );
+      await writeSessionToken(null);
+    };
+    void persist().catch((error: unknown) => {
+      logError('auth', 'No se pudo borrar la sesión guardada', {
+        error: error instanceof Error ? error.message : error,
+      });
+    });
   };
 
   const signIn = async (email: string, password: string) => {
@@ -229,6 +258,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
     if (!mounted.current || operation !== version.current) return;
     if (protectedUser && protectedUser !== session.user.id) await writeBiometricUser(null);
     if (!mounted.current || operation !== version.current) return;
+    if (Platform.OS !== 'web' && protectedUser === session.user.id) {
+      await writeBiometricAccess(session.user.id, session.token);
+      if (!mounted.current || operation !== version.current) return;
+    }
     await writeSessionToken(session.token);
     if (!mounted.current || operation !== version.current) return;
     publishSession(session, Platform.OS !== 'web' && protectedUser === session.user.id);
@@ -239,19 +272,55 @@ export function SessionProvider({ children }: PropsWithChildren) {
     });
   };
 
-  const unlock = async () => {
-    if (busyRef.current || !savedSession.current) return;
+  const signInWithBiometrics = async () => {
+    if (Platform.OS === 'web') throw new Error('Este acceso está disponible en la app móvil.');
+    if (busyRef.current) throw new Error('Ya hay una verificación en curso.');
     const operation = version.current;
-    const session = savedSession.current;
     busyRef.current = true;
     setBiometricBusy(true);
     setBiometricError(null);
     try {
+      const protectedUser = await readBiometricUser();
+      const rememberedToken = await readBiometricToken();
+      if (!mounted.current || operation !== version.current) {
+        throw new Error('La sesión cambió durante la verificación. Inténtalo de nuevo.');
+      }
+      if (!protectedUser) {
+        throw new Error(
+          'Primero ingresa con tu correo y contraseña y activa el acceso biométrico en Ajustes.'
+        );
+      }
+      if (!rememberedToken) {
+        throw new Error(
+          'El acceso biométrico está activado, pero falta la sesión guardada. Ingresa con tu contraseña para recuperarla.'
+        );
+      }
+      const decodeRemembered = () => {
+        try {
+          return api.decodificarToken(rememberedToken);
+        } catch {
+          throw new Error(
+            'El acceso biométrico sigue activado, pero la sesión ha expirado o ya no es válida. Ingresa con tu contraseña para renovarla.'
+          );
+        }
+      };
+      const rememberedUser = decodeRemembered();
+      if (rememberedUser.id !== protectedUser) {
+        throw new Error(
+          'La cuenta guardada no coincide con la activación biométrica. Ingresa con tu contraseña.'
+        );
+      }
+      const session = { user: rememberedUser, token: rememberedToken };
       // La huella no renueva ni prolonga el JWT emitido por el servidor.
-      api.decodificarToken(session.token);
       await authenticateDevice();
-      if (!mounted.current || operation !== version.current) return;
-      api.decodificarToken(session.token);
+      if (!mounted.current || operation !== version.current) {
+        throw new Error('La sesión cambió durante la verificación. Inténtalo de nuevo.');
+      }
+      decodeRemembered();
+      await writeSessionToken(session.token);
+      if (!mounted.current || operation !== version.current) {
+        throw new Error('La sesión cambió durante la verificación. Inténtalo de nuevo.');
+      }
       publishSession(session, true);
     } catch (error) {
       if (mounted.current && operation === version.current) {
@@ -259,14 +328,26 @@ export function SessionProvider({ children }: PropsWithChildren) {
           error instanceof Error ? error.message : 'No se pudo desbloquear. Usa tu contraseña.'
         );
       }
+      throw error;
     } finally {
       busyRef.current = false;
       if (mounted.current) setBiometricBusy(false);
     }
   };
 
+  // La pantalla de bloqueo presenta el error del contexto; los formularios lo reciben como rechazo.
+  const unlock = async () => {
+    try {
+      await signInWithBiometrics();
+    } catch {
+      // biometricError conserva el motivo sin desmontar la pantalla protegida.
+    }
+  };
+
   const setBiometricEnabled = async (enabled: boolean) => {
-    if (busyRef.current || locked || !savedSession.current) return;
+    if (busyRef.current) throw new Error('Ya hay una verificación en curso.');
+    if (locked || !savedSession.current)
+      throw new Error('Inicia sesión antes de cambiar el acceso biométrico.');
     const session = savedSession.current;
     const operation = version.current;
     busyRef.current = true;
@@ -280,9 +361,12 @@ export function SessionProvider({ children }: PropsWithChildren) {
       await authenticateDevice(
         enabled ? 'Activar desbloqueo de Presteza' : 'Desactivar desbloqueo de Presteza'
       );
-      if (!mounted.current || operation !== version.current) return;
-      await writeBiometricUser(enabled ? session.user.id : null);
-      if (!mounted.current || operation !== version.current) return;
+      if (!mounted.current || operation !== version.current)
+        throw new Error('La sesión cambió. No se pudo guardar el ajuste.');
+      if (enabled) await writeBiometricAccess(session.user.id, session.token);
+      else await writeBiometricUser(null);
+      if (!mounted.current || operation !== version.current)
+        throw new Error('La sesión cambió. Vuelve a comprobar el ajuste.');
       publishSession(session, enabled);
     } finally {
       busyRef.current = false;
@@ -306,6 +390,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         token,
         isAuthenticated: Boolean(user && token),
         signIn,
+        signInWithBiometrics,
         // El registro NO devuelve token, así que enseguida iniciamos sesión.
         signUp: async (name, email, password, phone, birthDate) => {
           logInfo('auth', 'registro iniciado', { email: email.trim().toLowerCase() });

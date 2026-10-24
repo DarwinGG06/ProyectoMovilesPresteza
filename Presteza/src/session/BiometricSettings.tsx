@@ -19,7 +19,7 @@ export function BiometricSettings() {
       setMessage(
         biometricEnabled
           ? 'Desbloqueo biométrico desactivado.'
-          : 'Desbloqueo activado en este teléfono. Se solicitará al volver a abrir Presteza.'
+          : 'Acceso guardado en este teléfono. Podrás ingresar con biometría incluso después de cerrar sesión, mientras la sesión guardada siga vigente.'
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo cambiar el desbloqueo.');
@@ -35,13 +35,13 @@ export function BiometricSettings() {
               {biometricEnabled ? 'ACCESO PROTEGIDO' : 'SEGURIDAD DEL DISPOSITIVO'}
             </Text>
             <Text accessibilityRole="header" className="font-serif-light text-[30px] text-tinta">
-              Huella o rostro
+              {biometricSupport.label}
             </Text>
             <View className="h-px bg-madera/20" />
           </View>
           <Text className="font-roboto-light text-sm leading-6 text-tinta">
             {biometricEnabled
-              ? 'Activado. Al salir de la app, tu cuenta queda bloqueada hasta que confirmes tu identidad.'
+              ? 'Activado. Puedes volver a ingresar con biometría después de cerrar sesión. Para quitar el acceso guardado de este teléfono, desactívalo aquí.'
               : 'Protege el acceso a tu cuenta al abrir la app o volver del segundo plano. También puedes usar el código del teléfono o tu contraseña de Presteza.'}
           </Text>
           <Text className="font-roboto text-xs leading-5 text-madera">
@@ -62,7 +62,9 @@ export function BiometricSettings() {
                   ? 'VERIFICANDO...'
                   : biometricEnabled
                     ? 'DESACTIVAR DESBLOQUEO'
-                    : 'ACTIVAR HUELLA O ROSTRO'
+                    : biometricSupport.label === 'Face ID'
+                      ? 'ACTIVAR FACE ID'
+                      : 'ACTIVAR HUELLA'
               }
             />
           ) : null}

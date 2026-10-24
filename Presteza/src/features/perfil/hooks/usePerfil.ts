@@ -1,4 +1,4 @@
-import { router, type Href } from 'expo-router';
+import { router, useFocusEffect, type Href } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useSession } from '@/session/context';
@@ -70,6 +70,12 @@ export function usePerfil() {
   useEffect(() => {
     recargar();
   }, [recargar]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setPestana('cuenta');
+    }, []),
+  );
 
   useEffect(() => {
     if (user?.role === 'admin') {

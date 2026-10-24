@@ -1,22 +1,49 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 
+export type CartOption = { name: string; price?: number };
+
 export type CartItem = {
   id: string;
+  dishId: string;
   productName: string;
   quantity: number;
   totalPrice: number;
-  selectedOptions?: { name: string }[];
+  selectedOptions?: CartOption[];
 };
+
+type NuevoItem = {
+  id: string;
+  productName: string;
+  unitPrice: number;
+  quantity?: number;
+  selectedOptions?: CartOption[];
+};
+
+export function idLineaBandeja(dishId: string, extras?: CartOption[]) {
+  return lineaId(dishId, extras);
+}
 
 type CartContextValue = {
   items: CartItem[];
   totalItems: number;
   totalPrice: number;
-  addItem: (producto: { id: string; productName: string; unitPrice: number }) => void;
+  addItem: (producto: NuevoItem) => void;
   updateQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
 };
+
+function claveExtras(extras?: CartOption[]) {
+  return (extras ?? [])
+    .map((item) => item.name)
+    .sort()
+    .join('|');
+}
+
+function lineaId(dishId: string, extras?: CartOption[]) {
+  const extrasClave = claveExtras(extras);
+  return extrasClave ? `${dishId}::${extrasClave}` : dishId;
+}
 
 const CartContext = createContext<CartContextValue | null>(null);
 
@@ -33,11 +60,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       totalPrice,
       addItem: (producto) => {
         setItems((prev) => {
-          const existente = prev.find((item) => item.id === producto.id);
+          const id = lineaId(producto.id, producto.selectedOptions);
+          const extra = Math.max(1, producto.quantity ?? 1);
+          const existente = prev.find((item) => item.id === id);
           if (existente) {
-            const quantity = existente.quantity + 1;
+            const quantity = existente.quantity + extra;
             return prev.map((item) =>
-              item.id === producto.id
+              item.id === id
                 ? { ...item, quantity, totalPrice: producto.unitPrice * quantity }
                 : item,
             );
@@ -46,16 +75,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
           return [
             ...prev,
             {
-              id: producto.id,
+              id,
+              dishId: producto.id,
               productName: producto.productName,
-              quantity: 1,
-              totalPrice: producto.unitPrice,
+              quantity: extra,
+              totalPrice: producto.unitPrice * extra,
+              selectedOptions: producto.selectedOptions,
             },
           ];
         });
       },
       updateQuantity: (id, quantity) => {
-        if (quantity < 1) return;
+        if (quantity < 1) {
+          setItems((prev) => prev.filter((item) => item.id !== id));
+          return;
+        }
         setItems((prev) =>
           prev.map((item) =>
             item.id === id

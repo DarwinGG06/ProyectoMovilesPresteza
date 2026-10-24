@@ -1,12 +1,9 @@
 import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { Animated, Platform } from 'react-native';
+import { useState } from 'react';
 
 import { useControlDrawerHome } from '@/features/inicio/context/ControlDrawerHome';
 import { useCart } from '@/services/cart/CartContext';
 import { useSession } from '@/session/context';
-
-const usarNativo = Platform.OS !== 'web';
 
 export function useNavBar() {
   const { user, isAuthenticated } = useSession();
@@ -16,24 +13,6 @@ export function useNavBar() {
   const [usuarioAbierto, setUsuarioAbierto] = useState(false);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const pulso = useRef(new Animated.Value(1)).current;
-
-  // El contador del carrito late mientras haya algo dentro.
-  useEffect(() => {
-    if (totalItems === 0) {
-      pulso.setValue(1);
-      return;
-    }
-
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulso, { toValue: 1.15, duration: 700, useNativeDriver: usarNativo }),
-        Animated.timing(pulso, { toValue: 1, duration: 700, useNativeDriver: usarNativo }),
-      ]),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [pulso, totalItems]);
 
   // Con sesión abre el menú de usuario; sin ella, el modal de inicio de sesión.
   const abrirCuenta = () => {
@@ -47,7 +26,6 @@ export function useNavBar() {
   return {
     inicial: isAuthenticated && user?.name ? user.name.trim().charAt(0).toUpperCase() : undefined,
     totalItems,
-    pulso,
     irAlInicio: () => router.push('/home'),
     alternarDrawer: () => {
       if (drawerListo) {

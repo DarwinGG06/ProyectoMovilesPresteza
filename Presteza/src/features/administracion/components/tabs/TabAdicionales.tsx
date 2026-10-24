@@ -4,7 +4,7 @@ import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
 
 import { useTabAdicionales } from '../../hooks/useTabAdicionales';
-import type { AdicionalAdmin, AdicionalForm } from '../../types';
+import type { AdicionalAdmin, AdicionalForm, CategoriaAdmin } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioAdicional } from '../formularios/FormularioAdicional';
@@ -21,6 +21,7 @@ import {
 
 type TabAdicionalesProps = {
   adicionales: AdicionalAdmin[];
+  categorias: CategoriaAdmin[];
   guardando?: boolean;
   onGuardar: (datos: AdicionalForm, editando?: AdicionalAdmin | null) => Promise<boolean>;
   onAlternar: (adicional: AdicionalAdmin) => void;
@@ -29,12 +30,13 @@ type TabAdicionalesProps = {
 
 export function TabAdicionales({
   adicionales,
+  categorias = [],
   guardando,
   onGuardar,
   onAlternar,
   onEliminar,
 }: TabAdicionalesProps) {
-  const tab = useTabAdicionales(adicionales, onGuardar);
+  const tab = useTabAdicionales(adicionales, categorias, onGuardar);
 
   return (
     <View>
@@ -84,6 +86,9 @@ export function TabAdicionales({
                   <Text className="font-roboto-light text-sm text-tinta" numberOfLines={2}>
                     {adicional.name}
                   </Text>
+                  <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70" numberOfLines={1}>
+                    {tab.nombresCategoria(adicional.categoryIds)}
+                  </Text>
                   <AccionesAdmin>
                     <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(adicional)} />
                     <EnlaceAdmin
@@ -120,6 +125,9 @@ export function TabAdicionales({
                 <Text className="mt-1 font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {adicional.name}
                 </Text>
+                <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70" numberOfLines={2}>
+                  {tab.nombresCategoria(adicional.categoryIds)}
+                </Text>
                 <Text className="mt-2 font-roboto text-lg text-oro">
                   {formatCOP(adicional.price || 0)}
                 </Text>
@@ -140,7 +148,9 @@ export function TabAdicionales({
         titulo={tab.editando ? 'Editar adicional' : 'Nuevo adicional'}
         onCerrar={tab.cerrar}>
         <FormularioAdicional
+          key={tab.editando ? idDe(tab.editando) : 'nuevo'}
           valores={tab.valoresFormulario}
+          categorias={categorias}
           onCancelar={tab.cerrar}
           onGuardar={tab.guardar}
           guardando={guardando}

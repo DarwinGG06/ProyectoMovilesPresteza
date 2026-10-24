@@ -86,19 +86,36 @@ export function eliminarInsumo(jwt: string, id: string) {
   return request<void>(`/supplies/${id}`, { method: 'DELETE', token: jwt });
 }
 
-export function listarAdicionales(jwt: string) {
+function mapearAdicional(item: Record<string, unknown>) {
+  return {
+    _id: texto(item._id) || undefined,
+    id: texto(item.id) || undefined,
+    name: texto(item.name),
+    description: texto(item.description) || undefined,
+    price: Number(item.price) || 0,
+    available: item.available !== false,
+    categoryIds: Array.isArray(item.categoryIds) ? (item.categoryIds as string[]) : undefined,
+    dishIds: Array.isArray(item.dishIds) ? (item.dishIds as string[]) : undefined,
+  } as AdicionalAdmin;
+}
+
+export function listarAdicionales(jwt?: string) {
   return seguro(async () => {
-    const crudos = lista<Record<string, unknown>>(await request('/adds', { token: jwt }), 'adds');
-    return crudos.map((item) => ({
-      _id: texto(item._id) || undefined,
-      id: texto(item.id) || undefined,
-      name: texto(item.name),
-      description: texto(item.description) || undefined,
-      price: Number(item.price) || 0,
-      available: item.available !== false,
-      categoryIds: Array.isArray(item.categoryIds) ? (item.categoryIds as string[]) : undefined,
-      dishIds: Array.isArray(item.dishIds) ? (item.dishIds as string[]) : undefined,
-    })) as AdicionalAdmin[];
+    const crudos = lista<Record<string, unknown>>(
+      await request(jwt ? '/adds' : '/adds/available', jwt ? { token: jwt } : undefined),
+      'adds',
+    );
+    return crudos.map(mapearAdicional);
+  }, [] as AdicionalAdmin[]);
+}
+
+export function listarAdicionalesPorCategoria(categoryId: string) {
+  return seguro(async () => {
+    const crudos = lista<Record<string, unknown>>(
+      await request(`/adds/category/${categoryId}`),
+      'adds',
+    );
+    return crudos.map(mapearAdicional).filter((item) => item.available !== false && item.name);
   }, [] as AdicionalAdmin[]);
 }
 

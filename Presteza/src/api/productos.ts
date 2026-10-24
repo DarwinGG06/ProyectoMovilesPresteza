@@ -15,7 +15,11 @@ function normalizarProducto(crudo: Record<string, unknown>): Producto {
     _id: texto(crudo._id) || undefined,
     id: texto(crudo.id) || undefined,
     name: texto(crudo.name),
-    description: texto(crudo.description),
+    description:
+      texto(crudo.description) ||
+      texto(crudo.descripcion) ||
+      texto(crudo.desc) ||
+      texto(crudo.details),
     price: Number(crudo.price) || 0,
     categoryId,
     category:

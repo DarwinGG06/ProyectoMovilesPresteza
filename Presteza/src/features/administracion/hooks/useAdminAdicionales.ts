@@ -15,7 +15,9 @@ export function useAdminAdicionales() {
       if (!sesion) return false;
       const cuerpo = {
         name: datos.name.trim(),
+        description: datos.name.trim(),
         price: Number(datos.price),
+        categoryIds: datos.categoryIds ?? [],
         available: editando?.available !== false,
       };
 

@@ -90,6 +90,7 @@ export type InsumoForm = {
 export type AdicionalForm = {
   name: string;
   price: string;
+  categoryIds: string[];
 };
 
 export type AjustesForm = {

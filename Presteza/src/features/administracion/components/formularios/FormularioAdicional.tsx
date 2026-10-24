@@ -1,16 +1,21 @@
 import { View } from 'react-native';
 
 import Field from '@/components/Field';
+import Select from '@/components/Select';
 import { useFormulario } from '@/shared/hooks/useFormulario';
-import type { AdicionalForm } from '../../types';
+
+import type { AdicionalForm, CategoriaAdmin } from '../../types';
+import { idDe } from '../../utils';
 import { AccionesForm } from './AccionesForm';
 
 export function FormularioAdicional({
   valores,
+  categorias,
   onGuardar,
   guardando,
 }: {
   valores: AdicionalForm;
+  categorias: CategoriaAdmin[];
   onCancelar: () => void;
   onGuardar: (datos: AdicionalForm) => Promise<void>;
   guardando?: boolean;
@@ -36,6 +41,17 @@ export function FormularioAdicional({
         keyboardType="numeric"
         variante="linea"
         rules={{ required: 'Escribe el precio' }}
+      />
+      <Select
+        control={control}
+        name="categoryIds"
+        label="Categorías"
+        multiple
+        options={categorias.map((categoria) => ({ value: idDe(categoria), label: categoria.name }))}
+        rules={{
+          validate: (valor) =>
+            (Array.isArray(valor) && valor.length > 0) || 'Elige al menos una categoría',
+        }}
       />
       <AccionesForm onGuardar={guardar} guardando={guardando} />
     </View>

@@ -5,7 +5,6 @@ import Button from '@/components/Button';
 import { idPedido } from '@/api/perfil';
 import { formatCOP } from '@/services/cart/CartContext';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
-import { Footer } from '@/shared/components/footer';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
@@ -96,17 +95,10 @@ export function SeguimientoScreen() {
                   </View>
                 </View>
 
-                <Button
-                  className="mt-8"
-                  variant="secondary"
-                  text="ACTUALIZAR"
-                  onPress={() => void seguimiento.recargar()}
-                />
-                <Button className="mt-3" variant="gold" text="MI CUENTA" onPress={seguimiento.irAlPerfil} />
+                <Button className="mt-8" variant="gold" text="MI CUENTA" onPress={seguimiento.irAlPerfil} />
               </View>
             )}
           </View>
-          <Footer />
         </ScrollView>
       </Pergamino>
     </EvitarTeclado>

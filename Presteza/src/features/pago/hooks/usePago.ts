@@ -92,7 +92,7 @@ export function usePago() {
         products: items.map((item) => {
           const extras = item.selectedOptions?.map((opcion) => opcion.name).join(', ');
           return {
-            dishId: item.id,
+            dishId: item.dishId || item.id,
             name: item.productName,
             quantity: item.quantity,
             unit_price: item.totalPrice / item.quantity,

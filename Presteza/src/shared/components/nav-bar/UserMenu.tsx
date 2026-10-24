@@ -36,7 +36,7 @@ export function UserMenu({ visible, onClose }: UserMenuProps) {
             <Pressable
               onPress={() => {
                 onClose();
-                router.push((user.role === 'admin' ? '/home/admin' : '/perfil') as Href);
+                router.replace((user.role === 'admin' ? '/home/admin' : '/perfil') as Href);
               }}
               className="mx-4 mt-4 flex-row items-center justify-between border-b border-madera/15 px-1 py-4">
               <View className="flex-row items-center gap-3">

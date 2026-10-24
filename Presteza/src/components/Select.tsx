@@ -39,7 +39,15 @@ type Props<T extends FieldValues> = {
   rules?: RegisterOptions<T, Path<T>>;
   /** `barra` reparte el ancho. `fila` se desliza en una línea. */
   variante?: 'chips' | 'barra' | 'fila';
+  /** Varias categorías a la vez (el valor del campo es `string[]`). */
+  multiple?: boolean;
 };
+
+function listaDe(value: unknown) {
+  if (Array.isArray(value)) return value.map(String);
+  if (value === undefined || value === null || value === '') return [] as string[];
+  return [String(value)];
+}
 
 export default function Select<T extends FieldValues>({
   control,
@@ -48,13 +56,27 @@ export default function Select<T extends FieldValues>({
   options,
   rules,
   variante = 'chips',
+  multiple = false,
 }: Props<T>) {
   return (
     <Controller
       control={control}
       name={name}
       rules={rules}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const elegidos = listaDe(value);
+        const marcar = (opcion: SelectValue) => {
+          if (!multiple) {
+            onChange(opcion);
+            return;
+          }
+          const clave = String(opcion);
+          onChange(
+            elegidos.includes(clave) ? elegidos.filter((item) => item !== clave) : [...elegidos, clave],
+          );
+        };
+
+        return (
         <View className="gap-1.5">
           <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
           {variante === 'fila' ? (
@@ -64,11 +86,11 @@ export default function Select<T extends FieldValues>({
               contentContainerClassName="flex-row">
               {options.map((option) => {
                 const opcion = valorDe(option);
-                const active = opcion === value;
+                const active = multiple ? elegidos.includes(String(opcion)) : opcion === value;
                 return (
                   <Pressable
                     key={claveDe(opcion)}
-                    onPress={() => onChange(opcion)}
+                    onPress={() => marcar(opcion)}
                     className={`mr-5 py-2 ${active ? 'border-b border-oro' : ''}`}>
                     <Text
                       className={`font-roboto text-[13px] ${
@@ -87,11 +109,11 @@ export default function Select<T extends FieldValues>({
               }>
               {options.map((option) => {
                 const opcion = valorDe(option);
-                const active = opcion === value;
+                const active = multiple ? elegidos.includes(String(opcion)) : opcion === value;
                 return (
                   <Pressable
                     key={claveDe(opcion)}
-                    onPress={() => onChange(opcion)}
+                    onPress={() => marcar(opcion)}
                     className={
                       variante === 'barra'
                         ? `flex-1 items-center py-3 ${active ? 'border-b-2 border-oro' : ''}`
@@ -113,7 +135,8 @@ export default function Select<T extends FieldValues>({
           )}
           {!!error && <Text className="font-roboto text-xs text-red-600">{error.message}</Text>}
         </View>
-      )}
+        );
+      }}
     />
   );
 }

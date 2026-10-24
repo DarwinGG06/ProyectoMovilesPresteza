@@ -1,4 +1,4 @@
-import { Animated, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useNavBar } from '@/shared/hooks/useNavBar';
@@ -28,11 +28,11 @@ export function NavBar() {
             <View>
               <BotonBarra icono="bag-handle-outline" onPress={nav.abrirCarrito} />
               {nav.totalItems > 0 ? (
-                <Animated.View
-                  style={{ transform: [{ scale: nav.pulso }] }}
-                  className="absolute right-0.5 top-0.5 min-h-[14px] min-w-[14px] items-center justify-center bg-marca px-1">
-                  <Text className="font-roboto text-[8px] text-pergamino">{nav.totalItems}</Text>
-                </Animated.View>
+                <View className="absolute right-0 top-1 h-[18px] min-w-[18px] items-center justify-center rounded-full bg-marca px-1">
+                  <Text className="text-center font-roboto text-[10px] leading-[12px] text-crema">
+                    {nav.totalItems > 9 ? '9+' : nav.totalItems}
+                  </Text>
+                </View>
               ) : null}
             </View>
             <BotonBarra icono="menu" onPress={nav.alternarDrawer} />

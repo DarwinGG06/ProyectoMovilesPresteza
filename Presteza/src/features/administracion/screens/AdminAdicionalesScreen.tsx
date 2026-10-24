@@ -9,6 +9,7 @@ export function AdminAdicionalesScreen() {
     <PantallaPestanaAdmin>
       <TabAdicionales
         adicionales={admin.adicionales}
+        categorias={admin.categorias}
         guardando={admin.guardando}
         onGuardar={admin.guardarAdicional}
         onAlternar={admin.alternarAdicional}

@@ -13,12 +13,12 @@ export function useSeguimiento() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const recargar = useCallback(async () => {
+  const recargar = useCallback(async (silencio = false) => {
     if (!user?.id) {
       setCargando(false);
       return;
     }
-    setError(null);
+    if (!silencio) setError(null);
     try {
       const lista = await obtenerPedidos(user.id);
       const ordenados = [...lista].sort(
@@ -27,8 +27,10 @@ export function useSeguimiento() {
       const encontrado = id ? ordenados.find((item) => idPedido(item) === id) : ordenados[0];
       setPedido(encontrado ?? null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo cargar el pedido.');
-      setPedido(null);
+      if (!silencio) {
+        setError(err instanceof Error ? err.message : 'No se pudo cargar el pedido.');
+        setPedido(null);
+      }
     } finally {
       setCargando(false);
     }
@@ -39,13 +41,19 @@ export function useSeguimiento() {
     void recargar();
   }, [recargar]);
 
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) return;
+    const timer = setInterval(() => void recargar(true), 12000);
+    return () => clearInterval(timer);
+  }, [isAuthenticated, recargar, user?.id]);
+
   return {
     pedido,
     cargando,
     error,
     isAuthenticated,
     recargar,
-    irAlPerfil: () => router.push('/perfil'),
+    irAlPerfil: () => router.replace('/perfil'),
     irAlMenu: () => router.push('/home/menu'),
   };
 }

@@ -54,6 +54,7 @@ export function useDetallePlato() {
 
   const extrasElegidos = extras.filter((extra) => elegidos.includes(idDe(extra) || extra.name));
   const opciones = extrasElegidos.map((extra) => ({
+    id: idDe(extra) || undefined,
     name: extra.price ? `${extra.name} (+${formatCOP(extra.price)})` : extra.name,
     price: extra.price,
   }));

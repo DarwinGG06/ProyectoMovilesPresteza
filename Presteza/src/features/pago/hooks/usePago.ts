@@ -84,21 +84,15 @@ export function usePago() {
     try {
       const puntos = canjear ? (cotizacion?.pointsRedeemed ?? 0) : 0;
       const creado = await crearPedidoConPuntos(token, {
-        usuarioId: user.id,
-        user_name: user.name,
         payment_method: metodo,
-        total: totalPrice,
         pointsToRedeem: puntos,
-        products: items.map((item) => {
-          const extras = item.selectedOptions?.map((opcion) => opcion.name).join(', ');
-          return {
-            dishId: item.dishId || item.id,
-            name: item.productName,
-            quantity: item.quantity,
-            unit_price: item.totalPrice / item.quantity,
-            description: extras ? `${item.productName} · ${extras}` : item.productName,
-          };
-        }),
+        products: items.map((item) => ({
+          dishId: item.dishId || item.id,
+          quantity: item.quantity,
+          adds: (item.selectedOptions ?? [])
+            .filter((opcion) => opcion.id)
+            .map((opcion) => ({ addId: opcion.id as string })),
+        })),
       });
       const pedido = entidad(creado, 'order', 'pedido');
       const id = idDe(pedido);

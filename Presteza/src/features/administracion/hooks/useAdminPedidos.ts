@@ -31,17 +31,12 @@ export function useAdminPedidos() {
 
       const cuerpo = {
         usuarioId: cliente.id,
-        user_name: cliente.name,
         payment_method: datos.payment_method,
         status: estadoPedidoBackend(datos.status),
         products: datos.lineas.map((linea) => ({
           dishId: linea.dishId,
-          name: linea.name,
           quantity: linea.quantity,
-          unit_price: linea.unit_price,
-          description: linea.description || linea.name,
         })),
-        total: datos.lineas.reduce((suma, linea) => suma + linea.unit_price * linea.quantity, 0),
       };
 
       setGuardando(true);

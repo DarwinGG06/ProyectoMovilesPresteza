@@ -124,26 +124,18 @@ export async function cotizarPuntos(
 export async function crearPedidoConPuntos(
   jwt: string,
   datos: {
-    usuarioId: string;
-    user_name: string;
     payment_method: string;
     products: {
       dishId: string;
-      name: string;
       quantity: number;
-      unit_price: number;
-      description: string;
+      adds?: { addId: string }[];
     }[];
-    total: number;
     pointsToRedeem?: number;
   },
 ) {
   return request(`/orders`, {
     method: 'POST',
     token: jwt,
-    body: {
-      ...datos,
-      status: 'pendiente',
-    },
+    body: datos,
   });
 }

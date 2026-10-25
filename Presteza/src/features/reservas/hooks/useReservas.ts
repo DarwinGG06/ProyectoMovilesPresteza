@@ -53,7 +53,7 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
   }, []);
 
   const recargar = useCallback(async () => {
-    if (!token) {
+    if (!token || (alcance === 'todas' && user?.role !== 'admin')) {
       setReservas([]);
       setMesas([]);
       setCargando(false);
@@ -79,46 +79,11 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
     }
     setMesas(resultadoMesas.status === 'fulfilled' ? resultadoMesas.value : []);
     setCargando(false);
-  }, [alcance, aplicar, token]);
+  }, [alcance, aplicar, token, user?.role]);
 
   useEffect(() => {
-    let viva = true;
-
-    void (async () => {
-      if (!token) {
-        if (!viva) return;
-        setReservas([]);
-        setMesas([]);
-        setCargando(false);
-        return;
-      }
-
-      setError(null);
-      setCargando(true);
-      const [resultadoReservas, resultadoMesas] = await Promise.allSettled([
-        listarReservas(token, alcance),
-        listarMesas(),
-      ]);
-      if (!viva) return;
-
-      if (resultadoReservas.status === 'fulfilled') {
-        aplicar(() => resultadoReservas.value);
-      } else {
-        aplicar(() => []);
-        setError(
-          resultadoReservas.reason instanceof Error
-            ? resultadoReservas.reason.message
-            : 'No se pudieron cargar las reservas.',
-        );
-      }
-      setMesas(resultadoMesas.status === 'fulfilled' ? resultadoMesas.value : []);
-      setCargando(false);
-    })();
-
-    return () => {
-      viva = false;
-    };
-  }, [alcance, aplicar, token]);
+    void recargar();
+  }, [recargar]);
 
   const lista = useMemo(() => {
     const ordenadas = ordenarReservas(reservas);

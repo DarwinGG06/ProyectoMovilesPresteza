@@ -7,7 +7,7 @@ import { formatCOP } from '@/services/cart/CartContext';
 
 import { FILTROS_PEDIDOS, useTabPedidos } from '../../hooks/useTabPedidos';
 import type { ClienteAdmin, PedidoAdmin, PedidoForm, ProductoAdmin } from '../../types';
-import { estadoPedidoBackend, formatoFechaHora, idDe, textoEstadoPedido } from '../../utils';
+import { formatoFechaHora, idDe, siguientesEstadosPedido, textoEstadoPedido } from '../../utils';
 import {
   AccionesAdmin,
   BotonAgregarAdmin,
@@ -24,14 +24,6 @@ import {
   GrillaAdmin,
   InterruptorVista,
 } from '../VistaCarta';
-
-const ESTADOS = [
-  { id: 'pending', etiqueta: 'PENDIENTE' },
-  { id: 'preparing', etiqueta: 'PREPARANDO' },
-  { id: 'ready', etiqueta: 'LISTO' },
-  { id: 'delivered', etiqueta: 'ENTREGADO' },
-  { id: 'cancelled', etiqueta: 'CANCELAR' },
-] as const;
 
 type TabPedidosProps = {
   pedidos: PedidoAdmin[];
@@ -190,13 +182,15 @@ export function TabPedidos({
             <Text className="font-roboto text-lg text-marca">{formatCOP(detalle.total || 0)}</Text>
 
             <Text className="mt-2 font-roboto text-[10px] tracking-[2px] text-marca">ESTADO</Text>
+            <Text className="font-roboto text-sm text-tinta">
+              {textoEstadoPedido(detalle.status)}
+            </Text>
             <AccionesAdmin>
-              {ESTADOS.map((estado) => (
+              {siguientesEstadosPedido(detalle.status).map((estado) => (
                 <EnlaceAdmin
                   key={estado.id}
                   etiqueta={estado.etiqueta}
-                  activo={estadoPedidoBackend(detalle.status) === estadoPedidoBackend(estado.id)}
-                  peligro={estado.id === 'cancelled'}
+                  peligro={estado.peligro}
                   onPress={() => {
                     onCambiarEstado(detalle, estado.id);
                     tab.cerrarDetalle();

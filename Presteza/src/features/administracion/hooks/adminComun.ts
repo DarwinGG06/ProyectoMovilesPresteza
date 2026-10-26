@@ -57,14 +57,17 @@ export function useSesionAdmin() {
 }
 
 export function useListaAdmin<T>(listar: (token: string) => Promise<T[]>) {
-  const { token, aviso, conToken } = useSesionAdmin();
+  const { token, aviso, conToken, user } = useSesionAdmin();
   const [lista, setLista] = useState<T[]>([]);
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const recargar = useCallback(async () => {
-    if (!token) return;
+    if (!token || user?.role !== 'admin') {
+      setCargando(false);
+      return;
+    }
     setError(null);
     setCargando(true);
     try {
@@ -75,7 +78,7 @@ export function useListaAdmin<T>(listar: (token: string) => Promise<T[]>) {
     } finally {
       setCargando(false);
     }
-  }, [listar, token]);
+  }, [listar, token, user?.role]);
 
   useEffect(() => {
     let viva = true;

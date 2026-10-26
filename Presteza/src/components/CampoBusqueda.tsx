@@ -1,6 +1,8 @@
 import React from 'react';
 import { TextInput } from 'react-native';
 
+import { colores } from '@/theme/tokens';
+
 type Props = {
   value: string;
   onChangeText: (texto: string) => void;
@@ -27,7 +29,7 @@ export default function CampoBusqueda({
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      placeholderTextColor={variant === 'oscuro' ? '#d4af7788' : '#a3a3a3'}
+      placeholderTextColor={variant === 'oscuro' ? colores['oro-suave'] : colores.placeholder}
       autoCapitalize="none"
       className={`font-roboto ${clases} ${className ?? ''}`}
     />

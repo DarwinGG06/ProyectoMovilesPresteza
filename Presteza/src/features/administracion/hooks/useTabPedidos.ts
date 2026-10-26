@@ -18,6 +18,8 @@ function valoresDe(pedido?: PedidoAdmin | null, clienteId = ''): PedidoForm {
     userId: pedido?.userId || clienteId,
     payment_method: pedido?.payment_method || 'cash',
     status: estadoPedidoBackend(pedido?.status || 'pendiente'),
+    tipo: pedido?.tipo === 'domicilio' ? 'domicilio' : 'mesa',
+    tableNumber: pedido?.tableNumber || '',
     lineas: (pedido?.products ?? []).map((producto) => ({
       dishId: producto.dishId || producto.name || '',
       name: producto.name || 'Plato',

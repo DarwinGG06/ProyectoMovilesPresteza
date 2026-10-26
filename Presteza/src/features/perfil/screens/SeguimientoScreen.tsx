@@ -8,7 +8,7 @@ import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado'
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
-import { formatFecha, textoEstadoPedido } from '../utils';
+import { formatFecha, textoEntrega, textoEstadoPedido } from '../utils';
 import { useSeguimiento } from '../hooks/useSeguimiento';
 
 export function SeguimientoScreen() {
@@ -71,6 +71,11 @@ export function SeguimientoScreen() {
                 <Text className="mt-1 font-roboto text-sm text-tinta/70">
                   {formatFecha(pedido.createdAt)}
                 </Text>
+                {textoEntrega(pedido) ? (
+                  <Text className="mt-2 font-roboto text-sm text-tinta/70">
+                    {textoEntrega(pedido)}
+                  </Text>
+                ) : null}
 
                 <View className="mt-8">
                   <BarraEstadosPedido status={pedido.status} amplia />

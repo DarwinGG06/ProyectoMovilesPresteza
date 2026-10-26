@@ -67,6 +67,7 @@ export function useTabProductos(
       price: editando ? String(editando.price) : '',
       categoryId: editando?.categoryId ?? idDe(categorias[0]),
       imageUrl: editando?.imageUrl ?? '',
+      imagePublicId: editando?.imagePublicId ?? '',
       modelUrl: editando?.modelUrl ?? '',
     } satisfies ProductoForm,
   };

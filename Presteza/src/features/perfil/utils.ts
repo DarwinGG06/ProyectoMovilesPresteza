@@ -74,3 +74,13 @@ export function metodoPagoNombre(metodo: string) {
 export function totalItemsPedido(pedido: Pedido) {
   return pedido.products?.reduce((suma, item) => suma + (item.quantity || 0), 0) ?? 0;
 }
+
+export function textoEntrega(pedido: {
+  tipo?: 'mesa' | 'domicilio' | null;
+  tableNumber?: string | null;
+  deliveryAddress?: string | null;
+}) {
+  if (pedido.tipo === 'domicilio') return pedido.deliveryAddress || 'Domicilio';
+  if (pedido.tipo === 'mesa') return pedido.tableNumber ? `Mesa ${pedido.tableNumber}` : 'En mesa';
+  return '';
+}

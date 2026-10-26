@@ -8,6 +8,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { colores } from '@/theme/tokens';
+
 const PASOS = ['Pendiente', 'Preparando', 'Listo', 'Entregado'] as const;
 
 export function pasoDeEstado(status: string) {
@@ -78,7 +80,7 @@ export function BarraEstadosPedido({
               left: 20,
               top: 9,
               height: 2,
-              backgroundColor: '#6b1d3d',
+              backgroundColor: colores.marca,
             },
             relleno,
           ]}

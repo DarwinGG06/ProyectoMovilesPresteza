@@ -33,6 +33,10 @@ No pegues estas clases a mano en una pantalla nueva. Importa el componente.
 
 ---
 
+Los valores viven en `src/theme/tokens.ts`. Las pantallas usan `className`
+(`bg-pergamino`, `rounded-tarjeta`, `shadow-elevada`). Si un API no acepta
+clase (`placeholderTextColor`, `Ionicons`), se importa `colores`.
+
 ## Paleta (`tailwind.config.js`)
 
 | Papel | Token | Hex | Dónde se ve |

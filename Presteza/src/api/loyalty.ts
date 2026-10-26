@@ -125,6 +125,9 @@ export async function crearPedidoConPuntos(
   jwt: string,
   datos: {
     payment_method: string;
+    tipo: 'mesa' | 'domicilio';
+    tableNumber?: string;
+    deliveryAddress?: string;
     products: {
       dishId: string;
       quantity: number;

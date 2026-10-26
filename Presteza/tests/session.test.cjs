@@ -113,6 +113,7 @@ async function mount(store, authApi = auth, options = {}) {
       setToken: (token) => {
         apiToken = token;
       },
+      setOnUnauthorized: () => {},
     },
     '../api/logger': logger,
     './storage': store,
@@ -323,6 +324,7 @@ for (const scenario of [
     await assert.rejects(request('/auth/login', { method: 'POST' }), {
       message: scenario.expected,
     });
+    // El 401 de login no cierra sesión: no había token en esa petición.
     assert.equal(errors[0][2].mensaje, scenario.logMessage ?? scenario.message);
     if (scenario.logMessage) {
       assert.equal(JSON.stringify(errors).includes(scenario.message), false);
@@ -330,6 +332,37 @@ for (const scenario of [
     }
   });
 }
+
+test('un 401 con token cierra la sesión en el cliente HTTP', async () => {
+  let cerrado = false;
+  const { request, setToken, setOnUnauthorized } = load(
+    'src/api/client.ts',
+    {
+      './config': { API_URL: 'https://api.example.invalid' },
+      './logger': {
+        ...logger,
+        redactarCuerpo: (value) => value,
+        redactarRespuesta: (value) => value,
+      },
+    },
+    {
+      AbortController,
+      setTimeout,
+      clearTimeout,
+      fetch: async () => ({
+        ok: false,
+        status: 401,
+        json: async () => ({ message: 'Unauthorized' }),
+      }),
+    },
+  );
+  setToken('token-viejo');
+  setOnUnauthorized(() => {
+    cerrado = true;
+  });
+  await assert.rejects(request('/orders'), { message: 'Unauthorized' });
+  assert.equal(cerrado, true);
+});
 
 test('espera la restauración antes de montar pantallas que usan autenticación', async () => {
   let resolveRead;

@@ -6,7 +6,7 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { idPedido } from '@/api/perfil';
 import { usePedidosPerfil } from '../../hooks/usePedidosPerfil';
 import type { Pedido } from '../../types';
-import { formatFecha, metodoPagoNombre, textoEstadoPedido, totalItemsPedido } from '../../utils';
+import { formatFecha, metodoPagoNombre, textoEntrega, textoEstadoPedido, totalItemsPedido } from '../../utils';
 import { EnlaceAccion, LineaCuenta } from '../elementos';
 import { EstadoVacio, TarjetaPerfil } from '../TarjetaPerfil';
 
@@ -76,6 +76,11 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
                         </Text>
                       </View>
                     ))}
+                    {textoEntrega(pedido) ? (
+                      <Text className="mt-2 font-roboto text-xs text-tinta/70">
+                        {textoEntrega(pedido)}
+                      </Text>
+                    ) : null}
                     <Text className="mt-2 font-roboto text-xs text-tinta/70">
                       Pago: {metodoPagoNombre(pedido.payment_method)}
                     </Text>

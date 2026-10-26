@@ -155,6 +155,16 @@ export function enriquecerClientes(
     });
 }
 
+export function textoEntrega(pedido: {
+  tipo?: 'mesa' | 'domicilio' | null;
+  tableNumber?: string | null;
+  deliveryAddress?: string | null;
+}) {
+  if (pedido.tipo === 'domicilio') return pedido.deliveryAddress || 'Domicilio';
+  if (pedido.tipo === 'mesa') return pedido.tableNumber ? `Mesa ${pedido.tableNumber}` : 'En mesa';
+  return '';
+}
+
 export function iniciales(nombre?: string) {
   if (!nombre) return 'C';
   return nombre

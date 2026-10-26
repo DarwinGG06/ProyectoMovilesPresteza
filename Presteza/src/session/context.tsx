@@ -10,7 +10,7 @@ import React, {
 import { ActivityIndicator, AppState, Platform, Text, View } from 'react-native';
 
 import * as api from '../api/auth';
-import { setToken } from '../api/client';
+import { setOnUnauthorized, setToken } from '../api/client';
 import { logError, logInfo } from '../api/logger';
 import type { User } from '../types';
 import { authenticateDevice, getBiometricSupport, type BiometricSupport } from './biometrics';

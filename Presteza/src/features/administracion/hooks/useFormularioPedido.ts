@@ -47,5 +47,5 @@ export function useFormularioPedido(
     );
   };
 
-  return { control, guardar: handleSubmit(onGuardar), lineas, total, agregar, cambiarCantidad };
+  return { control, guardar: handleSubmit(onGuardar), lineas, total, agregar, cambiarCantidad, watch };
 }

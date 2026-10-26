@@ -117,10 +117,21 @@ export async function marcarTarjetaPrincipal(userId: string, jwt: string, index:
   return extraerUsuario(data);
 }
 
+function normalizarPedido(crudo: Pedido): Pedido {
+  const extra = crudo as Pedido & { table_number?: string; delivery_address?: string; fulfillment_type?: string };
+  const tipoCrudo = extra.tipo || extra.fulfillment_type;
+  return {
+    ...crudo,
+    tipo: tipoCrudo === 'domicilio' ? 'domicilio' : tipoCrudo === 'mesa' ? 'mesa' : crudo.tipo,
+    tableNumber: extra.tableNumber || extra.table_number || null,
+    deliveryAddress: extra.deliveryAddress || extra.delivery_address || null,
+  };
+}
+
 export async function obtenerPedidos(userId: string) {
   const data = await request<RespuestaPedidos>(`/orders/user/${userId}`);
-  if (Array.isArray(data)) return data;
-  return data.orders ?? [];
+  const lista = Array.isArray(data) ? data : (data.orders ?? []);
+  return lista.map(normalizarPedido);
 }
 
 export async function obtenerReservas(jwt: string) {

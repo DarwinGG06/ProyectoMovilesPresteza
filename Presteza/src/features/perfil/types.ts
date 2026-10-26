@@ -117,6 +117,9 @@ export type Pedido = {
   id?: string;
   total: number;
   payment_method: string;
+  tipo?: 'mesa' | 'domicilio' | null;
+  tableNumber?: string | null;
+  deliveryAddress?: string | null;
   products: ProductoPedido[];
   status: string;
   user_name?: string;

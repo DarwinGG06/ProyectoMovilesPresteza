@@ -7,7 +7,7 @@ import { formatCOP } from '@/services/cart/CartContext';
 
 import { FILTROS_PEDIDOS, useTabPedidos } from '../../hooks/useTabPedidos';
 import type { ClienteAdmin, PedidoAdmin, PedidoForm, ProductoAdmin } from '../../types';
-import { formatoFechaHora, idDe, siguientesEstadosPedido, textoEstadoPedido } from '../../utils';
+import { formatoFechaHora, idDe, siguientesEstadosPedido, textoEntrega, textoEstadoPedido } from '../../utils';
 import {
   AccionesAdmin,
   BotonAgregarAdmin,
@@ -104,6 +104,7 @@ export function TabPedidos({
                       </Text>
                       <Text className="mt-1 font-roboto text-sm text-tinta/60" numberOfLines={1}>
                         {pedido.user_name || 'Cliente'}
+                        {textoEntrega(pedido) ? ` · ${textoEntrega(pedido)}` : ''}
                       </Text>
                       <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70">
                         {formatoFechaHora(pedido.createdAt)}
@@ -169,6 +170,9 @@ export function TabPedidos({
             <Text className="font-roboto text-sm text-tinta/70">
               {detalle.user_name || 'Cliente'}
             </Text>
+            {textoEntrega(detalle) ? (
+              <Text className="font-roboto text-sm text-tinta/55">{textoEntrega(detalle)}</Text>
+            ) : null}
             <Text className="font-roboto text-sm text-tinta/55">
               {formatoFechaHora(detalle.createdAt)}
             </Text>

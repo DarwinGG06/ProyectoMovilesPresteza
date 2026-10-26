@@ -20,6 +20,9 @@ export type PedidoAdmin = {
   id?: string;
   total: number;
   payment_method?: string;
+  tipo?: 'mesa' | 'domicilio' | null;
+  tableNumber?: string | null;
+  deliveryAddress?: string | null;
   products?: {
     dishId?: string;
     name?: string;
@@ -119,6 +122,8 @@ export type PedidoForm = {
   userId: string;
   payment_method: string;
   status: string;
+  tipo: 'mesa' | 'domicilio';
+  tableNumber: string;
   lineas: LineaPedido[];
 };
 

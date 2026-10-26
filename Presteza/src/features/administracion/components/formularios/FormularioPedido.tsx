@@ -3,6 +3,8 @@ import { Pressable, Text, View } from 'react-native';
 import Select from '@/components/Select';
 import { formatCOP } from '@/services/cart/CartContext';
 
+import { MESAS_SALON } from '@/features/reservas/data';
+
 import { useFormularioPedido } from '../../hooks/useFormularioPedido';
 import type { ClienteAdmin, PedidoForm, ProductoAdmin } from '../../types';
 import { idDe } from '../../utils';
@@ -38,11 +40,12 @@ export function FormularioPedido({
   guardando?: boolean;
   bloquearCliente?: boolean;
 }) {
-  const { control, guardar, lineas, total, agregar, cambiarCantidad } = useFormularioPedido(
+  const { control, guardar, lineas, total, agregar, cambiarCantidad, watch } = useFormularioPedido(
     valores,
     onGuardar,
   );
   const clienteFijo = clientes.find((cliente) => cliente.id === valores.userId);
+  const tipo = watch('tipo');
 
   return (
     <View>
@@ -64,6 +67,40 @@ export function FormularioPedido({
         />
       ) : (
         <Text className="font-roboto text-sm text-texto/55">No hay clientes registrados.</Text>
+      )}
+
+      <View className="mt-6">
+        <Select
+          control={control}
+          name="tipo"
+          label="Entrega"
+          variante="barra"
+          options={[
+            { value: 'mesa', label: 'Mesa' },
+            { value: 'domicilio', label: 'Domicilio' },
+          ]}
+          rules={{ required: 'Elige mesa o domicilio' }}
+        />
+      </View>
+
+      {tipo === 'mesa' ? (
+        <View className="mt-6">
+          <Select
+            control={control}
+            name="tableNumber"
+            label="Mesa"
+            variante="fila"
+            options={MESAS_SALON.map((mesa) => ({
+              value: mesa.id,
+              label: `Mesa ${mesa.id}`,
+            }))}
+            rules={{ required: 'Elige la mesa' }}
+          />
+        </View>
+      ) : (
+        <Text className="mt-4 font-roboto text-sm text-texto/55">
+          Se usa la dirección principal del cliente.
+        </Text>
       )}
 
       <View className="mt-6">

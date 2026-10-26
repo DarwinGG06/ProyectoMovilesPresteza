@@ -33,6 +33,8 @@ export function useAdminPedidos() {
         usuarioId: cliente.id,
         payment_method: datos.payment_method,
         status: estadoPedidoBackend(datos.status),
+        tipo: datos.tipo,
+        tableNumber: datos.tipo === 'mesa' ? datos.tableNumber : undefined,
         products: datos.lineas.map((linea) => ({
           dishId: linea.dishId,
           quantity: linea.quantity,

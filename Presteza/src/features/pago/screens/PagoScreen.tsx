@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
 import Badge from '@/components/Badge';
 import Button from '@/components/Button';
@@ -17,10 +17,11 @@ export function PagoScreen() {
   return (
     <>
       <ContenedorPantalla titulo="Pago">
-        <Badge text="EN MESA" className="mt-4" />
+        <Badge text={pago.tipo === 'domicilio' ? 'DOMICILIO' : 'MESA'} className="mt-4" />
         <Text className="mt-3 font-roboto text-base leading-6 text-texto/70">
-          Confirmas el pedido aquí. Se paga en el restaurante y los puntos se acreditan cuando
-          quede entregado.
+          {pago.tipo === 'domicilio'
+            ? 'Revisa o cambia la dirección. Los puntos se acreditan al entregarse.'
+            : 'Elige la mesa. Los puntos se acreditan al entregarse.'}
         </Text>
 
         {pago.items.length === 0 ? (
@@ -133,6 +134,114 @@ export function PagoScreen() {
                     </Text>
                   ) : null}
                 </>
+              )}
+            </Tarjeta>
+
+            <Tarjeta className="mt-4 gap-3">
+              <Badge text="ENTREGA" variant="sello" />
+              <View className="flex-row">
+                {(
+                  [
+                    { value: 'mesa' as const, label: 'Mesa' },
+                    { value: 'domicilio' as const, label: 'Domicilio' },
+                  ] as const
+                ).map((opcion) => {
+                  const activo = pago.tipo === opcion.value;
+                  return (
+                    <Pressable
+                      key={opcion.value}
+                      onPress={() => pago.setTipo(opcion.value)}
+                      hitSlop={8}
+                      className="mr-6 py-2.5">
+                      <Text
+                        className={`font-roboto text-[11px] tracking-[2px] ${
+                          activo ? 'text-tinta' : 'text-tinta/45'
+                        }`}>
+                        {opcion.label.toUpperCase()}
+                      </Text>
+                      <View className={`mt-1.5 h-px w-8 ${activo ? 'bg-marca' : 'bg-transparent'}`} />
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              {pago.tipo === 'mesa' ? (
+                <View className="flex-row flex-wrap">
+                  {pago.mesas.map((numero) => {
+                    const activo = pago.mesa === numero;
+                    return (
+                      <Pressable
+                        key={numero}
+                        onPress={() => pago.setMesa(numero)}
+                        hitSlop={6}
+                        className="mr-1 min-w-[44px] items-center py-2.5">
+                        <Text
+                          className={`font-roboto text-[12px] ${
+                            activo ? 'text-tinta' : 'text-tinta/45'
+                          }`}>
+                          {numero}
+                        </Text>
+                        <View className={`mt-1 h-px w-5 ${activo ? 'bg-marca' : 'bg-transparent'}`} />
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View className="gap-4">
+                  {pago.guardadas.length > 0 ? (
+                    <View>
+                      {pago.guardadas.map((dir, i) => (
+                        <Pressable
+                          key={`${dir.name}-${i}`}
+                          onPress={() => pago.elegirGuardada(i)}
+                          className="border-b border-madera/15 py-3">
+                          <Text
+                            className={`font-roboto text-[10px] tracking-[1.5px] ${
+                              pago.indice === i ? 'text-marca' : 'text-tinta/40'
+                            }`}>
+                            {(dir.name || 'Dirección').toUpperCase()}
+                          </Text>
+                          <Text className="mt-1 font-serif-light text-lg text-tinta">
+                            {dir.address}
+                          </Text>
+                          {dir.neighborhood ? (
+                            <Text className="mt-0.5 font-roboto text-xs text-tinta/50">
+                              {dir.neighborhood}
+                            </Text>
+                          ) : null}
+                        </Pressable>
+                      ))}
+                      <Pressable onPress={pago.nuevaDireccion} className="py-3">
+                        <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                          NUEVA DIRECCIÓN
+                        </Text>
+                      </Pressable>
+                    </View>
+                  ) : null}
+
+                  <TextInput
+                    className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
+                    placeholder="Nombre (casa, trabajo…)"
+                    placeholderTextColor="rgba(42, 24, 16, 0.4)"
+                    value={pago.formulario.name}
+                    onChangeText={(valor) => pago.cambiarCampo('name', valor)}
+                  />
+                  <TextInput
+                    className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
+                    placeholder="Calle y número"
+                    placeholderTextColor="rgba(42, 24, 16, 0.4)"
+                    value={pago.formulario.address}
+                    onChangeText={(valor) => pago.cambiarCampo('address', valor)}
+                  />
+                  <TextInput
+                    className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
+                    placeholder="Barrio"
+                    placeholderTextColor="rgba(42, 24, 16, 0.4)"
+                    value={pago.formulario.neighborhood}
+                    onChangeText={(valor) => pago.cambiarCampo('neighborhood', valor)}
+                  />
+                  <Text className="font-roboto text-xs text-texto/55">Manizales · 170001</Text>
+                </View>
               )}
             </Tarjeta>
 

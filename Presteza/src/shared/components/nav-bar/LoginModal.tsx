@@ -26,7 +26,6 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
     error,
     enviando,
     entrarConBiometria,
-    biometricSupport,
     biometricBusy,
     biometricEnabled,
   } = useLoginModal(onClose);
@@ -100,7 +99,6 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                   />
                   <View className="mt-3">
                     <BiometricLoginButton
-                      label={biometricSupport.label}
                       busy={biometricBusy}
                       disabled={enviando}
                       onPress={() => void entrarConBiometria()}

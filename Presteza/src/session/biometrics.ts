@@ -8,11 +8,11 @@ export type BiometricSupport = {
 };
 
 export async function getBiometricSupport(): Promise<BiometricSupport> {
-  if (Platform.OS === 'web') {
+  if (Platform.OS !== 'android') {
     return {
       available: false,
-      label: 'Huella o rostro',
-      reason: 'Disponible en la app de Android o iOS.',
+      label: 'Huella digital',
+      reason: 'Disponible solo en la app de Android.',
     };
   }
 
@@ -22,10 +22,7 @@ export async function getBiometricSupport(): Promise<BiometricSupport> {
     LocalAuthentication.supportedAuthenticationTypesAsync(),
   ]);
   const fingerprint = types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT);
-  const faceID =
-    Platform.OS === 'ios' &&
-    types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION);
-  const label = faceID ? 'Face ID' : 'Huella digital';
+  const label = 'Huella digital';
   if (!hardware) {
     return {
       available: false,
@@ -33,7 +30,7 @@ export async function getBiometricSupport(): Promise<BiometricSupport> {
       reason: 'Este dispositivo no tiene un sensor biométrico compatible.',
     };
   }
-  if (Platform.OS === 'android' && !fingerprint) {
+  if (!fingerprint) {
     return {
       available: false,
       label,
@@ -44,13 +41,12 @@ export async function getBiometricSupport(): Promise<BiometricSupport> {
     return {
       available: false,
       label,
-      reason: 'Primero registra tu huella o rostro en los ajustes del teléfono.',
+      reason: 'Primero registra tu huella en los ajustes del teléfono.',
     };
   }
   if (
-    Platform.OS === 'android' &&
     (await LocalAuthentication.getEnrolledLevelAsync()) <
-      LocalAuthentication.SecurityLevel.BIOMETRIC_STRONG
+    LocalAuthentication.SecurityLevel.BIOMETRIC_STRONG
   ) {
     return {
       available: false,
@@ -62,11 +58,11 @@ export async function getBiometricSupport(): Promise<BiometricSupport> {
 }
 
 export async function authenticateDevice(promptMessage = 'Desbloquear Presteza'): Promise<void> {
-  if (Platform.OS === 'web') throw new Error('La biometría está disponible en la app móvil.');
+  if (Platform.OS !== 'android') throw new Error('La biometría está disponible solo en Android.');
   const result = await LocalAuthentication.authenticateAsync({
     promptMessage,
     promptSubtitle: 'Confirma tu identidad para continuar',
-    promptDescription: 'Usa tu huella, rostro o el bloqueo de pantalla del teléfono.',
+    promptDescription: 'Usa tu huella o el bloqueo de pantalla del teléfono.',
     cancelLabel: 'Cancelar',
     fallbackLabel: 'Usar código del teléfono',
     disableDeviceFallback: false,
@@ -79,7 +75,7 @@ export async function authenticateDevice(promptMessage = 'Desbloquear Presteza')
     app_cancel: 'La verificación se interrumpió. Inténtalo de nuevo.',
     system_cancel: 'La verificación se interrumpió. Inténtalo de nuevo.',
     lockout: 'Demasiados intentos. Usa el código del teléfono o tu contraseña de Presteza.',
-    not_enrolled: 'No hay una huella o rostro registrado. Usa tu contraseña de Presteza.',
+    not_enrolled: 'No hay una huella registrado. Usa tu contraseña de Presteza.',
     not_available: 'La biometría no está disponible. Usa tu contraseña de Presteza.',
     passcode_not_set:
       'Configura el bloqueo de pantalla del teléfono o usa tu contraseña de Presteza.',

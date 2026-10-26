@@ -34,7 +34,7 @@ export function writeSessionToken(token: string | null): Promise<void> {
 /** La preferencia pertenece a una cuenta y a este dispositivo; nunca contiene una huella. */
 export async function readBiometricUser(): Promise<string | null> {
   await pendingWrite;
-  if (Platform.OS === 'web') return null;
+  if (Platform.OS !== 'android') return null;
   return SecureStore.getItemAsync(BIOMETRIC_USER_KEY);
 }
 
@@ -54,7 +54,7 @@ async function restoreStoredKey(key: string, value: string | null): Promise<void
 
 export function writeBiometricUser(userId: string | null): Promise<void> {
   const operation = pendingWrite.then(async () => {
-    if (Platform.OS === 'web') return;
+    if (Platform.OS !== 'android') return;
     if (userId === null) {
       await removeStoredKey(BIOMETRIC_USER_KEY);
       await removeStoredKey(BIOMETRIC_TOKEN_KEY);
@@ -67,7 +67,7 @@ export function writeBiometricUser(userId: string | null): Promise<void> {
 /** Credencial recordada: no restaura la sesión automáticamente después de un logout. */
 export async function readBiometricToken(): Promise<string | null> {
   await pendingWrite;
-  if (Platform.OS === 'web') return null;
+  if (Platform.OS !== 'android') return null;
   return SecureStore.getItemAsync(BIOMETRIC_TOKEN_KEY);
 }
 
@@ -78,7 +78,7 @@ export async function readBiometricToken(): Promise<string | null> {
  */
 export function writeBiometricAccess(userId: string, token: string): Promise<void> {
   const operation = pendingWrite.then(async () => {
-    if (Platform.OS === 'web') return;
+    if (Platform.OS !== 'android') return;
     const previousUser = await SecureStore.getItemAsync(BIOMETRIC_USER_KEY);
     const previousToken = await SecureStore.getItemAsync(BIOMETRIC_TOKEN_KEY);
     try {

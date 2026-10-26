@@ -1,11 +1,3 @@
-/**
- * Contexto de sesión: quién está dentro de la app en este momento.
- *
- * Un "contexto" de React es un valor que se comparte con todas las pantallas
- * sin tener que pasarlo de una a otra por props. Aquí guardamos el usuario y
- * exponemos las tres acciones que lo cambian: entrar, registrarse y salir.
- */
-
 import React, {
   createContext,
   useCallback,
@@ -33,7 +25,6 @@ import {
 } from './storage';
 
 interface Session {
-  /** null = nadie ha entrado. */
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
@@ -75,7 +66,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const [biometricError, setBiometricError] = useState<string | null>(null);
   const [biometricSupport, setBiometricSupport] = useState<BiometricSupport>({
     available: false,
-    label: 'Huella o rostro',
+    label: 'Huella digital',
     reason: 'Comprobando la biometría del dispositivo...',
   });
   // Una sesión bloqueada no se publica en el contexto ni en el cliente HTTP.
@@ -91,7 +82,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
     setSessionEmail(session.user.email);
     enabledRef.current = protect;
     setBiometricEnabledState(protect);
-    const inBackground = Platform.OS !== 'web' && appState.current && appState.current !== 'active';
+    const inBackground =
+      Platform.OS === 'android' && appState.current && appState.current !== 'active';
     setLocked(Boolean(protect && inBackground));
     setToken(protect && inBackground ? null : session.token);
     setTokenState(protect && inBackground ? null : session.token);
@@ -110,7 +102,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         if (mounted.current)
           setBiometricSupport({
             available: false,
-            label: 'Huella o rostro',
+            label: 'Huella digital',
             reason: 'No se pudo consultar la biometría. Comprueba los ajustes del teléfono.',
           });
       });
@@ -129,7 +121,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         const protectedUser = await readBiometricUser();
         if (!activo || operation !== version.current) return;
         // La preferencia sobrevive al logout, pero no inicia una sesión por sí sola.
-        setBiometricEnabledState(Platform.OS !== 'web' && Boolean(protectedUser));
+        setBiometricEnabledState(Platform.OS === 'android' && Boolean(protectedUser));
         if (!guardado) return;
 
         let usuario: User;
@@ -141,7 +133,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
           return;
         }
 
-        const protect = Platform.OS !== 'web' && protectedUser === usuario.id;
+        const protect = Platform.OS === 'android' && protectedUser === usuario.id;
         if (protect && !(await readBiometricToken())) {
           // Migra instalaciones que solo guardaban el token de la sesión activa.
           await writeBiometricAccess(usuario.id, guardado);
@@ -175,10 +167,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }, []);
 
   useEffect(() => {
-    if (Platform.OS === 'web') return;
+    if (Platform.OS !== 'android') return;
     const subscription = AppState.addEventListener('change', (next) => {
       appState.current = next;
-      // El diálogo nativo también puede volver inactiva la app. No bloquearlo en bucle.
       if (next === 'active' || busyRef.current || !enabledRef.current || !savedSession.current)
         return;
       setToken(null);
@@ -200,17 +191,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
     setUser((prev) => (prev ? { ...prev, ...parcial } : prev));
   }, []);
-
-  /**
-   * Pide el token al backend y lo deja disponible para las siguientes
-   * peticiones. Si las credenciales son malas, `api.login` lanza el error del
-   * servidor y la pantalla de login lo muestra: aquí no se atrapa.
-   */
   const salir = () => {
     const session = savedSession.current;
-    // La huella, Face ID y Touch ID no viven en el servidor: la credencial
-    // recordada tiene que seguir en el teléfono después de cerrar sesión.
-    const preserveBiometric = Platform.OS !== 'web' && enabledRef.current && Boolean(session);
+    const preserveBiometric = Platform.OS === 'android' && enabledRef.current && Boolean(session);
     version.current++;
     savedSession.current = null;
     setSessionEmail('');
@@ -258,13 +241,13 @@ export function SessionProvider({ children }: PropsWithChildren) {
     if (!mounted.current || operation !== version.current) return;
     if (protectedUser && protectedUser !== session.user.id) await writeBiometricUser(null);
     if (!mounted.current || operation !== version.current) return;
-    if (Platform.OS !== 'web' && protectedUser === session.user.id) {
+    if (Platform.OS === 'android' && protectedUser === session.user.id) {
       await writeBiometricAccess(session.user.id, session.token);
       if (!mounted.current || operation !== version.current) return;
     }
     await writeSessionToken(session.token);
     if (!mounted.current || operation !== version.current) return;
-    publishSession(session, Platform.OS !== 'web' && protectedUser === session.user.id);
+    publishSession(session, Platform.OS === 'android' && protectedUser === session.user.id);
     logInfo('auth', 'login OK', {
       id: session.user.id,
       email: session.user.email,
@@ -273,7 +256,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
   };
 
   const signInWithBiometrics = async () => {
-    if (Platform.OS === 'web') throw new Error('Este acceso está disponible en la app móvil.');
+    if (Platform.OS !== 'android') throw new Error('Este acceso está disponible solo en Android.');
     if (busyRef.current) throw new Error('Ya hay una verificación en curso.');
     const operation = version.current;
     busyRef.current = true;
@@ -311,7 +294,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
         );
       }
       const session = { user: rememberedUser, token: rememberedToken };
-      // La huella no renueva ni prolonga el JWT emitido por el servidor.
       await authenticateDevice();
       if (!mounted.current || operation !== version.current) {
         throw new Error('La sesión cambió durante la verificación. Inténtalo de nuevo.');
@@ -335,16 +317,15 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
   };
 
-  // La pantalla de bloqueo presenta el error del contexto; los formularios lo reciben como rechazo.
   const unlock = async () => {
     try {
       await signInWithBiometrics();
     } catch {
-      // biometricError conserva el motivo sin desmontar la pantalla protegida.
     }
   };
 
   const setBiometricEnabled = async (enabled: boolean) => {
+    if (Platform.OS !== 'android') throw new Error('Este acceso está disponible solo en Android.');
     if (busyRef.current) throw new Error('Ya hay una verificación en curso.');
     if (locked || !savedSession.current)
       throw new Error('Inicia sesión antes de cambiar el acceso biométrico.');
@@ -372,7 +353,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
       busyRef.current = false;
       if (mounted.current) {
         setBiometricBusy(false);
-        // Si se abandonó la app durante un intento fallido, conservar el bloqueo.
         if (enabledRef.current && savedSession.current && appState.current !== 'active') {
           setToken(null);
           setTokenState(null);
@@ -391,7 +371,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
         isAuthenticated: Boolean(user && token),
         signIn,
         signInWithBiometrics,
-        // El registro NO devuelve token, así que enseguida iniciamos sesión.
         signUp: async (name, email, password, phone, birthDate) => {
           logInfo('auth', 'registro iniciado', { email: email.trim().toLowerCase() });
           try {
@@ -420,7 +399,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
       ) : locked ? (
         <SessionLockScreen
           email={sessionEmail}
-          label={biometricSupport.label}
           busy={biometricBusy}
           error={biometricError}
           onUnlock={unlock}

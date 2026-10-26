@@ -11,16 +11,8 @@ import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/Cont
 import { useIniciarSesion } from '../hooks/useIniciarSesion';
 
 export function IniciarSesionScreen() {
-  const {
-    control,
-    error,
-    enviando,
-    entrar,
-    entrarConBiometria,
-    biometricSupport,
-    biometricBusy,
-    biometricEnabled,
-  } = useIniciarSesion();
+  const { control, error, enviando, entrar, entrarConBiometria, biometricBusy, biometricEnabled } =
+    useIniciarSesion();
 
   return (
     <ContenedorPantalla titulo="Iniciar sesión">
@@ -73,7 +65,6 @@ export function IniciarSesionScreen() {
           disabled={enviando}
         />
         <BiometricLoginButton
-          label={biometricSupport.label}
           busy={biometricBusy}
           disabled={enviando}
           onPress={() => void entrarConBiometria()}

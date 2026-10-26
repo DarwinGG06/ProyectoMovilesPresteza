@@ -28,18 +28,19 @@ function biometrics(platform, overrides = {}) {
   return exports;
 }
 
-test('web no consulta ni invoca sensores nativos', async () => {
-  const api = biometrics('web', {
-    hasHardwareAsync: async () => {
-      throw new Error('No debe invocarse');
-    },
-    authenticateAsync: async () => {
-      throw new Error('No debe invocarse');
-    },
+for (const platform of ['web', 'ios'])
+  test(`${platform} no consulta ni invoca sensores nativos`, async () => {
+    const api = biometrics(platform, {
+      hasHardwareAsync: async () => {
+        throw new Error('No debe invocarse');
+      },
+      authenticateAsync: async () => {
+        throw new Error('No debe invocarse');
+      },
+    });
+    assert.equal((await api.getBiometricSupport()).available, false);
+    await assert.rejects(api.authenticateDevice(), /Android/);
   });
-  assert.equal((await api.getBiometricSupport()).available, false);
-  await assert.rejects(api.authenticateDevice(), /app móvil/);
-});
 
 test('exige sensor, enrolamiento y biometría fuerte en Android', async () => {
   for (const override of [
@@ -52,14 +53,6 @@ test('exige sensor, enrolamiento y biometría fuerte en Android', async () => {
     assert.ok(support.reason);
   }
   assert.equal((await biometrics('android').getBiometricSupport()).label, 'Huella digital');
-  assert.equal(
-    (
-      await biometrics('ios', {
-        supportedAuthenticationTypesAsync: async () => [2],
-      }).getBiometricSupport()
-    ).label,
-    'Face ID'
-  );
 });
 
 test('invoca el diálogo real con biometría fuerte y alternativa de bloqueo del teléfono', async () => {
@@ -76,8 +69,7 @@ test('invoca el diálogo real con biometría fuerte y alternativa de bloqueo del
   assert.equal(received.disableDeviceFallback, false);
 });
 
-test('Face ID solo se anuncia en iOS con sensor facial; Touch ID sigue siendo huella', async () => {
-  assert.equal((await biometrics('ios').getBiometricSupport()).label, 'Huella digital');
+test('Android sin sensor de huella no ofrece activación', async () => {
   const android = await biometrics('android', {
     supportedAuthenticationTypesAsync: async () => [2],
   }).getBiometricSupport();

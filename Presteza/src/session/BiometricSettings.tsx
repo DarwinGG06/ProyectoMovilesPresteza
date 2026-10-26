@@ -26,6 +26,8 @@ export function BiometricSettings() {
     }
   };
 
+  if (Platform.OS !== 'android') return null;
+
   return (
     <View className="mb-3 overflow-hidden rounded-[28px]">
       <Pergamino>
@@ -52,22 +54,19 @@ export function BiometricSettings() {
               {biometricSupport.reason}
             </Text>
           ) : null}
-          {Platform.OS !== 'web' ? (
-            <Button
-              variant={biometricEnabled ? 'secondary' : 'gold'}
-              disabled={biometricBusy}
-              onPress={() => void toggle()}
-              text={
-                biometricBusy
-                  ? 'VERIFICANDO...'
-                  : biometricEnabled
-                    ? 'DESACTIVAR DESBLOQUEO'
-                    : biometricSupport.label === 'Face ID'
-                      ? 'ACTIVAR FACE ID'
-                      : 'ACTIVAR HUELLA'
-              }
-            />
-          ) : null}
+
+          <Button
+            variant={biometricEnabled ? 'secondary' : 'gold'}
+            disabled={biometricBusy}
+            onPress={() => void toggle()}
+            text={
+              biometricBusy
+                ? 'VERIFICANDO...'
+                : biometricEnabled
+                  ? 'DESACTIVAR DESBLOQUEO'
+                  : 'ACTIVAR HUELLA'
+            }
+          />
           {error || message ? (
             <Text
               accessibilityRole="alert"

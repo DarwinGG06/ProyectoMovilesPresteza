@@ -43,11 +43,11 @@
       "expo-status-bar",
       "expo-router",
       "expo-asset",
-      "expo-secure-store",
+      ["expo-secure-store", { "faceIDPermission": false }],
       [
         "expo-local-authentication",
         {
-          "faceIDPermission": "Presteza usa Face ID para desbloquear tu cuenta en este dispositivo."
+          "faceIDPermission": false
         }
       ],
       "expo-font",

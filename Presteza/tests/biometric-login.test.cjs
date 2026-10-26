@@ -85,12 +85,12 @@ for (const [file, hook] of [
   });
 }
 
-test('el botón distingue Android, Face ID y Touch ID, y no ofrece biometría nativa en web', async () => {
+test('el botón de huella solo aparece en Android', async () => {
   for (const [platform, label, expected] of [
     ['android', 'Huella digital', 'INGRESAR CON HUELLA'],
     ['android', 'Face ID', 'INGRESAR CON HUELLA'],
-    ['ios', 'Face ID', 'INGRESAR CON FACE ID'],
-    ['ios', 'Huella digital', 'INGRESAR CON HUELLA'],
+    ['ios', 'Face ID', null],
+    ['ios', 'Huella digital', null],
     ['web', 'Huella digital', null],
   ]) {
     const { BiometricLoginButton } = load('src/session/BiometricLoginButton.tsx', {
@@ -103,6 +103,32 @@ test('el botón distingue Android, Face ID y Touch ID, y no ofrece biometría na
     });
     const button = tree.root.findAllByType('Button')[0];
     assert.equal(button?.props.text ?? null, expected);
+    await act(async () => {
+      tree.unmount();
+    });
+  }
+});
+
+test('los ajustes biométricos solo aparecen en Android', async () => {
+  for (const platform of ['android', 'ios', 'web']) {
+    const { BiometricSettings } = load('src/session/BiometricSettings.tsx', {
+      'react-native': { Platform: { OS: platform }, View: 'View', Text: 'Text' },
+      '@/components/Button': { default: 'Button', __esModule: true },
+      '@/shared/components/materiales/Pergamino': { Pergamino: 'Paper' },
+      './context': {
+        useSession: () => ({
+          biometricEnabled: false,
+          biometricSupport: { available: true, label: 'Huella digital' },
+          biometricBusy: false,
+          setBiometricEnabled: async () => {},
+        }),
+      },
+    });
+    let tree;
+    await act(async () => {
+      tree = create(React.createElement(BiometricSettings));
+    });
+    assert.equal(tree.toJSON() !== null, platform === 'android');
     await act(async () => {
       tree.unmount();
     });

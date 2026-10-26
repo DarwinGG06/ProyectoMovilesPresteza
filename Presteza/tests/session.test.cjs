@@ -170,7 +170,37 @@ async function mount(store, authApi = auth, options = {}) {
   };
 }
 
-for (const platform of ['web', 'android']) {
+test('iPhone ignora la activación antigua y mantiene el ingreso normal sin bloqueo biométrico', async () => {
+  const token = jwt();
+  const store = storage('ios', token, 'test-user');
+  assert.equal(await store.readBiometricUser(), null);
+  await store.writeBiometricAccess('test-user', token);
+  assert.equal(await store.readBiometricToken(), null);
+  let prompts = 0;
+  const app = await mount(store, auth, {
+    platform: 'ios',
+    authenticate: async () => {
+      prompts++;
+    },
+  });
+  assert.equal(app.session.isAuthenticated, true);
+  assert.equal(app.session.biometricEnabled, false);
+  assert.equal(app.lock, undefined);
+  await assert.rejects(app.session.setBiometricEnabled(true), /Android/);
+  await assert.rejects(app.session.signInWithBiometrics(), /Android/);
+  await app.background('background');
+  await app.background('active');
+  assert.equal(app.session.isAuthenticated, true);
+  assert.equal(app.lock, undefined);
+  assert.equal(prompts, 0);
+  await act(async () => {
+    app.session.logout();
+  });
+  assert.equal(await store.readSessionToken(), null);
+  await app.unmount();
+});
+
+for (const platform of ['web', 'android', 'ios']) {
   test(`${platform}: login sobrevive al desmontaje y logout no reaparece al reiniciar`, async () => {
     const store = storage(platform);
     const first = await mount(store, auth, { platform });
@@ -204,7 +234,7 @@ for (const platform of ['web', 'android']) {
   });
 }
 
-for (const platform of ['web', 'android']) {
+for (const platform of ['web', 'android', 'ios']) {
   for (const token of ['corrupto', jwt({ exp: 1 })]) {
     test(`${platform}: descarta sesión ${token === 'corrupto' ? 'corrupta' : 'expirada'} sin reportar un fallo de la app`, async () => {
       const errors = [];
@@ -383,7 +413,7 @@ test('el acceso público del login rechaza cancelación y permite una nueva veri
   await app.unmount();
 });
 
-for (const platform of ['android', 'ios']) {
+for (const platform of ['android']) {
   test(`${platform}: activar, cerrar sesión, reiniciar e ingresar con biometría conserva el acceso`, async () => {
     const token = jwt();
     const store = storage(platform, token);
@@ -874,7 +904,7 @@ test('un fallo al leer la preferencia no restaura una sesión sin verificarla', 
   await app.unmount();
 });
 
-for (const platform of ['web', 'android']) {
+for (const platform of ['web', 'android', 'ios']) {
   test(`${platform}: respeta el backend remoto incluso con Metro en LAN`, () => {
     const config = load(
       'src/api/config.ts',

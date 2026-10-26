@@ -3,7 +3,6 @@ import { Platform, Text, View } from 'react-native';
 import Button from '@/components/Button';
 
 type Props = {
-  label: string;
   busy?: boolean;
   disabled?: boolean;
   onPress: () => void;
@@ -11,15 +10,14 @@ type Props = {
 };
 
 /** Se comparte entre los dos formularios de login y la sesión guardada bloqueada. */
-export function BiometricLoginButton({ label, busy, disabled, onPress, showHint }: Props) {
-  if (Platform.OS === 'web') return null;
-  const faceID = Platform.OS === 'ios' && label === 'Face ID';
+export function BiometricLoginButton({ busy, disabled, onPress, showHint }: Props) {
+  if (Platform.OS !== 'android') return null;
 
   return (
     <View className="gap-2">
       <Button
         variant="secondary"
-        text={busy ? 'VERIFICANDO...' : faceID ? 'INGRESAR CON FACE ID' : 'INGRESAR CON HUELLA'}
+        text={busy ? 'VERIFICANDO...' : 'INGRESAR CON HUELLA'}
         onPress={onPress}
         disabled={disabled || busy}
       />

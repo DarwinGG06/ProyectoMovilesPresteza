@@ -19,7 +19,6 @@ import { BiometricLoginButton } from './BiometricLoginButton';
 
 type Props = {
   email: string;
-  label: string;
   busy: boolean;
   error: string | null;
   onUnlock: () => Promise<void>;
@@ -27,15 +26,7 @@ type Props = {
   onSignOut: () => void;
 };
 
-export function SessionLockScreen({
-  email,
-  label,
-  busy,
-  error,
-  onUnlock,
-  onPassword,
-  onSignOut,
-}: Props) {
+export function SessionLockScreen({ email, busy, error, onUnlock, onPassword, onSignOut }: Props) {
   const [passwordMode, setPasswordMode] = useState(true);
   const [password, setPassword] = useState('');
   const [passwordBusy, setPasswordBusy] = useState(false);
@@ -79,13 +70,7 @@ export function SessionLockScreen({
                     <ActivityIndicator size="large" color="#6b1d3d" />
                   ) : (
                     <Ionicons
-                      name={
-                        passwordMode
-                          ? 'lock-closed-outline'
-                          : label === 'Face ID'
-                            ? 'scan-outline'
-                            : 'finger-print-outline'
-                      }
+                      name={passwordMode ? 'lock-closed-outline' : 'finger-print-outline'}
                       size={40}
                       color="#6b1d3d"
                     />
@@ -100,7 +85,7 @@ export function SessionLockScreen({
                 <Text className="text-center font-roboto-light text-base leading-6 text-madera">
                   {passwordMode
                     ? 'Continúa con tu contraseña o con el acceso biométrico de este dispositivo.'
-                    : 'Usa tu huella, rostro o el bloqueo de pantalla del teléfono para continuar.'}
+                    : 'Usa tu huella o el bloqueo de pantalla del teléfono para continuar.'}
                 </Text>
               </View>
 
@@ -138,7 +123,6 @@ export function SessionLockScreen({
               ) : null}
               <View className="mt-4">
                 <BiometricLoginButton
-                  label={label}
                   busy={busy}
                   disabled={disabled}
                   onPress={() => {

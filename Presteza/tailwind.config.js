@@ -26,6 +26,7 @@ module.exports = {
         'marca-clara': '#8b2d4f',
         'marca-oscura': '#3a0c20',
         oro: '#d4af77',
+        'oro-suave': '#d4af7788',
         crema: '#faf6f2',
         pergamino: '#f6f0e6',
         'pergamino-oscuro': '#ebe3d4',
@@ -33,8 +34,15 @@ module.exports = {
         madera: '#5c3d2e',
         texto: '#222222',
         linea: '#eee6dc',
+        placeholder: '#a3a3a3',
         whatsapp: '#25d366',
         'whatsapp-oscuro': '#1ebc57',
+      },
+      borderRadius: {
+        tarjeta: '20px',
+      },
+      boxShadow: {
+        elevada: '0 8px 20px rgba(58, 12, 32, 0.10)',
       },
     },
   },

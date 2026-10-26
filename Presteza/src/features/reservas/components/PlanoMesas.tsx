@@ -125,14 +125,16 @@ function TarjetaMesa({
     <Pressable
       onPress={onPress}
       disabled={ocupada}
-      className={`mb-3 w-1/3 items-center border py-2 ${
-        seleccionada ? 'border-oro bg-oro/15' : 'border-transparent'
+      className={`mb-3 w-1/3 items-center py-2 ${
+        seleccionada ? 'border-2 border-marca bg-transparent' : 'border-2 border-transparent'
       }`}>
       <IconoMesa ocupada={ocupada} seleccionada={seleccionada} capacidad={mesa.capacity} />
-      <Text className="mt-1 font-roboto-medium text-[14px] text-[#2c2c2c]">Mesa {numero}</Text>
+      <Text className="mt-1 font-roboto-medium text-[14px] text-tinta">Mesa {numero}</Text>
       <Text
-        className={`font-roboto text-[12px] ${ocupada ? 'font-roboto-medium text-[#9a4d58]' : 'text-marca'}`}>
-        {ocupada ? 'Ocupada' : 'Libre'}
+        className={`font-roboto text-[12px] ${
+          ocupada ? 'font-roboto-medium text-marca/70' : seleccionada ? 'text-marca' : 'text-marca'
+        }`}>
+        {ocupada ? 'Ocupada' : seleccionada ? 'Elegida' : 'Libre'}
       </Text>
     </Pressable>
   );

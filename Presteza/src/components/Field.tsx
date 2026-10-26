@@ -18,6 +18,7 @@ import {
 import { Platform, Pressable, Text, TextInput, View, type TextInputProps } from 'react-native';
 
 import { useVerContrasena } from '@/shared/hooks/useVerContrasena';
+import { colores } from '@/theme/tokens';
 
 // Hereda todas las props de TextInput (keyboardType, secureTextEntry...) y
 // añade las del formulario.
@@ -90,7 +91,7 @@ export default function Field<T extends FieldValues>({
               onChangeText={onChange}
               onBlur={onBlur}
               autoCapitalize="none"
-              placeholderTextColor="#a3a3a3"
+              placeholderTextColor={colores.placeholder}
               {...input}
               secureTextEntry={contrasena.oculto}
             />
@@ -106,7 +107,7 @@ export default function Field<T extends FieldValues>({
                 accessibilityRole="button"
                 accessibilityLabel={contrasena.etiqueta}
                 className="absolute right-0 top-0 z-10 h-full w-12 items-center justify-center">
-                <Ionicons name={contrasena.icono} size={20} color="#6b1d3d" />
+                <Ionicons name={contrasena.icono} size={20} color={colores.marca} />
               </Pressable>
             ) : null}
           </View>

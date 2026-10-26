@@ -1,5 +1,7 @@
 import Svg, { Circle, Ellipse, G, Rect } from 'react-native-svg';
 
+import { colores } from '@/theme/tokens';
+
 type IconoMesaProps = {
   ocupada: boolean;
   seleccionada?: boolean;
@@ -20,14 +22,14 @@ const PALETA = {
   },
   seleccionada: {
     respaldo: '#4e1430',
-    asiento: '#7a2348',
-    brillo: 'rgba(255,255,255,0.32)',
-    aro: '#6b4423',
-    mantel: '#e8d7b8',
-    plato: '#faf6f2',
-    bordePlato: '#d4af77',
-    aroInterior: '#5c3d2e',
-    centro: '#3a2418',
+    asiento: '#6b1d3d',
+    brillo: 'rgba(255,255,255,0.28)',
+    aro: '#8b5e3c',
+    mantel: '#d4bc93',
+    plato: '#f6f0e6',
+    bordePlato: '#c4a574',
+    aroInterior: 'rgba(92,61,46,0.55)',
+    centro: '#5c3d2e',
   },
   ocupada: {
     respaldo: '#8d807c',
@@ -60,7 +62,7 @@ export function IconoMesa({ ocupada, seleccionada = false, capacidad = 4 }: Icon
   return (
     <Svg width={92} height={92} viewBox="0 0 100 100">
       {seleccionada && !ocupada ? (
-        <Circle cx={50} cy={50} r={47} fill="rgba(212,175,119,0.16)" stroke="#d4af77" strokeWidth={1.25} />
+        <Circle cx={50} cy={50} r={47} fill="none" stroke={colores.marca} strokeWidth={2.25} />
       ) : null}
 
       {Array.from({ length: sillas }, (_, index) => (

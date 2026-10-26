@@ -1,8 +1,11 @@
 import { Drawer } from 'expo-router/drawer';
 
 import { ContenidoDrawerHome } from '@/features/inicio/components/ContenidoDrawerHome';
+import { useSession } from '@/session/context';
 
 export default function HomeLayout() {
+  const { user } = useSession();
+
   return (
     <Drawer
       drawerContent={(props) => <ContenidoDrawerHome {...props} />}
@@ -23,7 +26,9 @@ export default function HomeLayout() {
       <Drawer.Screen name="nosotros" options={{ title: 'Nosotros', drawerLabel: 'Nosotros' }} />
       <Drawer.Screen name="contacto" options={{ title: 'Contacto', drawerLabel: 'Contacto' }} />
       <Drawer.Screen name="reservas" options={{ title: 'Reservas', drawerLabel: 'Reservas' }} />
-      <Drawer.Screen name="admin" options={{ title: 'Administración', drawerLabel: 'Administración' }} />
+      <Drawer.Protected guard={user?.role === 'admin'}>
+        <Drawer.Screen name="admin" options={{ title: 'Administración', drawerLabel: 'Administración' }} />
+      </Drawer.Protected>
     </Drawer>
   );
 }

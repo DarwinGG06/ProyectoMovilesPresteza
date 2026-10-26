@@ -1,6 +1,6 @@
 import type { Producto } from '../types';
 import { request } from './client';
-import { idDe, lista, seguro, texto } from './helpers';
+import { idDe, lista, texto } from './helpers';
 
 function normalizarProducto(crudo: Record<string, unknown>): Producto {
   const categoria = crudo.category;
@@ -33,15 +33,13 @@ function normalizarProducto(crudo: Record<string, unknown>): Producto {
   };
 }
 
-export function listarProductos(jwt?: string) {
-  return seguro(async () => {
-    const crudos = lista<Record<string, unknown>>(
-      await request('/dishes', jwt ? { token: jwt } : undefined),
-      'dishes',
-      'products',
-    );
-    return crudos.map(normalizarProducto);
-  }, []);
+export async function listarProductos(jwt?: string) {
+  const crudos = lista<Record<string, unknown>>(
+    await request('/dishes', jwt ? { token: jwt } : undefined),
+    'dishes',
+    'products',
+  );
+  return crudos.map(normalizarProducto);
 }
 
 export function crearProducto(jwt: string, datos: Record<string, unknown>) {

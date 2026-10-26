@@ -58,8 +58,9 @@ export async function elegirModelo3d(): Promise<ArchivoModelo3d | null> {
 }
 
 /** Sube el .glb a Cloudinary como archivo `raw` y devuelve su URL pública. */
-export function subirModelo3d(archivo: ArchivoModelo3d): Promise<string> {
-  return subirACloudinary(archivo, 'raw');
+export async function subirModelo3d(archivo: ArchivoModelo3d): Promise<string> {
+  const recurso = await subirACloudinary(archivo, 'raw');
+  return recurso.url;
 }
 
 /** Nombre corto para mostrar en el formulario a partir de la URL guardada. */

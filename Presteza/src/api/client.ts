@@ -23,6 +23,20 @@ export function setToken(value: string | null): void {
   token = value;
 }
 
+/** Un solo sitio: si el servidor manda 401 con sesión, se cierra aquí. */
+let onUnauthorized: (() => void) | null = null;
+
+export function setOnUnauthorized(handler: (() => void) | null): void {
+  onUnauthorized = handler;
+}
+
+function cerrarSiTokenRechazado(status: number, path: string, jwtUsado: string | null) {
+  if (status !== 401 || !jwtUsado) return;
+  if (path.startsWith('/auth/login') || path.startsWith('/auth/register')) return;
+  setToken(null);
+  onUnauthorized?.();
+}
+
 function mensajeError(data: unknown, fallback: string) {
   if (data && typeof data === 'object') {
     const cuerpo = data as { message?: string | string[]; error?: string };
@@ -116,6 +130,7 @@ export async function request<T>(
     const mensajeUsuario = servicioNoDisponible
       ? 'El servidor no pudo conectarse con uno de sus servicios. Inténtalo de nuevo más tarde.'
       : message;
+    cerrarSiTokenRechazado(response.status, path, jwt);
     throw new Error(mensajeUsuario);
   }
 

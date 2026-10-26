@@ -1,5 +1,6 @@
-import { Image, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
+import { FotoRemota } from '@/shared/components/foto/FotoRemota';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
 function BotonFuente({
@@ -42,14 +43,15 @@ export function CampoImagenProducto({
       <View
         className={`overflow-hidden border bg-white ${error ? 'border-red-600' : 'border-linea'}`}
         style={{ height: 168 }}>
-        {uri ? (
-          <Image source={{ uri }} className="h-full w-full" resizeMode="cover" />
-        ) : (
-          <View className="flex-1 items-center justify-center gap-2">
-            <IconoNav name="camera-outline" size={28} className="text-oro" />
-            <Text className="text-[10px] tracking-[2px] text-texto/55">SIN FOTO</Text>
-          </View>
-        )}
+        <FotoRemota
+          uri={uri}
+          fallback={
+            <View className="flex-1 items-center justify-center gap-2">
+              <IconoNav name="camera-outline" size={28} className="text-oro" />
+              <Text className="text-[10px] tracking-[2px] text-texto/55">SIN FOTO</Text>
+            </View>
+          }
+        />
       </View>
       <View className="mt-1 flex-row flex-wrap gap-2">
         <BotonFuente etiqueta="CÁMARA" onPress={onCamara} disabled={disabled} />

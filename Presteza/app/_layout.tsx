@@ -6,13 +6,41 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ControlDrawerHomeProvider } from '@/features/inicio/context/ControlDrawerHome';
 import { CartProvider } from '@/services/cart/CartContext';
-import { SessionProvider } from '@/session/context';
+import { SessionProvider, useSession } from '@/session/context';
 import { AvisoProvider } from '@/shared/components/aviso';
 import { WhatsAppFloat } from '@/shared/components/footer';
 import { NavBar } from '@/shared/components/nav-bar';
 import { useFuentes } from '@/shared/hooks/useFuentes';
 
 import '../global.css';
+
+function Rutas() {
+  const { user, isAuthenticated } = useSession();
+  const esAdmin = user?.role === 'admin';
+
+  return (
+    <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="home" />
+      <Stack.Screen name="plato/[id]" />
+      <Stack.Screen name="recuperar-contrasena" />
+      <Stack.Screen name="restablecer-contrasena" />
+
+      <Stack.Screen name="perfil" />
+      <Stack.Screen name="pago" />
+      <Stack.Screen name="seguimiento" />
+
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="iniciar-sesion" />
+        <Stack.Screen name="registro" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={esAdmin}>
+        <Stack.Screen name="administracion" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
 
 export default function RootLayout() {
   const fuentesListas = useFuentes();
@@ -29,10 +57,7 @@ export default function RootLayout() {
                 <View className="flex-1 bg-pergamino">
                   <NavBar />
                   <View className="flex-1">
-                    <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
-                      <Stack.Screen name="index" />
-                      <Stack.Screen name="home" />
-                    </Stack>
+                    <Rutas />
                   </View>
                   <WhatsAppFloat />
                   <StatusBar style="dark" />

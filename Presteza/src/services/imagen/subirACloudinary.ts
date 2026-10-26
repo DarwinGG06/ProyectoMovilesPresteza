@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 
 import type { ArchivoImagen } from './formatos';
+import { extraerPublicId, type RecursoNube } from './nube';
 
 const NUBE = process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME?.trim();
 const PRESET = process.env.EXPO_PUBLIC_CLOUDINARY_UPLOAD_PRESET?.trim();
@@ -41,6 +42,7 @@ function mensajeCloudinary(crudo?: string) {
 
 type RespuestaCloudinary = {
   secure_url?: string;
+  public_id?: string;
   error?: { message?: string };
 };
 
@@ -106,7 +108,7 @@ function enviarNativo(url: string, archivo: ArchivoSubida): Promise<Respuesta> {
 export async function subirACloudinary(
   archivo: ArchivoSubida,
   tipo: TipoRecurso = 'image',
-): Promise<string> {
+): Promise<RecursoNube> {
   if (!NUBE || !PRESET) {
     throw new Error('Falta la configuración de Cloudinary en el entorno.');
   }
@@ -119,9 +121,12 @@ export async function subirACloudinary(
     throw new Error(mensajeCloudinary(cuerpo.error?.message));
   }
 
-  return cuerpo.secure_url;
+  return {
+    url: cuerpo.secure_url,
+    publicId: cuerpo.public_id || extraerPublicId(cuerpo.secure_url),
+  };
 }
 
-export function subirImagenACloudinary(archivo: ArchivoImagen): Promise<string> {
+export function subirImagenACloudinary(archivo: ArchivoImagen): Promise<RecursoNube> {
   return subirACloudinary(archivo, 'image');
 }

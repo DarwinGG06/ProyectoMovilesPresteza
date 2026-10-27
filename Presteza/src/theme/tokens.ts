@@ -21,6 +21,11 @@ export const radios = {
   tarjeta: 20,
 } as const;
 
+/** Área de toque mínima (WCAG / rúbrica): `min-h-12 min-w-12`. */
+export const toques = {
+  minimo: 48,
+} as const;
+
 export const sombras = {
   elevada: {
     shadowColor: colores['marca-oscura'],

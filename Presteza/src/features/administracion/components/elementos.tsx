@@ -31,9 +31,11 @@ export function ChipFiltro({
   return (
     <Pressable
       onPress={onPress}
-      className={`mb-2 mr-2 rounded-full px-3.5 py-2 ${activo ? 'bg-marca' : 'border border-madera/20'}`}>
+      accessibilityRole="button"
+      accessibilityState={{ selected: activo }}
+      className={`mb-2 mr-2 min-h-12 items-center justify-center rounded-full px-3.5 ${activo ? 'bg-marca' : 'border border-madera/20'}`}>
       <Text
-        className={`font-roboto text-[10px] tracking-[1px] ${activo ? 'text-crema' : 'text-tinta/45'}`}>
+        className={`font-roboto text-[10px] tracking-[1px] ${activo ? 'text-crema' : 'text-tinta/70'}`}>
         {etiqueta}
       </Text>
     </Pressable>
@@ -54,7 +56,8 @@ export function EnlaceAdmin({
   return (
     <Pressable
       onPress={onPress}
-      className={`mb-2 mr-2 rounded-full px-3.5 py-2 ${
+      accessibilityRole="button"
+      className={`mb-2 mr-2 min-h-12 items-center justify-center rounded-full px-3.5 ${
         activo
           ? 'bg-marca'
           : peligro
@@ -83,7 +86,10 @@ export function BotonAgregarAdmin({
   etiqueta?: string;
 }) {
   return (
-    <Pressable onPress={onPress} className="mb-4 self-start rounded-full bg-marca px-5 py-2.5">
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      className="mb-4 min-h-12 items-center justify-center self-start rounded-full bg-marca px-5">
       <Text className="font-roboto text-[11px] tracking-[1.6px] text-crema">{etiqueta}</Text>
     </Pressable>
   );

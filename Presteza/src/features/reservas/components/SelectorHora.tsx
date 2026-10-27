@@ -28,7 +28,9 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
       <View className="mt-4 flex-row items-center justify-between">
         <Pressable
           onPress={() => mover(-1)}
-          className="h-10 w-10 items-center justify-center border border-oro/30">
+          accessibilityRole="button"
+          accessibilityLabel="Hora anterior"
+          className="min-h-12 min-w-12 items-center justify-center border border-oro/30">
           <IconoNav name="chevron-back" size={22} className="text-crema" />
         </Pressable>
 
@@ -41,7 +43,9 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
 
         <Pressable
           onPress={() => mover(1)}
-          className="h-10 w-10 items-center justify-center border border-oro/30">
+          accessibilityRole="button"
+          accessibilityLabel="Hora siguiente"
+          className="min-h-12 min-w-12 items-center justify-center border border-oro/30">
           <IconoNav name="chevron-forward" size={22} className="text-crema" />
         </Pressable>
       </View>
@@ -53,7 +57,9 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
             <Pressable
               key={item}
               onPress={() => elegir(item)}
-              className={`px-2.5 py-1 ${activa ? 'bg-oro' : 'border border-oro/25'}`}>
+              accessibilityRole="button"
+              accessibilityState={{ selected: activa }}
+              className={`min-h-12 min-w-12 items-center justify-center px-2.5 ${activa ? 'bg-oro' : 'border border-oro/25'}`}>
               <Text
                 className={`font-roboto text-[10px] ${activa ? 'text-marca-oscura' : 'text-crema/80'}`}>
                 {item}

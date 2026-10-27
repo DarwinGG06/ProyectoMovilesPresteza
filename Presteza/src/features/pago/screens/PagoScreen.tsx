@@ -2,6 +2,7 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 
 import Badge from '@/components/Badge';
 import Button from '@/components/Button';
+import { ChipCategoria } from '@/components/ChipCategoria';
 import Tarjeta from '@/components/Tarjeta';
 import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
 import { LoginModal } from '@/shared/components/nav-bar/LoginModal';
@@ -28,7 +29,10 @@ export function PagoScreen() {
           <Tarjeta className="mt-8 gap-3">
             <Badge text="BANDEJA" variant="sello" />
             <Text className="font-serif-light text-2xl text-marca-oscura">Aún no hay platos</Text>
-            <Pressable onPress={pago.irAlMenu} className="mt-2 self-start">
+            <Pressable
+              onPress={pago.irAlMenu}
+              accessibilityRole="button"
+              className="mt-2 min-h-12 justify-center self-start">
               <Text className="font-roboto text-[11px] tracking-[2px] text-marca">IR AL MENÚ →</Text>
             </Pressable>
           </Tarjeta>
@@ -104,7 +108,7 @@ export function PagoScreen() {
                     <Pressable
                       onPress={() => pago.setCanjear(false)}
                       disabled={pago.cotizando || pago.enviando}
-                      className={`mt-1 border px-4 py-3 ${!pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
+                      className={`mt-1 min-h-12 items-center justify-center border px-4 ${!pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
                       <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
                         15% CUMPLEAÑOS
                       </Text>
@@ -115,7 +119,7 @@ export function PagoScreen() {
                     <Pressable
                       onPress={() => pago.setCanjear(true)}
                       disabled={pago.cotizando || pago.enviando}
-                      className={`mt-1 border px-4 py-3 ${pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
+                      className={`mt-1 min-h-12 items-center justify-center border px-4 ${pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
                       <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
                         {pago.canjear
                           ? `CANJEAR ${cotizacion?.pointsRedeemed ?? 0} PUNTOS`
@@ -139,52 +143,29 @@ export function PagoScreen() {
 
             <Tarjeta className="mt-4 gap-3">
               <Badge text="ENTREGA" variant="sello" />
-              <View className="flex-row">
-                {(
-                  [
-                    { value: 'mesa' as const, label: 'Mesa' },
-                    { value: 'domicilio' as const, label: 'Domicilio' },
-                  ] as const
-                ).map((opcion) => {
-                  const activo = pago.tipo === opcion.value;
-                  return (
-                    <Pressable
-                      key={opcion.value}
-                      onPress={() => pago.setTipo(opcion.value)}
-                      hitSlop={8}
-                      className="mr-6 py-2.5">
-                      <Text
-                        className={`font-roboto text-[11px] tracking-[2px] ${
-                          activo ? 'text-tinta' : 'text-tinta/45'
-                        }`}>
-                        {opcion.label.toUpperCase()}
-                      </Text>
-                      <View className={`mt-1.5 h-px w-8 ${activo ? 'bg-marca' : 'bg-transparent'}`} />
-                    </Pressable>
-                  );
-                })}
+              <View className="flex-row flex-wrap">
+                <ChipCategoria
+                  etiqueta="Mesa"
+                  activo={pago.tipo === 'mesa'}
+                  onPress={() => pago.setTipo('mesa')}
+                />
+                <ChipCategoria
+                  etiqueta="Domicilio"
+                  activo={pago.tipo === 'domicilio'}
+                  onPress={() => pago.setTipo('domicilio')}
+                />
               </View>
 
               {pago.tipo === 'mesa' ? (
                 <View className="flex-row flex-wrap">
-                  {pago.mesas.map((numero) => {
-                    const activo = pago.mesa === numero;
-                    return (
-                      <Pressable
-                        key={numero}
-                        onPress={() => pago.setMesa(numero)}
-                        hitSlop={6}
-                        className="mr-1 min-w-[44px] items-center py-2.5">
-                        <Text
-                          className={`font-roboto text-[12px] ${
-                            activo ? 'text-tinta' : 'text-tinta/45'
-                          }`}>
-                          {numero}
-                        </Text>
-                        <View className={`mt-1 h-px w-5 ${activo ? 'bg-marca' : 'bg-transparent'}`} />
-                      </Pressable>
-                    );
-                  })}
+                  {pago.mesas.map((numero) => (
+                    <ChipCategoria
+                      key={numero}
+                      etiqueta={numero}
+                      activo={pago.mesa === numero}
+                      onPress={() => pago.setMesa(numero)}
+                    />
+                  ))}
                 </View>
               ) : (
                 <View className="gap-4">
@@ -211,7 +192,10 @@ export function PagoScreen() {
                           ) : null}
                         </Pressable>
                       ))}
-                      <Pressable onPress={pago.nuevaDireccion} className="py-3">
+                      <Pressable
+                        onPress={pago.nuevaDireccion}
+                        accessibilityRole="button"
+                        className="min-h-12 justify-center py-3">
                         <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
                           NUEVA DIRECCIÓN
                         </Text>
@@ -254,7 +238,9 @@ export function PagoScreen() {
                     <Pressable
                       key={opcion.value}
                       onPress={() => pago.setMetodo(opcion.value)}
-                      className={`border px-4 py-2 ${activo ? 'border-oro bg-oro/15' : 'border-oro/35'}`}>
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: activo }}
+                      className={`min-h-12 items-center justify-center border px-4 ${activo ? 'border-oro bg-oro/15' : 'border-oro/35'}`}>
                       <Text className="font-roboto text-[11px] tracking-[1px] text-marca-oscura">
                         {opcion.label.toUpperCase()}
                       </Text>

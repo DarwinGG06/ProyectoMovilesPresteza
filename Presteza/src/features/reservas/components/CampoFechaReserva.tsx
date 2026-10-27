@@ -127,7 +127,7 @@ function SelectorFecha({
     <>
       <Pressable
         onPress={abrir}
-        className={`border-b bg-transparent px-0 py-3 ${error ? 'border-red-600' : 'border-madera/25'}`}>
+        className={`min-h-12 justify-center border-b bg-transparent px-0 py-3 ${error ? 'border-red-600' : 'border-madera/25'}`}>
         <Text className={`font-roboto-light text-[17px] ${valor ? 'text-tinta' : 'text-tinta/35'}`}>
           {texto}
         </Text>
@@ -180,10 +180,14 @@ function Columna({
       {opciones.map((opcion) => {
         const activo = opcion.valor === elegido;
         return (
-          <Pressable key={opcion.valor} onPress={() => onElegir(opcion.valor)} className="py-2">
+          <Pressable
+            key={opcion.valor}
+            onPress={() => onElegir(opcion.valor)}
+            accessibilityRole="button"
+            className="min-h-12 justify-center py-2">
             <Text
               className={`text-center font-roboto ${
-                activo ? 'text-lg text-tinta' : 'text-tinta/30'
+                activo ? 'text-lg text-tinta' : 'text-tinta/70'
               }`}>
               {opcion.etiqueta}
             </Text>

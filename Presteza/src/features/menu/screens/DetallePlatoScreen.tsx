@@ -27,7 +27,10 @@ export function DetallePlatoScreen() {
         <Text className="text-center font-serif-light text-2xl text-tinta">
           {plato.error || 'Ese plato no está en la carta.'}
         </Text>
-        <Pressable onPress={plato.volver} className="mt-6">
+        <Pressable
+          onPress={plato.volver}
+          accessibilityRole="button"
+          className="mt-6 min-h-12 justify-center">
           <Text className="font-roboto text-[11px] tracking-[2px] text-marca">VOLVER A LA CARTA</Text>
         </Pressable>
       </View>
@@ -50,13 +53,17 @@ export function DetallePlatoScreen() {
             )}
             <Pressable
               onPress={plato.volver}
-              className="absolute left-5 top-5 bg-pergamino/90 px-3 py-2 active:opacity-80">
+              accessibilityRole="button"
+              accessibilityLabel="Volver a la carta"
+              className="absolute left-5 top-5 min-h-12 justify-center bg-pergamino/90 px-3 active:opacity-80">
               <Text className="font-roboto text-[11px] tracking-[2px] text-marca">← CARTA</Text>
             </Pressable>
             {plato.tieneModelo ? (
               <Pressable
                 onPress={plato.abrirVisor}
-                className="absolute right-5 top-5 bg-marca-oscura px-3 py-2 active:opacity-80">
+                accessibilityRole="button"
+                accessibilityLabel={`Ver ${producto.name} en 3D`}
+                className="absolute right-5 top-5 min-h-12 justify-center bg-marca-oscura px-3 active:opacity-80">
                 <Text className="font-roboto text-[11px] tracking-[2px] text-oro">VER 3D</Text>
               </Pressable>
             ) : null}
@@ -85,7 +92,7 @@ export function DetallePlatoScreen() {
                       key={extra.id || extra._id || extra.name}
                       onPress={() => plato.alternarExtra(extra)}
                       accessibilityRole="button"
-                      className="flex-row items-baseline border-b border-madera/20 py-3.5 active:opacity-80">
+                      className="min-h-12 flex-row items-center border-b border-madera/20 py-3.5 active:opacity-80">
                       <Text
                         className={`flex-1 font-roboto text-[15px] ${activo ? 'text-tinta' : 'text-tinta/70'}`}>
                         {activo ? '●  ' : '○  '}

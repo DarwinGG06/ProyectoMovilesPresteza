@@ -23,8 +23,9 @@ function BotonIcono({
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
       accessibilityLabel={etiqueta}
-      className={`mb-2 mr-2 h-10 w-10 items-center justify-center rounded-full ${activo ? 'bg-marca' : 'border border-madera/20'}`}>
+      className={`mb-2 mr-2 min-h-12 min-w-12 items-center justify-center rounded-full ${activo ? 'bg-marca' : 'border border-madera/20'}`}>
       <IconoNav name={icono} size={16} className={activo ? 'text-crema' : 'text-marca'} />
     </Pressable>
   );

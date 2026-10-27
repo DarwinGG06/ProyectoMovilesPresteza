@@ -107,7 +107,10 @@ export function EnlaceAccion({
   peligro?: boolean;
 }) {
   return (
-    <Pressable onPress={onPress} className="py-1 pr-4">
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      className="min-h-12 justify-center py-1 pr-4">
       <Text
         className={`font-roboto text-[11px] tracking-[2px] ${peligro ? 'text-red-700' : 'text-marca'}`}>
         {etiqueta}

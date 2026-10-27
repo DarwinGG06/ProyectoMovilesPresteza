@@ -24,9 +24,14 @@ export function NavBar() {
           </Pressable>
 
           <View className="flex-row items-center">
-            <BotonBarra icono="person-outline" inicial={nav.inicial} onPress={nav.abrirCuenta} />
+            <BotonBarra
+              icono="person-outline"
+              etiqueta="Cuenta"
+              inicial={nav.inicial}
+              onPress={nav.abrirCuenta}
+            />
             <View>
-              <BotonBarra icono="bag-handle-outline" onPress={nav.abrirCarrito} />
+              <BotonBarra icono="bag-handle-outline" etiqueta="Bandeja" onPress={nav.abrirCarrito} />
               {nav.totalItems > 0 ? (
                 <View className="absolute right-0 top-1 h-[18px] min-w-[18px] items-center justify-center rounded-full bg-marca px-1">
                   <Text className="text-center font-roboto text-[10px] leading-[12px] text-crema">
@@ -35,7 +40,7 @@ export function NavBar() {
                 </View>
               ) : null}
             </View>
-            <BotonBarra icono="menu" onPress={nav.alternarDrawer} />
+            <BotonBarra icono="menu" etiqueta="Menú" onPress={nav.alternarDrawer} />
           </View>
         </View>
         <View className="h-px bg-madera/15" />
@@ -51,15 +56,21 @@ export function NavBar() {
 
 function BotonBarra({
   icono,
+  etiqueta,
   inicial,
   onPress,
 }: {
   icono: 'person-outline' | 'bag-handle-outline' | 'menu';
+  etiqueta: string;
   inicial?: string;
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} className="h-10 w-10 items-center justify-center">
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={etiqueta}
+      className="min-h-12 min-w-12 items-center justify-center">
       {inicial ? (
         <Text className="font-serif text-[15px] text-marca">{inicial}</Text>
       ) : (

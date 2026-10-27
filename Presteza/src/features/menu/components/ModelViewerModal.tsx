@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Modal, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Modal, Text, Pressable, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+
+import { colores } from '@/theme/tokens';
 
 import { useModelo3d } from '../hooks/useModelo3d';
 
@@ -77,9 +79,13 @@ export function ModelViewerModal({
           <Text className="font-roboto-bold text-xl text-crema" numberOfLines={1}>
             {productName || 'Vista 3D'}
           </Text>
-          <TouchableOpacity onPress={onClose} className="rounded-full bg-black/30 p-2">
-            <Ionicons name="close" size={24} color="#d4af77" />
-          </TouchableOpacity>
+          <Pressable
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Cerrar vista 3D"
+            className="min-h-12 min-w-12 items-center justify-center rounded-full bg-black/30">
+            <Ionicons name="close" size={24} color={colores.oro} />
+          </Pressable>
         </View>
 
         {/* Visor 3D */}

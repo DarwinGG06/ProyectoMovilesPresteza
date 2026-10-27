@@ -85,7 +85,11 @@ export function EncabezadoSeccion({
 
   return (
     <View className="px-6 pt-8">
-      <Pressable onPress={onVolver} hitSlop={8} className="self-start py-1">
+      <Pressable
+        onPress={onVolver}
+        accessibilityRole="button"
+        accessibilityLabel="Volver a la cuenta"
+        className="min-h-12 justify-center self-start">
         <Text className="font-roboto text-[10px] tracking-[3px] text-oro">←  CUENTA</Text>
       </Pressable>
       <View className="mt-2 flex-row items-center">

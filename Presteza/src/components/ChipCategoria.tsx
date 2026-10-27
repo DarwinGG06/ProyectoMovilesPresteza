@@ -8,7 +8,12 @@ type ChipCategoriaProps = {
 
 export function ChipCategoria({ etiqueta, activo, onPress }: ChipCategoriaProps) {
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" className="mr-1 py-2 active:opacity-70">
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={etiqueta}
+      accessibilityState={{ selected: Boolean(activo) }}
+      className="mr-1 min-h-12 min-w-12 justify-center px-1 active:opacity-70">
       <Text
         className={`font-roboto text-[10px] tracking-[2px] ${
           activo ? 'text-tinta' : 'text-tinta/70'

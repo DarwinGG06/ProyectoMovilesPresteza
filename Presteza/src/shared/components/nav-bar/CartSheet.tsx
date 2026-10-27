@@ -34,7 +34,11 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                   La bandeja
                 </Text>
               </View>
-              <Pressable onPress={onClose} className="py-1" accessibilityRole="button">
+              <Pressable
+                onPress={onClose}
+                accessibilityRole="button"
+                accessibilityLabel="Cerrar bandeja"
+                className="min-h-12 min-w-12 items-center justify-center">
                 <Text className="font-roboto text-[11px] tracking-[2px] text-marca">CERRAR</Text>
               </Pressable>
             </View>
@@ -82,7 +86,9 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                         <Pressable
                           onPress={() => updateQuantity(item.id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
-                          className="pr-3 active:opacity-70 disabled:opacity-35">
+                          accessibilityRole="button"
+                          accessibilityLabel={`Quitar uno de ${item.productName}`}
+                          className="min-h-12 min-w-12 items-center justify-center active:opacity-70 disabled:opacity-35">
                           <Text className="font-serif text-2xl leading-7 text-tinta">−</Text>
                         </Pressable>
                         <Text className="min-w-[28px] text-center font-serif-italic text-xl text-tinta">
@@ -90,10 +96,16 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                         </Text>
                         <Pressable
                           onPress={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="pl-3 active:opacity-70">
+                          accessibilityRole="button"
+                          accessibilityLabel={`Agregar uno de ${item.productName}`}
+                          className="min-h-12 min-w-12 items-center justify-center active:opacity-70">
                           <Text className="font-serif text-2xl leading-7 text-tinta">+</Text>
                         </Pressable>
-                        <Pressable onPress={() => removeItem(item.id)} className="ml-auto py-1">
+                        <Pressable
+                          onPress={() => removeItem(item.id)}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Quitar ${item.productName}`}
+                          className="ml-auto min-h-12 justify-center px-2">
                           <Text className="font-roboto text-[10px] tracking-[2px] text-marca">QUITAR</Text>
                         </Pressable>
                       </View>

@@ -29,7 +29,11 @@ export function HeroPerfil({ nombre, email, puntos, nivel, onAjustes }: HeroPerf
         <Pergamino>
           <View className="px-6 pb-8 pt-5">
             <View className="mb-2 flex-row justify-end">
-              <Pressable onPress={onAjustes} hitSlop={10} className="h-9 w-9 items-center justify-center">
+              <Pressable
+                onPress={onAjustes}
+                accessibilityRole="button"
+                accessibilityLabel="Ajustes"
+                className="min-h-12 min-w-12 items-center justify-center">
                 <IconoNav name="settings-outline" size={20} className="text-marca" />
               </Pressable>
             </View>

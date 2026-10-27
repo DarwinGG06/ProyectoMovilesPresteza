@@ -63,7 +63,11 @@ export function MenuAdmin({ activa, onChange, contadores, children }: MenuAdminP
 
   return (
     <>
-      <Pressable onPress={() => setAbierto(true)} hitSlop={8}>
+      <Pressable
+        onPress={() => setAbierto(true)}
+        accessibilityRole="button"
+        accessibilityLabel="Abrir menú de administración"
+        className="min-h-12 justify-center">
         {children ?? (
           <Text className="font-roboto text-[10px] tracking-[3px] text-tinta/70">ADMINISTRACIÓN</Text>
         )}
@@ -94,7 +98,7 @@ export function MenuAdmin({ activa, onChange, contadores, children }: MenuAdminP
                               setAbierto(false);
                               onChange(item.id);
                             }}
-                            className="flex-row items-baseline py-3">
+                            className="min-h-12 flex-row items-center py-3">
                             <Text
                               className={`flex-1 font-serif text-[22px] ${
                                 seleccionada ? 'text-marca' : 'text-tinta'
@@ -132,7 +136,11 @@ export function EncabezadoSeccionAdmin({
 }) {
   return (
     <View className="bg-crema px-6 pb-3 pt-6">
-      <Pressable onPress={onVolver} hitSlop={8} className="self-start py-1">
+      <Pressable
+        onPress={onVolver}
+        accessibilityRole="button"
+        accessibilityLabel="Volver a administración"
+        className="min-h-12 justify-center self-start">
         <Text className="font-roboto text-[10px] tracking-[3px] text-tinta/70">←  ADMINISTRACIÓN</Text>
       </Pressable>
       <View className="mt-2">

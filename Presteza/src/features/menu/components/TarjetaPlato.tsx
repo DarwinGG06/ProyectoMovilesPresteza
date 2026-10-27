@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 
 import { idDe } from '@/api/helpers';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
+import { colores } from '@/theme/tokens';
 import type { Producto } from '@/types';
 
 type TarjetaPlatoProps = {
@@ -48,8 +49,8 @@ export function TarjetaPlato({ producto, indice, tieneModelo, onVerModelo }: Tar
             }}
             accessibilityRole="button"
             accessibilityLabel={`Ver ${producto.name} en 3D`}
-            className="absolute -bottom-1 -right-1 border border-oro bg-marca-oscura p-1.5 active:opacity-80">
-            <Ionicons name="cube-outline" size={14} color="#d4af77" />
+            className="absolute -bottom-2 -right-2 min-h-12 min-w-12 items-center justify-center border border-oro bg-marca-oscura active:opacity-80">
+            <Ionicons name="cube-outline" size={16} color={colores.oro} />
           </Pressable>
         ) : null}
       </View>

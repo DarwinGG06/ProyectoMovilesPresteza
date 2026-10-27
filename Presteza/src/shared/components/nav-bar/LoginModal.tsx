@@ -42,7 +42,9 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                 <View className="p-6">
                   <Pressable
                     onPress={close}
-                    className="absolute right-5 top-5 z-10 h-9 w-9 items-center justify-center border border-madera/25">
+                    accessibilityRole="button"
+                    accessibilityLabel="Cerrar"
+                    className="absolute right-5 top-5 z-10 min-h-12 min-w-12 items-center justify-center border border-madera/25">
                     <IconoNav name="close" size={16} className="text-tinta" />
                   </Pressable>
 
@@ -106,13 +108,19 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                     />
                   </View>
 
-                  <Pressable onPress={irARecuperar} className="mb-5 mt-4 self-end">
+                  <Pressable
+                    onPress={irARecuperar}
+                    accessibilityRole="button"
+                    className="mb-5 mt-4 min-h-12 justify-center self-end">
                     <Text className="font-roboto text-xs tracking-wide text-marca">
                       ¿Olvidaste tu contraseña?
                     </Text>
                   </Pressable>
 
-                  <Pressable onPress={irARegistro}>
+                  <Pressable
+                    onPress={irARegistro}
+                    accessibilityRole="button"
+                    className="min-h-12 justify-center">
                     <Text className="text-center font-roboto text-tinta/60">
                       ¿Primera vez? <Text className="font-roboto-bold text-marca">Regístrate</Text>
                     </Text>

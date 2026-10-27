@@ -26,7 +26,7 @@ export default function Button({
 }: Props) {
   const tono: Variant = variant ?? (secondary ? 'secondary' : 'primary');
   const letra = compact ? 'text-[10px] tracking-[1.2px]' : 'text-[11px] tracking-[3px]';
-  const alto = compact ? 40 : 54;
+  const alto = compact ? 48 : 54;
 
   if (tono === 'gold') {
     return (

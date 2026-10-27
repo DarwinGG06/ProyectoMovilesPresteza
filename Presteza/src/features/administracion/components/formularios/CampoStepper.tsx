@@ -22,14 +22,18 @@ export function Paso({
       <Pressable
         onPress={() => onCambio(Math.max(minimo, valor - 1))}
         hitSlop={8}
-        className="h-9 w-9 items-center justify-center">
+        accessibilityRole="button"
+        accessibilityLabel="Quitar uno"
+        className="min-h-12 min-w-12 items-center justify-center">
         <Text className="font-roboto-light text-2xl text-marca-oscura">−</Text>
       </Pressable>
       <Text className="w-8 text-center font-roboto-light text-lg text-marca-oscura">{valor}</Text>
       <Pressable
         onPress={() => onCambio(maximo != null ? Math.min(maximo, valor + 1) : valor + 1)}
         hitSlop={8}
-        className="h-9 w-9 items-center justify-center">
+        accessibilityRole="button"
+        accessibilityLabel="Agregar uno"
+        className="min-h-12 min-w-12 items-center justify-center">
         <Text className="font-roboto-light text-2xl text-marca-oscura">+</Text>
       </Pressable>
     </View>

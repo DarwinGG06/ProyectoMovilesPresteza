@@ -1,12 +1,21 @@
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { useAviso } from '@/shared/components/aviso';
+
 import {
   elegirDesdeArchivo,
   elegirDesdeCamara,
   elegirDesdeGaleria,
 } from '@/services/imagen/elegir';
-import { ImagenInvalidaError, type ArchivoImagen } from '@/services/imagen/formatos';
+import {
+  archivoDesdeUri,
+  esUriLocal,
+  ImagenInvalidaError,
+  urlDeImagen,
+  urlPublicaImagen,
+  type ArchivoImagen,
+} from '@/services/imagen/formatos';
 import { subirImagenACloudinary } from '@/services/imagen/subirACloudinary';
 import {
   elegirModelo3d,
@@ -27,13 +36,28 @@ function mensajeDe(error: unknown, porDefecto: string) {
   return error instanceof Error ? error.message : porDefecto;
 }
 
+function texto(valor?: string | null) {
+  return urlDeImagen(valor);
+}
+
 export function useFormularioProducto({
   valores,
   onGuardar,
   guardando,
 }: OpcionesFormularioProducto) {
+  const aviso = useAviso();
   const { control, handleSubmit, setError, clearErrors, getValues, setValue, watch } =
-    useForm<ProductoForm>({ defaultValues: valores });
+    useForm<ProductoForm>({
+      defaultValues: {
+        name: valores.name ?? '',
+        description: valores.description ?? '',
+        price: valores.price ?? '',
+        categoryId: valores.categoryId ?? '',
+        imageUrl: valores.imageUrl ?? '',
+        modelUrl: valores.modelUrl ?? '',
+        adicionalIds: valores.adicionalIds ?? [],
+      },
+    });
   const [archivo, setArchivo] = useState<ArchivoImagen | null>(null);
   const [modelo, setModelo] = useState<ArchivoModelo3d | null>(null);
   const [subiendo, setSubiendo] = useState(false);
@@ -50,9 +74,12 @@ export function useFormularioProducto({
       const elegido = await origen();
       if (!elegido) return;
       setArchivo(elegido);
+      setValue('imageUrl', elegido.uri);
       clearErrors('imageUrl');
     } catch (error) {
-      setError('imageUrl', { message: mensajeDe(error, 'No se pudo leer la imagen') });
+      const mensaje = mensajeDe(error, 'No se pudo leer la imagen');
+      setError('imageUrl', { message: mensaje });
+      aviso.error('Imagen', mensaje);
     }
   };
 
@@ -74,10 +101,16 @@ export function useFormularioProducto({
     clearErrors('modelUrl');
   };
 
-  const guardar = handleSubmit(async (datos) => {
+  const guardar = handleSubmit(
+    async (datos) => {
     const local = archivoRef.current;
-    if (!local && !datos.imageUrl.trim()) {
+    const foto = texto(datos.imageUrl) || texto(valores.imageUrl);
+    const modeloUrl = texto(datos.modelUrl) || texto(valores.modelUrl);
+    const publica = urlPublicaImagen(foto);
+    const pendiente = local ?? (foto && esUriLocal(foto) ? archivoDesdeUri(foto) : null);
+    if (!pendiente && !publica) {
       setError('imageUrl', { message: 'Elige una foto del plato' });
+      aviso.error('Plato', 'Elige una foto del plato.');
       return;
     }
 
@@ -85,17 +118,19 @@ export function useFormularioProducto({
     try {
       // La imagen y el modelo se suben a la vez; cada error se muestra en su campo.
       const [imagen, modelo3d] = await Promise.allSettled([
-        local ? subirImagenACloudinary(local) : Promise.resolve(datos.imageUrl.trim()),
-        modeloRef.current ? subirModelo3d(modeloRef.current) : Promise.resolve(datos.modelUrl.trim()),
+        pendiente
+          ? subirImagenACloudinary(pendiente).then((recurso) => recurso.url)
+          : Promise.resolve(publica),
+        modeloRef.current ? subirModelo3d(modeloRef.current) : Promise.resolve(modeloUrl),
       ]);
 
       if (imagen.status === 'rejected') {
-        setError('imageUrl', {
-          message:
-            imagen.reason instanceof ImagenInvalidaError
-              ? imagen.reason.message
-              : mensajeDe(imagen.reason, 'No se pudo subir la imagen'),
-        });
+        const mensaje =
+          imagen.reason instanceof ImagenInvalidaError
+            ? imagen.reason.message
+            : mensajeDe(imagen.reason, 'No se pudo subir la imagen');
+        setError('imageUrl', { message: mensaje });
+        aviso.error('Imagen', mensaje);
       } else {
         setValue('imageUrl', imagen.value);
         setArchivo(null);
@@ -103,7 +138,9 @@ export function useFormularioProducto({
       }
 
       if (modelo3d.status === 'rejected') {
-        setError('modelUrl', { message: mensajeDe(modelo3d.reason, 'No se pudo subir el modelo') });
+        const mensaje = mensajeDe(modelo3d.reason, 'No se pudo subir el modelo');
+        setError('modelUrl', { message: mensaje });
+        aviso.error('Modelo 3D', mensaje);
       } else {
         setValue('modelUrl', modelo3d.value);
         setModelo(null);
@@ -112,19 +149,40 @@ export function useFormularioProducto({
 
       if (imagen.status === 'rejected' || modelo3d.status === 'rejected') return;
 
-      await onGuardar({ ...getValues(), imageUrl: imagen.value, modelUrl: modelo3d.value });
-    } catch {
-      // El aviso del admin ya dice si falló el plato o los adicionales.
+      const urlLista = urlPublicaImagen(imagen.value) || publica;
+      if (!urlLista) {
+        setError('imageUrl', { message: 'La foto no quedó lista. Elige la imagen otra vez.' });
+        aviso.error('Imagen', 'La foto no quedó lista. Elige la imagen otra vez.');
+        return;
+      }
+
+      await onGuardar({
+        ...getValues(),
+        imageUrl: urlLista,
+        modelUrl: modelo3d.value || modeloUrl,
+        adicionalIds: datos.adicionalIds ?? [],
+      });
+    } catch (error) {
+      aviso.errorDe(error, 'No se pudo guardar el plato.', 'Plato');
     } finally {
       setSubiendo(false);
     }
-  });
+    },
+    (errores) => {
+      const primero = Object.values(errores)[0];
+      const mensaje =
+        primero && typeof primero === 'object' && 'message' in primero && primero.message
+          ? String(primero.message)
+          : 'Revisa nombre, descripción, precio y categoría.';
+      aviso.error('Plato', mensaje);
+    },
+  );
 
   const modeloGuardado = watch('modelUrl');
 
   return {
     control,
-    preview: archivo?.uri || watch('imageUrl'),
+    preview: archivo?.uri || urlDeImagen(watch('imageUrl')),
     ocupado: Boolean(guardando || subiendo),
     subiendo,
     guardar,

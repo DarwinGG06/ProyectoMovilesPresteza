@@ -24,7 +24,9 @@ export function lista<T>(data: unknown, ...claves: string[]): T[] {
 export function texto(valor: unknown) {
   if (typeof valor === 'string') return valor;
   if (typeof valor === 'number' && Number.isFinite(valor)) return String(valor);
-  if (valor && typeof valor === 'object' && 'toString' in valor) {
+  if (valor && typeof valor === 'object') {
+    const obj = valor as { $oid?: unknown };
+    if (typeof obj.$oid === 'string') return obj.$oid;
     const id = String(valor);
     if (id && id !== '[object Object]') return id;
   }

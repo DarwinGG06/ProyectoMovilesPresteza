@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { actualizarAdicional, listarAdicionales } from '@/api/admin';
 import { idDe } from '@/api/helpers';
 import { actualizarProducto, eliminarProducto } from '@/api/productos';
+import { urlPublicaImagen } from '@/services/imagen/formatos';
 import type { AdicionalAdmin, ProductoForm } from '@/features/administracion/types';
 import { cambiosDe } from '@/features/administracion/utils';
 import { useAviso } from '@/shared/components/aviso';
@@ -34,13 +35,22 @@ export function useCartaAdmin(recargar: () => void, categorias: Categoria[]) {
   const guardar = useCallback(
     async (datos: ProductoForm) => {
       if (!token || !editando) return;
-      const imagen = datos.imageUrl.trim();
-      const modelo = datos.modelUrl.trim();
+      const id = idDe(editando);
+      if (!id) {
+        aviso.error('Producto', 'Cierra este plato y ábrelo otra vez desde la carta.');
+        return;
+      }
+      const imagen = urlPublicaImagen(datos.imageUrl);
+      const modelo = typeof datos.modelUrl === 'string' ? datos.modelUrl.trim() : '';
+      if (!imagen) {
+        aviso.error('Imagen', 'La foto no quedó lista. Elige la imagen otra vez y pulsa Listo.');
+        return;
+      }
       const actual = {
-        name: datos.name.trim(),
-        description: datos.description.trim(),
+        name: (datos.name ?? '').trim(),
+        description: (datos.description ?? '').trim(),
         price: Number(datos.price),
-        categoryId: datos.categoryId,
+        categoryId: datos.categoryId ?? '',
         image: imagen,
         modelUrl: modelo,
       };
@@ -53,13 +63,13 @@ export function useCartaAdmin(recargar: () => void, categorias: Categoria[]) {
         modelUrl: editando.modelUrl ?? '',
       };
       const cambios = cambiosDe(actual, original);
-      const categoria = datos.categoryId.trim();
+      const categoria = (datos.categoryId ?? '').trim();
       const elegidos = new Set((datos.adicionalIds ?? []).map(String));
 
       setGuardando(true);
       try {
         if (Object.keys(cambios).length) {
-          await actualizarProducto(token, idDe(editando), cambios);
+          await actualizarProducto(token, id, cambios);
         }
 
         if (categoria) {

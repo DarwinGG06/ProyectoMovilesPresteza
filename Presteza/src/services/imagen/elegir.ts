@@ -9,14 +9,17 @@ import {
   type ArchivoImagen,
 } from './formatos';
 
-function dePicker(asset: {
-  uri: string;
-  mimeType?: string | null;
-  fileName?: string | null;
-  fileSize?: number | null;
-}): ArchivoImagen {
+function dePicker(
+  asset: {
+    uri: string;
+    mimeType?: string | null;
+    fileName?: string | null;
+    fileSize?: number | null;
+  },
+  opciones?: { asumirImagen?: boolean },
+): ArchivoImagen {
   validarTamano(asset.fileSize);
-  const mime = validarFormatoImagen(asset.mimeType, asset.fileName ?? asset.uri);
+  const mime = validarFormatoImagen(asset.mimeType, asset.fileName ?? asset.uri, opciones);
   return {
     uri: asset.uri,
     mime,
@@ -27,7 +30,7 @@ function dePicker(asset: {
 async function deImagen(lanzar: () => Promise<ImagePicker.ImagePickerResult>): Promise<ArchivoImagen | null> {
   const resultado = await lanzar();
   if (resultado.canceled || !resultado.assets[0]) return null;
-  return dePicker(resultado.assets[0]);
+  return dePicker(resultado.assets[0], { asumirImagen: true });
 }
 
 const opciones: ImagePicker.ImagePickerOptions = {

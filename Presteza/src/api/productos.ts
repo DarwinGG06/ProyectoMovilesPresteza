@@ -1,6 +1,6 @@
 import type { Producto } from '../types';
 import { request } from './client';
-import { idDe, lista, texto } from './helpers';
+import { entidad, idDe, lista, texto } from './helpers';
 
 function normalizarProducto(crudo: Record<string, unknown>): Producto {
   const categoria = crudo.category;
@@ -42,14 +42,20 @@ export async function listarProductos(jwt?: string) {
   return crudos.map(normalizarProducto);
 }
 
-export function crearProducto(jwt: string, datos: Record<string, unknown>) {
-  return request<Producto>('/dishes', { method: 'POST', token: jwt, body: datos });
+export async function crearProducto(jwt: string, datos: Record<string, unknown>) {
+  const respuesta = await request('/dishes', { method: 'POST', token: jwt, body: datos });
+  return normalizarProducto(entidad(respuesta, 'dish', 'product'));
 }
 
-export function actualizarProducto(jwt: string, id: string, datos: Record<string, unknown>) {
-  return request<Producto>(`/dishes/${id}`, { method: 'PATCH', token: jwt, body: datos });
+export async function actualizarProducto(jwt: string, id: string, datos: Record<string, unknown>) {
+  const limpio = id.trim();
+  if (!limpio) throw new Error('Este plato no tiene id. Cierra el formulario y ábrelo otra vez.');
+  const respuesta = await request(`/dishes/${limpio}`, { method: 'PATCH', token: jwt, body: datos });
+  return normalizarProducto(entidad(respuesta, 'dish', 'product'));
 }
 
 export function eliminarProducto(jwt: string, id: string) {
-  return request<void>(`/dishes/${id}`, { method: 'DELETE', token: jwt });
+  const limpio = id.trim();
+  if (!limpio) return Promise.reject(new Error('Este plato no tiene id. Recarga la lista.'));
+  return request<void>(`/dishes/${limpio}`, { method: 'DELETE', token: jwt });
 }

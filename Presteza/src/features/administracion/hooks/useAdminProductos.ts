@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { actualizarProducto, crearProducto, eliminarProducto, listarProductos } from '@/api/productos';
+import { urlPublicaImagen } from '@/services/imagen/formatos';
 import type { ProductoAdmin, ProductoForm } from '../types';
 import { cambiosDe, idDe } from '../utils';
 import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
@@ -13,13 +14,17 @@ export function useAdminProductos() {
     async (datos: ProductoForm, editando?: ProductoAdmin | null) => {
       const sesion = conToken();
       if (!sesion) return false;
-      const imagen = datos.imageUrl.trim();
-      const modelo = datos.modelUrl.trim();
+      const imagen = urlPublicaImagen(datos.imageUrl);
+      const modelo = typeof datos.modelUrl === 'string' ? datos.modelUrl.trim() : '';
+      if (!imagen) {
+        aviso.error('Imagen', 'La foto no quedó lista. Elige la imagen otra vez y pulsa Listo.');
+        return false;
+      }
       const actual = {
-        name: datos.name.trim(),
-        description: datos.description.trim(),
+        name: (datos.name ?? '').trim(),
+        description: (datos.description ?? '').trim(),
         price: Number(datos.price),
-        categoryId: datos.categoryId,
+        categoryId: datos.categoryId ?? '',
         image: imagen,
         modelUrl: modelo,
       };
@@ -27,6 +32,12 @@ export function useAdminProductos() {
       setGuardando(true);
       try {
         if (editando) {
+          const id = idDe(editando);
+          if (!id) {
+            aviso.error('Producto', 'Cierra este plato y ábrelo otra vez desde la lista.');
+            await recargar();
+            return false;
+          }
           const original = {
             name: editando.name,
             description: editando.description ?? '',
@@ -39,7 +50,7 @@ export function useAdminProductos() {
           // ni siquiera viaja al backend.
           const cambios = cambiosDe(actual, original);
           if (Object.keys(cambios).length) {
-            const actualizado = await actualizarProducto(sesion, idDe(editando), cambios);
+            const actualizado = await actualizarProducto(sesion, id, cambios);
             setLista((prev) =>
               fusionar(
                 prev,
@@ -49,7 +60,7 @@ export function useAdminProductos() {
             );
             aviso.ok('Plato editado', `${actual.name} fue editado.`);
           }
-          return idDe(editando);
+          return id;
         }
         // Sin modelo, `modelUrl` va como undefined y JSON.stringify lo omite.
         const creado = await crearProducto(sesion, {
@@ -59,8 +70,13 @@ export function useAdminProductos() {
           available: true,
         });
         const id = idDe(creado);
+        if (!id) {
+          aviso.ok('Plato creado', `${actual.name} ya está en la carta.`);
+          await recargar();
+          return false;
+        }
         setLista((prev) => [
-          { ...creado, ...actual, imageUrl: imagen, modelUrl: modelo || undefined, available: true },
+          { ...creado, ...actual, id, _id: id, imageUrl: imagen, modelUrl: modelo || undefined, available: true },
           ...prev,
         ]);
         aviso.ok('Plato creado', `${actual.name} ya está en la carta.`);
@@ -72,7 +88,7 @@ export function useAdminProductos() {
         setGuardando(false);
       }
     },
-    [aviso, conToken, setGuardando, setLista],
+    [aviso, conToken, recargar, setGuardando, setLista],
   );
 
   const alternar = useCallback(

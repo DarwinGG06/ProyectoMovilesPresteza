@@ -55,7 +55,6 @@ export function FormularioProducto({
         variante="linea"
         maxLength={400}
         rules={{
-          required: 'Escribe una descripción',
           maxLength: { value: 400, message: 'Máximo 400 caracteres' },
         }}
       />

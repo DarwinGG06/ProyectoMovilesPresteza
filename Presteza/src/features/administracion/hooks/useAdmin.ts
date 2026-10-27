@@ -141,7 +141,16 @@ export function useAdmin() {
     adicionales: adicionales.adicionales,
     mensajes: mensajes.mensajes,
     clientes,
-    guardarProducto: productos.guardar,
+    guardarProducto: async (datos, editando) => {
+      const id = await productos.guardar(datos, editando);
+      if (!id) return false;
+      try {
+        await adicionales.vincularAPlato(id, datos.adicionalIds ?? [], datos.categoryId);
+      } catch {
+        // El vínculo se avisa aparte; el plato ya quedó guardado.
+      }
+      return true;
+    },
     alternarProducto: productos.alternar,
     eliminarProducto: productos.eliminar,
     eliminarProductos: productos.eliminarVarios,

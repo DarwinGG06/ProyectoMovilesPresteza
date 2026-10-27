@@ -1,10 +1,9 @@
 import { type ComponentProps, type ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import Button from '@/components/Button';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
-import { TarjetaFolio } from './elementos';
+import { BotonAgregar, TarjetaFolio } from './elementos';
 
 type NombreIcono = ComponentProps<typeof IconoNav>['name'];
 
@@ -22,7 +21,9 @@ export function TarjetaPerfil({ titulo, accion, compacto, children }: TarjetaPer
     return (
       <View className="mb-2">
         {accion ? (
-          <Button text={accion.etiqueta} variant="gold" className="mb-4" onPress={accion.onPress} />
+          <View className="mb-5">
+            <BotonAgregar etiqueta={accion.etiqueta} onPress={accion.onPress} />
+          </View>
         ) : null}
         {children}
       </View>
@@ -57,9 +58,9 @@ export function EstadoVacio({ titulo, texto, accion }: EstadoVacioProps) {
       {titulo ? <Text className="mb-2 font-serif-light text-2xl text-tinta">{titulo}</Text> : null}
       <Text className="font-roboto text-sm leading-5 text-tinta/50">{texto}</Text>
       {accion ? (
-        <Pressable onPress={accion.onPress} className="mt-5 self-start">
-          <Text className="font-roboto text-[11px] tracking-[2px] text-marca">{accion.etiqueta}</Text>
-        </Pressable>
+        <View className="mt-5">
+          <BotonAgregar etiqueta={accion.etiqueta} onPress={accion.onPress} sobrePapel />
+        </View>
       ) : null}
     </TarjetaFolio>
   );

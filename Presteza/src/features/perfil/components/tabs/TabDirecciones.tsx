@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { useDirecciones } from '../../hooks/useDirecciones';
@@ -10,22 +11,23 @@ type TabDireccionesProps = {
   userId: string;
   perfil: UsuarioPerfil;
   onActualizado: (perfil: UsuarioPerfil) => void;
+  abrirTick?: number;
 };
 
-export function TabDirecciones({ userId, perfil, onActualizado }: TabDireccionesProps) {
+export function TabDirecciones({
+  userId,
+  perfil,
+  onActualizado,
+  abrirTick = 0,
+}: TabDireccionesProps) {
   const direcciones = useDirecciones({ userId, perfil, onActualizado });
 
+  useEffect(() => {
+    if (abrirTick > 0) direcciones.abrirFormulario();
+  }, [abrirTick, direcciones.abrirFormulario]);
+
   return (
-    <TarjetaPerfil
-      numero="I"
-      badge="DIRECCIONES"
-      titulo="Tus destinos"
-      compacto
-      accion={
-        direcciones.mostrarAccion
-          ? { etiqueta: 'AGREGAR', onPress: direcciones.abrirFormulario }
-          : undefined
-      }>
+    <TarjetaPerfil numero="I" badge="DIRECCIONES" titulo="Tus destinos" compacto>
       {direcciones.error ? <Mensaje texto={direcciones.error} error /> : null}
 
       {direcciones.formularioAbierto ? (
@@ -42,7 +44,6 @@ export function TabDirecciones({ userId, perfil, onActualizado }: TabDirecciones
           icono="location-outline"
           titulo="Sin direcciones"
           texto="Guarda una para agilizar tus pedidos en Manizales."
-          accion={{ etiqueta: 'AGREGAR DIRECCIÓN', onPress: direcciones.abrirFormulario }}
         />
       ) : (
         <View>

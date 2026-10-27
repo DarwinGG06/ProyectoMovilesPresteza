@@ -20,8 +20,7 @@ export function TabReservas({ onCambio }: TabReservasProps) {
       numero="I"
       badge="RESERVAS"
       titulo="Tus mesas"
-      compacto
-      accion={{ etiqueta: 'NUEVA', onPress: reservas.irAReservas }}>
+      compacto>
       {reservas.error ? <Mensaje texto={reservas.error} error /> : null}
 
       {reservas.edicion ? (
@@ -40,7 +39,6 @@ export function TabReservas({ onCambio }: TabReservasProps) {
         <EstadoVacio
           icono="calendar-outline"
           texto="Todavía no tienes una mesa reservada."
-          accion={{ etiqueta: 'RESERVAR', onPress: reservas.irAReservas }}
         />
       ) : (
         <View>

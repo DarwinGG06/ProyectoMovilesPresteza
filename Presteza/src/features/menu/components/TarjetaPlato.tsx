@@ -12,10 +12,19 @@ type TarjetaPlatoProps = {
   indice: number;
   tieneModelo?: boolean;
   onVerModelo?: () => void;
+  onEditar?: () => void;
+  onEliminar?: () => void;
 };
 
 /** Línea de carta: nombre en serifa, precio en vino, foto contenida. */
-export function TarjetaPlato({ producto, indice, tieneModelo, onVerModelo }: TarjetaPlatoProps) {
+export function TarjetaPlato({
+  producto,
+  indice,
+  tieneModelo,
+  onVerModelo,
+  onEditar,
+  onEliminar,
+}: TarjetaPlatoProps) {
   const precio = (Number(producto.price) || 0).toLocaleString('es-CO');
   const id = idDe(producto);
 
@@ -49,8 +58,9 @@ export function TarjetaPlato({ producto, indice, tieneModelo, onVerModelo }: Tar
             }}
             accessibilityRole="button"
             accessibilityLabel={`Ver ${producto.name} en 3D`}
-            className="absolute -bottom-2 -right-2 min-h-12 min-w-12 items-center justify-center border border-oro bg-marca-oscura active:opacity-80">
-            <Ionicons name="cube-outline" size={16} color={colores.oro} />
+            hitSlop={12}
+            className="absolute -bottom-1 -right-1 border border-oro bg-marca-oscura p-1.5 active:opacity-80">
+            <Ionicons name="cube-outline" size={14} color={colores.oro} />
           </Pressable>
         ) : null}
       </View>
@@ -65,6 +75,34 @@ export function TarjetaPlato({ producto, indice, tieneModelo, onVerModelo }: Tar
           </Text>
         ) : null}
         <Text className="mt-2 font-roboto text-[12px] tracking-[1px] text-marca">${precio}</Text>
+        {onEditar || onEliminar ? (
+          <View className="mt-3 flex-row flex-wrap">
+            {onEditar ? (
+              <Pressable
+                onPress={(evento) => {
+                  evento.stopPropagation();
+                  onEditar();
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={`Editar ${producto.name}`}
+                className="mr-4 min-h-12 justify-center">
+                <Text className="font-roboto text-[11px] tracking-[1.6px] text-marca">EDITAR</Text>
+              </Pressable>
+            ) : null}
+            {onEliminar ? (
+              <Pressable
+                onPress={(evento) => {
+                  evento.stopPropagation();
+                  onEliminar();
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={`Eliminar ${producto.name}`}
+                className="min-h-12 justify-center">
+                <Text className="font-roboto text-[11px] tracking-[1.6px] text-red-700">ELIMINAR</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );

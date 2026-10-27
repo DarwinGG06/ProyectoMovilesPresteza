@@ -5,6 +5,9 @@ import Animated from 'react-native-reanimated';
 import Button from '@/components/Button';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 
+import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
+
 import { useAnimacionHero } from '../hooks/useAnimacionHero';
 import { Plato } from './MesaDecor';
 
@@ -12,7 +15,9 @@ const MESA = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=140
 const COPA = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80';
 
 export function HeroInicio() {
+  const { user } = useSession();
   const { platoGrande, halo } = useAnimacionHero();
+  const admin = esAdmin(user);
 
   return (
     <View className="overflow-hidden bg-marca-oscura pb-10 pt-6">
@@ -80,13 +85,15 @@ export function HeroInicio() {
                   onPress={() => router.push('/home/menu')}
                   className="mr-2 flex-1"
                 />
-                <Button
-                  text="RESERVAR"
-                  compact
-                  variant="gold"
-                  onPress={() => router.push('/home/reservas')}
-                  className="flex-1"
-                />
+                {admin ? null : (
+                  <Button
+                    text="RESERVAR"
+                    compact
+                    variant="gold"
+                    onPress={() => router.push('/home/reservas')}
+                    className="flex-1"
+                  />
+                )}
               </View>
             </View>
           </Pergamino>

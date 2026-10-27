@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ControlDrawerHomeProvider } from '@/features/inicio/context/ControlDrawerHome';
 import { CartProvider } from '@/services/cart/CartContext';
 import { SessionProvider, useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
 import { AvisoProvider } from '@/shared/components/aviso';
 import { WhatsAppFloat } from '@/shared/components/footer';
 import { NavBar } from '@/shared/components/nav-bar';
@@ -16,7 +17,7 @@ import '../global.css';
 
 function Rutas() {
   const { user, isAuthenticated } = useSession();
-  const esAdmin = user?.role === 'admin';
+  const admin = esAdmin(user);
 
   return (
     <Stack screenOptions={{ headerShown: false, animation: 'fade' }}>
@@ -35,7 +36,7 @@ function Rutas() {
         <Stack.Screen name="registro" />
       </Stack.Protected>
 
-      <Stack.Protected guard={esAdmin}>
+      <Stack.Protected guard={admin}>
         <Stack.Screen name="administracion" />
       </Stack.Protected>
     </Stack>

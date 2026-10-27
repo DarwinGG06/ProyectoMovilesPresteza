@@ -1,4 +1,5 @@
 import { type ComponentProps } from 'react';
+import { router, type Href } from 'expo-router';
 import {
   DrawerContentScrollView,
   useDrawerStatus,
@@ -8,6 +9,7 @@ import { Animated, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 import { useEntradaEscalonada } from '@/shared/hooks/useEntradaEscalonada';
@@ -38,18 +40,18 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
   const rutaActiva = props.state.routes[props.state.index]?.name;
   const abierto = useDrawerStatus() === 'open';
 
-  const enlaces =
-    user?.role === 'admin'
-      ? [
-          ...ENLACES,
-          {
-            etiqueta: 'Administración',
-            ruta: 'admin',
-            icono: 'speedometer-outline' as NombreIcono,
-            numero: '07',
-          },
-        ]
-      : ENLACES;
+  const base = esAdmin(user) ? ENLACES.filter((enlace) => enlace.ruta !== 'reservas') : ENLACES;
+  const enlaces = esAdmin(user)
+    ? [
+        ...base,
+        {
+          etiqueta: 'Administración',
+          ruta: 'admin',
+          icono: 'speedometer-outline' as NombreIcono,
+          numero: '07',
+        },
+      ]
+    : base;
 
   useRegistroDrawer(props.navigation);
 
@@ -97,7 +99,13 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
               etiqueta={enlace.etiqueta}
               icono={enlace.icono}
               onPress={() => {
-                props.navigation.navigate(enlace.ruta);
+                if (enlace.ruta === 'reservas') {
+                  router.push('/home/reservas?desde=menu' as Href);
+                } else if (enlace.ruta === 'admin') {
+                  props.navigation.navigate('admin', { screen: 'index' });
+                } else {
+                  props.navigation.navigate(enlace.ruta);
+                }
                 props.navigation.closeDrawer();
               }}
             />

@@ -3,7 +3,6 @@ import { ScrollView, View } from 'react-native';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { Footer } from '@/shared/components/footer';
 
-import { CategoriasInicio } from '../components/CategoriasInicio';
 import { CtaInicio } from '../components/CtaInicio';
 import { HeroInicio } from '../components/HeroInicio';
 import { ProductosInicio } from '../components/ProductosInicio';
@@ -18,7 +17,6 @@ export function InicioScreen() {
           <HeroInicio />
           <ValoresInicio />
           <ProductosInicio />
-          <CategoriasInicio />
           <StatsInicio />
           <CtaInicio />
           <Footer />

@@ -1,17 +1,52 @@
-import { useMemo, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import type { Producto } from '@/types';
+import { idDe } from '@/api/helpers';
+import type { Categoria, Producto } from '@/types';
 
+import type { PortadaCategoria } from '../components/TarjetaCategoria';
 import { useMenuPublico } from './useMenuPublico';
+
+function slug(texto: string) {
+  return texto.trim().toLowerCase();
+}
+
+function idDesdeParametro(param: string | undefined, categorias: Categoria[]) {
+  if (!param?.trim()) return null;
+  const porId = categorias.find((categoria) => idDe(categoria) === param);
+  if (porId) return idDe(porId);
+  const pedida = slug(param);
+  const porNombre = categorias.find((categoria) => slug(categoria.name || '') === pedida);
+  return porNombre ? idDe(porNombre) : null;
+}
 
 export function useMenu() {
   const { productos, categorias, cargando, refrescando, error, recargar } = useMenuPublico();
+  const params = useLocalSearchParams<{ categoria?: string | string[] }>();
+  const categoriaParam = Array.isArray(params.categoria)
+    ? params.categoria[params.categoria.length - 1]
+    : params.categoria;
+  const categoriaConsumida = useRef<string | null>(null);
 
   const [busqueda, setBusqueda] = useState('');
   const [categoriaActiva, setCategoriaActiva] = useState<string | null>(null);
   const [visorAbierto, setVisorAbierto] = useState(false);
   const [modeloUrl, setModeloUrl] = useState<string | null>(null);
   const [nombreProducto, setNombreProducto] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!categoriaParam) {
+      categoriaConsumida.current = null;
+      return;
+    }
+    if (!categorias.length) return;
+    if (categoriaConsumida.current === categoriaParam) return;
+
+    const id = idDesdeParametro(categoriaParam, categorias);
+    categoriaConsumida.current = categoriaParam;
+    if (id) setCategoriaActiva(id);
+    router.setParams({ categoria: undefined });
+  }, [categoriaParam, categorias]);
 
   const lista = useMemo(() => {
     return productos.filter((producto) => {
@@ -44,8 +79,23 @@ export function useMenu() {
     }, 300);
   };
 
+  const portadas = useMemo<PortadaCategoria[]>(() => {
+    return categorias
+      .map((categoria) => {
+        const id = idDe(categoria);
+        const platos = productos.filter((plato) => plato.categoryId === id);
+        if (!id || !platos.length) return null;
+        return {
+          id,
+          name: categoria.name,
+          count: platos.length,
+          imageUrl: categoria.imageUrl || platos.find((plato) => plato.imageUrl)?.imageUrl,
+        };
+      })
+      .filter((item): item is PortadaCategoria => Boolean(item));
+  }, [categorias, productos]);
+
   const secciones = useMemo(() => {
-    const idDe = (item?: { id?: string; _id?: string }) => item?.id || item?._id || '';
     if (categoriaActiva) {
       const categoria = categorias.find((item) => idDe(item) === categoriaActiva);
       return [{ title: categoria?.name || 'Carta', data: lista }];
@@ -75,6 +125,8 @@ export function useMenu() {
     categoriaActiva,
     elegirCategoria: setCategoriaActiva,
     productos: lista,
+    portadas,
+    viendoCategorias: !categoriaActiva && !busqueda.trim(),
     secciones,
     tieneModelo,
     abrirVisor,

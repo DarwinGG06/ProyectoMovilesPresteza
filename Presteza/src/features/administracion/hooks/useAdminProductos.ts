@@ -38,34 +38,33 @@ export function useAdminProductos() {
           // Solo se envía lo que cambió: si el modelo no se tocó, `modelUrl`
           // ni siquiera viaja al backend.
           const cambios = cambiosDe(actual, original);
-          if (!Object.keys(cambios).length) {
-            aviso.ok('Sin cambios', 'No hay nada que guardar.');
-            return true;
+          if (Object.keys(cambios).length) {
+            const actualizado = await actualizarProducto(sesion, idDe(editando), cambios);
+            setLista((prev) =>
+              fusionar(
+                prev,
+                { ...editando, ...actualizado },
+                { ...cambios, imageUrl: imagen, modelUrl: modelo || undefined },
+              ),
+            );
+            aviso.ok('Plato editado', `${actual.name} fue editado.`);
           }
-          const actualizado = await actualizarProducto(sesion, idDe(editando), cambios);
-          setLista((prev) =>
-            fusionar(
-              prev,
-              { ...editando, ...actualizado },
-              { ...cambios, imageUrl: imagen, modelUrl: modelo || undefined },
-            ),
-          );
-          aviso.ok('Plato editado', `${actual.name} fue editado.`);
-        } else {
-          // Sin modelo, `modelUrl` va como undefined y JSON.stringify lo omite.
-          const creado = await crearProducto(sesion, {
-            ...actual,
-            modelUrl: modelo || undefined,
-            type: 'principal',
-            available: true,
-          });
-          setLista((prev) => [
-            { ...creado, ...actual, imageUrl: imagen, modelUrl: modelo || undefined, available: true },
-            ...prev,
-          ]);
-          aviso.ok('Plato creado', `${actual.name} ya está en la carta.`);
+          return idDe(editando);
         }
-        return true;
+        // Sin modelo, `modelUrl` va como undefined y JSON.stringify lo omite.
+        const creado = await crearProducto(sesion, {
+          ...actual,
+          modelUrl: modelo || undefined,
+          type: 'principal',
+          available: true,
+        });
+        const id = idDe(creado);
+        setLista((prev) => [
+          { ...creado, ...actual, imageUrl: imagen, modelUrl: modelo || undefined, available: true },
+          ...prev,
+        ]);
+        aviso.ok('Plato creado', `${actual.name} ya está en la carta.`);
+        return id;
       } catch (err) {
         aviso.errorDe(err, 'No se pudo guardar.', 'Producto');
         return false;

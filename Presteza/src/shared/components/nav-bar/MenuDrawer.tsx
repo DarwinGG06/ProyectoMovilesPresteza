@@ -4,6 +4,7 @@ import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
 import { useEntradaEscalonada } from '@/shared/hooks/useEntradaEscalonada';
 
 import { IconoNav } from './IconoNav';
@@ -27,18 +28,20 @@ type MenuDrawerProps = {
 
 export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
   const { user } = useSession();
-  const enlaces =
-    user?.role === 'admin'
-      ? [
-          ...ENLACES,
-          {
-            etiqueta: 'Administración',
-            ruta: '/home/admin' as Href,
-            icono: 'speedometer-outline' as NombreIcono,
-            numero: '07',
-          },
-        ]
-      : ENLACES;
+  const base = esAdmin(user)
+    ? ENLACES.filter((enlace) => enlace.ruta !== '/home/reservas')
+    : ENLACES;
+  const enlaces = esAdmin(user)
+    ? [
+        ...base,
+        {
+          etiqueta: 'Administración',
+          ruta: '/home/admin' as Href,
+          icono: 'speedometer-outline' as NombreIcono,
+          numero: '07',
+        },
+      ]
+    : base;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -74,6 +77,14 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
                 icono={enlace.icono}
                 onPress={() => {
                   onClose();
+                  if (enlace.ruta === '/home/reservas') {
+                    router.push('/home/reservas?desde=menu' as Href);
+                    return;
+                  }
+                  if (enlace.ruta === '/home/admin') {
+                    router.navigate('/home/admin' as Href);
+                    return;
+                  }
                   router.push(enlace.ruta);
                 }}
               />

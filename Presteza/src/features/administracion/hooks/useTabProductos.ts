@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 
-import type { CategoriaAdmin, ProductoAdmin, ProductoForm } from '../types';
+import type { AdicionalAdmin, CategoriaAdmin, ProductoAdmin, ProductoForm } from '../types';
 import { idDe } from '../utils';
 
 type Disponibilidad = 'all' | 'carta' | 'oculto';
@@ -9,6 +10,7 @@ export function useTabProductos(
   productos: ProductoAdmin[],
   categorias: CategoriaAdmin[],
   onGuardar: (datos: ProductoForm, editando?: ProductoAdmin | null) => Promise<boolean>,
+  adicionales: AdicionalAdmin[] = [],
 ) {
   const [busqueda, setBusqueda] = useState('');
   const [categoriaFiltro, setCategoriaFiltro] = useState('');
@@ -17,6 +19,15 @@ export function useTabProductos(
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(true);
   const [abierto, setAbierto] = useState(false);
   const [editando, setEditando] = useState<ProductoAdmin | null>(null);
+  const params = useLocalSearchParams<{ nuevo?: string | string[] }>();
+  const nuevoParam = Array.isArray(params.nuevo) ? params.nuevo[0] : params.nuevo;
+
+  useEffect(() => {
+    if (nuevoParam !== '1') return;
+    setEditando(null);
+    setAbierto(true);
+    router.setParams({ nuevo: undefined });
+  }, [nuevoParam]);
 
   const lista = useMemo(() => {
     const texto = busqueda.trim().toLowerCase();
@@ -67,8 +78,14 @@ export function useTabProductos(
       price: editando ? String(editando.price) : '',
       categoryId: editando?.categoryId ?? idDe(categorias[0]),
       imageUrl: editando?.imageUrl ?? '',
-      imagePublicId: editando?.imagePublicId ?? '',
       modelUrl: editando?.modelUrl ?? '',
+      adicionalIds: adicionales
+        .filter((item) =>
+          (item.categoryIds ?? []).some(
+            (id) => String(id) === String(editando?.categoryId ?? idDe(categorias[0])),
+          ),
+        )
+        .map((item) => idDe(item)),
     } satisfies ProductoForm,
   };
 }

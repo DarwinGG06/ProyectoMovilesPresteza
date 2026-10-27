@@ -25,7 +25,7 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
           icono="receipt-outline"
           titulo="No tienes pedidos"
           texto="Cuando pidas, el seguimiento aparece aquí."
-          accion={{ etiqueta: 'VER MENÚ', onPress: irAlMenu }}
+          accion={{ etiqueta: 'Ver menú', onPress: irAlMenu }}
         />
       ) : (
         <View>

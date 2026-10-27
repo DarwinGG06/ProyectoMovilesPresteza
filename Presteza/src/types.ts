@@ -67,6 +67,7 @@ export type ProductoForm = {
   imageUrl: string;
   /** URL del modelo 3D (.glb) en Cloudinary. Vacío = sin modelo. */
   modelUrl: string;
+  adicionalIds?: string[];
 };
 
 // --- Categorías ------------------------------------------------------------

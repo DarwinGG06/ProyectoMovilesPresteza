@@ -1,5 +1,5 @@
-import { router, useFocusEffect, type Href } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useSession } from '@/session/context';
 
@@ -11,6 +11,21 @@ import {
 } from '@/api/perfil';
 import type { Pedido, PestanaId, PlatoFavorito, Reserva, UsuarioPerfil } from '../types';
 
+const PESTANAS: PestanaId[] = [
+  'cuenta',
+  'puntos',
+  'pedidos',
+  'direcciones',
+  'pagos',
+  'reservas',
+  'ajustes',
+];
+
+function pestanaDe(valor?: string | string[]): PestanaId | null {
+  const cruda = Array.isArray(valor) ? valor[0] : valor;
+  return cruda && PESTANAS.includes(cruda as PestanaId) ? (cruda as PestanaId) : null;
+}
+
 export function usePerfil() {
   const { user, token, actualizarUsuario, isAuthenticated, logout } = useSession();
   const [perfil, setPerfil] = useState<UsuarioPerfil | null>(null);
@@ -19,7 +34,10 @@ export function usePerfil() {
   const [favoritos, setFavoritos] = useState<PlatoFavorito[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pestana, setPestana] = useState<PestanaId>('cuenta');
+  const params = useLocalSearchParams<{ pestana?: string | string[] }>();
+  const pestanaParam = Array.isArray(params.pestana) ? params.pestana[0] : params.pestana;
+  const [pestana, setPestana] = useState<PestanaId>(() => pestanaDe(pestanaParam) ?? 'cuenta');
+  const pestanaConsumida = useRef<string | null>(null);
 
   const recargar = useCallback(async () => {
     if (!user?.id) return;
@@ -71,11 +89,17 @@ export function usePerfil() {
     recargar();
   }, [recargar]);
 
-  useFocusEffect(
-    useCallback(() => {
-      setPestana('cuenta');
-    }, []),
-  );
+  useEffect(() => {
+    const pedida = pestanaDe(pestanaParam);
+    if (!pedida) {
+      pestanaConsumida.current = null;
+      return;
+    }
+    if (pestanaConsumida.current === pedida) return;
+    pestanaConsumida.current = pedida;
+    setPestana(pedida);
+    router.setParams({ pestana: undefined });
+  }, [pestanaParam]);
 
   useEffect(() => {
     if (user?.role === 'admin') {

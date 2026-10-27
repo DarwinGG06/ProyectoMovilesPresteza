@@ -91,5 +91,46 @@ export function useAdminAdicionales() {
     [aviso, conToken, setLista],
   );
 
-  return { adicionales, cargando, guardando, error, recargar, guardar, alternar, eliminar, eliminarVarios };
+  const vincularAPlato = useCallback(
+    async (_platoId: string, adicionalIds: string[], categoryId?: string) => {
+      const sesion = conToken();
+      const categoria = categoryId?.trim();
+      if (!sesion || !categoria) return;
+      const elegidos = new Set(adicionalIds.map(String));
+      const pendientes = adicionales.filter((item) => {
+        const tiene = (item.categoryIds ?? []).some((id) => String(id) === categoria);
+        return elegidos.has(idDe(item)) !== tiene;
+      });
+      if (!pendientes.length) return;
+
+      try {
+        await Promise.all(
+          pendientes.map(async (item) => {
+            const actual = (item.categoryIds ?? []).map(String);
+            const categoryIds = elegidos.has(idDe(item))
+              ? [...new Set([...actual, categoria])]
+              : actual.filter((id) => id !== categoria);
+            await actualizarAdicional(sesion, idDe(item), { categoryIds });
+            setLista((prev) => fusionar(prev, item, { categoryIds }));
+          }),
+        );
+      } catch (err) {
+        aviso.errorDe(err, 'El plato se guardó, pero no se pudieron actualizar los adicionales.', 'Adicional');
+      }
+    },
+    [adicionales, aviso, conToken, setLista],
+  );
+
+  return {
+    adicionales,
+    cargando,
+    guardando,
+    error,
+    recargar,
+    guardar,
+    alternar,
+    eliminar,
+    eliminarVarios,
+    vincularAPlato,
+  };
 }

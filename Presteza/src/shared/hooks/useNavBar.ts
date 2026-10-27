@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useControlDrawerHome } from '@/features/inicio/context/ControlDrawerHome';
 import { useCart } from '@/services/cart/CartContext';
 import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
 
 export function useNavBar() {
   const { user, isAuthenticated } = useSession();
@@ -24,8 +25,9 @@ export function useNavBar() {
   };
 
   return {
+    esAdmin: esAdmin(user),
     inicial: isAuthenticated && user?.name ? user.name.trim().charAt(0).toUpperCase() : undefined,
-    totalItems,
+    totalItems: esAdmin(user) ? 0 : totalItems,
     irAlInicio: () => router.push('/home'),
     alternarDrawer: () => {
       if (drawerListo) {
@@ -42,7 +44,10 @@ export function useNavBar() {
     usuarioAbierto,
     cerrarUsuario: () => setUsuarioAbierto(false),
     carritoAbierto,
-    abrirCarrito: () => setCarritoAbierto(true),
+    abrirCarrito: () => {
+      if (esAdmin(user)) return;
+      setCarritoAbierto(true);
+    },
     cerrarCarrito: () => setCarritoAbierto(false),
   };
 }

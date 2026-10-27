@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Stack } from 'expo-router';
 
 import { EnvoltorioAdmin } from '@/features/administracion/components/EnvoltorioAdmin';
 import { MarcoAdmin } from '@/features/administracion/components/MarcoAdmin';
@@ -9,24 +9,23 @@ export default function AdminLayout() {
     <AdminProvider>
       <EnvoltorioAdmin>
         <MarcoAdmin>
-          <Tabs
-            tabBar={() => null}
+          <Stack
             screenOptions={{
               headerShown: false,
-              tabBarStyle: { display: 'none', height: 0 },
-              sceneStyle: { backgroundColor: 'transparent', flex: 1 },
+              animation: 'fade',
+              contentStyle: { backgroundColor: 'transparent' },
             }}>
-            <Tabs.Screen name="index" options={{ title: 'Resumen' }} />
-            <Tabs.Screen name="productos" options={{ title: 'Productos' }} />
-            <Tabs.Screen name="pedidos" options={{ title: 'Pedidos' }} />
-            <Tabs.Screen name="categorias" options={{ title: 'Categorías' }} />
-            <Tabs.Screen name="inventario" options={{ title: 'Inventario' }} />
-            <Tabs.Screen name="reservas" options={{ title: 'Reservas' }} />
-            <Tabs.Screen name="adicionales" options={{ title: 'Adicionales' }} />
-            <Tabs.Screen name="mensajes" options={{ title: 'Mensajes' }} />
-            <Tabs.Screen name="clientes" options={{ title: 'Clientes' }} />
-            <Tabs.Screen name="ajustes" options={{ title: 'Ajustes' }} />
-          </Tabs>
+            <Stack.Screen name="index" options={{ title: 'Resumen' }} />
+            <Stack.Screen name="productos" options={{ title: 'Productos' }} />
+            <Stack.Screen name="pedidos" options={{ title: 'Pedidos' }} />
+            <Stack.Screen name="categorias" options={{ title: 'Categorías' }} />
+            <Stack.Screen name="inventario" options={{ title: 'Inventario' }} />
+            <Stack.Screen name="reservas" options={{ title: 'Reservas' }} />
+            <Stack.Screen name="adicionales" options={{ title: 'Adicionales' }} />
+            <Stack.Screen name="mensajes" options={{ title: 'Mensajes' }} />
+            <Stack.Screen name="clientes" options={{ title: 'Clientes' }} />
+            <Stack.Screen name="ajustes" options={{ title: 'Ajustes' }} />
+          </Stack>
         </MarcoAdmin>
       </EnvoltorioAdmin>
     </AdminProvider>

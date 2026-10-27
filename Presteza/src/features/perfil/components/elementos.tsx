@@ -14,32 +14,66 @@ type BotonPerfilProps = {
   disabled?: boolean;
 };
 
+export function BotonAgregar({
+  etiqueta,
+  onPress,
+  sobrePapel,
+}: {
+  etiqueta: string;
+  onPress: () => void;
+  sobrePapel?: boolean;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={etiqueta}
+      className={`min-h-12 flex-row items-center self-start rounded-full pl-1.5 pr-5 ${
+        sobrePapel ? 'bg-marca' : 'bg-crema'
+      }`}>
+      <View
+        className={`mr-3 h-10 w-10 items-center justify-center rounded-full ${
+          sobrePapel ? 'bg-crema/15' : 'bg-marca'
+        }`}>
+        <IconoNav name="add" size={22} className="text-crema" />
+      </View>
+      <Text
+        className={`font-roboto text-[12px] tracking-[1.2px] ${
+          sobrePapel ? 'text-crema' : 'text-marca'
+        }`}>
+        {etiqueta}
+      </Text>
+    </Pressable>
+  );
+}
+
 export function BotonPerfil({
   etiqueta,
   onPress,
   variante = 'primario',
   disabled,
 }: BotonPerfilProps) {
-  if (variante === 'peligro') {
-    return (
-      <Pressable
-        onPress={onPress}
-        disabled={disabled}
-        className={`border border-red-600/40 px-4 py-3 ${disabled ? 'opacity-50' : ''}`}>
-        <Text className="text-center font-roboto text-[11px] tracking-[2px] text-red-700">
-          {etiqueta}
-        </Text>
-      </Pressable>
-    );
-  }
+  const caja =
+    variante === 'peligro'
+      ? 'border border-red-600/35'
+      : variante === 'outline'
+        ? 'border border-marca/20'
+        : 'bg-marca';
+  const letra =
+    variante === 'peligro' ? 'text-red-700' : variante === 'outline' ? 'text-marca' : 'text-crema';
 
   return (
-    <Button
-      text={etiqueta}
+    <Pressable
       onPress={onPress}
       disabled={disabled}
-      variant={variante === 'outline' ? 'gold' : 'primary'}
-    />
+      accessibilityRole="button"
+      className={`min-h-12 items-center justify-center rounded-full px-5 ${caja} ${
+        disabled ? 'opacity-45' : 'active:opacity-80'
+      }`}>
+      <Text className={`text-center font-roboto text-[12px] tracking-[1.2px] ${letra}`}>
+        {etiqueta}
+      </Text>
+    </Pressable>
   );
 }
 

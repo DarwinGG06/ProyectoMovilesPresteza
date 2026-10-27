@@ -46,44 +46,6 @@ export const PRODUCTOS_DESTACADOS = [
   },
 ];
 
-export const CATEGORIAS = [
-  {
-    id: 'desayunos',
-    name: 'Desayunos',
-    description: 'Empieza el día con sabor',
-    icono: 'sunny-outline' as const,
-    imageUrl: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&q=80',
-  },
-  {
-    id: 'almuerzos',
-    name: 'Almuerzos',
-    description: 'Platos que llenan y emocionan',
-    icono: 'restaurant-outline' as const,
-    imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80',
-  },
-  {
-    id: 'hamburguesas',
-    name: 'Hamburguesas',
-    description: 'Jugosas, únicas y nuestras',
-    icono: 'fast-food-outline' as const,
-    imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80',
-  },
-  {
-    id: 'ensaladas',
-    name: 'Ensaladas',
-    description: 'Frescura en cada tenedor',
-    icono: 'leaf-outline' as const,
-    imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80',
-  },
-  {
-    id: 'postres',
-    name: 'Postres',
-    description: 'El final que se queda',
-    icono: 'ice-cream-outline' as const,
-    imageUrl: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&q=80',
-  },
-];
-
 export const ESTADISTICAS = [
   { icono: 'people-outline' as const, valor: 5000, sufijo: '+', etiqueta: 'Clientes satisfechos', max: 5000 },
   { icono: 'cafe-outline' as const, valor: 100, sufijo: '+', etiqueta: 'Platos en carta', max: 120 },

@@ -1,9 +1,9 @@
-import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const HERO = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&q=80';
 
-export function HeroReservas() {
+export function HeroReservas({ onVolver }: { onVolver?: () => void }) {
   return (
     <ImageBackground
       source={{ uri: HERO }}
@@ -13,6 +13,15 @@ export function HeroReservas() {
         colors={['rgba(107,29,61,0.72)', 'rgba(58,12,32,0.92)']}
         style={StyleSheet.absoluteFill}
       />
+      {onVolver ? (
+        <Pressable
+          onPress={onVolver}
+          accessibilityRole="button"
+          accessibilityLabel="Volver a mis reservas"
+          className="absolute left-6 top-6 z-10 min-h-12 justify-center">
+          <Text className="font-roboto text-[10px] tracking-[3px] text-oro">←  MIS RESERVAS</Text>
+        </Pressable>
+      ) : null}
       <View className="items-center px-6">
         <Text className="font-roboto text-[10px] tracking-[4px] text-oro">PRESTEZA · MILÁN</Text>
         <Text className="mt-3 text-center font-serif-light text-5xl text-white">Reservas</Text>

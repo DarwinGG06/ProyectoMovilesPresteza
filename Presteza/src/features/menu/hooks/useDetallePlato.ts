@@ -6,13 +6,18 @@ import { idDe } from '@/api/helpers';
 import type { AdicionalAdmin } from '@/features/administracion/types';
 import { formatCOP, idLineaBandeja, useCart } from '@/services/cart/CartContext';
 
+import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
+
 import { extrasSugeridos } from '../data/adicionales';
 import { useMenuPublico } from './useMenuPublico';
 
 export function useDetallePlato() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { productos, categorias, cargando, error } = useMenuPublico();
+  const { productos, categorias, cargando, error, recargar } = useMenuPublico();
+  const { user } = useSession();
   const { items, addItem, updateQuantity } = useCart();
+  const puedePedir = !esAdmin(user);
   const [visorAbierto, setVisorAbierto] = useState(false);
   const [adicionales, setAdicionales] = useState<AdicionalAdmin[]>([]);
   const [elegidos, setElegidos] = useState<string[]>([]);
@@ -80,7 +85,7 @@ export function useDetallePlato() {
   };
 
   const agregar = () => {
-    if (!producto) return;
+    if (!producto || !puedePedir) return;
     addItem({
       id: idDe(producto),
       productName: producto.name,
@@ -108,8 +113,11 @@ export function useDetallePlato() {
     abrirVisor: () => setVisorAbierto(true),
     cerrarVisor: () => setVisorAbierto(false),
     agregar,
+    puedePedir,
     enBandeja,
     volver: () => router.back(),
     irABandeja: () => router.push('/pago'),
+    categorias,
+    recargar: () => recargar(true),
   };
 }

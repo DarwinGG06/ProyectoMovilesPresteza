@@ -69,7 +69,7 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
         ) : (
           <TarjetaFolio>
             <BotonPerfil
-              etiqueta="CAMBIAR CONTRASEÑA"
+              etiqueta="Cambiar contraseña"
               onPress={ajustes.empezarClave}
               variante="outline"
             />
@@ -80,7 +80,7 @@ export function TabAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Ta
 
       <TarjetaPerfil numero="III" badge="SESIÓN" titulo="Salir">
         <TarjetaFolio>
-          <BotonPerfil etiqueta="CERRAR SESIÓN" onPress={ajustes.cerrarSesion} variante="peligro" />
+          <BotonPerfil etiqueta="Cerrar sesión" onPress={ajustes.cerrarSesion} variante="peligro" />
         </TarjetaFolio>
       </TarjetaPerfil>
     </View>

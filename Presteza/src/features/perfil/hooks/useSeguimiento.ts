@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { idPedido, obtenerPedidos } from '@/api/perfil';
 import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
 
 import type { Pedido } from '../types';
 
@@ -35,6 +36,12 @@ export function useSeguimiento() {
       setCargando(false);
     }
   }, [id, user?.id]);
+
+  useEffect(() => {
+    if (esAdmin(user)) {
+      router.replace('/home/admin');
+    }
+  }, [user]);
 
   useEffect(() => {
     setCargando(true);

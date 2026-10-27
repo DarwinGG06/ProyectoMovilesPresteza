@@ -1,10 +1,14 @@
 import { Pressable, Text, View } from 'react-native';
 
+import { toques } from '@/theme/tokens';
+
 type ChipCategoriaProps = {
   etiqueta: string;
   activo?: boolean;
   onPress: () => void;
 };
+
+const holgura = Math.round((toques.minimo - 24) / 2);
 
 export function ChipCategoria({ etiqueta, activo, onPress }: ChipCategoriaProps) {
   return (
@@ -13,7 +17,8 @@ export function ChipCategoria({ etiqueta, activo, onPress }: ChipCategoriaProps)
       accessibilityRole="button"
       accessibilityLabel={etiqueta}
       accessibilityState={{ selected: Boolean(activo) }}
-      className="mr-1 min-h-12 min-w-12 justify-center px-1 active:opacity-70">
+      hitSlop={{ top: holgura, bottom: holgura, left: 8, right: 8 }}
+      className="mr-4 py-1 active:opacity-70">
       <Text
         className={`font-roboto text-[10px] tracking-[2px] ${
           activo ? 'text-tinta' : 'text-tinta/70'

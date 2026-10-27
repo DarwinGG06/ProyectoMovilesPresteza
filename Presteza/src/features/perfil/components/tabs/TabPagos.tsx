@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { usePagos } from '../../hooks/usePagos';
@@ -11,22 +12,24 @@ type TabPagosProps = {
   token: string;
   perfil: UsuarioPerfil;
   onActualizado: (perfil: UsuarioPerfil) => void;
+  abrirTick?: number;
 };
 
-export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps) {
+export function TabPagos({
+  userId,
+  token,
+  perfil,
+  onActualizado,
+  abrirTick = 0,
+}: TabPagosProps) {
   const pagos = usePagos({ userId, token, onActualizado });
 
+  useEffect(() => {
+    if (abrirTick > 0) pagos.abrirFormulario();
+  }, [abrirTick, pagos.abrirFormulario]);
+
   return (
-    <TarjetaPerfil
-      numero="I"
-      badge="PAGOS"
-      titulo="Métodos guardados"
-      compacto
-      accion={
-        pagos.formularioAbierto
-          ? undefined
-          : { etiqueta: 'AGREGAR', onPress: pagos.abrirFormulario }
-      }>
+    <TarjetaPerfil numero="I" badge="PAGOS" titulo="Métodos guardados" compacto>
       {pagos.error ? <Mensaje texto={pagos.error} error /> : null}
 
       {pagos.formularioAbierto ? (
@@ -42,7 +45,6 @@ export function TabPagos({ userId, token, perfil, onActualizado }: TabPagosProps
           icono="card-outline"
           titulo="Sin métodos de pago"
           texto="Guarda solo los últimos 4 dígitos. No pedimos el número completo."
-          accion={{ etiqueta: 'AGREGAR TARJETA', onPress: pagos.abrirFormulario }}
         />
       ) : (
         <View>

@@ -1,6 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
 import { useAviso } from '@/shared/components/aviso';
 
 import { horaEnHorario, horarioDelDia, mesasDelSalon, mostrarSelector, numeroMesa, textoSeleccion } from '../data';
@@ -9,8 +12,23 @@ import { fechaHoy } from '../utils';
 import { useReservas } from './useReservas';
 
 export function useNuevaReserva() {
+  const { user } = useSession();
+  const { desde } = useLocalSearchParams<{ desde?: string }>();
+  const vinoDelPerfil = desde === 'perfil';
   const casa = useReservas({ alcance: 'mias' });
   const aviso = useAviso();
+
+  const volver = useCallback(() => {
+    if (vinoDelPerfil) {
+      router.replace('/perfil?pestana=reservas' as Href);
+      return;
+    }
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+    router.replace('/home' as Href);
+  }, [vinoDelPerfil]);
   const [seleccion, setSeleccion] = useState<SeleccionReserva>(null);
   const [loginAbierto, setLoginAbierto] = useState(false);
   const [exito, setExito] = useState(false);
@@ -62,6 +80,10 @@ export function useNuevaReserva() {
   };
 
   const enviar = handleSubmit(async (datos) => {
+    if (esAdmin(user)) {
+      aviso.error('Reserva', 'La casa no reserva mesa para sí.');
+      return;
+    }
     if (!casa.isAuthenticated) {
       setLoginAbierto(true);
       return;
@@ -93,6 +115,11 @@ export function useNuevaReserva() {
     });
 
     if (!ok) return;
+
+    if (vinoDelPerfil) {
+      router.replace('/perfil?pestana=reservas' as Href);
+      return;
+    }
 
     setExito(true);
     setSeleccion(null);
@@ -135,5 +162,7 @@ export function useNuevaReserva() {
     exito,
     loginAbierto,
     cerrarLogin: () => setLoginAbierto(false),
+    vinoDelPerfil,
+    volver,
   };
 }

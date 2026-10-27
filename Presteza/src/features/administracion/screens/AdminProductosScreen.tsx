@@ -10,6 +10,7 @@ export function AdminProductosScreen() {
       <TabProductos
         productos={admin.productos}
         categorias={admin.categorias}
+        adicionales={admin.adicionales}
         guardando={admin.guardando}
         onGuardar={admin.guardarProducto}
         onAlternar={admin.alternarProducto}

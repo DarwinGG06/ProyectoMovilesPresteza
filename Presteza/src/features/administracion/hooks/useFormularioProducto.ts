@@ -113,8 +113,8 @@ export function useFormularioProducto({
       if (imagen.status === 'rejected' || modelo3d.status === 'rejected') return;
 
       await onGuardar({ ...getValues(), imageUrl: imagen.value, modelUrl: modelo3d.value });
-    } catch (error) {
-      setError('imageUrl', { message: mensajeDe(error, 'No se pudo guardar el plato') });
+    } catch {
+      // El aviso del admin ya dice si falló el plato o los adicionales.
     } finally {
       setSubiendo(false);
     }

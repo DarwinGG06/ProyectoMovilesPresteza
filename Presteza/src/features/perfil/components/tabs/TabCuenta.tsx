@@ -61,7 +61,7 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
           <EstadoVacio
             icono="heart-outline"
             texto="Todavía no has marcado ningún plato."
-            accion={{ etiqueta: 'IR AL MENÚ', onPress: () => router.push('/home/menu') }}
+            accion={{ etiqueta: 'Ir al menú', onPress: () => router.push('/home/menu') }}
           />
         ) : (
           <View>

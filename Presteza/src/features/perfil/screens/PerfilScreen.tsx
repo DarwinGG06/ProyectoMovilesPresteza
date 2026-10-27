@@ -1,4 +1,5 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
+import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
@@ -33,6 +34,8 @@ export function PerfilScreen() {
     pestana,
     setPestana,
   } = usePerfil();
+  const [tickDir, setTickDir] = useState(0);
+  const [tickPago, setTickPago] = useState(0);
 
   if (!isAuthenticated || !user) {
     return <InvitadoPerfil />;
@@ -88,6 +91,18 @@ export function PerfilScreen() {
                     ? reservas.length
                     : undefined
               }
+              accion={
+                pestana === 'reservas'
+                  ? {
+                      etiqueta: 'Nueva',
+                      onPress: () => router.push('/home/reservas?desde=perfil' as Href),
+                    }
+                  : pestana === 'direcciones'
+                    ? { etiqueta: 'Agregar', onPress: () => setTickDir((n) => n + 1) }
+                    : pestana === 'pagos'
+                      ? { etiqueta: 'Agregar', onPress: () => setTickPago((n) => n + 1) }
+                      : undefined
+              }
             />
           )}
 
@@ -119,10 +134,21 @@ export function PerfilScreen() {
                 ) : null}
                 {pestana === 'pedidos' ? <TabPedidos pedidos={pedidos} /> : null}
                 {pestana === 'direcciones' ? (
-                  <TabDirecciones userId={user.id} perfil={perfil} onActualizado={setPerfil} />
+                  <TabDirecciones
+                    userId={user.id}
+                    perfil={perfil}
+                    onActualizado={setPerfil}
+                    abrirTick={tickDir}
+                  />
                 ) : null}
                 {pestana === 'pagos' ? (
-                  <TabPagos userId={user.id} token={token} perfil={perfil} onActualizado={setPerfil} />
+                  <TabPagos
+                    userId={user.id}
+                    token={token}
+                    perfil={perfil}
+                    onActualizado={setPerfil}
+                    abrirTick={tickPago}
+                  />
                 ) : null}
                 {pestana === 'reservas' ? (
                   <TabReservas onCambio={(lista) => setReservas(lista)} />

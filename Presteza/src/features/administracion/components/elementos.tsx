@@ -187,17 +187,22 @@ export function ModalAdmin({
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onCerrar}>
       <EvitarTeclado offset={0}>
         <View className="flex-1 justify-end bg-marca-oscura/55">
-          <View className="max-h-[88%] overflow-hidden">
-            <Pergamino>
-              <View className="px-6 pb-10 pt-3">
-                <View className="mb-5 h-px w-10 self-center bg-madera/40" />
+          <View className="h-[88%]">
+            <Pergamino fill>
+              <View className="flex-1 px-6 pt-6">
                 <View className="mb-6 flex-row items-end justify-between">
                   <Text className="flex-1 font-serif-light text-[26px] text-tinta">{titulo}</Text>
                   <Pressable onPress={onCerrar} hitSlop={8} className="pb-1">
                     <IconoNav name="close" size={18} className="text-texto/40" />
                   </Pressable>
                 </View>
-                <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
+                <ScrollView
+                  style={{ flex: 1 }}
+                  contentContainerStyle={{ paddingBottom: 48 }}
+                  keyboardShouldPersistTaps="handled"
+                  keyboardDismissMode="on-drag"
+                  showsVerticalScrollIndicator={false}
+                  showsHorizontalScrollIndicator={false}>
                   {children}
                 </ScrollView>
               </View>

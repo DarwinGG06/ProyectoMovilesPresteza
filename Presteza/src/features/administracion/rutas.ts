@@ -1,4 +1,4 @@
-import type { Href } from 'expo-router';
+import { router, type Href } from 'expo-router';
 
 import type { PestanaAdmin } from './types';
 
@@ -30,4 +30,8 @@ export const RUTA_POR_PESTANA: Record<PestanaAdmin, string> = {
 
 export function hrefAdmin(pestana: PestanaAdmin): Href {
   return (pestana === 'dashboard' ? '/home/admin' : `/home/admin/${pestana}`) as Href;
+}
+
+export function irAlPanelAdmin() {
+  router.navigate('/home/admin' as Href);
 }

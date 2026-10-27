@@ -5,7 +5,7 @@ import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
 
 import { useTabProductos } from '../../hooks/useTabProductos';
-import type { CategoriaAdmin, ProductoAdmin, ProductoForm } from '../../types';
+import type { AdicionalAdmin, CategoriaAdmin, ProductoAdmin, ProductoForm } from '../../types';
 import { idDe } from '../../utils';
 import { BotonAgregarAdmin, ChipFiltro, EstadoVacioAdmin, ModalAdmin } from '../elementos';
 import { FormularioProducto } from '../formularios/FormularioProducto';
@@ -21,6 +21,7 @@ import {
 type TabProductosProps = {
   productos: ProductoAdmin[];
   categorias: CategoriaAdmin[];
+  adicionales?: AdicionalAdmin[];
   guardando?: boolean;
   onGuardar: (datos: ProductoForm, editando?: ProductoAdmin | null) => Promise<boolean>;
   onAlternar: (producto: ProductoAdmin) => void;
@@ -30,12 +31,13 @@ type TabProductosProps = {
 export function TabProductos({
   productos,
   categorias,
+  adicionales = [],
   guardando,
   onGuardar,
   onAlternar,
   onEliminar,
 }: TabProductosProps) {
-  const tab = useTabProductos(productos, categorias, onGuardar);
+  const tab = useTabProductos(productos, categorias, onGuardar, adicionales);
 
   return (
     <View>
@@ -44,7 +46,7 @@ export function TabProductos({
         badge="CARTA"
         titulo="Platos"
         compacto>
-        <BotonAgregarAdmin onPress={() => tab.abrir()} />
+        <BotonAgregarAdmin etiqueta="AGREGAR PLATO" onPress={() => tab.abrir()} />
         <CampoBusqueda
           value={tab.busqueda}
           onChangeText={tab.setBusqueda}
@@ -175,6 +177,7 @@ export function TabProductos({
           key={idDe(tab.editando) || 'nuevo'}
           valores={tab.valoresFormulario}
           categorias={categorias}
+          adicionales={adicionales}
           onCancelar={tab.cerrar}
           onGuardar={tab.guardar}
           guardando={guardando}

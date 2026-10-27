@@ -9,6 +9,7 @@ import type { CotizacionPuntos, Direccion } from '@/features/perfil/types';
 import { MESAS_SALON } from '@/features/reservas/data';
 import { useCart } from '@/services/cart/CartContext';
 import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
 
 const METODOS = [
   { value: 'cash', label: 'Efectivo' },
@@ -62,6 +63,12 @@ export function usePago() {
   const [error, setError] = useState<string | null>(null);
   const [exito, setExito] = useState<string | null>(null);
   const [loginAbierto, setLoginAbierto] = useState(false);
+
+  useEffect(() => {
+    if (esAdmin(user)) {
+      router.replace('/home/admin');
+    }
+  }, [user]);
 
   const recotar = useCallback(async () => {
     if (!user?.id || totalPrice <= 0) {
@@ -152,6 +159,10 @@ export function usePago() {
   };
 
   const confirmar = async () => {
+    if (esAdmin(user)) {
+      setError('La casa no hace pedidos de cliente.');
+      return;
+    }
     if (!isAuthenticated || !user) {
       setLoginAbierto(true);
       return;

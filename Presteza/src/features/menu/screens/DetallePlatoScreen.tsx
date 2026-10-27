@@ -6,11 +6,17 @@ import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado'
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
+import { ModalAdmin } from '@/features/administracion/components/elementos';
+import { FormularioProducto } from '@/features/administracion/components/formularios/FormularioProducto';
+import { idDe } from '@/api/helpers';
+
 import { ModelViewerModal } from '../components/ModelViewerModal';
+import { useCartaAdmin } from '../hooks/useCartaAdmin';
 import { useDetallePlato } from '../hooks/useDetallePlato';
 
 export function DetallePlatoScreen() {
   const plato = useDetallePlato();
+  const admin = useCartaAdmin(plato.recargar, plato.categorias);
 
   if (plato.cargando) {
     return (
@@ -107,6 +113,25 @@ export function DetallePlatoScreen() {
               </View>
             ) : null}
 
+            {admin.esAdmin ? (
+              <View className="mt-8 flex-row flex-wrap">
+                <Pressable
+                  onPress={() => admin.abrirEditar(producto)}
+                  accessibilityRole="button"
+                  className="mr-6 min-h-12 justify-center">
+                  <Text className="font-roboto text-[11px] tracking-[1.6px] text-marca">EDITAR</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => admin.eliminar(producto)}
+                  accessibilityRole="button"
+                  className="min-h-12 justify-center">
+                  <Text className="font-roboto text-[11px] tracking-[1.6px] text-red-700">ELIMINAR</Text>
+                </Pressable>
+              </View>
+            ) : null}
+
+            {plato.puedePedir ? (
+            <>
             <View className="mt-10 flex-row items-end justify-between">
               <View>
                 <Text className="font-roboto text-[10px] tracking-[2px] text-marca">CANTIDAD</Text>
@@ -149,6 +174,12 @@ export function DetallePlatoScreen() {
                 <Button className="mt-0" variant="gold" text="IR A PAGAR" onPress={plato.irABandeja} />
               ) : null}
             </View>
+            </>
+            ) : (
+              <Text className="mt-10 font-roboto text-sm leading-6 text-tinta/70">
+                La casa consulta la carta. Los pedidos los hacen los clientes.
+              </Text>
+            )}
           </View>
         </ScrollView>
       </Pergamino>
@@ -159,6 +190,17 @@ export function DetallePlatoScreen() {
         modelUrl={producto.modelUrl ?? null}
         productName={producto.name}
       />
+      <ModalAdmin visible={admin.abierto} titulo="Editar plato" onCerrar={admin.cerrar}>
+        <FormularioProducto
+          key={idDe(admin.editando) || 'editar'}
+          valores={admin.valoresFormulario}
+          categorias={admin.categorias}
+          adicionales={admin.adicionales}
+          onCancelar={admin.cerrar}
+          onGuardar={admin.guardar}
+          guardando={admin.guardando}
+        />
+      </ModalAdmin>
     </EvitarTeclado>
   );
 }

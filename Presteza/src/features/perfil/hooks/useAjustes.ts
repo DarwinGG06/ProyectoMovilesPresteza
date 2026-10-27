@@ -67,7 +67,7 @@ export function useAjustes({ userId, perfil, onActualizado, onCerrarSesion }: Us
       peligro: true,
       onConfirmar: () => {
         onCerrarSesion();
-        router.push('/');
+        router.replace('/home');
       },
     });
   };

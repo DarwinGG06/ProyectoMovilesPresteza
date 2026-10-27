@@ -1,7 +1,8 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useForm } from 'react-hook-form';
 
 import { useSession } from '@/session/context';
+import { rutaTrasSesion } from '@/session/roles';
 
 export type LoginForm = { email: string; password: string };
 

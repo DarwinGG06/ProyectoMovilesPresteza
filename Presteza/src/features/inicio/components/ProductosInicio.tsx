@@ -1,44 +1,32 @@
 import { router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
-import { formatCOP, useCart } from '@/services/cart/CartContext';
+import { formatCOP } from '@/services/cart/CartContext';
 
 import { PRODUCTOS_DESTACADOS } from '../data';
 import { MarcaCurso, Plato } from './MesaDecor';
 
 export function ProductosInicio() {
-  const { addItem } = useCart();
   const [principal, segundo, postre] = PRODUCTOS_DESTACADOS;
+  const irALaCarta = () => router.push('/home/menu');
 
   return (
     <View className="bg-marca-oscura px-5 pb-12">
       <MarcaCurso numero="II" nombre="DESTACADOS" />
       <Text className="mb-4 font-roboto text-sm text-crema/55">
-        Toca un plato para añadirlo al pedido.
+        Toca un plato para ver la carta.
       </Text>
 
       <View className="h-[300px]">
-        <Pressable
-          onPress={() =>
-            addItem({ id: principal.id, productName: principal.name, unitPrice: principal.price })
-          }
-          className="absolute left-0 top-8">
+        <Pressable onPress={irALaCarta} className="absolute left-0 top-8">
           <Plato uri={principal.imageUrl} size={210} />
         </Pressable>
 
-        <Pressable
-          onPress={() =>
-            addItem({ id: segundo.id, productName: segundo.name, unitPrice: segundo.price })
-          }
-          className="absolute right-2 top-0">
+        <Pressable onPress={irALaCarta} className="absolute right-2 top-0">
           <Plato uri={segundo.imageUrl} size={132} />
         </Pressable>
 
-        <Pressable
-          onPress={() =>
-            addItem({ id: postre.id, productName: postre.name, unitPrice: postre.price })
-          }
-          className="absolute bottom-0 right-8">
+        <Pressable onPress={irALaCarta} className="absolute bottom-0 right-8">
           <Plato uri={postre.imageUrl} size={118} />
         </Pressable>
       </View>
@@ -47,9 +35,7 @@ export function ProductosInicio() {
         {PRODUCTOS_DESTACADOS.map((producto, index) => (
           <Pressable
             key={producto.id}
-            onPress={() =>
-              addItem({ id: producto.id, productName: producto.name, unitPrice: producto.price })
-            }
+            onPress={irALaCarta}
             className="flex-row items-baseline justify-between border-b border-oro/20 py-3">
             <View className="flex-1 pr-3">
               <Text className="font-roboto text-[10px] text-oro/70">{producto.badge}</Text>

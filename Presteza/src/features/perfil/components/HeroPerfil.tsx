@@ -33,7 +33,7 @@ export function HeroPerfil({ nombre, email, puntos, nivel, onAjustes }: HeroPerf
                 onPress={onAjustes}
                 accessibilityRole="button"
                 accessibilityLabel="Ajustes"
-                className="min-h-12 min-w-12 items-center justify-center">
+                className="h-12 w-12 items-center justify-center rounded-full bg-marca/8">
                 <IconoNav name="settings-outline" size={20} className="text-marca" />
               </Pressable>
             </View>

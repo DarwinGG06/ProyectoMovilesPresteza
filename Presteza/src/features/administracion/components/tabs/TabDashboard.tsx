@@ -6,6 +6,7 @@ import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
 import { hrefAdmin } from '../../rutas';
 import type { PedidoAdmin, PestanaAdmin, StatsAdmin } from '../../types';
+import { BotonAgregarAdmin } from '../elementos';
 import { HeroAdmin } from '../HeroAdmin';
 import { MenuAdmin } from '../PestanasAdmin';
 
@@ -17,7 +18,11 @@ type TabDashboardProps = {
 };
 
 function irA(tab: PestanaAdmin) {
-  router.replace(hrefAdmin(tab));
+  if (tab === 'dashboard') {
+    router.navigate(hrefAdmin(tab));
+    return;
+  }
+  router.push(hrefAdmin(tab));
 }
 
 function AvisoPendiente({ texto, onPress }: { texto: string; onPress: () => void }) {
@@ -83,11 +88,11 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
               pedidos: stats.pendingOrders,
               reservas: stats.pendingReservations,
               mensajes: stats.unreadMessages,
-            }}
-          />
-          <Text className="mt-1 font-serif-light text-[34px] leading-[38px] text-tinta">
-            Admin Presteza
-          </Text>
+            }}>
+            <Text className="font-serif-light text-[34px] leading-[38px] text-tinta">
+              Admin Presteza
+            </Text>
+          </MenuAdmin>
         </View>
         <Pressable
           onPress={() => irA('ajustes')}
@@ -97,7 +102,14 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
         </Pressable>
       </View>
 
-      <View className="mt-6">
+      <View className="mt-5">
+        <BotonAgregarAdmin
+          etiqueta="AGREGAR PLATO"
+          onPress={() => router.push('/home/admin/productos?nuevo=1' as Href)}
+        />
+      </View>
+
+      <View className="mt-2">
         <HeroAdmin stats={stats} pedidos={pedidos} onPress={() => irA('pedidos')} />
       </View>
 
@@ -108,6 +120,12 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
 
       <View className="flex-row flex-wrap justify-between">
         <TarjetaDato
+          etiqueta="Platos"
+          valor={stats.totalProducts}
+          icono="restaurant-outline"
+          onPress={() => irA('productos')}
+        />
+        <TarjetaDato
           etiqueta="Pedidos"
           valor={stats.totalOrders}
           icono="bag-handle-outline"
@@ -117,7 +135,7 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
           etiqueta="Reservas"
           valor={stats.pendingReservations}
           icono="calendar-outline"
-          onPress={() => router.replace('/home/admin/reservas?filtro=pending' as Href)}
+          onPress={() => router.push('/home/admin/reservas?filtro=pending' as Href)}
         />
         <TarjetaDato
           etiqueta="Categorías"
@@ -152,7 +170,7 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
               ? '1 pedido por revisar'
               : `${stats.pendingOrders} pedidos por revisar`
           }
-          onPress={() => router.replace('/home/admin/pedidos?filtro=pending' as Href)}
+          onPress={() => router.push('/home/admin/pedidos?filtro=pending' as Href)}
         />
       ) : null}
       {stats.pendingReservations > 0 ? (
@@ -162,7 +180,7 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
               ? '1 reserva pendiente'
               : `${stats.pendingReservations} reservas pendientes`
           }
-          onPress={() => router.replace('/home/admin/reservas?filtro=pending' as Href)}
+          onPress={() => router.push('/home/admin/reservas?filtro=pending' as Href)}
         />
       ) : null}
     </View>

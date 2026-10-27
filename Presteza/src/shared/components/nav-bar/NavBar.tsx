@@ -30,16 +30,18 @@ export function NavBar() {
               inicial={nav.inicial}
               onPress={nav.abrirCuenta}
             />
-            <View>
-              <BotonBarra icono="bag-handle-outline" etiqueta="Bandeja" onPress={nav.abrirCarrito} />
-              {nav.totalItems > 0 ? (
-                <View className="absolute right-0 top-1 h-[18px] min-w-[18px] items-center justify-center rounded-full bg-marca px-1">
-                  <Text className="text-center font-roboto text-[10px] leading-[12px] text-crema">
-                    {nav.totalItems > 9 ? '9+' : nav.totalItems}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
+            {nav.esAdmin ? null : (
+              <View>
+                <BotonBarra icono="bag-handle-outline" etiqueta="Bandeja" onPress={nav.abrirCarrito} />
+                {nav.totalItems > 0 ? (
+                  <View className="absolute right-0 top-1 h-[18px] min-w-[18px] items-center justify-center rounded-full bg-marca px-1">
+                    <Text className="text-center font-roboto text-[10px] leading-[12px] text-crema">
+                      {nav.totalItems > 9 ? '9+' : nav.totalItems}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+            )}
             <BotonBarra icono="menu" etiqueta="Menú" onPress={nav.alternarDrawer} />
           </View>
         </View>

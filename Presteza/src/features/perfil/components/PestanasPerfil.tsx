@@ -74,10 +74,12 @@ export function EncabezadoSeccion({
   pestana,
   onVolver,
   contador,
+  accion,
 }: {
   pestana: PestanaId;
   onVolver: () => void;
   contador?: number;
+  accion?: { etiqueta: string; onPress: () => void };
 }) {
   const titulo = pestana === 'cuenta' ? 'Cuenta' : TITULOS[pestana];
   const mostrarNumero =
@@ -92,12 +94,28 @@ export function EncabezadoSeccion({
         className="min-h-12 justify-center self-start">
         <Text className="font-roboto text-[10px] tracking-[3px] text-oro">←  CUENTA</Text>
       </Pressable>
-      <View className="mt-2 flex-row items-center">
-        <Text className="font-serif-light text-[34px] text-crema">{titulo}</Text>
-        {mostrarNumero ? (
-          <View className="ml-3 min-w-[26px] items-center rounded-full bg-marca px-2 py-0.5">
-            <Text className="font-roboto text-[12px] text-crema">{contador}</Text>
-          </View>
+      <View className="mt-2 flex-row items-end justify-between gap-3">
+        <View className="min-w-0 flex-1 flex-row items-center">
+          <Text className="font-serif-light text-[34px] text-crema">{titulo}</Text>
+          {mostrarNumero ? (
+            <View className="ml-3 min-w-[26px] items-center rounded-full bg-marca px-2 py-0.5">
+              <Text className="font-roboto text-[12px] text-crema">{contador}</Text>
+            </View>
+          ) : null}
+        </View>
+        {accion ? (
+          <Pressable
+            onPress={accion.onPress}
+            accessibilityRole="button"
+            accessibilityLabel={accion.etiqueta}
+            className="mb-1 min-h-12 flex-row items-center">
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-crema">
+              <IconoNav name="add" size={20} className="text-marca" />
+            </View>
+            <Text className="ml-2 font-roboto text-[11px] tracking-[1.2px] text-oro">
+              {accion.etiqueta}
+            </Text>
+          </Pressable>
         ) : null}
       </View>
       <View className="mt-3 h-px w-10 bg-oro" />

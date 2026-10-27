@@ -9,12 +9,17 @@ import { useCtaInicio } from '../hooks/useCtaInicio';
 import { MarcaCurso } from './MesaDecor';
 
 export function CtaInicio() {
-  const { control, reservar, verMenu, llamar } = useCtaInicio();
+  const { control, reservar, verMenu, llamar, esAdmin } = useCtaInicio();
 
   return (
     <View className="bg-marca-oscura px-5 pb-14">
-      <MarcaCurso numero="V" nombre="RESERVAS" />
+      {esAdmin ? (
+        <MarcaCurso numero="V" nombre="LA CARTA" />
+      ) : (
+        <MarcaCurso numero="V" nombre="RESERVAS" />
+      )}
 
+      {esAdmin ? null : (
       <Pergamino>
         <View className="px-6 py-8">
           <Text className="font-roboto text-[10px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
@@ -51,6 +56,7 @@ export function CtaInicio() {
           <Button text="RESERVAR" onPress={reservar} className="mt-6" />
         </View>
       </Pergamino>
+      )}
 
       <View className="mt-6 flex-row gap-3">
         <Button text="VER MENÚ" onPress={verMenu} variant="ghost" className="flex-1" />

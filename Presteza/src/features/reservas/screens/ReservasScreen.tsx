@@ -1,5 +1,9 @@
-import { ScrollView, View } from 'react-native';
+import { router, useFocusEffect, usePathname } from 'expo-router';
+import { useCallback } from 'react';
+import { BackHandler, ScrollView, View } from 'react-native';
 
+import { useSession } from '@/session/context';
+import { esAdmin } from '@/session/roles';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { Footer } from '@/shared/components/footer';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
@@ -12,7 +16,31 @@ import { SelectorCapacidad } from '../components/SelectorCapacidad';
 import { useNuevaReserva } from '../hooks/useNuevaReserva';
 
 export function ReservasScreen() {
+  const { user } = useSession();
+  const pathname = usePathname();
   const reserva = useNuevaReserva();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!esAdmin(user)) return;
+      if (pathname === '/home/reservas') {
+        router.replace('/home/admin');
+      }
+    }, [pathname, user]),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!reserva.vinoDelPerfil) return undefined;
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        reserva.volver();
+        return true;
+      });
+      return () => sub.remove();
+    }, [reserva.vinoDelPerfil, reserva.volver]),
+  );
+
+  if (esAdmin(user)) return null;
 
   return (
     <>
@@ -22,7 +50,7 @@ export function ReservasScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag">
-            <HeroReservas />
+            <HeroReservas onVolver={reserva.vinoDelPerfil ? reserva.volver : undefined} />
             <Pergamino>
               <View className="px-4 py-6">
                 <PlanoMesas

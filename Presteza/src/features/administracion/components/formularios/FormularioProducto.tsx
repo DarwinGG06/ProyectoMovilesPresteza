@@ -1,12 +1,12 @@
 import { Controller } from 'react-hook-form';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import Field from '@/components/Field';
 import Select from '@/components/Select';
 import { ModelViewerModal } from '@/features/menu/components/ModelViewerModal';
 
 import { useFormularioProducto } from '../../hooks/useFormularioProducto';
-import type { CategoriaAdmin, ProductoForm } from '../../types';
+import type { AdicionalAdmin, CategoriaAdmin, ProductoForm } from '../../types';
 import { idDe } from '../../utils';
 import { AccionesForm } from './AccionesForm';
 import { CampoImagenProducto } from './CampoImagenProducto';
@@ -15,6 +15,7 @@ import { CampoModelo3d } from './CampoModelo3d';
 type FormularioProductoProps = {
   valores: ProductoForm;
   categorias: CategoriaAdmin[];
+  adicionales?: AdicionalAdmin[];
   onCancelar: () => void;
   onGuardar: (datos: ProductoForm) => Promise<void>;
   guardando?: boolean;
@@ -23,6 +24,7 @@ type FormularioProductoProps = {
 export function FormularioProducto({
   valores,
   categorias,
+  adicionales = [],
   onGuardar,
   guardando,
 }: FormularioProductoProps) {
@@ -109,6 +111,21 @@ export function FormularioProducto({
         options={categorias.map((categoria) => ({ value: idDe(categoria), label: categoria.name }))}
         rules={{ required: 'Elige una categoría' }}
       />
+      {adicionales.some((item) => item.available !== false) ? (
+        <Select
+          control={formulario.control}
+          name="adicionalIds"
+          label="Adicionales de la categoría"
+          multiple
+          options={adicionales
+            .filter((item) => item.available !== false)
+            .map((item) => ({ value: idDe(item), label: item.name }))}
+        />
+      ) : (
+        <Text className="font-roboto text-[13px] text-tinta/45">
+          Todavía no hay adicionales. Créalos en Adicionales y luego asígnalos al plato.
+        </Text>
+      )}
       <AccionesForm
         onGuardar={formulario.guardar}
         guardando={formulario.ocupado}

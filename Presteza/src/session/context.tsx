@@ -28,8 +28,8 @@ interface Session {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signInWithBiometrics: () => Promise<void>;
+  signIn: (email: string, password: string) => Promise<User>;
+  signInWithBiometrics: () => Promise<User>;
   signUp: (
     name: string,
     email: string,
@@ -238,21 +238,30 @@ export function SessionProvider({ children }: PropsWithChildren) {
     logInfo('auth', 'login iniciado', { email: email.trim().toLowerCase() });
     const session = await api.login(email, password);
     const protectedUser = await readBiometricUser();
-    if (!mounted.current || operation !== version.current) return;
+    if (!mounted.current || operation !== version.current) {
+      throw new Error('La sesión cambió. Inténtalo de nuevo.');
+    }
     if (protectedUser && protectedUser !== session.user.id) await writeBiometricUser(null);
-    if (!mounted.current || operation !== version.current) return;
+    if (!mounted.current || operation !== version.current) {
+      throw new Error('La sesión cambió. Inténtalo de nuevo.');
+    }
     if (Platform.OS === 'android' && protectedUser === session.user.id) {
       await writeBiometricAccess(session.user.id, session.token);
-      if (!mounted.current || operation !== version.current) return;
+      if (!mounted.current || operation !== version.current) {
+        throw new Error('La sesión cambió. Inténtalo de nuevo.');
+      }
     }
     await writeSessionToken(session.token);
-    if (!mounted.current || operation !== version.current) return;
+    if (!mounted.current || operation !== version.current) {
+      throw new Error('La sesión cambió. Inténtalo de nuevo.');
+    }
     publishSession(session, Platform.OS === 'android' && protectedUser === session.user.id);
     logInfo('auth', 'login OK', {
       id: session.user.id,
       email: session.user.email,
       role: session.user.role,
     });
+    return session.user;
   };
 
   const signInWithBiometrics = async () => {
@@ -304,6 +313,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         throw new Error('La sesión cambió durante la verificación. Inténtalo de nuevo.');
       }
       publishSession(session, true);
+      return session.user;
     } catch (error) {
       if (mounted.current && operation === version.current) {
         setBiometricError(

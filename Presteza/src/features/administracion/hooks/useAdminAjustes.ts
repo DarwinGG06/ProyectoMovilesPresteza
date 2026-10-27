@@ -46,7 +46,7 @@ export function useAdminAjustes() {
       peligro: true,
       onConfirmar: () => {
         logout();
-        router.push('/');
+        router.replace('/home');
       },
     });
   }, [aviso, logout]);

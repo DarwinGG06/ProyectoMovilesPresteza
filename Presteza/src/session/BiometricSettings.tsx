@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 
-import Button from '@/components/Button';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 
 import { useSession } from './context';
@@ -55,18 +54,24 @@ export function BiometricSettings() {
             </Text>
           ) : null}
 
-          <Button
-            variant={biometricEnabled ? 'secondary' : 'gold'}
-            disabled={biometricBusy}
+          <Pressable
             onPress={() => void toggle()}
-            text={
-              biometricBusy
-                ? 'VERIFICANDO...'
+            disabled={biometricBusy || !biometricSupport.available}
+            accessibilityRole="button"
+            className={`min-h-12 items-center justify-center rounded-full px-5 ${
+              biometricEnabled ? 'border border-marca/20' : 'bg-marca'
+            } ${biometricBusy || !biometricSupport.available ? 'opacity-45' : 'active:opacity-80'}`}>
+            <Text
+              className={`font-roboto text-[12px] tracking-[1.2px] ${
+                biometricEnabled ? 'text-marca' : 'text-crema'
+              }`}>
+              {biometricBusy
+                ? 'Verificando…'
                 : biometricEnabled
-                  ? 'DESACTIVAR DESBLOQUEO'
-                  : 'ACTIVAR HUELLA'
-            }
-          />
+                  ? 'Desactivar desbloqueo'
+                  : 'Activar huella'}
+            </Text>
+          </Pressable>
           {error || message ? (
             <Text
               accessibilityRole="alert"

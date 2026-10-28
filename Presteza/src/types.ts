@@ -54,7 +54,11 @@ export type Producto = {
   categoryId?: string;
   category?: string;
   imageUrl?: string;
+  /** public_id en Cloudinary: sirve para borrar la foto cuando se cambia o se borra el plato. */
+  imagePublicId?: string;
   modelUrl?: string;
+  /** public_id del .glb en Cloudinary (incluye la extensión). */
+  modelPublicId?: string;
   type?: string;
   available?: boolean;
 };
@@ -65,8 +69,12 @@ export type ProductoForm = {
   price: string;
   categoryId: string;
   imageUrl: string;
+  /** Solo llega cuando se acaba de subir una foto nueva. */
+  imagePublicId?: string;
   /** URL del modelo 3D (.glb) en Cloudinary. Vacío = sin modelo. */
   modelUrl: string;
+  /** Solo llega cuando se acaba de subir un modelo nuevo. */
+  modelPublicId?: string;
   adicionalIds?: string[];
 };
 
@@ -78,6 +86,8 @@ export type Categoria = {
   name: string;
   description?: string;
   imageUrl?: string;
+  /** public_id en Cloudinary: sirve para borrar la imagen al cambiarla o borrar la categoría. */
+  imagePublicId?: string;
   icon?: string;
 };
 
@@ -85,6 +95,8 @@ export type CategoriaForm = {
   name: string;
   description: string;
   imageUrl: string;
+  /** Solo llega cuando se acaba de subir una imagen nueva. */
+  imagePublicId?: string;
 };
 
 // --- Reservas --------------------------------------------------------------

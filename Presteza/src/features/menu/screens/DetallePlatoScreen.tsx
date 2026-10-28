@@ -1,8 +1,9 @@
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
 import { formatCOP } from '@/services/cart/CartContext';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
+import { FotoRemota } from '@/shared/components/foto/FotoRemota';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
@@ -51,7 +52,9 @@ export function DetallePlatoScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View>
             {producto.imageUrl ? (
-              <Image source={{ uri: producto.imageUrl }} className="h-72 w-full bg-madera/15" resizeMode="cover" />
+              <View className="h-72 w-full bg-madera/15">
+                <FotoRemota uri={producto.imageUrl} />
+              </View>
             ) : (
               <View className="h-56 items-center justify-center bg-madera/15">
                 <SelloP size="lg" />

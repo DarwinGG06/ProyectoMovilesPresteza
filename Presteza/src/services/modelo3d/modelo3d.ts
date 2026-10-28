@@ -8,6 +8,7 @@
 
 import * as DocumentPicker from 'expo-document-picker';
 
+import type { RecursoNube } from '../imagen/nube';
 import { subirACloudinary, type ArchivoSubida } from '../imagen/subirACloudinary';
 
 export type ArchivoModelo3d = ArchivoSubida;
@@ -57,10 +58,9 @@ export async function elegirModelo3d(): Promise<ArchivoModelo3d | null> {
   };
 }
 
-/** Sube el .glb a Cloudinary como archivo `raw` y devuelve su URL pública. */
-export async function subirModelo3d(archivo: ArchivoModelo3d): Promise<string> {
-  const recurso = await subirACloudinary(archivo, 'raw');
-  return recurso.url;
+/** Sube el .glb a Cloudinary como archivo `raw` y devuelve su URL y su public_id. */
+export function subirModelo3d(archivo: ArchivoModelo3d): Promise<RecursoNube> {
+  return subirACloudinary(archivo, 'raw');
 }
 
 /** Nombre corto para mostrar en el formulario a partir de la URL guardada. */

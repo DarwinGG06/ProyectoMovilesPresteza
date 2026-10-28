@@ -7,7 +7,10 @@ export type RecursoNube = {
 
 export type TipoRecursoNube = 'image' | 'raw' | 'video';
 
-/** Saca el public_id de una URL de Cloudinary (fotos viejas sin columna). */
+/**
+ * Saca el public_id de una URL de Cloudinary (fotos viejas sin columna).
+ * En `raw` (modelos .glb) el public_id SÍ incluye la extensión; en `image` no.
+ */
 export function extraerPublicId(url?: string | null): string {
   if (!url) return '';
   try {
@@ -19,8 +22,9 @@ export function extraerPublicId(url?: string | null): string {
     const resto = partes.slice(upload + 1);
     const version = resto.findIndex((parte) => /^v\d+$/.test(parte));
     const idPartes = version >= 0 ? resto.slice(version + 1) : resto.filter((parte) => !parte.includes(','));
-    const junto = idPartes.join('/');
-    return decodeURIComponent(junto.replace(/\.[a-zA-Z0-9]+$/, ''));
+    const junto = decodeURIComponent(idPartes.join('/'));
+    if (partes.includes('raw')) return junto;
+    return junto.replace(/\.[a-zA-Z0-9]+$/, '');
   } catch {
     return '';
   }

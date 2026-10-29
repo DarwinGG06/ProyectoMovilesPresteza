@@ -49,7 +49,12 @@ export function useAdminCategorias() {
           aviso.ok('Categoría editada', `${actual.name} fue editada.`);
         } else {
           const creada = await crearCategoria(sesion, { ...actual, imagePublicId });
-          setLista((prev) => [{ ...creada, ...actual }, ...prev]);
+          if (idDe(creada)) {
+            setLista((prev) => [{ ...creada, ...actual }, ...prev]);
+          } else {
+            // Respuesta sin id: se recarga del servidor para no dejar una categoría inservible.
+            await recargar();
+          }
           aviso.ok('Categoría creada', `${actual.name} ya está en la carta.`);
         }
         return true;
@@ -60,7 +65,7 @@ export function useAdminCategorias() {
         setGuardando(false);
       }
     },
-    [aviso, conToken, setGuardando, setLista],
+    [aviso, conToken, recargar, setGuardando, setLista],
   );
 
   const eliminar = useCallback(

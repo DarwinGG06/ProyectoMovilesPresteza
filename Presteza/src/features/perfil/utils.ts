@@ -84,3 +84,39 @@ export function textoEntrega(pedido: {
   if (pedido.tipo === 'mesa') return pedido.tableNumber ? `Mesa ${pedido.tableNumber}` : 'En mesa';
   return '';
 }
+
+// --- Vencimiento de tarjeta (MM/AAAA) ----------------------------------------
+
+/**
+ * Formatea el vencimiento mientras se escribe: solo deja números, pone la "/"
+ * después del mes y corta en MM/AAAA.
+ *   "0"      → "0"
+ *   "022"    → "02/2"
+ *   "022026" → "02/2026"
+ *   "5"      → "05"   (no hay mes 5x, así que se completa con 0)
+ */
+export function formatearVencimiento(texto: string) {
+  let digitos = texto.replace(/\D/g, '').slice(0, 6);
+  if (digitos.length === 1 && Number(digitos) > 1) digitos = `0${digitos}`;
+  if (digitos.length <= 2) return digitos;
+  return `${digitos.slice(0, 2)}/${digitos.slice(2)}`;
+}
+
+/** `true` si es MM/AAAA, el mes existe y la tarjeta no está vencida (ni a más de 20 años). */
+export function vencimientoValido(valor: string, hoy = new Date()) {
+  const partes = /^(0[1-9]|1[0-2])\/(\d{4})$/.exec(valor);
+  if (!partes) return false;
+  const mes = Number(partes[1]);
+  const anio = Number(partes[2]);
+  const anioActual = hoy.getFullYear();
+  const mesActual = hoy.getMonth() + 1;
+  if (anio > anioActual + 20) return false;
+  return anio > anioActual || (anio === anioActual && mes >= mesActual);
+}
+
+/** Tarjetas viejas guardadas como MM/YY ("02/26") pasan a MM/AAAA ("02/2026") al editarlas. */
+export function vencimientoAAAA(valor?: string | null) {
+  const texto = (valor ?? '').trim();
+  const corto = /^(0[1-9]|1[0-2])\/(\d{2})$/.exec(texto);
+  return corto ? `${corto[1]}/20${corto[2]}` : texto;
+}

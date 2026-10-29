@@ -31,6 +31,11 @@ type Props<T extends FieldValues> = TextInputProps & {
   rules?: RegisterOptions<T, Path<T>>;
   /** `linea` es el de admin: sin caja, solo el subrayado. */
   variante?: 'caja' | 'linea';
+  /**
+   * Transforma el texto en cada tecla antes de guardarlo en el formulario.
+   * Ej: `formatearVencimiento` convierte "022" en "02/2".
+   */
+  formatear?: (texto: string) => string;
 };
 
 export default function Field<T extends FieldValues>({
@@ -41,6 +46,7 @@ export default function Field<T extends FieldValues>({
   className,
   secureTextEntry,
   variante = 'caja',
+  formatear,
   ...input
 }: Props<T>) {
   const contrasena = useVerContrasena(secureTextEntry);
@@ -88,7 +94,7 @@ export default function Field<T extends FieldValues>({
                     }`}
               } ${contrasena.esContrasena ? 'pr-12' : ''} ${className ?? ''}`}
               value={value ?? ''}
-              onChangeText={onChange}
+              onChangeText={(texto) => onChange(formatear ? formatear(texto) : texto)}
               onBlur={onBlur}
               autoCapitalize="none"
               placeholderTextColor={colores.placeholder}

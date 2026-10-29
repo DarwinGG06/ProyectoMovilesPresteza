@@ -1,6 +1,5 @@
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 
-import { FotoRemota } from '@/shared/components/foto/FotoRemota';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
 export type PortadaCategoria = {
@@ -26,14 +25,13 @@ export function TarjetaCategoria({
       accessibilityLabel={`${portada.name}, ${platos}`}
       className="mb-6 w-[48%] active:opacity-80">
       <View className="h-36 overflow-hidden bg-madera/10">
-        <FotoRemota
-          uri={portada.imageUrl}
-          fallback={
-            <View className="h-full w-full items-center justify-center">
-              <SelloP size="sm" />
-            </View>
-          }
-        />
+        {portada.imageUrl ? (
+          <Image source={{ uri: portada.imageUrl }} className="h-full w-full" resizeMode="cover" />
+        ) : (
+          <View className="h-full w-full items-center justify-center">
+            <SelloP size="sm" />
+          </View>
+        )}
       </View>
       <Text className="mt-3 font-serif-semibold text-[20px] leading-6 text-tinta" numberOfLines={2}>
         {portada.name}

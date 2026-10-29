@@ -1,9 +1,8 @@
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { idDe } from '@/api/helpers';
-import { FotoRemota } from '@/shared/components/foto/FotoRemota';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 import { colores } from '@/theme/tokens';
 import type { Producto } from '@/types';
@@ -40,16 +39,17 @@ export function TarjetaPlato({
       </Text>
 
       <View className="relative mr-4 h-20 w-20">
-        <View className="h-full w-full bg-madera/10">
-          <FotoRemota
-            uri={producto.imageUrl}
-            fallback={
-              <View className="h-full w-full items-center justify-center">
-                <SelloP size="sm" />
-              </View>
-            }
+        {producto.imageUrl ? (
+          <Image
+            source={{ uri: producto.imageUrl }}
+            className="h-full w-full bg-madera/10"
+            resizeMode="cover"
           />
-        </View>
+        ) : (
+          <View className="h-full w-full items-center justify-center bg-madera/10">
+            <SelloP size="sm" />
+          </View>
+        )}
         {tieneModelo ? (
           <Pressable
             onPress={(evento) => {

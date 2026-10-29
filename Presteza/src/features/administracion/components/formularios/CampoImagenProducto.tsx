@@ -22,12 +22,10 @@ function BotonFuente({
   );
 }
 
-/** Campo de foto con cámara, galería y archivo. Se usa en platos y categorías. */
 export function CampoImagenProducto({
   uri,
   error,
   disabled,
-  titulo = 'Imagen del plato',
   onCamara,
   onGaleria,
   onArchivo,
@@ -35,14 +33,13 @@ export function CampoImagenProducto({
   uri?: string;
   error?: string;
   disabled?: boolean;
-  titulo?: string;
   onCamara: () => void;
   onGaleria: () => void;
   onArchivo: () => void;
 }) {
   return (
     <View className="gap-1.5">
-      <Text className="font-semibold text-marca-oscura">{titulo}</Text>
+      <Text className="font-semibold text-marca-oscura">Imagen del plato</Text>
       <View
         className={`overflow-hidden border bg-white ${error ? 'border-red-600' : 'border-linea'}`}
         style={{ height: 168 }}>

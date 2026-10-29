@@ -1,7 +1,6 @@
 import { type ComponentProps, type ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 
-import { FotoRemota } from '@/shared/components/foto/FotoRemota';
 import { IconoNav } from '@/shared/components/nav-bar/IconoNav';
 
 import { AccionesAdmin, EnlaceAdmin } from './elementos';
@@ -219,7 +218,7 @@ export function FotoCarta({
         backgroundColor: '#2a0818',
       }}>
       {uri ? (
-        <FotoRemota uri={uri} />
+        <Image source={{ uri }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
       ) : (
         <View className="flex-1 items-center justify-center">
           <IconoNav name="restaurant-outline" size={18} className="text-marca" />

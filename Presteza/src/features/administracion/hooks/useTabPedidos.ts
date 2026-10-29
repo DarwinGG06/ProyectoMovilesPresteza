@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import type { ClienteAdmin, PedidoAdmin, PedidoForm } from '../types';
-import { estadoPedidoBackend, idDe } from '../utils';
+import { estadoPedidoBackend, idDe, pedidoEditable } from '../utils';
 
 export const FILTROS_PEDIDOS = [
   { id: 'all', etiqueta: 'TODOS' },
@@ -63,6 +63,8 @@ export function useTabPedidos(
   }, [detalle, pedidos]);
 
   const abrir = (pedido?: PedidoAdmin) => {
+    // Un pedido entregado es solo de lectura: no se abre el formulario.
+    if (pedido && !pedidoEditable(pedido)) return;
     setEditando(pedido ?? null);
     setAbierto(true);
   };

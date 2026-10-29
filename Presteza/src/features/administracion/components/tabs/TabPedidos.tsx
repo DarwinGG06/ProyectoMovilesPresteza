@@ -10,6 +10,7 @@ import type { ClienteAdmin, PedidoAdmin, PedidoForm, ProductoAdmin } from '../..
 import {
   formatoFechaHora,
   idDe,
+  pedidoEditable,
   siguientesEstadosPedido,
   textoEntrega,
   textoEstadoPedido,
@@ -61,7 +62,9 @@ export function TabPedidos({
   const accionesFila = (pedido: PedidoAdmin) => (
     <AccionesAdmin>
       <EnlaceAdmin etiqueta="VER" onPress={() => tab.verDetalle(pedido)} />
-      <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(pedido)} />
+      {pedidoEditable(pedido) ? (
+        <EnlaceAdmin etiqueta="EDITAR" onPress={() => tab.abrir(pedido)} />
+      ) : null}
       <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(pedido)} />
     </AccionesAdmin>
   );
@@ -209,8 +212,16 @@ export function TabPedidos({
               ))}
             </AccionesAdmin>
 
+            {pedidoEditable(detalle) ? null : (
+              <Text className="font-roboto text-xs text-tinta/60">
+                Pedido entregado: solo se puede ver.
+              </Text>
+            )}
+
             <AccionesAdmin>
-              <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
+              {pedidoEditable(detalle) ? (
+                <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
+              ) : null}
               <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
             </AccionesAdmin>
           </View>

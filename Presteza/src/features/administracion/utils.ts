@@ -24,6 +24,11 @@ export function formatoFechaHora(valor?: string) {
   });
 }
 
+/** Un pedido entregado queda cerrado: se puede ver, pero ya no editar. */
+export function pedidoEditable(pedido?: { status?: string } | null) {
+  return estadoPedidoBackend(pedido?.status ?? '') !== 'entregado';
+}
+
 export function siguientesEstadosPedido(status: string) {
   const clave = estadoPedidoBackend(status);
   if (clave === 'pendiente') {

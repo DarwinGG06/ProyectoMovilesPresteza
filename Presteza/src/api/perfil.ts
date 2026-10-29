@@ -101,6 +101,20 @@ export async function agregarTarjeta(userId: string, jwt: string, tarjeta: Tarje
   return extraerUsuario(data);
 }
 
+export async function actualizarTarjeta(
+  userId: string,
+  jwt: string,
+  index: number,
+  tarjeta: Partial<TarjetaPago>,
+) {
+  const data = await request<RespuestaUsuario>(`/users/${userId}/payment-cards/${index}`, {
+    method: 'PATCH',
+    body: tarjeta,
+    token: jwt,
+  });
+  return extraerUsuario(data);
+}
+
 export async function eliminarTarjeta(userId: string, jwt: string, index: number) {
   const data = await request<RespuestaUsuario>(`/users/${userId}/payment-cards/${index}`, {
     method: 'DELETE',

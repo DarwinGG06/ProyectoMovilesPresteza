@@ -16,7 +16,7 @@ type TabPagosProps = {
 };
 
 export function TabPagos({ userId, token, perfil, onActualizado, abrirTick = 0 }: TabPagosProps) {
-  const pagos = usePagos({ userId, token, onActualizado });
+  const pagos = usePagos({ userId, token, tarjetas: perfil.paymentCards, onActualizado });
 
   useEffect(() => {
     if (abrirTick > 0) pagos.abrirFormulario();
@@ -29,6 +29,10 @@ export function TabPagos({ userId, token, perfil, onActualizado, abrirTick = 0 }
       {pagos.formularioAbierto ? (
         <Comanda>
           <FormularioPago
+            // Cambia la key para que el formulario se arme de nuevo con los
+            // valores de otra tarjeta (o vacío para una nueva).
+            key={pagos.indiceEdicion === null ? 'nueva' : `editar-${pagos.indiceEdicion}`}
+            valores={pagos.valores}
             onCancelar={pagos.cancelar}
             onGuardar={pagos.guardar}
             guardando={pagos.guardando}
@@ -57,6 +61,7 @@ export function TabPagos({ userId, token, perfil, onActualizado, abrirTick = 0 }
                 {!tarjeta.is_primary ? (
                   <EnlaceAccion etiqueta="PRINCIPAL" onPress={() => pagos.marcarPrincipal(index)} />
                 ) : null}
+                <EnlaceAccion etiqueta="EDITAR" onPress={() => pagos.editar(index)} />
                 <EnlaceAccion
                   etiqueta="ELIMINAR"
                   onPress={() => pagos.eliminar(index, tarjeta.name)}

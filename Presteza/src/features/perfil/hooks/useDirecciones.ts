@@ -23,7 +23,10 @@ export function useDirecciones({ userId, perfil, onActualizado }: UseDirecciones
   const [error, setError] = useState<string | null>(null);
   const aviso = useAviso();
 
-  const abrirFormulario = () => setMostrarForm(true);
+  // `useCallback`: la misma función en cada render. TabDirecciones la usa dentro
+  // de un useEffect; si cambiara en cada render, el efecto volvería a abrir el
+  // formulario justo después de CANCELAR.
+  const abrirFormulario = useCallback(() => setMostrarForm(true), []);
 
   const editar = (index: number) => {
     setIndiceEdicion(index);

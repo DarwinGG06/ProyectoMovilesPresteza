@@ -4,19 +4,22 @@ import Field from '@/components/Field';
 import Select from '@/components/Select';
 import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { TarjetaForm } from '../../types';
+import { formatearVencimiento, vencimientoValido } from '../../utils';
 import { AccionesFormulario } from '../elementos';
 
 const MARCAS = ['Visa', 'Mastercard', 'American Express', 'Diners Club'];
 
 type FormularioPagoProps = {
+  /** Valores de la tarjeta que se edita. Sin valores = tarjeta nueva. */
+  valores?: TarjetaForm;
   onCancelar: () => void;
   onGuardar: (datos: TarjetaForm) => Promise<void>;
   guardando?: boolean;
 };
 
-export function FormularioPago({ onCancelar, onGuardar, guardando }: FormularioPagoProps) {
+export function FormularioPago({ valores, onCancelar, onGuardar, guardando }: FormularioPagoProps) {
   const { control, guardar } = useFormulario<TarjetaForm>(
-    {
+    valores ?? {
       name: '',
       cardholder_name: '',
       last_four_digits: '',
@@ -70,11 +73,15 @@ export function FormularioPago({ onCancelar, onGuardar, guardando }: FormularioP
         control={control}
         name="expiry_date"
         label="Vencimiento"
-        placeholder="MM/YY"
-        maxLength={5}
+        placeholder="MM/AAAA"
+        keyboardType="number-pad"
+        maxLength={7}
+        formatear={formatearVencimiento}
         rules={{
           required: 'Escribe el vencimiento',
-          pattern: { value: /^(0[1-9]|1[0-2])\/\d{2}$/, message: 'Usa el formato MM/YY' },
+          pattern: { value: /^(0[1-9]|1[0-2])\/\d{4}$/, message: 'Usa el formato MM/AAAA' },
+          validate: (valor) =>
+            vencimientoValido(String(valor ?? '')) || 'La tarjeta está vencida o la fecha no es válida',
         }}
       />
 
@@ -103,7 +110,7 @@ export function FormularioPago({ onCancelar, onGuardar, guardando }: FormularioP
         onCancelar={onCancelar}
         onGuardar={guardar}
         guardando={guardando}
-        etiquetaGuardar="AGREGAR TARJETA"
+        etiquetaGuardar={valores ? 'GUARDAR CAMBIOS' : 'AGREGAR TARJETA'}
       />
     </View>
   );

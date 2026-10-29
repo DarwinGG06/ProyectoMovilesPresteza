@@ -1,6 +1,6 @@
 import type { Categoria } from '../types';
 import { request } from './client';
-import { lista, texto } from './helpers';
+import { entidad, lista, texto } from './helpers';
 
 function normalizarCategoria(crudo: Record<string, unknown>): Categoria {
   return {
@@ -22,12 +22,17 @@ export async function listarCategorias(jwt?: string) {
   return crudos.map(normalizarCategoria);
 }
 
-export function crearCategoria(jwt: string, datos: Record<string, unknown>) {
-  return request<Categoria>('/categories', { method: 'POST', token: jwt, body: datos });
+// El backend responde `{ message, category: {...} }`: se saca la categoría de
+// adentro y se normaliza. Si no, la categoría nueva entra a la lista sin `id`
+// y no se puede elegir en el formulario del plato.
+export async function crearCategoria(jwt: string, datos: Record<string, unknown>) {
+  const respuesta = await request('/categories', { method: 'POST', token: jwt, body: datos });
+  return normalizarCategoria(entidad(respuesta, 'category'));
 }
 
-export function actualizarCategoria(jwt: string, id: string, datos: Record<string, unknown>) {
-  return request<Categoria>(`/categories/${id}`, { method: 'PATCH', token: jwt, body: datos });
+export async function actualizarCategoria(jwt: string, id: string, datos: Record<string, unknown>) {
+  const respuesta = await request(`/categories/${id}`, { method: 'PATCH', token: jwt, body: datos });
+  return normalizarCategoria(entidad(respuesta, 'category'));
 }
 
 export function eliminarCategoria(jwt: string, id: string) {

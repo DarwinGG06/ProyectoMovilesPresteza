@@ -7,7 +7,14 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { useTabClientes } from '../../hooks/useTabClientes';
 import type { ClienteAdmin, ClienteForm } from '../../types';
 import { iniciales } from '../../utils';
-import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import {
+  AccionesAdmin,
+  BotonAgregarAdmin,
+  ChipFiltro,
+  EnlaceAdmin,
+  EstadoVacioAdmin,
+  ModalAdmin,
+} from '../elementos';
 import { FormularioCliente } from '../formularios/FormularioCliente';
 import {
   CajaCuadricula,
@@ -26,21 +33,12 @@ type TabClientesProps = {
   onEliminar: (cliente: ClienteAdmin) => void;
 };
 
-export function TabClientes({
-  clientes,
-  guardando,
-  onGuardar,
-  onEliminar,
-}: TabClientesProps) {
+export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabClientesProps) {
   const tab = useTabClientes(clientes, onGuardar);
 
   return (
     <View>
-      <TarjetaPerfil
-        numero="I"
-        badge="MESA"
-        titulo="Clientes"
-        compacto>
+      <TarjetaPerfil numero="I" badge="MESA" titulo="Clientes" compacto>
         <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <CampoBusqueda
           value={tab.busqueda}
@@ -96,7 +94,7 @@ export function TabClientes({
                   </Text>
                   {cliente.email ? (
                     <Text
-                      className="mt-0.5 font-roboto text-[11px] text-tinta/45"
+                      className="mt-0.5 font-roboto text-[11px] text-tinta/70"
                       numberOfLines={1}>
                       {cliente.email}
                     </Text>
@@ -125,21 +123,21 @@ export function TabClientes({
             {tab.lista.map((cliente) => (
               <CajaCuadricula key={cliente.id}>
                 <View className="mb-2 h-10 w-10 items-center justify-center border border-oro/40">
-                  <Text className="font-roboto text-sm text-oro">{iniciales(cliente.name)}</Text>
+                  <Text className="font-roboto text-sm text-marca">{iniciales(cliente.name)}</Text>
                 </View>
                 <Text className="font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {cliente.name}
                 </Text>
                 {cliente.email ? (
-                  <Text className="mt-1 font-roboto text-[11px] text-tinta/45" numberOfLines={1}>
+                  <Text className="mt-1 font-roboto text-[11px] text-tinta/70" numberOfLines={1}>
                     {cliente.email}
                   </Text>
                 ) : null}
-                <Text className="mt-2 font-roboto text-sm text-tinta/55">
+                <Text className="mt-2 font-roboto text-sm text-tinta/70">
                   {cliente.totalOrders ?? 0} pedidos · {cliente.totalReservations ?? 0} reservas
                 </Text>
                 {cliente.totalSpent ? (
-                  <Text className="mt-1 font-roboto text-sm text-oro">
+                  <Text className="mt-1 font-roboto text-sm text-marca">
                     {formatCOP(cliente.totalSpent)}
                   </Text>
                 ) : null}

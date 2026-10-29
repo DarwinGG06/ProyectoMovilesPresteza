@@ -51,7 +51,7 @@ export function SedeScreen() {
                   SEDE PRINCIPAL
                 </Text>
                 <Text className="mt-2 font-serif-light text-2xl text-tinta">{sede.direccion}</Text>
-                <Text className="mt-3 font-roboto text-[15px] leading-6 text-tinta/60">
+                <Text className="mt-3 font-roboto text-[15px] leading-6 text-tinta/70">
                   {sede.direccionCompleta}
                 </Text>
                 <Text className="mt-3 font-roboto text-sm text-marca">{sede.ciudad}</Text>

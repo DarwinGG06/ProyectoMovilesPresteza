@@ -42,7 +42,7 @@ export function FormularioPedido({
 }) {
   const { control, guardar, lineas, total, agregar, cambiarCantidad, watch } = useFormularioPedido(
     valores,
-    onGuardar,
+    onGuardar
   );
   const clienteFijo = clientes.find((cliente) => cliente.id === valores.userId);
   const tipo = watch('tipo');
@@ -52,9 +52,7 @@ export function FormularioPedido({
       {bloquearCliente ? (
         <View className="mb-2">
           <Text className="mb-1 font-roboto text-[10px] tracking-[2px] text-marca">Cliente</Text>
-          <Text className="font-roboto text-base text-tinta">
-            {clienteFijo?.name || 'Cliente'}
-          </Text>
+          <Text className="font-roboto text-base text-tinta">{clienteFijo?.name || 'Cliente'}</Text>
         </View>
       ) : clientes.length > 0 ? (
         <Select
@@ -66,7 +64,7 @@ export function FormularioPedido({
           rules={{ required: 'Elige un cliente' }}
         />
       ) : (
-        <Text className="font-roboto text-sm text-texto/55">No hay clientes registrados.</Text>
+        <Text className="font-roboto text-sm text-texto/70">No hay clientes registrados.</Text>
       )}
 
       <View className="mt-6">
@@ -98,7 +96,7 @@ export function FormularioPedido({
           />
         </View>
       ) : (
-        <Text className="mt-4 font-roboto text-sm text-texto/55">
+        <Text className="mt-4 font-roboto text-sm text-texto/70">
           Se usa la dirección principal del cliente.
         </Text>
       )}
@@ -128,20 +126,18 @@ export function FormularioPedido({
       <View className="mt-8">
         <Text className="mb-1 font-roboto text-[10px] tracking-[2px] text-marca">Carta</Text>
         {productos.length === 0 ? (
-          <Text className="py-3 font-roboto text-sm text-texto/55">No hay platos en la carta.</Text>
+          <Text className="py-3 font-roboto text-sm text-texto/70">No hay platos en la carta.</Text>
         ) : (
           productos.map((producto) => {
             const id = idDe(producto);
             const linea = lineas.find((item) => item.dishId === id);
             return (
-              <View
-                key={id}
-                className="flex-row items-center border-b border-marca/10 py-3">
+              <View key={id} className="flex-row items-center border-b border-marca/10 py-3">
                 <Pressable onPress={() => agregar(producto)} className="flex-1 pr-3">
                   <Text className="font-roboto-light text-base text-marca-oscura">
                     {producto.name}
                   </Text>
-                  <Text className="font-roboto text-[11px] text-texto/45">
+                  <Text className="font-roboto text-[11px] text-texto/70">
                     {formatCOP(producto.price || 0)}
                   </Text>
                 </Pressable>
@@ -156,7 +152,7 @@ export function FormularioPedido({
                     onPress={() => agregar(producto)}
                     hitSlop={8}
                     className="h-9 w-9 items-center justify-center">
-                    <Text className="font-roboto-light text-2xl text-oro">+</Text>
+                    <Text className="font-roboto-light text-2xl text-marca">+</Text>
                   </Pressable>
                 )}
               </View>

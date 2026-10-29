@@ -16,16 +16,12 @@ export function TabReservas({ onCambio }: TabReservasProps) {
   const reservas = useReservasPerfil(onCambio);
 
   return (
-    <TarjetaPerfil
-      numero="I"
-      badge="RESERVAS"
-      titulo="Tus mesas"
-      compacto>
+    <TarjetaPerfil numero="I" badge="RESERVAS" titulo="Tus mesas" compacto>
       {reservas.error ? <Mensaje texto={reservas.error} error /> : null}
 
       {reservas.edicion ? (
         <Comanda>
-          <Text className="mb-3 font-roboto text-sm text-texto/55">
+          <Text className="mb-3 font-roboto text-sm text-texto/70">
             Mesa {reservas.edicion.mesa}. La mesa no se puede cambiar.
           </Text>
           <FormularioReserva
@@ -36,10 +32,7 @@ export function TabReservas({ onCambio }: TabReservasProps) {
           />
         </Comanda>
       ) : reservas.lista.length === 0 ? (
-        <EstadoVacio
-          icono="calendar-outline"
-          texto="Todavía no tienes una mesa reservada."
-        />
+        <EstadoVacio icono="calendar-outline" texto="Todavía no tienes una mesa reservada." />
       ) : (
         <View>
           {reservas.lista.map((reserva, index) => (
@@ -48,14 +41,14 @@ export function TabReservas({ onCambio }: TabReservasProps) {
               indice={index}
               titulo={`Mesa ${reserva.tableNumber}`}
               sello={reservas.textoEstado(reserva.status).toUpperCase()}>
-              <Text className="mt-1 font-roboto text-sm text-tinta/60">
+              <Text className="mt-1 font-roboto text-sm text-tinta/70">
                 {reserva.date} · {reserva.time}
               </Text>
-              <Text className="mt-1 font-roboto text-sm text-tinta/45">
+              <Text className="mt-1 font-roboto text-sm text-tinta/70">
                 {reserva.numberOfPeople} {reserva.numberOfPeople === 1 ? 'persona' : 'personas'}
               </Text>
               {reserva.specialRequests ? (
-                <Text className="mt-2 font-roboto text-sm italic text-tinta/45">
+                <Text className="mt-2 font-roboto text-sm italic text-tinta/70">
                   {reserva.specialRequests}
                 </Text>
               ) : null}

@@ -5,7 +5,13 @@ import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { useTabMensajes } from '../../hooks/useTabMensajes';
 import type { MensajeAdmin, MensajeForm } from '../../types';
 import { formatoFechaHora, idDe } from '../../utils';
-import { AccionesAdmin, BotonAgregarAdmin, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import {
+  AccionesAdmin,
+  BotonAgregarAdmin,
+  EnlaceAdmin,
+  EstadoVacioAdmin,
+  ModalAdmin,
+} from '../elementos';
 import { FormularioMensaje } from '../formularios/FormularioMensaje';
 import {
   CajaCuadricula,
@@ -36,11 +42,7 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
 
   return (
     <View>
-      <TarjetaPerfil
-        compacto
-        numero="I"
-        badge="CORREO"
-        titulo="Mensajes">
+      <TarjetaPerfil compacto numero="I" badge="CORREO" titulo="Mensajes">
         <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
 
@@ -67,7 +69,7 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
                   {acciones(mensaje)}
                 </CeldaTabla>
                 <CeldaTabla flex={0.8}>
-                  <Text className="font-roboto text-sm text-tinta/60" numberOfLines={1}>
+                  <Text className="font-roboto text-sm text-tinta/70" numberOfLines={1}>
                     {mensaje.name}
                   </Text>
                   <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70" numberOfLines={1}>
@@ -84,10 +86,10 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
                 <Text className="font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {mensaje.subject}
                 </Text>
-                <Text className="mt-1 font-roboto text-sm text-tinta/60" numberOfLines={1}>
+                <Text className="mt-1 font-roboto text-sm text-tinta/70" numberOfLines={1}>
                   {mensaje.name}
                 </Text>
-                <Text className="mt-2 font-roboto text-sm text-tinta/45" numberOfLines={3}>
+                <Text className="mt-2 font-roboto text-sm text-tinta/70" numberOfLines={3}>
                   {mensaje.message}
                 </Text>
                 {acciones(mensaje)}
@@ -121,7 +123,7 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
             {tab.detalle.phone ? (
               <Text className="font-roboto text-sm text-texto/70">{tab.detalle.phone}</Text>
             ) : null}
-            <Text className="font-roboto text-sm text-texto/55">
+            <Text className="font-roboto text-sm text-texto/70">
               {formatoFechaHora(tab.detalle.createdAt)}
             </Text>
             <Text className="mt-2 font-roboto text-base leading-6 text-marca-oscura">

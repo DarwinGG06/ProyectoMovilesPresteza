@@ -245,8 +245,8 @@ secondary: placa hueca           texto marca     (CANCELAR sobre claro)
 ghost:     placa hueca           texto oro       (VER MENÚ sobre vino)
 gold:      placa metálica        texto marca     (LLAMAR, MAPA, ENVIAR)
 letra:     text-[11px] tracking-[3px]
-pressed:   `active:opacity-80`
-disabled:  `disabled:opacity-40` (gold) / `opacity-45` (resto)
+pressed:   reducción de escala a 0.97; conserva los colores y el contraste
+disabled:  fondo pergamino oscuro, texto tinta, borde discontinuo y acción bloqueada
 ```
 
 ```tsx
@@ -383,3 +383,13 @@ Chips inactivos: `text-tinta/70`. Ayudas de campo: `text-tinta/70`.
 Android e iOS: mismos tokens NativeWind. Hay que grabar las dos plataformas
 en el video de la entrega; el código no cambia por SO.
 
+
+## Revisión de contraste y pedidos · 28 de octubre de 2026
+
+Los textos antes al 55% pasan al 70%. También se elevaron los textos más tenues en tinta, crema y gris. El oro se reserva para texto sobre fondos oscuros; en superficies claras se usa marca o tinta. Los botones base conservan el contraste en sus estados presionado y deshabilitado.
+
+Relaciones calculadas con los tokens: tinta al 70% sobre pergamino 5.94:1; gris al 70% sobre pergamino 5.55:1; crema al 70% sobre vino oscuro 8.06:1; marca sobre pergamino 9.92:1. Estos valores verifican esas combinaciones, no certifican toda la interfaz sobre fotografías o degradados.
+
+El historial y los pedidos del administrador se consultan al entrar, al volver del segundo plano y cada cinco segundos mientras la pantalla está enfocada y la app activa. Si falla una consulta se conserva la lista anterior. La creación conserva el aviso «Pedido creado» y la navegación a seguimiento.
+
+Validación pendiente: recorrido visual y funcional en teléfonos Android e iOS.

@@ -50,8 +50,8 @@ export function CampoImagenProducto({
           uri={uri}
           fallback={
             <View className="flex-1 items-center justify-center gap-2">
-              <IconoNav name="camera-outline" size={28} className="text-oro" />
-              <Text className="text-[10px] tracking-[2px] text-texto/55">SIN FOTO</Text>
+              <IconoNav name="camera-outline" size={28} className="text-marca" />
+              <Text className="text-[10px] tracking-[2px] text-texto/70">SIN FOTO</Text>
             </View>
           }
         />
@@ -61,7 +61,7 @@ export function CampoImagenProducto({
         <BotonFuente etiqueta="GALERÍA" onPress={onGaleria} disabled={disabled} />
         <BotonFuente etiqueta="ARCHIVO" onPress={onArchivo} disabled={disabled} />
       </View>
-      <Text className="text-xs text-texto/55">JPG, JPEG, PNG o WebP. Máximo 10 MB.</Text>
+      <Text className="text-xs text-texto/70">JPG, JPEG, PNG o WebP. Máximo 10 MB.</Text>
       {error ? <Text className="text-xs text-red-600">{error}</Text> : null}
     </View>
   );

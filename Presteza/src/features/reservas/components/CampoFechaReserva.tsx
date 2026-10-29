@@ -1,10 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  Controller,
-  type Control,
-  type FieldValues,
-  type Path,
-} from 'react-hook-form';
+import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
@@ -69,11 +64,7 @@ export function CampoFechaReserva<T extends FieldValues>({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <View className="gap-1.5">
           <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
-          <SelectorFecha
-            valor={String(value || '')}
-            error={Boolean(error)}
-            onChange={onChange}
-          />
+          <SelectorFecha valor={String(value || '')} error={Boolean(error)} onChange={onChange} />
           {error ? <Text className="font-roboto text-xs text-red-600">{error.message}</Text> : null}
         </View>
       )}
@@ -128,12 +119,18 @@ function SelectorFecha({
       <Pressable
         onPress={abrir}
         className={`min-h-12 justify-center border-b bg-transparent px-0 py-3 ${error ? 'border-red-600' : 'border-madera/25'}`}>
-        <Text className={`font-roboto-light text-[17px] ${valor ? 'text-tinta' : 'text-tinta/35'}`}>
+        <Text className={`font-roboto-light text-[17px] ${valor ? 'text-tinta' : 'text-tinta/70'}`}>
           {texto}
         </Text>
       </Pressable>
-      <Modal visible={abierto} transparent animationType="fade" onRequestClose={() => setAbierto(false)}>
-        <Pressable className="flex-1 justify-end bg-marca-oscura/55" onPress={() => setAbierto(false)}>
+      <Modal
+        visible={abierto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setAbierto(false)}>
+        <Pressable
+          className="flex-1 justify-end bg-marca-oscura/55"
+          onPress={() => setAbierto(false)}>
           <Pressable onPress={(evento) => evento.stopPropagation()}>
             <Pergamino>
               <View className="px-6 pb-10 pt-6">

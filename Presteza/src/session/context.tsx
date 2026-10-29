@@ -330,8 +330,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const unlock = async () => {
     try {
       await signInWithBiometrics();
-    } catch {
-    }
+    } catch {}
   };
 
   const setBiometricEnabled = async (enabled: boolean) => {
@@ -412,7 +411,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
           busy={biometricBusy}
           error={biometricError}
           onUnlock={unlock}
-          onPassword={(password) => signIn(sessionEmail, password)}
+          onPassword={async (password) => {
+            await signIn(sessionEmail, password);
+          }}
           onSignOut={salir}
         />
       ) : (

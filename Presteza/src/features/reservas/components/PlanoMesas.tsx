@@ -34,9 +34,7 @@ export function PlanoMesas({
         <Text className="text-center font-roboto text-[10px] tracking-[4px] text-oro">
           SALÓN PRESTEZA
         </Text>
-        <Text className="mt-1 text-center font-serif-light text-2xl text-crema">
-          Elige tu mesa
-        </Text>
+        <Text className="mt-1 text-center font-serif-light text-2xl text-crema">Elige tu mesa</Text>
         <Text className="mb-4 mt-1 text-center font-roboto text-sm text-crema">
           Mesas de madera. Toca una libre.
         </Text>
@@ -80,7 +78,7 @@ export function PlanoMesas({
             <Text className="mt-2 font-roboto text-[11px] tracking-[2px] text-marca-oscura">
               BARRA
             </Text>
-            <Text className="mt-1 font-roboto text-xs text-texto/60">1 o más personas</Text>
+            <Text className="mt-1 font-roboto text-xs text-texto/70">1 o más personas</Text>
           </Pressable>
           <Pressable
             onPress={onPersonalizada}
@@ -89,7 +87,7 @@ export function PlanoMesas({
             <Text className="mt-2 font-roboto text-[11px] tracking-[2px] text-marca-oscura">
               A TU MEDIDA
             </Text>
-            <Text className="mt-1 font-roboto text-xs text-texto/60">Grupo grande</Text>
+            <Text className="mt-1 font-roboto text-xs text-texto/70">Grupo grande</Text>
           </Pressable>
         </View>
       </View>

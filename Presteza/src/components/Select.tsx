@@ -72,69 +72,73 @@ export default function Select<T extends FieldValues>({
           }
           const clave = String(opcion);
           onChange(
-            elegidos.includes(clave) ? elegidos.filter((item) => item !== clave) : [...elegidos, clave],
+            elegidos.includes(clave)
+              ? elegidos.filter((item) => item !== clave)
+              : [...elegidos, clave]
           );
         };
 
         return (
-        <View className="gap-1.5">
-          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
-          {variante === 'fila' ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="flex-row">
-              {options.map((option) => {
-                const opcion = valorDe(option);
-                const active = multiple ? elegidos.includes(String(opcion)) : opcion === value;
-                return (
-                  <Pressable
-                    key={claveDe(opcion)}
-                    onPress={() => marcar(opcion)}
-                    className={`mr-5 py-2 ${active ? 'border-b border-oro' : ''}`}>
-                    <Text
-                      className={`font-roboto text-[13px] ${
-                        active ? 'text-marca-oscura' : 'text-texto/40'
-                      }`}>
-                      {etiquetaDe(option)}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-          ) : (
-            <View
-              className={
-                variante === 'barra' ? 'flex-row border-b border-marca/15' : 'flex-row flex-wrap gap-2'
-              }>
-              {options.map((option) => {
-                const opcion = valorDe(option);
-                const active = multiple ? elegidos.includes(String(opcion)) : opcion === value;
-                return (
-                  <Pressable
-                    key={claveDe(opcion)}
-                    onPress={() => marcar(opcion)}
-                    className={
-                      variante === 'barra'
-                        ? `flex-1 items-center py-3 ${active ? 'border-b-2 border-oro' : ''}`
-                        : `px-3 py-2 ${active ? 'bg-marca-oscura' : 'border border-marca/20'}`
-                    }>
-                    <Text
-                      numberOfLines={1}
+          <View className="gap-1.5">
+            <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
+            {variante === 'fila' ? (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerClassName="flex-row">
+                {options.map((option) => {
+                  const opcion = valorDe(option);
+                  const active = multiple ? elegidos.includes(String(opcion)) : opcion === value;
+                  return (
+                    <Pressable
+                      key={claveDe(opcion)}
+                      onPress={() => marcar(opcion)}
+                      className={`mr-5 py-2 ${active ? 'border-b border-oro' : ''}`}>
+                      <Text
+                        className={`font-roboto text-[13px] ${
+                          active ? 'text-marca-oscura' : 'text-texto/70'
+                        }`}>
+                        {etiquetaDe(option)}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <View
+                className={
+                  variante === 'barra'
+                    ? 'flex-row border-b border-marca/15'
+                    : 'flex-row flex-wrap gap-2'
+                }>
+                {options.map((option) => {
+                  const opcion = valorDe(option);
+                  const active = multiple ? elegidos.includes(String(opcion)) : opcion === value;
+                  return (
+                    <Pressable
+                      key={claveDe(opcion)}
+                      onPress={() => marcar(opcion)}
                       className={
                         variante === 'barra'
-                          ? `font-roboto text-[11px] ${active ? 'text-marca-oscura' : 'text-texto/40'}`
-                          : `font-roboto text-[12px] ${active ? 'text-crema' : 'text-marca-oscura'}`
+                          ? `flex-1 items-center py-3 ${active ? 'border-b-2 border-oro' : ''}`
+                          : `px-3 py-2 ${active ? 'bg-marca-oscura' : 'border border-marca/20'}`
                       }>
-                      {etiquetaDe(option)}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          )}
-          {!!error && <Text className="font-roboto text-xs text-red-600">{error.message}</Text>}
-        </View>
+                      <Text
+                        numberOfLines={1}
+                        className={
+                          variante === 'barra'
+                            ? `font-roboto text-[11px] ${active ? 'text-marca-oscura' : 'text-texto/70'}`
+                            : `font-roboto text-[12px] ${active ? 'text-crema' : 'text-marca-oscura'}`
+                        }>
+                        {etiquetaDe(option)}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            )}
+            {!!error && <Text className="font-roboto text-xs text-red-600">{error.message}</Text>}
+          </View>
         );
       }}
     />

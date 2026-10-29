@@ -6,7 +6,14 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { useTabAdicionales } from '../../hooks/useTabAdicionales';
 import type { AdicionalAdmin, AdicionalForm, CategoriaAdmin } from '../../types';
 import { idDe } from '../../utils';
-import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import {
+  AccionesAdmin,
+  BotonAgregarAdmin,
+  ChipFiltro,
+  EnlaceAdmin,
+  EstadoVacioAdmin,
+  ModalAdmin,
+} from '../elementos';
 import { FormularioAdicional } from '../formularios/FormularioAdicional';
 import {
   AccionesCarta,
@@ -40,11 +47,7 @@ export function TabAdicionales({
 
   return (
     <View>
-      <TarjetaPerfil
-        compacto
-        numero="I"
-        badge="EXTRAS"
-        titulo="Adicionales">
+      <TarjetaPerfil compacto numero="I" badge="EXTRAS" titulo="Adicionales">
         <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
         <FilaFiltros>
@@ -86,7 +89,9 @@ export function TabAdicionales({
                   <Text className="font-roboto-light text-sm text-tinta" numberOfLines={2}>
                     {adicional.name}
                   </Text>
-                  <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70" numberOfLines={1}>
+                  <Text
+                    className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70"
+                    numberOfLines={1}>
                     {tab.nombresCategoria(adicional.categoryIds)}
                   </Text>
                   <AccionesAdmin>
@@ -103,12 +108,12 @@ export function TabAdicionales({
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla ancho={78}>
-                  <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                  <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
                     {adicional.available === false ? 'OCULTO' : 'ACTIVO'}
                   </Text>
                 </CeldaTabla>
                 <CeldaTabla ancho={82} derecha>
-                  <Text className="text-right font-roboto text-sm text-oro">
+                  <Text className="text-right font-roboto text-sm text-marca">
                     {formatCOP(adicional.price || 0)}
                   </Text>
                 </CeldaTabla>
@@ -119,16 +124,18 @@ export function TabAdicionales({
           <GrillaAdmin>
             {tab.lista.map((adicional) => (
               <CajaCuadricula key={idDe(adicional)}>
-                <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
                   {adicional.available === false ? 'OCULTO' : 'DISPONIBLE'}
                 </Text>
                 <Text className="mt-1 font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {adicional.name}
                 </Text>
-                <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70" numberOfLines={2}>
+                <Text
+                  className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70"
+                  numberOfLines={2}>
                   {tab.nombresCategoria(adicional.categoryIds)}
                 </Text>
-                <Text className="mt-2 font-roboto text-lg text-oro">
+                <Text className="mt-2 font-roboto text-lg text-marca">
                   {formatCOP(adicional.price || 0)}
                 </Text>
                 <AccionesCarta

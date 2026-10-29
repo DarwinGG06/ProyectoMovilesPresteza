@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { entidad, idDe } from '@/api/helpers';
 import { cotizarPuntos, crearPedidoConPuntos } from '@/api/loyalty';
@@ -10,6 +10,7 @@ import { MESAS_SALON } from '@/features/reservas/data';
 import { useCart } from '@/services/cart/CartContext';
 import { useSession } from '@/session/context';
 import { esAdmin } from '@/session/roles';
+import { useAviso } from '@/shared/components/aviso';
 
 const METODOS = [
   { value: 'cash', label: 'Efectivo' },
@@ -47,6 +48,7 @@ function textoDireccion(dir: DireccionPago) {
 }
 
 export function usePago() {
+  const aviso = useAviso();
   const { items, totalPrice, clearCart } = useCart();
   const { user, token, isAuthenticated } = useSession();
   const [metodo, setMetodo] = useState<(typeof METODOS)[number]['value']>('cash');
@@ -70,42 +72,50 @@ export function usePago() {
     }
   }, [user]);
 
-  const recotar = useCallback(async () => {
-    if (!user?.id || totalPrice <= 0) {
-      setCotizacion(null);
-      return;
-    }
-
-    setCotizando(true);
-    setError(null);
-    try {
-      const aplicarCumple = !canjear;
-      const base = await cotizarPuntos(user.id, totalPrice, 0, aplicarCumple);
-      const minimo = CANJE_MINIMO;
-      const puedeCanjear = canjear && base.maxRedeemable >= minimo;
-
-      if (puedeCanjear) {
-        setCotizacion(
-          await cotizarPuntos(user.id, totalPrice, base.maxRedeemable, false),
-        );
+  const userId = user?.id;
+  useEffect(() => {
+    let active = true;
+    const recotar = async () => {
+      await Promise.resolve();
+      if (!active) return;
+      if (!userId || totalPrice <= 0) {
+        setCotizacion(null);
+        setCotizando(false);
         return;
       }
 
-      if (canjear && base.maxRedeemable < minimo) {
-        setCanjear(false);
-      }
-      setCotizacion(base);
-    } catch (err) {
-      setCanjear(false);
-      setError(err instanceof Error ? err.message : 'No se pudo cotizar el descuento.');
-    } finally {
-      setCotizando(false);
-    }
-  }, [canjear, totalPrice, user?.id]);
+      setCotizando(true);
+      setError(null);
+      try {
+        const aplicarCumple = !canjear;
+        const base = await cotizarPuntos(userId, totalPrice, 0, aplicarCumple);
+        if (!active) return;
+        const minimo = CANJE_MINIMO;
+        const puedeCanjear = canjear && base.maxRedeemable >= minimo;
 
-  useEffect(() => {
+        if (puedeCanjear) {
+          const quote = await cotizarPuntos(userId, totalPrice, base.maxRedeemable, false);
+          if (active) setCotizacion(quote);
+          return;
+        }
+
+        if (canjear && base.maxRedeemable < minimo) {
+          setCanjear(false);
+        }
+        setCotizacion(base);
+      } catch (err) {
+        if (!active) return;
+        setCanjear(false);
+        setError(err instanceof Error ? err.message : 'No se pudo cotizar el descuento.');
+      } finally {
+        if (active) setCotizando(false);
+      }
+    };
     void recotar();
-  }, [recotar]);
+    return () => {
+      active = false;
+    };
+  }, [canjear, totalPrice, userId]);
 
   useEffect(() => {
     void listarMesas()
@@ -120,14 +130,11 @@ export function usePago() {
   }, []);
 
   useEffect(() => {
-    if (!user?.id) {
-      setGuardadas([]);
-      setIndice(null);
-      setFormulario(vacia());
-      return;
-    }
-    void obtenerUsuario(user.id)
+    let active = true;
+    const request = userId ? obtenerUsuario(userId) : Promise.resolve({ addresses: [] });
+    void request
       .then((perfil) => {
+        if (!active) return;
         const lista = perfil.addresses ?? [];
         setGuardadas(lista);
         const principal = lista.findIndex((item) => item.is_primary);
@@ -136,11 +143,15 @@ export function usePago() {
         setFormulario(elegido === null ? vacia() : desdeGuardada(lista[elegido]));
       })
       .catch(() => {
+        if (!active) return;
         setGuardadas([]);
         setIndice(null);
         setFormulario(vacia());
       });
-  }, [user?.id, isAuthenticated]);
+    return () => {
+      active = false;
+    };
+  }, [userId, isAuthenticated]);
 
   const elegirGuardada = (i: number) => {
     const dir = guardadas[i];
@@ -212,7 +223,7 @@ export function usePago() {
       const creado = await crearPedidoConPuntos(token, {
         payment_method: metodo,
         tipo,
-        tableNumber: tipo === 'mesa' ? mesa ?? undefined : undefined,
+        tableNumber: tipo === 'mesa' ? (mesa ?? undefined) : undefined,
         deliveryAddress: tipo === 'domicilio' ? entrega : undefined,
         pointsToRedeem: puntos,
         products: items.map((item) => ({
@@ -227,6 +238,10 @@ export function usePago() {
       const id = idDe(pedido);
       clearCart();
       router.replace(id ? `/seguimiento?id=${id}` : '/seguimiento');
+      aviso.ok(
+        'Pedido creado',
+        'Recibimos tu pedido y vaciamos tu bandeja. Puedes consultar su estado en esta pantalla de seguimiento.'
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo crear el pedido.');
     } finally {

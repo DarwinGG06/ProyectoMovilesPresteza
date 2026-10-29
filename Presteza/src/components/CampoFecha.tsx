@@ -147,16 +147,24 @@ function SelectorNativo({
       <Pressable
         onPress={abrir}
         className={`min-h-12 justify-center border-b bg-transparent px-0 py-3 ${error ? 'border-red-600' : 'border-madera/25'}`}>
-        <Text className={`font-roboto-light text-[17px] ${valor ? 'text-tinta' : 'text-tinta/35'}`}>
+        <Text className={`font-roboto-light text-[17px] ${valor ? 'text-tinta' : 'text-tinta/70'}`}>
           {valor ? formatearFechaLarga(valor) : 'Selecciona la fecha'}
         </Text>
       </Pressable>
-      <Modal visible={abierto} transparent animationType="fade" onRequestClose={() => setAbierto(false)}>
-        <Pressable className="flex-1 justify-end bg-marca-oscura/55" onPress={() => setAbierto(false)}>
+      <Modal
+        visible={abierto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setAbierto(false)}>
+        <Pressable
+          className="flex-1 justify-end bg-marca-oscura/55"
+          onPress={() => setAbierto(false)}>
           <Pressable onPress={(evento) => evento.stopPropagation()}>
             <Pergamino>
               <View className="px-6 pb-10 pt-6">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">NACIMIENTO</Text>
+                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                  NACIMIENTO
+                </Text>
                 <Text className="mt-2 font-roboto text-2xl text-tinta">Elige tu fecha</Text>
                 <View className="mt-5 h-44 flex-row">
                   <Columna

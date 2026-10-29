@@ -1,5 +1,7 @@
 import { Pressable, Text, TextInput, View } from 'react-native';
 
+import { colores } from '@/theme/tokens';
+
 import Badge from '@/components/Badge';
 import Button from '@/components/Button';
 import { ChipCategoria } from '@/components/ChipCategoria';
@@ -30,10 +32,18 @@ export function PagoScreen() {
             <Badge text="BANDEJA" variant="sello" />
             <Text className="font-serif-light text-2xl text-marca-oscura">Aún no hay platos</Text>
             <Pressable
+              style={({ pressed }) => ({
+                transform: [{ scale: pressed ? 0.98 : 1 }],
+                ...(pago.enviando
+                  ? { backgroundColor: colores['pergamino-oscuro'], borderStyle: 'dashed' as const }
+                  : {}),
+              })}
               onPress={pago.irAlMenu}
               accessibilityRole="button"
               className="mt-2 min-h-12 justify-center self-start">
-              <Text className="font-roboto text-[11px] tracking-[2px] text-marca">IR AL MENÚ →</Text>
+              <Text className="font-roboto text-[11px] tracking-[2px] text-marca">
+                IR AL MENÚ →
+              </Text>
             </Pressable>
           </Tarjeta>
         ) : (
@@ -99,15 +109,26 @@ export function PagoScreen() {
                   ) : null}
 
                   {pago.cumpleDisponible ? (
-                    <Text className="font-roboto text-xs leading-5 text-texto/55">
+                    <Text className="font-roboto text-xs leading-5 text-texto/70">
                       Hoy solo puedes elegir uno: 15% de cumpleaños o canje de puntos.
                     </Text>
                   ) : null}
 
                   {pago.cumpleDisponible ? (
                     <Pressable
+                      style={({ pressed }) => ({
+                        transform: [{ scale: pressed ? 0.98 : 1 }],
+                        ...(pago.enviando
+                          ? {
+                              backgroundColor: colores['pergamino-oscuro'],
+                              borderStyle: 'dashed' as const,
+                            }
+                          : {}),
+                      })}
                       onPress={() => pago.setCanjear(false)}
                       disabled={pago.cotizando || pago.enviando}
+                      accessibilityRole="button"
+                      accessibilityState={{ disabled: pago.cotizando || pago.enviando }}
                       className={`mt-1 min-h-12 items-center justify-center border px-4 ${!pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
                       <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
                         15% CUMPLEAÑOS
@@ -117,8 +138,19 @@ export function PagoScreen() {
 
                   {pago.puedeCanjear ? (
                     <Pressable
+                      style={({ pressed }) => ({
+                        transform: [{ scale: pressed ? 0.98 : 1 }],
+                        ...(pago.enviando
+                          ? {
+                              backgroundColor: colores['pergamino-oscuro'],
+                              borderStyle: 'dashed' as const,
+                            }
+                          : {}),
+                      })}
                       onPress={() => pago.setCanjear(true)}
                       disabled={pago.cotizando || pago.enviando}
+                      accessibilityRole="button"
+                      accessibilityState={{ disabled: pago.cotizando || pago.enviando }}
                       className={`mt-1 min-h-12 items-center justify-center border px-4 ${pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
                       <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
                         {pago.canjear
@@ -127,13 +159,13 @@ export function PagoScreen() {
                       </Text>
                     </Pressable>
                   ) : !pago.cumpleDisponible ? (
-                    <Text className="font-roboto text-xs leading-5 text-texto/55">
+                    <Text className="font-roboto text-xs leading-5 text-texto/70">
                       El canje mínimo es 50 puntos y no puede superar la mitad del pedido.
                     </Text>
                   ) : null}
 
                   {cotizacion?.estimatedPoints ? (
-                    <Text className="font-roboto text-xs text-texto/55">
+                    <Text className="font-roboto text-xs text-texto/70">
                       Este pedido sumará unos {cotizacion.estimatedPoints} puntos al entregarse.
                     </Text>
                   ) : null}
@@ -145,11 +177,13 @@ export function PagoScreen() {
               <Badge text="ENTREGA" variant="sello" />
               <View className="flex-row flex-wrap">
                 <ChipCategoria
+                  disabled={pago.enviando || pago.cotizando}
                   etiqueta="Mesa"
                   activo={pago.tipo === 'mesa'}
                   onPress={() => pago.setTipo('mesa')}
                 />
                 <ChipCategoria
+                  disabled={pago.enviando || pago.cotizando}
                   etiqueta="Domicilio"
                   activo={pago.tipo === 'domicilio'}
                   onPress={() => pago.setTipo('domicilio')}
@@ -160,6 +194,7 @@ export function PagoScreen() {
                 <View className="flex-row flex-wrap">
                   {pago.mesas.map((numero) => (
                     <ChipCategoria
+                      disabled={pago.enviando || pago.cotizando}
                       key={numero}
                       etiqueta={numero}
                       activo={pago.mesa === numero}
@@ -173,12 +208,27 @@ export function PagoScreen() {
                     <View>
                       {pago.guardadas.map((dir, i) => (
                         <Pressable
+                          style={({ pressed }) => ({
+                            transform: [{ scale: pressed ? 0.98 : 1 }],
+                            ...(pago.enviando
+                              ? {
+                                  backgroundColor: colores['pergamino-oscuro'],
+                                  borderStyle: 'dashed' as const,
+                                }
+                              : {}),
+                          })}
                           key={`${dir.name}-${i}`}
+                          disabled={pago.enviando}
+                          accessibilityRole="button"
+                          accessibilityState={{
+                            disabled: pago.enviando,
+                            selected: pago.indice === i,
+                          }}
                           onPress={() => pago.elegirGuardada(i)}
                           className="border-b border-madera/15 py-3">
                           <Text
                             className={`font-roboto text-[10px] tracking-[1.5px] ${
-                              pago.indice === i ? 'text-marca' : 'text-tinta/40'
+                              pago.indice === i ? 'text-marca' : 'text-tinta/70'
                             }`}>
                             {(dir.name || 'Dirección').toUpperCase()}
                           </Text>
@@ -186,13 +236,24 @@ export function PagoScreen() {
                             {dir.address}
                           </Text>
                           {dir.neighborhood ? (
-                            <Text className="mt-0.5 font-roboto text-xs text-tinta/50">
+                            <Text className="mt-0.5 font-roboto text-xs text-tinta/70">
                               {dir.neighborhood}
                             </Text>
                           ) : null}
                         </Pressable>
                       ))}
                       <Pressable
+                        style={({ pressed }) => ({
+                          transform: [{ scale: pressed ? 0.98 : 1 }],
+                          ...(pago.enviando
+                            ? {
+                                backgroundColor: colores['pergamino-oscuro'],
+                                borderStyle: 'dashed' as const,
+                              }
+                            : {}),
+                        })}
+                        disabled={pago.enviando}
+                        accessibilityState={{ disabled: pago.enviando }}
                         onPress={pago.nuevaDireccion}
                         accessibilityRole="button"
                         className="min-h-12 justify-center py-3">
@@ -204,27 +265,30 @@ export function PagoScreen() {
                   ) : null}
 
                   <TextInput
+                    editable={!pago.enviando}
                     className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
                     placeholder="Nombre (casa, trabajo…)"
-                    placeholderTextColor="rgba(42, 24, 16, 0.4)"
+                    placeholderTextColor="rgba(42, 24, 16, 0.7)"
                     value={pago.formulario.name}
                     onChangeText={(valor) => pago.cambiarCampo('name', valor)}
                   />
                   <TextInput
+                    editable={!pago.enviando}
                     className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
                     placeholder="Calle y número"
-                    placeholderTextColor="rgba(42, 24, 16, 0.4)"
+                    placeholderTextColor="rgba(42, 24, 16, 0.7)"
                     value={pago.formulario.address}
                     onChangeText={(valor) => pago.cambiarCampo('address', valor)}
                   />
                   <TextInput
+                    editable={!pago.enviando}
                     className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
                     placeholder="Barrio"
-                    placeholderTextColor="rgba(42, 24, 16, 0.4)"
+                    placeholderTextColor="rgba(42, 24, 16, 0.7)"
                     value={pago.formulario.neighborhood}
                     onChangeText={(valor) => pago.cambiarCampo('neighborhood', valor)}
                   />
-                  <Text className="font-roboto text-xs text-texto/55">Manizales · 170001</Text>
+                  <Text className="font-roboto text-xs text-texto/70">Manizales · 170001</Text>
                 </View>
               )}
             </Tarjeta>
@@ -236,10 +300,20 @@ export function PagoScreen() {
                   const activo = pago.metodo === opcion.value;
                   return (
                     <Pressable
+                      style={({ pressed }) => ({
+                        transform: [{ scale: pressed ? 0.98 : 1 }],
+                        ...(pago.enviando
+                          ? {
+                              backgroundColor: colores['pergamino-oscuro'],
+                              borderStyle: 'dashed' as const,
+                            }
+                          : {}),
+                      })}
                       key={opcion.value}
+                      disabled={pago.enviando}
                       onPress={() => pago.setMetodo(opcion.value)}
                       accessibilityRole="button"
-                      accessibilityState={{ selected: activo }}
+                      accessibilityState={{ selected: activo, disabled: pago.enviando }}
                       className={`min-h-12 items-center justify-center border px-4 ${activo ? 'border-oro bg-oro/15' : 'border-oro/35'}`}>
                       <Text className="font-roboto text-[11px] tracking-[1px] text-marca-oscura">
                         {opcion.label.toUpperCase()}

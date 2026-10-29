@@ -28,7 +28,7 @@ export function SelectorCapacidad({ valor, onCambiar, detalle }: SelectorCapacid
         </Pressable>
       </View>
 
-      <Text className="mt-3 text-center font-roboto text-sm text-tinta/50">
+      <Text className="mt-3 text-center font-roboto text-sm text-tinta/70">
         {valor} {valor === 1 ? 'persona' : 'personas'}
         {detalle ? ` · ${detalle}` : ''}
       </Text>

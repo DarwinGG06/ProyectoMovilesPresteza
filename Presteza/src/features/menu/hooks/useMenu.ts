@@ -43,9 +43,12 @@ export function useMenu() {
     if (categoriaConsumida.current === categoriaParam) return;
 
     const id = idDesdeParametro(categoriaParam, categorias);
-    categoriaConsumida.current = categoriaParam;
-    if (id) setCategoriaActiva(id);
-    router.setParams({ categoria: undefined });
+    const timer = setTimeout(() => {
+      categoriaConsumida.current = categoriaParam;
+      if (id) setCategoriaActiva(id);
+      router.setParams({ categoria: undefined });
+    }, 0);
+    return () => clearTimeout(timer);
   }, [categoriaParam, categorias]);
 
   const lista = useMemo(() => {
@@ -81,7 +84,7 @@ export function useMenu() {
 
   const portadas = useMemo<PortadaCategoria[]>(() => {
     return categorias
-      .map((categoria) => {
+      .map((categoria): PortadaCategoria | null => {
         const id = idDe(categoria);
         const platos = productos.filter((plato) => plato.categoryId === id);
         if (!id || !platos.length) return null;

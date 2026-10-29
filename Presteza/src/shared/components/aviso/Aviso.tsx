@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
+import { colores } from '@/theme/tokens';
 
 export type AvisoConfig = {
   sello?: string;
@@ -55,8 +56,16 @@ function BotonAviso({
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      style={[styles.boton, caja, disabled ? styles.apagado : null]}>
-      <Text style={[styles.botonEtiqueta, texto]} className="font-roboto">
+      accessibilityRole="button"
+      accessibilityState={{ disabled: Boolean(disabled) }}
+      style={({ pressed }) => [
+        styles.boton,
+        caja,
+        disabled ? styles.apagado : pressed ? styles.presionado : null,
+      ]}>
+      <Text
+        style={[styles.botonEtiqueta, texto, disabled ? styles.textoApagado : null]}
+        className="font-roboto">
         {etiqueta}
       </Text>
     </Pressable>
@@ -92,7 +101,7 @@ function AvisoModal({
           style={StyleSheet.absoluteFill}
           onPress={cargando ? undefined : tieneCancelar ? onCerrar : onAceptar}
         />
-        <View style={styles.caja}>
+        <View style={styles.caja} accessibilityViewIsModal>
           <View style={styles.linea} />
           <View style={styles.cuerpo}>
             <View style={styles.centro}>
@@ -100,7 +109,7 @@ function AvisoModal({
               <Text style={styles.sello} className="font-roboto">
                 {sello}
               </Text>
-              <Text style={styles.titulo} className="font-roboto">
+              <Text style={styles.titulo} className="font-roboto" accessibilityRole="header">
                 {aviso?.titulo}
               </Text>
             </View>
@@ -111,7 +120,7 @@ function AvisoModal({
               ))}
             </View>
 
-            <Text style={styles.texto} className="font-roboto">
+            <Text style={styles.texto} className="font-roboto" accessibilityLiveRegion="polite">
               {aviso?.texto}
             </Text>
 
@@ -183,7 +192,7 @@ export function AvisoProvider({ children }: { children: ReactNode }) {
   );
 
   const aceptar = async () => {
-    if (!aviso) return;
+    if (!aviso || cargando) return;
     const actual = aviso;
     if (!actual.onConfirmar) {
       setAviso(null);
@@ -293,13 +302,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     lineHeight: 24,
-    color: 'rgba(250, 246, 242, 0.72)',
+    color: colores.crema,
   },
   acciones: {
     marginTop: 24,
     gap: 8,
   },
   boton: {
+    minHeight: 48,
+    justifyContent: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
@@ -329,6 +340,15 @@ const styles = StyleSheet.create({
     color: '#d4af77',
   },
   apagado: {
-    opacity: 0.5,
+    backgroundColor: colores['pergamino-oscuro'],
+    borderColor: colores.madera,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+  },
+  textoApagado: {
+    color: colores.tinta,
+  },
+  presionado: {
+    transform: [{ scale: 0.97 }],
   },
 });

@@ -121,7 +121,7 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
                     onPress={irARegistro}
                     accessibilityRole="button"
                     className="min-h-12 justify-center">
-                    <Text className="text-center font-roboto text-tinta/60">
+                    <Text className="text-center font-roboto text-tinta/70">
                       ¿Primera vez? <Text className="font-roboto-bold text-marca">Regístrate</Text>
                     </Text>
                   </Pressable>

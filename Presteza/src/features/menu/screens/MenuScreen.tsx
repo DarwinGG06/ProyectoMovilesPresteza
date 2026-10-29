@@ -1,5 +1,13 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, Pressable, SectionList, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  SectionList,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { Footer } from '@/shared/components/footer';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
@@ -62,7 +70,9 @@ export function MenuScreen() {
                 <TarjetaCategoria portada={item} onPress={() => menu.elegirCategoria(item.id)} />
               )}
               ListEmptyComponent={
-                <Vacio texto={menu.error ? 'No se pudo abrir la carta.' : 'Aún no hay categorías.'} />
+                <Vacio
+                  texto={menu.error ? 'No se pudo abrir la carta.' : 'Aún no hay categorías.'}
+                />
               }
               ListFooterComponent={<Footer />}
             />
@@ -90,7 +100,11 @@ export function MenuScreen() {
                 </View>
               )}
               ListEmptyComponent={
-                <Vacio texto={menu.error ? 'No se pudo abrir la carta.' : 'No hay platos en esta página.'} />
+                <Vacio
+                  texto={
+                    menu.error ? 'No se pudo abrir la carta.' : 'No hay platos en esta página.'
+                  }
+                />
               }
               ListFooterComponent={<Footer />}
             />
@@ -104,10 +118,7 @@ export function MenuScreen() {
         modelUrl={menu.modeloUrl}
         productName={menu.nombreProducto}
       />
-      <ModalAdmin
-        visible={admin.abierto}
-        titulo="Editar plato"
-        onCerrar={admin.cerrar}>
+      <ModalAdmin visible={admin.abierto} titulo="Editar plato" onCerrar={admin.cerrar}>
         <FormularioProducto
           key={idDe(admin.editando) || 'editar'}
           valores={admin.valoresFormulario}
@@ -139,9 +150,11 @@ function EncabezadoCarta({
     <View>
       <View className="items-center px-8 pb-8 pt-14">
         <Text className="font-roboto text-[10px] tracking-[4px] text-marca">PRESTEZA · MILÁN</Text>
-        <Text className="mt-3 font-serif-light text-[44px] leading-[46px] text-tinta">La carta</Text>
+        <Text className="mt-3 font-serif-light text-[44px] leading-[46px] text-tinta">
+          La carta
+        </Text>
         <View className="mt-5 h-px w-10 bg-marca/35" />
-        <Text className="mt-5 max-w-[260px] text-center font-serif-italic text-[17px] text-tinta/55">
+        <Text className="mt-5 max-w-[260px] text-center font-serif-italic text-[17px] text-tinta/70">
           {categoria ? categoria : 'Elige una página de la carta.'}
         </Text>
       </View>
@@ -159,7 +172,7 @@ function EncabezadoCarta({
             }}
             accessibilityRole="button"
             className="mb-4 min-h-12 justify-center self-start">
-            <Text className="font-roboto text-[11px] tracking-[2px] text-marca">←  CATEGORÍAS</Text>
+            <Text className="font-roboto text-[11px] tracking-[2px] text-marca">← CATEGORÍAS</Text>
           </Pressable>
         ) : null}
 
@@ -178,7 +191,7 @@ function EncabezadoCarta({
 function Vacio({ texto }: { texto: string }) {
   return (
     <View className="items-center px-6 py-12">
-      <Text className="font-serif-italic text-lg text-tinta/55">{texto}</Text>
+      <Text className="font-serif-italic text-lg text-tinta/70">{texto}</Text>
     </View>
   );
 }

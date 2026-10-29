@@ -24,7 +24,7 @@ export function EncabezadoSeccion({
         {titulo}
       </Text>
       <Text
-        className={`mt-2 font-roboto text-sm leading-5 ${claro ? 'text-crema/60' : 'text-texto/55'}`}>
+        className={`mt-2 font-roboto text-sm leading-5 ${claro ? 'text-crema/70' : 'text-texto/70'}`}>
         {subtitulo}
       </Text>
     </View>

@@ -40,14 +40,18 @@ export function HeroAdmin({ stats, pedidos, onPress }: HeroAdminProps) {
     .map((pedido) => pedido.total || 0);
 
   return (
-    <Pressable onPress={onPress} className="overflow-hidden rounded-[28px] bg-marca-oscura px-5 py-6">
+    <Pressable
+      onPress={onPress}
+      className="overflow-hidden rounded-[28px] bg-marca-oscura px-5 py-6">
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
-          <Text className="font-roboto text-[10px] tracking-[2px] text-crema/55">INGRESOS DEL MES</Text>
+          <Text className="font-roboto text-[10px] tracking-[2px] text-crema/70">
+            INGRESOS DEL MES
+          </Text>
           <Text className="mt-2 font-serif-light text-[34px] leading-[38px] text-crema">
             {formatCOP(stats.totalRevenue)}
           </Text>
-          <Text className="mt-3 font-roboto text-[12px] text-crema/50">Resumen de actividad →</Text>
+          <Text className="mt-3 font-roboto text-[12px] text-crema/70">Resumen de actividad →</Text>
         </View>
         <Sparkline valores={curva} />
       </View>

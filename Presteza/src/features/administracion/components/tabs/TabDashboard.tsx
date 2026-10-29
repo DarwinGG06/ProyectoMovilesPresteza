@@ -70,7 +70,7 @@ function TarjetaDato({
         <IconoNav name={icono} size={18} className="text-marca" />
         <IconoNav name="chevron-forward" size={14} className="text-tinta/25" />
       </View>
-      <Text className="mt-5 font-roboto text-[13px] text-tinta/45">{etiqueta}</Text>
+      <Text className="mt-5 font-roboto text-[13px] text-tinta/70">{etiqueta}</Text>
       <Text className="mt-1 font-serif-light text-[32px] leading-[36px] text-tinta">{valor}</Text>
     </Pressable>
   );
@@ -98,7 +98,7 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
           onPress={() => irA('ajustes')}
           hitSlop={10}
           className="mt-1 h-9 w-9 items-center justify-center">
-          <IconoNav name="settings-outline" size={20} className="text-tinta/35" />
+          <IconoNav name="settings-outline" size={20} className="text-tinta/70" />
         </Pressable>
       </View>
 
@@ -114,7 +114,9 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
       </View>
 
       <View className="mb-3 mt-8 flex-row items-center">
-        <Text className="font-roboto text-[10px] tracking-[2px] text-tinta/35">RESUMEN GENERAL</Text>
+        <Text className="font-roboto text-[10px] tracking-[2px] text-tinta/70">
+          RESUMEN GENERAL
+        </Text>
         <View className="ml-3 h-px flex-1 bg-tinta/10" />
       </View>
 

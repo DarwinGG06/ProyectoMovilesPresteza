@@ -7,7 +7,14 @@ import type { CasaReservas } from '@/features/reservas/hooks/useReservas';
 import type { Reserva } from '@/features/reservas/types';
 
 import { useTabReservas } from '../../hooks/useTabReservas';
-import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import {
+  AccionesAdmin,
+  BotonAgregarAdmin,
+  ChipFiltro,
+  EnlaceAdmin,
+  EstadoVacioAdmin,
+  ModalAdmin,
+} from '../elementos';
 import { FormularioReservaAdmin } from '../formularios/FormularioReservaAdmin';
 import {
   CajaCuadricula,
@@ -55,11 +62,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
 
   return (
     <View>
-      <TarjetaPerfil
-        numero="I"
-        badge="MESAS"
-        titulo="Reservas"
-        compacto>
+      <TarjetaPerfil numero="I" badge="MESAS" titulo="Reservas" compacto>
         <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <InterruptorVista
           vista={tab.vista}
@@ -93,16 +96,16 @@ export function TabReservas({ reservas }: TabReservasProps) {
                 <View className="flex-1">
                   <View className="flex-row items-start justify-between gap-2">
                     <View className="flex-1">
-                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-oro">
+                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-marca">
                         {reservas.textoEstado(reserva.status).toUpperCase()}
                       </Text>
                       <Text className="mt-1 font-roboto-light text-xl text-tinta">
                         Mesa {reserva.tableNumber}
                       </Text>
-                      <Text className="mt-1 font-roboto text-sm text-tinta/60" numberOfLines={1}>
+                      <Text className="mt-1 font-roboto text-sm text-tinta/70" numberOfLines={1}>
                         {reserva.userName || 'Cliente'}
                       </Text>
-                      <Text className="mt-1 font-roboto text-sm text-tinta/50">
+                      <Text className="mt-1 font-roboto text-sm text-tinta/70">
                         {reserva.date} · {reserva.time}
                       </Text>
                       <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70">
@@ -119,19 +122,19 @@ export function TabReservas({ reservas }: TabReservasProps) {
           <GrillaAdmin>
             {reservas.lista.map((reserva) => (
               <CajaCuadricula key={reservas.idDe(reserva)}>
-                <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
                   {reservas.textoEstado(reserva.status).toUpperCase()}
                 </Text>
                 <Text className="mt-1 font-roboto-light text-xl text-tinta">
                   Mesa {reserva.tableNumber}
                 </Text>
-                <Text className="mt-1 font-roboto text-sm text-tinta/50">
+                <Text className="mt-1 font-roboto text-sm text-tinta/70">
                   {reserva.date} · {reserva.time}
                 </Text>
                 <Text className="mt-1 font-roboto text-sm text-tinta">
                   {reserva.numberOfPeople} personas
                 </Text>
-                <Text className="mt-2 font-roboto text-sm text-tinta/60" numberOfLines={1}>
+                <Text className="mt-2 font-roboto text-sm text-tinta/70" numberOfLines={1}>
                   {reserva.userName || 'Cliente'}
                 </Text>
                 {acciones(reserva)}

@@ -121,7 +121,7 @@ export function FormularioProducto({
             .map((item) => ({ value: idDe(item), label: item.name }))}
         />
       ) : (
-        <Text className="font-roboto text-[13px] text-tinta/45">
+        <Text className="font-roboto text-[13px] text-tinta/70">
           Todavía no hay adicionales. Créalos en Adicionales y luego asígnalos al plato.
         </Text>
       )}

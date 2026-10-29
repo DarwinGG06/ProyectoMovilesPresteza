@@ -20,42 +20,44 @@ export function CtaInicio() {
       )}
 
       {esAdmin ? null : (
-      <Pergamino>
-        <View className="px-6 py-8">
-          <Text className="font-roboto text-[10px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
-          <Text className="mt-3 font-serif-light text-3xl text-tinta">¿Cuántos vienen?</Text>
-          <Text className="mt-2 font-serif-italic text-base text-tinta/50">
-            Te esperamos en Milán, Manizales.
-          </Text>
+        <Pergamino>
+          <View className="px-6 py-8">
+            <Text className="font-roboto text-[10px] tracking-[4px] text-marca">
+              RESERVA TU MESA
+            </Text>
+            <Text className="mt-3 font-serif-light text-3xl text-tinta">¿Cuántos vienen?</Text>
+            <Text className="mt-2 font-serif-italic text-base text-tinta/70">
+              Te esperamos en Milán, Manizales.
+            </Text>
 
-          <View className="mb-7 mt-7 h-px w-10 bg-marca/25" />
+            <View className="mb-7 mt-7 h-px w-10 bg-marca/25" />
 
-          <View className="gap-4">
-            <Field
-              control={control}
-              name="nombre"
-              label="Nombre"
-              placeholder="Tu nombre"
-              maxLength={80}
-              rules={{
-                required: 'Escribe tu nombre',
-                maxLength: { value: 80, message: 'Máximo 80 caracteres' },
-              }}
-            />
-            <Field
-              control={control}
-              name="personas"
-              label="Número de personas"
-              placeholder="Ej: 2"
-              keyboardType="number-pad"
-              maxLength={2}
-              rules={{ required: 'Indica cuántas personas' }}
-            />
+            <View className="gap-4">
+              <Field
+                control={control}
+                name="nombre"
+                label="Nombre"
+                placeholder="Tu nombre"
+                maxLength={80}
+                rules={{
+                  required: 'Escribe tu nombre',
+                  maxLength: { value: 80, message: 'Máximo 80 caracteres' },
+                }}
+              />
+              <Field
+                control={control}
+                name="personas"
+                label="Número de personas"
+                placeholder="Ej: 2"
+                keyboardType="number-pad"
+                maxLength={2}
+                rules={{ required: 'Indica cuántas personas' }}
+              />
+            </View>
+
+            <Button text="RESERVAR" onPress={reservar} className="mt-6" />
           </View>
-
-          <Button text="RESERVAR" onPress={reservar} className="mt-6" />
-        </View>
-      </Pergamino>
+        </Pergamino>
       )}
 
       <View className="mt-6 flex-row gap-3">

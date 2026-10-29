@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import { useReservas } from '@/features/reservas/hooks/useReservas';
 
-import type { PedidoAdmin, PedidoForm } from '../types';
+import type { PedidoAdmin, PedidoForm, ProductoAdmin, ProductoForm } from '../types';
 import { calcularStats, enriquecerClientes, idDe } from '../utils';
 import { useSesionAdmin } from './adminComun';
 import { useAdminAdicionales } from './useAdminAdicionales';
@@ -29,7 +29,7 @@ export function useAdmin() {
 
   const clientes = useMemo(
     () => enriquecerClientes(usuarios.usuarios, pedidos.pedidos, reservas.reservas),
-    [pedidos.pedidos, reservas.reservas, usuarios.usuarios],
+    [pedidos.pedidos, reservas.reservas, usuarios.usuarios]
   );
 
   const stats = useMemo(
@@ -53,7 +53,7 @@ export function useAdmin() {
       pedidos.pedidos,
       productos.productos,
       reservas.reservas,
-    ],
+    ]
   );
 
   useEffect(() => {
@@ -62,31 +62,42 @@ export function useAdmin() {
     }
   }, [isAuthenticated, user]);
 
+  const recargarProductos = productos.recargar;
+  const recargarCategorias = categorias.recargar;
+  const recargarInsumos = insumos.recargar;
+  const recargarAdicionales = adicionales.recargar;
+  const recargarPedidos = pedidos.recargar;
+  const recargarMensajes = mensajes.recargar;
+  const recargarUsuarios = usuarios.recargar;
+  const recargarReservas = reservas.recargar;
+  const guardarPedidoAdmin = pedidos.guardar;
+
   const recargar = useCallback(async () => {
     await Promise.all([
-      productos.recargar(),
-      categorias.recargar(),
-      insumos.recargar(),
-      adicionales.recargar(),
-      pedidos.recargar(),
-      mensajes.recargar(),
-      usuarios.recargar(),
-      reservas.recargar(),
+      recargarProductos(),
+      recargarCategorias(),
+      recargarInsumos(),
+      recargarAdicionales(),
+      recargarPedidos(),
+      recargarMensajes(),
+      recargarUsuarios(),
+      recargarReservas(),
     ]);
   }, [
-    adicionales.recargar,
-    categorias.recargar,
-    insumos.recargar,
-    mensajes.recargar,
-    pedidos.recargar,
-    productos.recargar,
-    reservas.recargar,
-    usuarios.recargar,
+    recargarAdicionales,
+    recargarCategorias,
+    recargarInsumos,
+    recargarMensajes,
+    recargarPedidos,
+    recargarProductos,
+    recargarReservas,
+    recargarUsuarios,
   ]);
 
   const guardarPedido = useCallback(
-    (datos: PedidoForm, editando?: PedidoAdmin | null) => pedidos.guardar(datos, editando, clientes),
-    [clientes, pedidos.guardar],
+    (datos: PedidoForm, editando?: PedidoAdmin | null) =>
+      guardarPedidoAdmin(datos, editando, clientes),
+    [clientes, guardarPedidoAdmin]
   );
 
   const error =
@@ -141,7 +152,7 @@ export function useAdmin() {
     adicionales: adicionales.adicionales,
     mensajes: mensajes.mensajes,
     clientes,
-    guardarProducto: async (datos, editando) => {
+    guardarProducto: async (datos: ProductoForm, editando?: ProductoAdmin | null) => {
       const id = await productos.guardar(datos, editando);
       if (!id) return false;
       try {

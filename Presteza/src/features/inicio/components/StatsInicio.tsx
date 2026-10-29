@@ -12,7 +12,7 @@ export function StatsInicio() {
   return (
     <View className="bg-marca-oscura px-5 pb-12">
       <MarcaCurso numero="IV" nombre="PRESTEZA EN CIFRAS" />
-      <Text className="mb-6 font-roboto text-sm text-crema/55">
+      <Text className="mb-6 font-roboto text-sm text-crema/70">
         Lo que hemos construido en Manizales.
       </Text>
 

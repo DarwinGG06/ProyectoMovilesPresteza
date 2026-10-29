@@ -15,13 +15,7 @@ type TabPagosProps = {
   abrirTick?: number;
 };
 
-export function TabPagos({
-  userId,
-  token,
-  perfil,
-  onActualizado,
-  abrirTick = 0,
-}: TabPagosProps) {
+export function TabPagos({ userId, token, perfil, onActualizado, abrirTick = 0 }: TabPagosProps) {
   const pagos = usePagos({ userId, token, onActualizado });
 
   useEffect(() => {
@@ -54,8 +48,8 @@ export function TabPagos({
               indice={index}
               titulo={`${tarjeta.brand} · ${tarjeta.last_four_digits}`}
               sello={tarjeta.is_primary ? 'PRINCIPAL' : undefined}>
-              <Text className="mt-1 font-roboto text-sm text-tinta/60">{tarjeta.name}</Text>
-              <Text className="mt-1 font-roboto text-sm text-tinta/45">
+              <Text className="mt-1 font-roboto text-sm text-tinta/70">{tarjeta.name}</Text>
+              <Text className="mt-1 font-roboto text-sm text-tinta/70">
                 {tarjeta.cardholder_name} · {tarjeta.type === 'debit' ? 'Débito' : 'Crédito'} ·{' '}
                 {tarjeta.expiry_date}
               </Text>

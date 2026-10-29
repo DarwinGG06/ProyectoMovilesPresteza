@@ -79,11 +79,9 @@ export function ContenidoDrawerHome(props: DrawerContentComponentProps) {
           <Text className="font-roboto text-[11px] tracking-[4px] text-oro">
             CARTA DE NAVEGACIÓN
           </Text>
-          <Text className="mt-1 font-serif-light text-4xl tracking-[6px] text-crema">
-            PRESTEZA
-          </Text>
+          <Text className="mt-1 font-serif-light text-4xl tracking-[6px] text-crema">PRESTEZA</Text>
           <View className="mt-3 h-px w-24 bg-oro" />
-          <Text className="mt-3 font-roboto-light text-sm text-crema/55">
+          <Text className="mt-3 font-roboto-light text-sm text-crema/70">
             Elige el siguiente servicio de la casa.
           </Text>
         </View>

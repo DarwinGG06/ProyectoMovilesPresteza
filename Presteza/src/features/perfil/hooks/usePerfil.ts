@@ -1,14 +1,11 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { usePedidosActualizados } from '@/shared/hooks/usePedidosActualizados';
+
 import { useSession } from '@/session/context';
 
-import {
-  obtenerFavoritos,
-  obtenerPedidos,
-  obtenerReservas,
-  obtenerUsuario,
-} from '@/api/perfil';
+import { obtenerFavoritos, obtenerPedidos, obtenerReservas, obtenerUsuario } from '@/api/perfil';
 import type { Pedido, PestanaId, PlatoFavorito, Reserva, UsuarioPerfil } from '../types';
 
 const PESTANAS: PestanaId[] = [
@@ -30,6 +27,12 @@ export function usePerfil() {
   const { user, token, actualizarUsuario, isAuthenticated, logout } = useSession();
   const [perfil, setPerfil] = useState<UsuarioPerfil | null>(null);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const userId = user?.id;
+  const consultarPedidos = useCallback(
+    () => (userId ? obtenerPedidos(userId) : Promise.resolve([])),
+    [userId]
+  );
+  usePedidosActualizados(consultarPedidos, setPedidos, Boolean(userId && token));
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [favoritos, setFavoritos] = useState<PlatoFavorito[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -86,7 +89,8 @@ export function usePerfil() {
   }, [actualizarUsuario, token, user]);
 
   useEffect(() => {
-    recargar();
+    const timer = setTimeout(() => void recargar(), 0);
+    return () => clearTimeout(timer);
   }, [recargar]);
 
   useEffect(() => {

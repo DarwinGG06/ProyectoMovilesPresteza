@@ -13,7 +13,7 @@ export function FormularioSede() {
   return (
     <View className="px-5 pb-14">
       <MarcaCurso numero="V" nombre="RESERVAS" />
-      <Text className="mb-6 font-roboto text-sm text-crema/55">
+      <Text className="mb-6 font-roboto text-sm text-crema/70">
         Nombre y cuántas personas van a la sede.
       </Text>
 
@@ -21,7 +21,7 @@ export function FormularioSede() {
         <View className="px-6 py-8">
           <Text className="font-roboto text-[10px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
           <Text className="mt-3 font-serif-light text-3xl text-tinta">¿Vienes a Milán?</Text>
-          <Text className="mt-2 font-serif-italic text-base text-tinta/50">
+          <Text className="mt-2 font-serif-italic text-base text-tinta/70">
             Te esperamos en Torre Plaza 70.
           </Text>
 

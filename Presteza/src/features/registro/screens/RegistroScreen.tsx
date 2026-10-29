@@ -15,7 +15,7 @@ export function RegistroScreen() {
 
   return (
     <ContenedorPantalla titulo="Registro">
-      <Text className="mt-4 font-roboto text-base leading-6 text-tinta/55">
+      <Text className="mt-4 font-roboto text-base leading-6 text-tinta/70">
         Crea tu cuenta. La fecha de nacimiento sirve para el 15% de cumpleaños; debes tener al menos
         15 años.
       </Text>
@@ -98,7 +98,7 @@ export function RegistroScreen() {
         <View className="mt-4 items-center">
           <View className="mb-4 h-px w-10 bg-marca/25" />
           <Link href="/iniciar-sesion">
-            <Text className="text-center font-roboto text-sm text-tinta/50">
+            <Text className="text-center font-roboto text-sm text-tinta/70">
               ¿Ya tienes cuenta? <Text className="font-roboto text-marca">Inicia sesión</Text>
             </Text>
           </Link>

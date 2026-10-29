@@ -6,7 +6,14 @@ import { formatCOP } from '@/services/cart/CartContext';
 import { useTabInventario } from '../../hooks/useTabInventario';
 import type { InsumoAdmin, InsumoForm } from '../../types';
 import { idDe } from '../../utils';
-import { AccionesAdmin, BotonAgregarAdmin, ChipFiltro, EnlaceAdmin, EstadoVacioAdmin, ModalAdmin } from '../elementos';
+import {
+  AccionesAdmin,
+  BotonAgregarAdmin,
+  ChipFiltro,
+  EnlaceAdmin,
+  EstadoVacioAdmin,
+  ModalAdmin,
+} from '../elementos';
 import { FormularioInsumo } from '../formularios/FormularioInsumo';
 import {
   AccionesCarta,
@@ -31,11 +38,7 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
 
   return (
     <View>
-      <TarjetaPerfil
-        compacto
-        numero="I"
-        badge="BODEGA"
-        titulo="Inventario">
+      <TarjetaPerfil compacto numero="I" badge="BODEGA" titulo="Inventario">
         <BotonAgregarAdmin onPress={() => tab.abrir()} />
         <InterruptorVista vista={tab.vista} onChange={tab.setVista} />
         <FilaFiltros>
@@ -77,7 +80,7 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
                   <Text className="font-roboto-light text-sm text-tinta" numberOfLines={1}>
                     {insumo.name}
                   </Text>
-                  <Text className="mt-0.5 font-roboto text-[11px] text-tinta/45" numberOfLines={1}>
+                  <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70" numberOfLines={1}>
                     {tab.sello(insumo.quantity)}
                   </Text>
                   <AccionesAdmin>
@@ -91,7 +94,7 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
                   </Text>
                 </CeldaTabla>
                 <CeldaTabla ancho={82} derecha>
-                  <Text className="text-right font-roboto text-sm text-oro">
+                  <Text className="text-right font-roboto text-sm text-marca">
                     {formatCOP(insumo.unit_price || 0)}
                   </Text>
                 </CeldaTabla>
@@ -102,14 +105,16 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
           <GrillaAdmin>
             {tab.lista.map((insumo) => (
               <CajaCuadricula key={idDe(insumo)}>
-                <Text className="font-roboto text-[10px] tracking-[1px] text-oro">
+                <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
                   {tab.sello(insumo.quantity)}
                 </Text>
                 <Text className="mt-1 font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {insumo.name}
                 </Text>
-                <Text className="mt-2 font-roboto-light text-2xl text-oro">{insumo.quantity}</Text>
-                <Text className="font-roboto text-[11px] text-tinta/50">
+                <Text className="mt-2 font-roboto-light text-2xl text-marca">
+                  {insumo.quantity}
+                </Text>
+                <Text className="font-roboto text-[11px] text-tinta/70">
                   {formatCOP(insumo.unit_price || 0)} / ud
                 </Text>
                 <AccionesCarta

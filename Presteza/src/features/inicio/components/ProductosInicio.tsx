@@ -13,7 +13,7 @@ export function ProductosInicio() {
   return (
     <View className="bg-marca-oscura px-5 pb-12">
       <MarcaCurso numero="II" nombre="DESTACADOS" />
-      <Text className="mb-4 font-roboto text-sm text-crema/55">
+      <Text className="mb-4 font-roboto text-sm text-crema/70">
         Toca un plato para ver la carta.
       </Text>
 
@@ -42,7 +42,7 @@ export function ProductosInicio() {
               <Text className="font-serif text-lg text-crema">{producto.name}</Text>
             </View>
             <Text className="font-roboto text-oro">{formatCOP(producto.price)}</Text>
-            <Text className="ml-3 font-roboto text-[10px] text-crema/40">0{index + 1}</Text>
+            <Text className="ml-3 font-roboto text-[10px] text-crema/70">0{index + 1}</Text>
           </Pressable>
         ))}
       </View>

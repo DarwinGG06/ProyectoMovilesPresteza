@@ -45,7 +45,7 @@ export function InfoContacto({
       <View className="px-6 pb-4 pt-10">
         <Text className="font-roboto text-[10px] tracking-[4px] text-oro">LA CASA</Text>
         <Text className="mt-2 font-serif-light text-3xl text-crema">Cómo encontrarnos</Text>
-        <Text className="mt-2 font-roboto text-sm leading-5 text-crema/55">
+        <Text className="mt-2 font-roboto text-sm leading-5 text-crema/70">
           Torre Plaza 70, Milán. Una llamada, un correo o la mesa.
         </Text>
 
@@ -95,7 +95,7 @@ export function InfoContacto({
           <View className="ml-4 flex-1">
             <Text className="font-roboto text-[10px] tracking-[2px] text-oro">WHATSAPP</Text>
             <Text className="mt-1 font-roboto-light text-lg text-crema">{whatsapp.nombre}</Text>
-            <Text className="font-roboto text-sm text-crema/60">{telefono}</Text>
+            <Text className="font-roboto text-sm text-crema/70">{telefono}</Text>
           </View>
           <IconoNav name="arrow-forward" size={16} className="text-oro" />
         </Pressable>

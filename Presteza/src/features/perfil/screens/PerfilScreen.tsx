@@ -48,7 +48,7 @@ export function PerfilScreen() {
         <View className="mt-6">
           <ActivityIndicator color="#d4af77" />
         </View>
-        <Text className="mt-3 font-roboto text-sm text-crema/50">Cargando tu mesa...</Text>
+        <Text className="mt-3 font-roboto text-sm text-crema/70">Cargando tu mesa...</Text>
       </View>
     );
   }

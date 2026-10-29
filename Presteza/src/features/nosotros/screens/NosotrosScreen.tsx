@@ -14,7 +14,10 @@ export function NosotrosScreen() {
     <EvitarTeclado>
       <View className="flex-1 bg-marca-oscura">
         <ScrollView showsVerticalScrollIndicator={false}>
-          <ImageBackground source={{ uri: HERO_NOSOTROS }} style={estilos.hero} imageStyle={estilos.foto}>
+          <ImageBackground
+            source={{ uri: HERO_NOSOTROS }}
+            style={estilos.hero}
+            imageStyle={estilos.foto}>
             <LinearGradient
               colors={['rgba(107,29,61,0.5)', 'rgba(58,12,32,0.94)']}
               style={StyleSheet.absoluteFill}
@@ -45,7 +48,7 @@ export function NosotrosScreen() {
                   <Text className="mt-2 font-serif-light text-[28px] leading-8 text-tinta">
                     {HISTORIA.titulo}
                   </Text>
-                  <Text className="mt-4 font-roboto text-[15px] leading-6 text-tinta/65">
+                  <Text className="mt-4 font-roboto text-[15px] leading-6 text-tinta/70">
                     {HISTORIA.texto}
                   </Text>
                   <View className="mt-5 h-px w-10 bg-marca/30" />
@@ -61,12 +64,12 @@ export function NosotrosScreen() {
             <MarcaCurso numero="II" nombre="VALORES" />
             <View className="flex-row flex-wrap justify-between">
               {VALORES_CASA.map((valor) => (
-                <View
-                  key={valor.titulo}
-                  className="mb-3 w-[48%] border border-oro/25 px-4 py-5">
+                <View key={valor.titulo} className="mb-3 w-[48%] border border-oro/25 px-4 py-5">
                   <IconoNav name={valor.icono} size={22} className="text-oro" />
-                  <Text className="mt-4 font-serif-light text-[22px] text-crema">{valor.titulo}</Text>
-                  <Text className="mt-2 font-roboto text-[13px] leading-5 text-crema/65">
+                  <Text className="mt-4 font-serif-light text-[22px] text-crema">
+                    {valor.titulo}
+                  </Text>
+                  <Text className="mt-2 font-roboto text-[13px] leading-5 text-crema/70">
                     {valor.texto}
                   </Text>
                 </View>
@@ -79,9 +82,15 @@ export function NosotrosScreen() {
             <View className="flex-row gap-3">
               {FUNDADORES.map((persona) => (
                 <View key={persona.nombre} className="flex-1 overflow-hidden border border-oro/25">
-                  <Image source={{ uri: persona.foto }} className="h-44 w-full bg-marca" resizeMode="cover" />
+                  <Image
+                    source={{ uri: persona.foto }}
+                    className="h-44 w-full bg-marca"
+                    resizeMode="cover"
+                  />
                   <View className="px-4 py-4">
-                    <Text className="font-serif-light text-[24px] text-crema">{persona.nombre}</Text>
+                    <Text className="font-serif-light text-[24px] text-crema">
+                      {persona.nombre}
+                    </Text>
                     <Text className="mt-1 font-roboto text-[11px] tracking-[1.4px] text-oro">
                       {persona.rol.toUpperCase()}
                     </Text>
@@ -96,10 +105,14 @@ export function NosotrosScreen() {
             <Pergamino>
               <View className="px-5 py-6">
                 <Text className="font-roboto text-[10px] tracking-[3px] text-marca">MISIÓN</Text>
-                <Text className="mt-3 font-roboto text-[15px] leading-6 text-tinta/70">{MISION}</Text>
+                <Text className="mt-3 font-roboto text-[15px] leading-6 text-tinta/70">
+                  {MISION}
+                </Text>
                 <View className="my-6 h-px bg-madera/20" />
                 <Text className="font-roboto text-[10px] tracking-[3px] text-marca">VISIÓN</Text>
-                <Text className="mt-3 font-roboto text-[15px] leading-6 text-tinta/70">{VISION}</Text>
+                <Text className="mt-3 font-roboto text-[15px] leading-6 text-tinta/70">
+                  {VISION}
+                </Text>
               </View>
             </Pergamino>
           </View>

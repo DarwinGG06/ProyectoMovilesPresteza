@@ -122,7 +122,7 @@ export function ModelViewerModal({
 
         {/* Controles de instrucción */}
         <View className="items-center border-t border-white/10 bg-marca-oscura px-5 py-3">
-          <Text className="font-roboto text-xs text-crema/60">
+          <Text className="font-roboto text-xs text-crema/70">
             Gira con un dedo · Haz zoom pellizcando
           </Text>
         </View>

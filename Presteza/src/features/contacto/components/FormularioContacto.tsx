@@ -26,7 +26,7 @@ export function FormularioContacto({
         <Text className="mt-3 font-serif-light text-[34px] leading-9 text-tinta">
           Envíanos un mensaje
         </Text>
-        <Text className="mt-3 font-serif-italic text-base text-tinta/50">
+        <Text className="mt-3 font-serif-italic text-base text-tinta/70">
           Completa la nota. La leemos en la casa y te escribimos.
         </Text>
 

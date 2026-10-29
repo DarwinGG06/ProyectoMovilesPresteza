@@ -41,11 +41,7 @@ export function TabProductos({
 
   return (
     <View>
-      <TarjetaPerfil
-        numero="I"
-        badge="CARTA"
-        titulo="Platos"
-        compacto>
+      <TarjetaPerfil numero="I" badge="CARTA" titulo="Platos" compacto>
         <BotonAgregarAdmin etiqueta="AGREGAR PLATO" onPress={() => tab.abrir()} />
         <CampoBusqueda
           value={tab.busqueda}
@@ -109,11 +105,11 @@ export function TabProductos({
                         numberOfLines={2}>
                         {producto.name}
                       </Text>
-                      <Text className="font-roboto text-sm text-oro">
+                      <Text className="font-roboto text-sm text-marca">
                         {formatCOP(producto.price || 0)}
                       </Text>
                     </View>
-                    <Text className="mt-1 font-roboto text-[10px] tracking-[1.4px] text-tinta/45">
+                    <Text className="mt-1 font-roboto text-[10px] tracking-[1.4px] text-tinta/70">
                       {tab.nombreCategoria(producto.categoryId).toUpperCase()}
                       {'  ·  '}
                       {producto.available === false ? 'OCULTO' : 'EN CARTA'}

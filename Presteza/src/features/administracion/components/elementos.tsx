@@ -58,11 +58,7 @@ export function EnlaceAdmin({
       onPress={onPress}
       accessibilityRole="button"
       className={`mb-2 mr-2 min-h-12 items-center justify-center rounded-full px-3.5 ${
-        activo
-          ? 'bg-marca'
-          : peligro
-            ? 'border border-red-600/50'
-            : 'border border-marca/35'
+        activo ? 'bg-marca' : peligro ? 'border border-red-600/50' : 'border border-marca/35'
       }`}>
       <Text
         className={`font-roboto text-[11px] tracking-[1.4px] ${
@@ -121,7 +117,9 @@ export function BarraSeleccionAdmin({
 }) {
   if (!activa) {
     return (
-      <Pressable onPress={onActivar} className="mb-4 self-start rounded-full border border-marca/35 px-5 py-2.5">
+      <Pressable
+        onPress={onActivar}
+        className="mb-4 self-start rounded-full border border-marca/35 px-5 py-2.5">
         <Text className="font-roboto text-[11px] tracking-[1.6px] text-marca">SELECCIONAR</Text>
       </Pressable>
     );
@@ -129,7 +127,7 @@ export function BarraSeleccionAdmin({
 
   return (
     <View className="mb-4 flex-row flex-wrap items-center">
-      <Text className="mr-3 mb-2 font-roboto text-[13px] text-tinta/55">
+      <Text className="mb-2 mr-3 font-roboto text-[13px] text-tinta/70">
         {cuenta === 0 ? 'Elige varios' : `${cuenta} elegidos`}
       </Text>
       <Pressable
@@ -138,8 +136,10 @@ export function BarraSeleccionAdmin({
         className={`mb-2 mr-2 rounded-full px-5 py-2.5 ${cuenta === 0 ? 'bg-marca/30' : 'bg-red-700'}`}>
         <Text className="font-roboto text-[11px] tracking-[1.6px] text-crema">ELIMINAR</Text>
       </Pressable>
-      <Pressable onPress={onCancelar} className="mb-2 rounded-full border border-madera/30 px-5 py-2.5">
-        <Text className="font-roboto text-[11px] tracking-[1.6px] text-tinta/55">CANCELAR</Text>
+      <Pressable
+        onPress={onCancelar}
+        className="mb-2 rounded-full border border-madera/30 px-5 py-2.5">
+        <Text className="font-roboto text-[11px] tracking-[1.6px] text-tinta/70">CANCELAR</Text>
       </Pressable>
     </View>
   );
@@ -193,7 +193,7 @@ export function ModalAdmin({
                 <View className="mb-6 flex-row items-end justify-between">
                   <Text className="flex-1 font-serif-light text-[26px] text-tinta">{titulo}</Text>
                   <Pressable onPress={onCerrar} hitSlop={8} className="pb-1">
-                    <IconoNav name="close" size={18} className="text-texto/40" />
+                    <IconoNav name="close" size={18} className="text-texto/70" />
                   </Pressable>
                 </View>
                 <ScrollView
@@ -242,7 +242,7 @@ export function EstadoVacioAdmin({
         elevation: 2,
       }}>
       <Text className="font-serif-light text-2xl text-tinta">{titulo}</Text>
-      <Text className="mt-2 font-roboto text-sm leading-5 text-tinta/50">{texto}</Text>
+      <Text className="mt-2 font-roboto text-sm leading-5 text-tinta/70">{texto}</Text>
     </View>
   );
 }

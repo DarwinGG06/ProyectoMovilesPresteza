@@ -104,7 +104,10 @@ export function CajaCuadricula({
 
   if (onPress || onLongPress) {
     return (
-      <Pressable onPress={onPress} onLongPress={onLongPress} className="mb-3 w-[48%] active:opacity-85">
+      <Pressable
+        onPress={onPress}
+        onLongPress={onLongPress}
+        className="mb-3 w-[48%] active:opacity-85">
         {cuerpo}
       </Pressable>
     );
@@ -131,7 +134,7 @@ export function EncabezadoTabla({ columnas }: { columnas: ColumnaTabla[] }) {
         <Text
           key={columna.texto}
           style={estiloColumna(columna)}
-          className={`font-roboto text-[10px] tracking-[2px] text-tinta/35 ${columna.derecha ? 'text-right' : ''}`}>
+          className={`font-roboto text-[10px] tracking-[2px] text-tinta/70 ${columna.derecha ? 'text-right' : ''}`}>
           {columna.texto}
         </Text>
       ))}
@@ -219,7 +222,7 @@ export function FotoCarta({
         <FotoRemota uri={uri} />
       ) : (
         <View className="flex-1 items-center justify-center">
-          <IconoNav name="restaurant-outline" size={18} className="text-oro/50" />
+          <IconoNav name="restaurant-outline" size={18} className="text-marca" />
         </View>
       )}
     </View>

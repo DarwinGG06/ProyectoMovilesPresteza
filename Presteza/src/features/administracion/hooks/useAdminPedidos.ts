@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { usePedidosActualizados } from '@/shared/hooks/usePedidosActualizados';
 
 import {
   actualizarEstadoPedido,
@@ -12,11 +13,30 @@ import { estadoPedidoBackend, idDe, textoEstadoPedido } from '../utils';
 import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminPedidos() {
-  const { lista: pedidos, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
-    useListaAdmin(listarPedidos);
+  const {
+    lista: pedidos,
+    setLista,
+    cargando,
+    guardando,
+    setGuardando,
+    error,
+    recargar,
+    aviso,
+    conToken,
+    token,
+  } = useListaAdmin(listarPedidos);
+  const consultarPedidos = useCallback(
+    () => (token ? listarPedidos(token) : Promise.resolve([])),
+    [token]
+  );
+  usePedidosActualizados(consultarPedidos, setLista, Boolean(token) && !guardando);
 
   const guardar = useCallback(
-    async (datos: PedidoForm, editando: PedidoAdmin | null | undefined, clientes: ClienteAdmin[]) => {
+    async (
+      datos: PedidoForm,
+      editando: PedidoAdmin | null | undefined,
+      clientes: ClienteAdmin[]
+    ) => {
       const sesion = conToken();
       if (!sesion) return false;
       const cliente = clientes.find((item) => item.id === datos.userId);
@@ -45,7 +65,9 @@ export function useAdminPedidos() {
       try {
         if (editando) {
           const actualizado = await actualizarPedido(sesion, idDe(editando), cuerpo);
-          setLista((prev) => fusionar(prev, { ...editando, ...actualizado }, { ...cuerpo, userId: cliente.id }));
+          setLista((prev) =>
+            fusionar(prev, { ...editando, ...actualizado }, { ...cuerpo, userId: cliente.id })
+          );
           aviso.ok('Pedido editado', `El pedido de ${cliente.name} fue editado.`);
         } else {
           const creado = await crearPedido(sesion, cuerpo);
@@ -60,7 +82,7 @@ export function useAdminPedidos() {
         setGuardando(false);
       }
     },
-    [aviso, conToken, setGuardando, setLista],
+    [aviso, conToken, setGuardando, setLista]
   );
 
   const cambiarEstado = useCallback(
@@ -98,7 +120,7 @@ export function useAdminPedidos() {
         },
       });
     },
-    [aviso, conToken, setLista],
+    [aviso, conToken, setLista]
   );
 
   const eliminar = useCallback(
@@ -119,17 +141,29 @@ export function useAdminPedidos() {
         },
       });
     },
-    [aviso, conToken, setLista],
+    [aviso, conToken, setLista]
   );
 
   const eliminarVarios = useCallback(
     (items: PedidoAdmin[], alTerminar?: () => void) => {
       const sesion = conToken();
       if (!sesion) return;
-      borrarVarios(aviso, sesion, setLista, eliminarPedido, items, 'pedidos', 'PEDIDOS', { alTerminar });
+      borrarVarios(aviso, sesion, setLista, eliminarPedido, items, 'pedidos', 'PEDIDOS', {
+        alTerminar,
+      });
     },
-    [aviso, conToken, setLista],
+    [aviso, conToken, setLista]
   );
 
-  return { pedidos, cargando, guardando, error, recargar, guardar, cambiarEstado, eliminar, eliminarVarios };
+  return {
+    pedidos,
+    cargando,
+    guardando,
+    error,
+    recargar,
+    guardar,
+    cambiarEstado,
+    eliminar,
+    eliminarVarios,
+  };
 }

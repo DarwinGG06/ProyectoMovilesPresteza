@@ -58,19 +58,19 @@ export function CampoModelo3d({
         className={`flex-row items-center gap-3 border bg-white px-4 py-4 ${
           error ? 'border-red-600' : 'border-linea'
         }`}>
-        <IconoNav name="cube-outline" size={26} className="text-oro" />
+        <IconoNav name="cube-outline" size={26} className="text-marca" />
         <View className="flex-1">
           {nombre ? (
             <>
               <Text className="font-roboto text-sm text-marca-oscura" numberOfLines={1}>
                 {nombre}
               </Text>
-              <Text className="mt-0.5 font-roboto text-[10px] tracking-[1px] text-texto/55">
+              <Text className="mt-0.5 font-roboto text-[10px] tracking-[1px] text-texto/70">
                 {pendiente ? 'SE SUBIRÁ AL GUARDAR' : 'GUARDADO'}
               </Text>
             </>
           ) : (
-            <Text className="font-roboto text-[10px] tracking-[2px] text-texto/55">SIN MODELO</Text>
+            <Text className="font-roboto text-[10px] tracking-[2px] text-texto/70">SIN MODELO</Text>
           )}
         </View>
       </View>
@@ -85,7 +85,7 @@ export function CampoModelo3d({
           <BotonModelo etiqueta="QUITAR" onPress={onQuitar} disabled={disabled} peligro />
         ) : null}
       </View>
-      <Text className="font-roboto text-xs text-texto/55">
+      <Text className="font-roboto text-xs text-texto/70">
         Archivo .glb. Máximo 10 MB. Es lo que se ve al tocar el cubo en el menú.
       </Text>
       {error ? <Text className="font-roboto text-xs text-red-600">{error}</Text> : null}

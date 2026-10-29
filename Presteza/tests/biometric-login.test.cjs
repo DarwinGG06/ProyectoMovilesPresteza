@@ -94,7 +94,12 @@ test('el botón de huella solo aparece en Android', async () => {
     ['web', 'Huella digital', null],
   ]) {
     const { BiometricLoginButton } = load('src/session/BiometricLoginButton.tsx', {
-      'react-native': { Platform: { OS: platform }, View: 'View', Text: 'Text' },
+      'react-native': {
+        Platform: { OS: platform },
+        View: 'View',
+        Text: 'Text',
+        Pressable: 'Pressable',
+      },
       '@/components/Button': { default: 'Button', __esModule: true },
     });
     let tree;
@@ -112,7 +117,12 @@ test('el botón de huella solo aparece en Android', async () => {
 test('los ajustes biométricos solo aparecen en Android', async () => {
   for (const platform of ['android', 'ios', 'web']) {
     const { BiometricSettings } = load('src/session/BiometricSettings.tsx', {
-      'react-native': { Platform: { OS: platform }, View: 'View', Text: 'Text' },
+      'react-native': {
+        Platform: { OS: platform },
+        View: 'View',
+        Text: 'Text',
+        Pressable: 'Pressable',
+      },
       '@/components/Button': { default: 'Button', __esModule: true },
       '@/shared/components/materiales/Pergamino': { Pergamino: 'Paper' },
       './context': {

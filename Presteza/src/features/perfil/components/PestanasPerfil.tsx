@@ -17,7 +17,12 @@ const INDICE: {
   { id: 'pedidos', etiqueta: 'Pedidos', detalle: 'Tu historial', icono: 'bag-handle-outline' },
   { id: 'reservas', etiqueta: 'Reservas', detalle: 'Tus mesas', icono: 'calendar-outline' },
   { id: 'puntos', etiqueta: 'Puntos', detalle: 'Fidelidad', icono: 'star-outline' },
-  { id: 'direcciones', etiqueta: 'Direcciones', detalle: 'Dónde llevar', icono: 'location-outline' },
+  {
+    id: 'direcciones',
+    etiqueta: 'Direcciones',
+    detalle: 'Dónde llevar',
+    icono: 'location-outline',
+  },
   { id: 'pagos', etiqueta: 'Pagos', detalle: 'Tus tarjetas', icono: 'card-outline' },
   { id: 'ajustes', etiqueta: 'Cuenta', detalle: 'Datos y sesión', icono: 'person-outline' },
 ];
@@ -47,7 +52,9 @@ export function PestanasPerfil({ onChange, contadores }: IndiceMesaProps) {
           <View key={item.id} className="w-1/2 px-1.5 pb-3">
             <View className="overflow-hidden rounded-[28px]">
               <Pergamino>
-                <Pressable onPress={() => onChange(item.id)} className="min-h-[118px] px-4 py-4 active:opacity-80">
+                <Pressable
+                  onPress={() => onChange(item.id)}
+                  className="min-h-[118px] px-4 py-4 active:opacity-80">
                   <View className="flex-row items-center justify-between">
                     <IconoNav name={item.icono} size={20} className="text-marca" />
                     {conNumero ? (
@@ -59,7 +66,7 @@ export function PestanasPerfil({ onChange, contadores }: IndiceMesaProps) {
                     )}
                   </View>
                   <Text className="mt-5 font-serif text-[22px] text-tinta">{item.etiqueta}</Text>
-                  <Text className="mt-1 font-roboto text-[12px] text-tinta/45">{item.detalle}</Text>
+                  <Text className="mt-1 font-roboto text-[12px] text-tinta/70">{item.detalle}</Text>
                 </Pressable>
               </Pergamino>
             </View>
@@ -83,7 +90,9 @@ export function EncabezadoSeccion({
 }) {
   const titulo = pestana === 'cuenta' ? 'Cuenta' : TITULOS[pestana];
   const mostrarNumero =
-    (pestana === 'pedidos' || pestana === 'reservas') && typeof contador === 'number' && contador > 0;
+    (pestana === 'pedidos' || pestana === 'reservas') &&
+    typeof contador === 'number' &&
+    contador > 0;
 
   return (
     <View className="px-6 pt-8">
@@ -92,7 +101,7 @@ export function EncabezadoSeccion({
         accessibilityRole="button"
         accessibilityLabel="Volver a la cuenta"
         className="min-h-12 justify-center self-start">
-        <Text className="font-roboto text-[10px] tracking-[3px] text-oro">←  CUENTA</Text>
+        <Text className="font-roboto text-[10px] tracking-[3px] text-oro">← CUENTA</Text>
       </Pressable>
       <View className="mt-2 flex-row items-end justify-between gap-3">
         <View className="min-w-0 flex-1 flex-row items-center">

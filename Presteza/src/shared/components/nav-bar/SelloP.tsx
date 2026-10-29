@@ -14,7 +14,8 @@ export function SelloP({ size = 'sm' }: SelloPProps) {
   const m = MEDIDAS[size];
 
   return (
-    <View className={`${m.caja} items-center justify-center rounded-full border border-oro/70`}>
+    <View
+      className={`${m.caja} items-center justify-center rounded-full border border-oro/70 bg-marca-oscura`}>
       <Text className={`${m.letra} font-serif text-oro`}>P</Text>
     </View>
   );

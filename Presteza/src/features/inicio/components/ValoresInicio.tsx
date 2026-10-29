@@ -9,7 +9,7 @@ export function ValoresInicio() {
   return (
     <View className="bg-marca-oscura px-5 pb-12">
       <MarcaCurso numero="I" nombre="NUESTRA CASA" />
-      <Text className="mb-6 font-roboto text-sm text-crema/55">
+      <Text className="mb-6 font-roboto text-sm text-crema/70">
         Tres razones para sentarse en Presteza.
       </Text>
 
@@ -21,7 +21,7 @@ export function ValoresInicio() {
                 0{index + 1}
               </Text>
               <Text className="mt-2 font-serif-light text-2xl text-tinta">{valor.titulo}</Text>
-              <Text className="mt-2 font-roboto text-[15px] leading-6 text-tinta/60">
+              <Text className="mt-2 font-roboto text-[15px] leading-6 text-tinta/70">
                 {valor.texto}
               </Text>
             </View>

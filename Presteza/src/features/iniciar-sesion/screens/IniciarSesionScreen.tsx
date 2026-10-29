@@ -16,7 +16,7 @@ export function IniciarSesionScreen() {
 
   return (
     <ContenedorPantalla titulo="Iniciar sesión">
-      <Text className="mt-4 font-roboto text-base leading-6 text-tinta/55">
+      <Text className="mt-4 font-roboto text-base leading-6 text-tinta/70">
         Entra con el correo que registraste.
       </Text>
 
@@ -79,7 +79,7 @@ export function IniciarSesionScreen() {
             </Text>
           </Link>
           <Link href="/registro">
-            <Text className="text-center font-roboto text-sm text-tinta/50">
+            <Text className="text-center font-roboto text-sm text-tinta/70">
               ¿No tienes cuenta? <Text className="font-roboto text-marca">Regístrate</Text>
             </Text>
           </Link>

@@ -1,8 +1,6 @@
 import { useCallback } from 'react';
 
 import { actualizarCategoria, crearCategoria, eliminarCategoria, listarCategorias } from '@/api/categorias';
-import { urlPublicaImagen } from '@/services/imagen/formatos';
-
 import type { CategoriaAdmin, CategoriaForm } from '../types';
 import { cambiosDe, idDe } from '../utils';
 import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
@@ -18,14 +16,8 @@ export function useAdminCategorias() {
       const actual = {
         name: datos.name.trim(),
         description: datos.description.trim(),
-        imageUrl: urlPublicaImagen(datos.imageUrl),
+        imageUrl: datos.imageUrl.trim(),
       };
-      if (!actual.imageUrl) {
-        aviso.error('Imagen', 'La imagen no quedó lista. Elígela otra vez y pulsa Listo.');
-        return false;
-      }
-      // public_id de la imagen recién subida: viaja solo junto con la URL nueva.
-      const imagePublicId = datos.imagePublicId?.trim() || undefined;
 
       setGuardando(true);
       try {
@@ -40,15 +32,11 @@ export function useAdminCategorias() {
             aviso.ok('Sin cambios', 'No hay nada que guardar.');
             return true;
           }
-          const cuerpo = {
-            ...cambios,
-            ...('imageUrl' in cambios && imagePublicId ? { imagePublicId } : {}),
-          };
-          const actualizado = await actualizarCategoria(sesion, idDe(editando), cuerpo);
+          const actualizado = await actualizarCategoria(sesion, idDe(editando), cambios);
           setLista((prev) => fusionar(prev, { ...editando, ...actualizado }, cambios));
           aviso.ok('Categoría editada', `${actual.name} fue editada.`);
         } else {
-          const creada = await crearCategoria(sesion, { ...actual, imagePublicId });
+          const creada = await crearCategoria(sesion, actual);
           setLista((prev) => [{ ...creada, ...actual }, ...prev]);
           aviso.ok('Categoría creada', `${actual.name} ya está en la carta.`);
         }

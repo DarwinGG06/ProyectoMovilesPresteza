@@ -27,9 +27,7 @@ function normalizarProducto(crudo: Record<string, unknown>): Producto {
         ? texto((categoria as { name?: unknown }).name)
         : texto(categoria) || undefined,
     imageUrl: texto(crudo.imageUrl) || texto(crudo.image),
-    imagePublicId: texto(crudo.imagePublicId) || texto(crudo.image_public_id) || undefined,
     modelUrl: texto(crudo.modelUrl) || texto(crudo.model_url) || undefined,
-    modelPublicId: texto(crudo.modelPublicId) || texto(crudo.model_public_id) || undefined,
     type: texto(crudo.type) || 'principal',
     available: crudo.available !== false,
   };

@@ -117,24 +117,12 @@ export function useFormularioProducto({
     setSubiendo(true);
     try {
       // La imagen y el modelo se suben a la vez; cada error se muestra en su campo.
-      // Se guarda URL + public_id; si no se subió nada nuevo, el public_id va vacío
-      // y el backend conserva el que ya tenía.
-      const [imagenSubida, modeloSubido] = await Promise.allSettled([
+      const [imagen, modelo3d] = await Promise.allSettled([
         pendiente
-          ? subirImagenACloudinary(pendiente)
-          : Promise.resolve({ url: publica, publicId: '' }),
-        modeloRef.current
-          ? subirModelo3d(modeloRef.current)
-          : Promise.resolve({ url: modeloUrl, publicId: '' }),
+          ? subirImagenACloudinary(pendiente).then((recurso) => recurso.url)
+          : Promise.resolve(publica),
+        modeloRef.current ? subirModelo3d(modeloRef.current) : Promise.resolve(modeloUrl),
       ]);
-      const imagen =
-        imagenSubida.status === 'fulfilled'
-          ? { status: 'fulfilled' as const, value: imagenSubida.value.url }
-          : imagenSubida;
-      const modelo3d =
-        modeloSubido.status === 'fulfilled'
-          ? { status: 'fulfilled' as const, value: modeloSubido.value.url }
-          : modeloSubido;
 
       if (imagen.status === 'rejected') {
         const mensaje =
@@ -171,11 +159,7 @@ export function useFormularioProducto({
       await onGuardar({
         ...getValues(),
         imageUrl: urlLista,
-        imagePublicId:
-          imagenSubida.status === 'fulfilled' ? imagenSubida.value.publicId || undefined : undefined,
         modelUrl: modelo3d.value || modeloUrl,
-        modelPublicId:
-          modeloSubido.status === 'fulfilled' ? modeloSubido.value.publicId || undefined : undefined,
         adicionalIds: datos.adicionalIds ?? [],
       });
     } catch (error) {

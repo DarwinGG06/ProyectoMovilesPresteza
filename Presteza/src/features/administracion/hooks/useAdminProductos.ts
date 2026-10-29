@@ -28,10 +28,6 @@ export function useAdminProductos() {
         image: imagen,
         modelUrl: modelo,
       };
-      // public_id de lo que se acaba de subir (no entra en la comparación de cambios:
-      // viaja solo junto con la URL que cambió).
-      const imagePublicId = datos.imagePublicId?.trim() || undefined;
-      const modelPublicId = modelo ? datos.modelPublicId?.trim() || undefined : undefined;
 
       setGuardando(true);
       try {
@@ -54,12 +50,7 @@ export function useAdminProductos() {
           // ni siquiera viaja al backend.
           const cambios = cambiosDe(actual, original);
           if (Object.keys(cambios).length) {
-            const cuerpo = {
-              ...cambios,
-              ...('image' in cambios && imagePublicId ? { imagePublicId } : {}),
-              ...('modelUrl' in cambios && modelPublicId ? { modelPublicId } : {}),
-            };
-            const actualizado = await actualizarProducto(sesion, id, cuerpo);
+            const actualizado = await actualizarProducto(sesion, id, cambios);
             setLista((prev) =>
               fusionar(
                 prev,
@@ -74,9 +65,7 @@ export function useAdminProductos() {
         // Sin modelo, `modelUrl` va como undefined y JSON.stringify lo omite.
         const creado = await crearProducto(sesion, {
           ...actual,
-          imagePublicId,
           modelUrl: modelo || undefined,
-          modelPublicId,
           type: 'principal',
           available: true,
         });

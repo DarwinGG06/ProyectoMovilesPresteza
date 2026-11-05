@@ -5,6 +5,7 @@ import Button from '@/components/Button';
 import { idPedido } from '@/api/perfil';
 import { formatCOP } from '@/services/cart/CartContext';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
+import { MapaRuta } from '@/shared/components/mapa/MapaRuta';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
@@ -77,6 +78,24 @@ export function SeguimientoScreen() {
                   </Text>
                 ) : null}
 
+                {pedido.tipo === 'domicilio' || pedido.deliveryAddress ? (
+                  <View className="mt-6 overflow-hidden border border-linea bg-white">
+                    <MapaRuta
+                      alto={280}
+                      repartidor={
+                        pedido.courierLat != null && pedido.courierLng != null
+                          ? { lat: pedido.courierLat, lng: pedido.courierLng }
+                          : null
+                      }
+                    />
+                    <Text className="px-4 py-3 text-center font-roboto text-sm text-tinta">
+                      {pedido.courierLat != null
+                        ? 'El repartidor va en camino. El punto dorado es él y el vino es la sede.'
+                        : 'El punto vino es Presteza. El dorado aparece cuando el pedido está en camino.'}
+                    </Text>
+                  </View>
+                ) : null}
+
                 <View className="mt-8">
                   <BarraEstadosPedido status={pedido.status} amplia />
                 </View>
@@ -100,7 +119,14 @@ export function SeguimientoScreen() {
                   </View>
                 </View>
 
-                <Button className="mt-8" variant="gold" text="MI CUENTA" onPress={seguimiento.irAlPerfil} />
+                {String(pedido.status || '').toLowerCase() === 'pendiente' ? (
+                  <Button
+                    className="mt-8"
+                    text="CANCELAR PEDIDO"
+                    onPress={seguimiento.cancelar}
+                  />
+                ) : null}
+                <Button className="mt-4" variant="gold" text="MI CUENTA" onPress={seguimiento.irAlPerfil} />
               </View>
             )}
           </View>

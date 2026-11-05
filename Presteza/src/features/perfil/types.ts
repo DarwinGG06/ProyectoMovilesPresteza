@@ -120,6 +120,8 @@ export type Pedido = {
   tipo?: 'mesa' | 'domicilio' | null;
   tableNumber?: string | null;
   deliveryAddress?: string | null;
+  courierLat?: number | null;
+  courierLng?: number | null;
   products: ProductoPedido[];
   status: string;
   user_name?: string;

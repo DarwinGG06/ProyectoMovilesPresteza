@@ -36,15 +36,13 @@ export function useAdminCategorias() {
           setLista((prev) => fusionar(prev, { ...editando, ...actualizado }, cambios));
           aviso.ok('Categoría editada', `${actual.name} fue editada.`);
         } else {
-          const creada = await crearCategoria(sesion, { ...actual, imagePublicId });
+          const creada = await crearCategoria(sesion, actual);
           if (idDe(creada)) {
             setLista((prev) => [{ ...creada, ...actual }, ...prev]);
           } else {
             // Respuesta sin id: se recarga del servidor para no dejar una categoría inservible.
             await recargar();
           }
-          const creada = await crearCategoria(sesion, actual);
-          setLista((prev) => [{ ...creada, ...actual }, ...prev]);
           aviso.ok('Categoría creada', `${actual.name} ya está en la carta.`);
         }
         return true;

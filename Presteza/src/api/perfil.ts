@@ -131,15 +131,36 @@ export async function marcarTarjetaPrincipal(userId: string, jwt: string, index:
   return extraerUsuario(data);
 }
 
+function coordenada(valor: unknown) {
+  const numero = typeof valor === 'number' ? valor : typeof valor === 'string' ? Number(valor) : NaN;
+  return Number.isFinite(numero) ? numero : null;
+}
+
 function normalizarPedido(crudo: Pedido): Pedido {
-  const extra = crudo as Pedido & { table_number?: string; delivery_address?: string; fulfillment_type?: string };
+  const extra = crudo as Pedido & {
+    table_number?: string;
+    delivery_address?: string;
+    fulfillment_type?: string;
+    courier_lat?: number | string | null;
+    courier_lng?: number | string | null;
+  };
   const tipoCrudo = extra.tipo || extra.fulfillment_type;
   return {
     ...crudo,
     tipo: tipoCrudo === 'domicilio' ? 'domicilio' : tipoCrudo === 'mesa' ? 'mesa' : crudo.tipo,
     tableNumber: extra.tableNumber || extra.table_number || null,
     deliveryAddress: extra.deliveryAddress || extra.delivery_address || null,
+    courierLat: coordenada(extra.courierLat ?? extra.courier_lat),
+    courierLng: coordenada(extra.courierLng ?? extra.courier_lng),
   };
+}
+
+export async function cancelarPedido(jwt: string, pedidoId: string) {
+  return request(`/orders/${pedidoId}/status`, {
+    method: 'PATCH',
+    token: jwt,
+    body: { status: 'cancelado' },
+  });
 }
 
 export async function obtenerPedidos(userId: string) {

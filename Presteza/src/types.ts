@@ -5,7 +5,7 @@
  * traducción ocurre en `src/api/`, y de ahí para acá todo se llama igual.
  */
 
-export const ROLES = ['admin', 'client'] as const;
+export const ROLES = ['admin', 'client', 'repartidor'] as const;
 export type Role = (typeof ROLES)[number];
 export type Rol = Role;
 

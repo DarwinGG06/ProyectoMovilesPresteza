@@ -24,6 +24,10 @@ export default function HomeLayout() {
       <Drawer.Screen name="contacto" options={{ title: 'Contacto', drawerLabel: 'Contacto' }} />
       <Drawer.Screen name="reservas" options={{ title: 'Reservas', drawerLabel: 'Reservas' }} />
       <Drawer.Screen name="admin" options={{ title: 'Administración', drawerLabel: 'Administración' }} />
+      <Drawer.Screen
+        name="repartidor"
+        options={{ title: 'Reparto', drawerLabel: 'Reparto', drawerItemStyle: { display: 'none' } }}
+      />
     </Drawer>
   );
 }

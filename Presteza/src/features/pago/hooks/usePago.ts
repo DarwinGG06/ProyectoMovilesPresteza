@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 
+import { setToken as fijarToken } from '@/api/client';
 import { entidad, idDe } from '@/api/helpers';
 import { cotizarPuntos, crearPedidoConPuntos } from '@/api/loyalty';
 import { agregarDireccion, actualizarDireccion, obtenerUsuario } from '@/api/perfil';
@@ -203,6 +204,7 @@ export function usePago() {
     setExito(null);
     try {
       if (tipo === 'domicilio') {
+    fijarToken(token);
         const cuerpo: Direccion = {
           name: formulario.name.trim() || 'Casa',
           address: formulario.address.trim(),
@@ -245,7 +247,13 @@ export function usePago() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo crear el pedido.');
     } finally {
-      setEnviando(false);
+      const mensaje = err instanceof Error ? err.message : 'No se pudo crear el pedido.';
+      if (/no autorizado/i.test(mensaje)) {
+        setError('Tu sesión venció. Entra de nuevo y confirma el pedido.');
+        setLoginAbierto(true);
+      } else {
+        setError(mensaje);
+      }
     }
   };
 

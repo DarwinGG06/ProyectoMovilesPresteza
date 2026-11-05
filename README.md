@@ -113,8 +113,33 @@ es `Presteza/src/api/client.ts`.
 |---|---|---|---|
 | **Admin** | `admin@presteza.com` | `Admin1234` | CRUD de las tres entidades en `/administracion` |
 | **Cliente** | `isa@gmail.com` | `Hola1234` | Perfil, reservas, menú |
+| **Repartidor** | `repartidor@presteza.com` | `Repartidor1234` | Domicilios listos → salir a entregar → entregado |
 
 También puedes crear una cuenta nueva en `/registro`. Sale como rol `client`.
+
+### Semilla del repartidor
+
+Si la cuenta aún no existe en el backend, créala una vez (Nest local o Vercel):
+
+```bash
+curl -X POST https://presteza-seven.vercel.app/users \
+  -H "Content-Type: application/json" \
+  -d "{\"role\":\"repartidor\",\"complete_name\":\"Repartidor Presteza\",\"email\":\"repartidor@presteza.com\",\"phone_number\":\"3000000000\",\"password\":\"Repartidor1234\",\"birth_date\":\"1995-01-15\"}"
+```
+
+Luego inicia sesión en la app: te lleva a `/home/repartidor`.
+
+### Ubicación del repartidor (mapa en vivo)
+
+En Supabase, ejecuta una vez:
+
+```sql
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS courier_lat double precision;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS courier_lng double precision;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS courier_updated_at timestamptz;
+```
+
+Sube el backend con `PATCH /orders/:id/ubicacion`. Con el pedido **en camino** y el repartidor conectado, el cliente ve el punto cada ~3 segundos en Seguimiento.
 
 ---
 

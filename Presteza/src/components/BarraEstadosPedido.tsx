@@ -10,7 +10,7 @@ import Animated, {
 
 import { colores } from '@/theme/tokens';
 
-const PASOS = ['Pendiente', 'Preparando', 'Listo', 'Entregado'] as const;
+const PASOS = ['Pendiente', 'Preparando', 'Listo', 'En camino', 'Entregado'] as const;
 
 export function pasoDeEstado(status: string) {
   const clave = String(status || '').trim().toLowerCase();
@@ -18,7 +18,8 @@ export function pasoDeEstado(status: string) {
   if (clave === 'pending' || clave === 'pendiente') return 0;
   if (clave === 'preparing' || clave === 'en_proceso' || clave === 'preparando') return 1;
   if (clave === 'ready' || clave === 'listo' || clave === 'completado') return 2;
-  if (clave === 'delivered' || clave === 'entregado') return 3;
+  if (clave === 'en_camino' || clave === 'en camino' || clave === 'on_the_way') return 3;
+  if (clave === 'delivered' || clave === 'entregado') return 4;
   return 0;
 }
 
@@ -93,7 +94,7 @@ export function BarraEstadosPedido({
           const hecho = index < paso;
 
           return (
-            <View key={nombre} className="w-1/4 items-center">
+            <View key={nombre} className="w-1/5 items-center">
               <View className="h-5 w-5 items-center justify-center">
                 {actual ? (
                   <Animated.View

@@ -29,7 +29,10 @@ export function pedidoEditable(pedido?: { status?: string } | null) {
   return estadoPedidoBackend(pedido?.status ?? '') !== 'entregado';
 }
 
-export function siguientesEstadosPedido(status: string) {
+export function siguientesEstadosPedido(
+  status: string,
+  tipo?: 'mesa' | 'domicilio' | null,
+) {
   const clave = estadoPedidoBackend(status);
   if (clave === 'pendiente') {
     return [
@@ -43,7 +46,8 @@ export function siguientesEstadosPedido(status: string) {
       { id: 'cancelled', etiqueta: 'CANCELAR', peligro: true },
     ];
   }
-  if (clave === 'listo') {
+  // El domicilio lo cierra el repartidor. La mesa la entrega el admin.
+  if (clave === 'listo' && tipo !== 'domicilio') {
     return [{ id: 'delivered', etiqueta: 'ENTREGAR' }];
   }
   return [];
@@ -59,6 +63,8 @@ export function textoEstadoPedido(status: string) {
     ready: 'Listo',
     listo: 'Listo',
     completado: 'Listo',
+    en_camino: 'En camino',
+    'en camino': 'En camino',
     delivered: 'Entregado',
     entregado: 'Entregado',
     cancelled: 'Cancelado',
@@ -87,6 +93,9 @@ export function estadoPedidoBackend(status: string) {
     ready: 'listo',
     listo: 'listo',
     completado: 'listo',
+    en_camino: 'en_camino',
+    'en camino': 'en_camino',
+    on_the_way: 'en_camino',
     delivered: 'entregado',
     entregado: 'entregado',
     cancelled: 'cancelado',

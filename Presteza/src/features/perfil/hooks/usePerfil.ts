@@ -108,6 +108,10 @@ export function usePerfil() {
   useEffect(() => {
     if (user?.role === 'admin') {
       router.replace('/home/admin' as Href);
+      return;
+    }
+    if (user?.role === 'repartidor') {
+      router.replace('/home/repartidor' as Href);
     }
   }, [user?.role]);
 

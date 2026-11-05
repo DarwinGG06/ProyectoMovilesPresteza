@@ -2,7 +2,7 @@ import { Href, router } from 'expo-router';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import { useSession } from '@/session/context';
-import { esAdmin, rutaTrasSesion } from '@/session/roles';
+import { esAdmin, esRepartidor, rutaTrasSesion } from '@/session/roles';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 
 import { IconoNav } from './IconoNav';
@@ -49,7 +49,11 @@ export function UserMenu({ visible, onClose }: UserMenuProps) {
                   <IconoNav name="person-outline" size={18} className="text-marca" />
                 </View>
                 <Text className="font-roboto text-base text-tinta">
-                  {esAdmin(user) ? 'Administración' : 'Mi Perfil'}
+                  {esAdmin(user)
+                    ? 'Administración'
+                    : esRepartidor(user)
+                      ? 'Mis pedidos'
+                      : 'Mi Perfil'}
                 </Text>
               </View>
               <IconoNav name="chevron-forward" size={16} className="text-marca" />

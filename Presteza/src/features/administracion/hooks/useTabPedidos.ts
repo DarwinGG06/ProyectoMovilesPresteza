@@ -8,6 +8,7 @@ export const FILTROS_PEDIDOS = [
   { id: 'pending', etiqueta: 'PENDIENTES' },
   { id: 'preparing', etiqueta: 'PREPARANDO' },
   { id: 'ready', etiqueta: 'LISTOS' },
+  { id: 'en_camino', etiqueta: 'EN CAMINO' },
   { id: 'delivered', etiqueta: 'ENTREGADOS' },
 ] as const;
 

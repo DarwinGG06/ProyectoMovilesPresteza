@@ -199,7 +199,10 @@ export function TabPedidos({
               {textoEstadoPedido(detalle.status)}
             </Text>
             <AccionesAdmin>
-              {siguientesEstadosPedido(detalle.status).map((estado) => (
+              {siguientesEstadosPedido(
+                detalle.status,
+                detalle.tipo === 'domicilio' || detalle.deliveryAddress ? 'domicilio' : detalle.tipo,
+              ).map((estado) => (
                 <EnlaceAdmin
                   key={estado.id}
                   etiqueta={estado.etiqueta}

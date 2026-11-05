@@ -16,11 +16,10 @@ const PAGOS = [
   { value: 'card', label: 'Tarjeta' },
 ];
 
-const ESTADOS = [
+const ESTADOS_COCINA = [
   { value: 'pendiente', label: 'Pendiente' },
-  { value: 'Preparando', label: 'Prep.' },
+  { value: 'Preparando', label: 'Preparando' },
   { value: 'listo', label: 'Listo' },
-  { value: 'entregado', label: 'Entregado' },
 ];
 
 export function FormularioPedido({
@@ -46,6 +45,11 @@ export function FormularioPedido({
   );
   const clienteFijo = clientes.find((cliente) => cliente.id === valores.userId);
   const tipo = watch('tipo');
+  const estado = watch('status');
+  const estados =
+    tipo === 'domicilio'
+      ? ESTADOS_COCINA
+      : [...ESTADOS_COCINA, { value: 'entregado', label: 'Entregado' }];
 
   return (
     <View>
@@ -113,14 +117,20 @@ export function FormularioPedido({
       </View>
 
       <View className="mt-6">
-        <Select
-          control={control}
-          name="status"
-          label="Estado"
-          variante="barra"
-          options={ESTADOS}
-          rules={{ required: 'Elige el estado' }}
-        />
+        {estado === 'en_camino' ? (
+          <Text className="font-roboto text-sm text-tinta/70">
+            En camino. Lo cierra el repartidor al entregarlo.
+          </Text>
+        ) : (
+          <Select
+            control={control}
+            name="status"
+            label="Estado"
+            variante="barra"
+            options={estados}
+            rules={{ required: 'Elige el estado' }}
+          />
+        )}
       </View>
 
       <View className="mt-8">

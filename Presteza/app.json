@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Presteza usa la cámara para fotografiar el plato de la carta.",
-        "NSPhotoLibraryUsageDescription": "Presteza usa la galería para elegir la foto del plato."
+        "NSPhotoLibraryUsageDescription": "Presteza usa la galería para elegir la foto del plato.",
+        "NSLocationWhenInUseUsageDescription": "Presteza usa tu ubicación para que el cliente vea el domicilio en camino."
       }
     },
     "android": {

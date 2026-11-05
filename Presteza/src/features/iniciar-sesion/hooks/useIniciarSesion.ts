@@ -17,8 +17,8 @@ export function useIniciarSesion() {
     if (formState.isSubmitting || biometricBusy) return;
     clearErrors('root');
     try {
-      await signInWithBiometrics();
-      router.replace('/perfil');
+      const user = await signInWithBiometrics();
+      router.replace(rutaTrasSesion(user) as Href);
     } catch (error) {
       setError('root', {
         message: error instanceof Error ? error.message : 'No se pudo iniciar sesión.',
@@ -28,8 +28,8 @@ export function useIniciarSesion() {
 
   const entrar = handleSubmit(async ({ email, password }) => {
     try {
-      await signIn(email, password);
-      router.replace('/perfil');
+      const user = await signIn(email, password);
+      router.replace(rutaTrasSesion(user) as Href);
     } catch (error) {
       // `root` es el error del formulario completo (credenciales malas, servidor
       // caído...), a diferencia del error de un campo concreto.

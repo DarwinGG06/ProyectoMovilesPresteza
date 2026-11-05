@@ -80,7 +80,12 @@ export function decodificarToken(jwt: string): User {
     name: payload.name ?? payload.email?.split('@')[0] ?? 'Invitado',
     email: payload.email ?? '',
     phone: payload.phone_number ?? '',
-    role: payload.role === 'admin' ? 'admin' : 'client',
+    role:
+      payload.role === 'admin'
+        ? 'admin'
+        : payload.role === 'repartidor'
+          ? 'repartidor'
+          : 'client',
   };
 
   logInfo('auth', 'token decodificado', {

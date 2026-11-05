@@ -23,10 +23,10 @@ export function useLoginModal(onClose: () => void) {
     if (biometricBusy || formState.isSubmitting) return;
     clearErrors('root');
     try {
-      await signInWithBiometrics();
+      const user = await signInWithBiometrics();
       reset();
       onClose();
-      router.replace('/perfil');
+      router.replace(rutaTrasSesion(user) as Href);
     } catch (error) {
       setError('root', {
         message: error instanceof Error ? error.message : 'No se pudo iniciar sesión.',
@@ -36,10 +36,10 @@ export function useLoginModal(onClose: () => void) {
 
   const entrar = handleSubmit(async ({ email, password }) => {
     try {
-      await signIn(email, password);
+      const user = await signIn(email, password);
       reset();
       onClose();
-      router.replace('/perfil');
+      router.replace(rutaTrasSesion(user) as Href);
     } catch (error) {
       setError('root', { message: (error as Error).message });
     }

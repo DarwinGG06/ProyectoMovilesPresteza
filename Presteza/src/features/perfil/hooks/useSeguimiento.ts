@@ -1,15 +1,17 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { idPedido, obtenerPedidos } from '@/api/perfil';
+import { cancelarPedido, idPedido, obtenerPedidos } from '@/api/perfil';
 import { useSession } from '@/session/context';
-import { esAdmin } from '@/session/roles';
+import { esAdmin, esRepartidor } from '@/session/roles';
+import { useAviso } from '@/shared/components/aviso';
 
 import type { Pedido } from '../types';
 
 export function useSeguimiento() {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { user, isAuthenticated } = useSession();
+  const { user, token, isAuthenticated } = useSession();
+  const aviso = useAviso();
   const [pedido, setPedido] = useState<Pedido | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +42,10 @@ export function useSeguimiento() {
   useEffect(() => {
     if (esAdmin(user)) {
       router.replace('/home/admin');
+      return;
+    }
+    if (esRepartidor(user)) {
+      router.replace('/home/repartidor');
     }
   }, [user]);
 
@@ -50,9 +56,29 @@ export function useSeguimiento() {
 
   useEffect(() => {
     if (!isAuthenticated || !user?.id) return;
-    const timer = setInterval(() => void recargar(true), 12000);
+    const enCamino = String(pedido?.status || '').toLowerCase() === 'en_camino';
+    // En camino: cada 3 s. El resto: cada 10 s.
+    const timer = setInterval(() => void recargar(true), enCamino ? 3000 : 10000);
     return () => clearInterval(timer);
-  }, [isAuthenticated, recargar, user?.id]);
+  }, [isAuthenticated, pedido?.status, recargar, user?.id]);
+
+  const cancelar = useCallback(() => {
+    if (!token || !pedido) return;
+    const id = idPedido(pedido);
+    if (!id || String(pedido.status || '').toLowerCase() !== 'pendiente') return;
+    aviso.confirmar({
+      sello: 'PEDIDO',
+      titulo: 'Cancelar pedido',
+      texto: 'Solo puedes cancelarlo mientras sigue pendiente.',
+      confirmar: 'CANCELAR PEDIDO',
+      peligro: true,
+      exito: { titulo: 'Pedido cancelado', texto: 'El pedido quedó cancelado.' },
+      onConfirmar: async () => {
+        await cancelarPedido(token, id);
+        await recargar(true);
+      },
+    });
+  }, [aviso, pedido, recargar, token]);
 
   return {
     pedido,
@@ -60,6 +86,7 @@ export function useSeguimiento() {
     error,
     isAuthenticated,
     recargar,
+    cancelar,
     irAlPerfil: () => router.replace('/perfil'),
     irAlMenu: () => router.push('/home/menu'),
   };

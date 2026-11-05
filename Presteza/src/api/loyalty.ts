@@ -114,9 +114,11 @@ export async function cotizarPuntos(
   total: number,
   pointsToRedeem = 0,
   aplicarCumpleanos = true,
+  jwt?: string | null,
 ) {
   const data = await request(
     `/loyalty/${userId}/quote?total=${Math.max(0, Math.round(total))}&pointsToRedeem=${Math.max(0, Math.floor(pointsToRedeem))}&applyBirthday=${aplicarCumpleanos ? '1' : '0'}`,
+    jwt ? { token: jwt } : undefined,
   );
   return normalizarCotizacion(data);
 }

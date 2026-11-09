@@ -1,7 +1,9 @@
 import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { PanelNotificaciones } from '@/shared/components/notificaciones/PanelNotificaciones';
 import { useNavBar } from '@/shared/hooks/useNavBar';
+import { useNotificaciones } from '@/shared/notificaciones/NotificacionesProvider';
 
 import { CartSheet } from './CartSheet';
 import { IconoNav } from './IconoNav';
@@ -11,6 +13,7 @@ import { UserMenu } from './UserMenu';
 
 export function NavBar() {
   const nav = useNavBar();
+  const avisos = useNotificaciones();
 
   return (
     <View className="bg-pergamino">
@@ -24,6 +27,33 @@ export function NavBar() {
           </Pressable>
 
           <View className="flex-row items-center">
+            {nav.conSesion ? (
+              <View>
+                <Pressable
+                  onPress={avisos.abrir}
+                  accessibilityRole="button"
+                  accessibilityLabel="Avisos"
+                  className="min-h-12 min-w-12 items-center justify-center">
+                  <View
+                    className={`h-9 w-9 items-center justify-center border ${
+                      avisos.unread > 0 ? 'border-oro bg-marca-oscura' : 'border-transparent'
+                    }`}>
+                    <IconoNav
+                      name={avisos.unread > 0 ? 'notifications' : 'notifications-outline'}
+                      size={18}
+                      color={avisos.unread > 0 ? '#d4af77' : '#6b1d3d'}
+                    />
+                  </View>
+                </Pressable>
+                {avisos.unread > 0 ? (
+                  <View className="absolute right-0 top-1 h-[18px] min-w-[18px] items-center justify-center rounded-full bg-marca px-1">
+                    <Text className="text-center font-roboto text-[10px] leading-[12px] text-crema">
+                      {avisos.unread > 9 ? '9+' : avisos.unread}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+            ) : null}
             <BotonBarra
               icono="person-outline"
               etiqueta="Cuenta"
@@ -52,6 +82,7 @@ export function NavBar() {
       <UserMenu visible={nav.usuarioAbierto} onClose={nav.cerrarUsuario} />
       <CartSheet visible={nav.carritoAbierto} onClose={nav.cerrarCarrito} />
       <MenuDrawer visible={nav.menuAbierto} onClose={nav.cerrarMenu} />
+      <PanelNotificaciones />
     </View>
   );
 }

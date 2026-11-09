@@ -141,6 +141,59 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS courier_updated_at timestamptz;
 
 Sube el backend con `PATCH /orders/:id/ubicacion`. Con el pedido **en camino** y el repartidor conectado, el cliente ve el punto cada ~3 segundos en Seguimiento.
 
+### Notificaciones en la app
+
+Campanita en la barra (con sesión), panel de avisos y toast al llegar una nueva.
+El backend escribe en la tabla `notifications` (pedidos y reservas). En Supabase, una vez:
+
+```sql
+create table if not exists public.notifications (
+  id text primary key default gen_random_uuid()::text,
+  user_id text not null,
+  role text,
+  kind text not null,
+  title text not null,
+  body text not null,
+  href text,
+  ref_type text,
+  ref_id text,
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists notifications_user_id_created_idx
+  on public.notifications (user_id, created_at desc);
+
+create index if not exists notifications_user_id_unread_idx
+  on public.notifications (user_id)
+  where read_at is null;
+```
+
+Luego despliega el Nest con el módulo `notifications` y las rutas
+`GET /notifications`, `PATCH /notifications/:id/read`, `PATCH /notifications/read-all`,
+`PATCH /notifications/push-token`.
+
+### Push al celular (APK)
+
+Además de la campanita en app, el Nest manda **Expo Push** al teléfono cuando
+se crea un aviso (pedido, reserva, etc.).
+
+1. En Supabase, agrega la columna del token:
+
+```sql
+alter table public.users
+  add column if not exists expo_push_token text;
+```
+
+2. Despliega el backend con el envío a `https://exp.host/--/api/v2/push/send`.
+3. Genera una APK (`eas build -p android --profile preview`) e instálala.
+4. Abre Presteza, inicia sesión y **acepta el permiso** de notificaciones.
+5. Con la app en segundo plano o cerrada, un cambio de pedido/reserva debería
+   aparecer en la bandeja del sistema.
+
+En web / Expo Go el push puede no llegar; la APK con el `projectId` de EAS es el
+camino correcto.
+
 ---
 
 ## Auth (registro e inicio de sesión)

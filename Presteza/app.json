@@ -59,7 +59,15 @@
           "cameraPermission": "Presteza usa la cámara para fotografiar el plato de la carta."
         }
       ],
-      "expo-document-picker"
+      "expo-document-picker",
+      [
+        "expo-notifications",
+        {
+          "color": "#6b1d3d",
+          "defaultChannel": "presteza",
+          "sounds": []
+        }
+      ]
     ],
     "experiments": {
       "tsconfigPaths": true,

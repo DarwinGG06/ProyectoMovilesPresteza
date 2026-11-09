@@ -11,7 +11,9 @@ import { esAdmin } from '@/session/roles';
 import { AvisoProvider } from '@/shared/components/aviso';
 import { WhatsAppFloat } from '@/shared/components/footer';
 import { NavBar } from '@/shared/components/nav-bar';
+import { ToastNotificacion } from '@/shared/components/notificaciones/ToastNotificacion';
 import { useFuentes } from '@/shared/hooks/useFuentes';
+import { NotificacionesProvider } from '@/shared/notificaciones/NotificacionesProvider';
 
 import '../global.css';
 
@@ -53,18 +55,21 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <CartProvider>
           <SessionProvider>
-            <AvisoProvider>
-              <ControlDrawerHomeProvider>
-                <View className="flex-1 bg-pergamino">
-                  <NavBar />
-                  <View className="flex-1">
-                    <Rutas />
+            <NotificacionesProvider>
+              <AvisoProvider>
+                <ControlDrawerHomeProvider>
+                  <View className="flex-1 bg-pergamino">
+                    <NavBar />
+                    <View className="flex-1">
+                      <Rutas />
+                    </View>
+                    <WhatsAppFloat />
+                    <ToastNotificacion />
+                    <StatusBar style="dark" />
                   </View>
-                  <WhatsAppFloat />
-                  <StatusBar style="dark" />
-                </View>
-              </ControlDrawerHomeProvider>
-            </AvisoProvider>
+                </ControlDrawerHomeProvider>
+              </AvisoProvider>
+            </NotificacionesProvider>
           </SessionProvider>
         </CartProvider>
       </SafeAreaProvider>

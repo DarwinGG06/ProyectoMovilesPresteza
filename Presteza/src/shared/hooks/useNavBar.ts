@@ -26,6 +26,7 @@ export function useNavBar() {
 
   return {
     esAdmin: esAdmin(user),
+    conSesion: Boolean(isAuthenticated && user),
     inicial: isAuthenticated && user?.name ? user.name.trim().charAt(0).toUpperCase() : undefined,
     totalItems: esAdmin(user) ? 0 : totalItems,
     irAlInicio: () => router.push('/home'),

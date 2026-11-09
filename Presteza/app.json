@@ -22,7 +22,14 @@
     },
     "android": {
       "usesCleartextTraffic": true,
-      "permissions": ["CAMERA", "READ_MEDIA_IMAGES", "READ_EXTERNAL_STORAGE"],
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "READ_EXTERNAL_STORAGE",
+        "POST_NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ],
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

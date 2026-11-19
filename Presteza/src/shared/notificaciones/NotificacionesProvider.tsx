@@ -29,8 +29,8 @@ import { avisarCambioCumpleanios } from './cumpleanios';
 import { useAvisoCumpleanios } from './useAvisoCumpleanios';
 import { useNavegacionAvisos } from './useNavegacionAvisos';
 
-// Activar cuando el backend tenga las rutas /notifications.
-const API_NOTIFICACIONES_HABILITADA = false;
+// Las rutas /notifications ya existen en el backend (necesita supabase-notifications.sql).
+const API_NOTIFICACIONES_HABILITADA = true;
 
 type Api = {
   items: Notificacion[];

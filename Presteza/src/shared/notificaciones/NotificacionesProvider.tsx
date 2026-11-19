@@ -229,5 +229,5 @@ export function useNotificaciones() {
   if (!api) {
     throw new Error('useNotificaciones necesita NotificacionesProvider');
   }
-  return api;
+  return api; 
 }

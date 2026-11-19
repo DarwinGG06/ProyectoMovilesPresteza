@@ -78,6 +78,7 @@ export type Categoria = {
   name: string;
   description?: string;
   imageUrl?: string;
+  imagePublicId?: string;
   icon?: string;
 };
 

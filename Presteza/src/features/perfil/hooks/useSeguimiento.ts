@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { cancelarPedido, idPedido, obtenerPedidos } from '@/api/perfil';
@@ -45,7 +45,7 @@ export function useSeguimiento() {
       return;
     }
     if (esRepartidor(user)) {
-      router.replace('/home/repartidor');
+      router.replace('/home/repartidor' as Href);
     }
   }, [user]);
 

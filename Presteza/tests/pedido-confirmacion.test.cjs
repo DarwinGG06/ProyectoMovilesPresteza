@@ -27,6 +27,8 @@ for (const fails of [false, true])
   test(`pedido ${fails ? 'fallido conserva bandeja y no confirma' : 'creado vacía bandeja, navega y confirma'}`, async () => {
     const events = [];
     const { usePago } = load('src/features/pago/hooks/usePago.ts', {
+      '@/api/client': { setToken() {} },
+      '@/shared/notificaciones/cumpleanios': { avisarCambioCumpleanios() {} },
       'expo-router': { router: { replace: (route) => events.push(['ruta', route]) } },
       '@/api/helpers': load('src/api/helpers.ts'),
       '@/api/loyalty': {

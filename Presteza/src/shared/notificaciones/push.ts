@@ -2,6 +2,7 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { isRunningInExpoGo } from 'expo';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -55,7 +56,7 @@ export async function obtenerExpoPushToken(): Promise<string | null> {
   if (Platform.OS === 'web') return null;
 
   try {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' && !isRunningInExpoGo()) {
       await Notifications.setNotificationChannelAsync('presteza', {
         name: 'Presteza',
         importance: Notifications.AndroidImportance.HIGH,
@@ -72,6 +73,9 @@ export async function obtenerExpoPushToken(): Promise<string | null> {
       estado = pedido.status;
     }
     if (estado !== 'granted') return null;
+    // Los permisos anteriores también sirven para notificaciones locales.
+    // Expo Go en Android no permite obtener el token push remoto.
+    if (Platform.OS === 'android' && isRunningInExpoGo()) return null;
 
     // Emulador Android a veces sirve; iOS necesita dispositivo real.
     if (Platform.OS === 'ios' && !Device.isDevice) return null;
@@ -94,43 +98,11 @@ export function escucharPushRecibido(onRecibido: (payload: PayloadPush) => void)
 }
 
 /**
- * Toques ya atendidos (por identificador del push). Evita abrir dos veces la
- * misma pantalla: el listener y `leerToqueInicial` pueden ver el mismo toque.
+ * Toque en un push. Solo entrega los datos (para marcar el aviso como leído);
+ * la navegación al `href` la hace `useNavegacionAvisos`.
  */
-const toquesAtendidos = new Set<string>();
-
-function atender(respuesta: Notifications.NotificationResponse): PayloadPush | null {
-  const clave = respuesta.notification.request.identifier;
-  if (toquesAtendidos.has(clave)) return null;
-  toquesAtendidos.add(clave);
-  return leerPayload(respuesta.notification.request.content);
-}
-
-/** Toque en un push con la app abierta o en segundo plano. */
 export function escucharToquePush(onToque: (payload: PayloadPush) => void) {
   return Notifications.addNotificationResponseReceivedListener((respuesta) => {
-    const payload = atender(respuesta);
-    if (payload) onToque(payload);
+    onToque(leerPayload(respuesta.notification.request.content));
   });
-}
-
-/**
- * Toque que ABRIÓ la app estando cerrada (arranque en frío).
- *
- * En ese caso el listener de arriba se registra tarde (la sesión tarda en
- * restaurarse) y no se entera del toque. Por eso, al montar, se pregunta cuál
- * fue la última respuesta y se atiende si no se había atendido.
- */
-export async function leerToqueInicial(): Promise<PayloadPush | null> {
-  if (Platform.OS === 'web') return null;
-  try {
-    const respuesta = await Notifications.getLastNotificationResponseAsync();
-    if (!respuesta) return null;
-    const payload = atender(respuesta);
-    // Se limpia para que no se repita al volver a montar el provider (p. ej. tras un logout/login).
-    await Notifications.clearLastNotificationResponseAsync();
-    return payload;
-  } catch {
-    return null;
-  }
 }

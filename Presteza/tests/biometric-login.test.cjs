@@ -37,6 +37,7 @@ for (const [file, hook] of [
     let calls = 0;
     let closed = 0;
     const module = load(file, {
+      '@/session/roles': load('src/session/roles.ts', {}),
       'expo-router': { router: { replace: (route) => routes.push(route) } },
       '@/session/context': {
         useSession: () => ({

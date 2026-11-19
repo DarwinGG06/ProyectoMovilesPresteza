@@ -27,6 +27,9 @@ function load(file, mocks = {}, globals = {}) {
     {
       exports,
       Error,
+      Date,
+      setTimeout,
+      clearTimeout,
       require: (name) => (Object.hasOwn(mocks, name) ? mocks[name] : require(name)),
       atob,
       ...globals,
@@ -104,6 +107,10 @@ async function mount(store, authApi = auth, options = {}) {
     },
   };
   const { SessionProvider, useSession } = load('src/session/context.tsx', {
+    '../shared/notificaciones/cumpleanios': {
+      establecerCuentaCumpleanios: options.establecerCuenta ?? (() => {}),
+      pedirAvisoCumpleaniosAlEntrar: () => {},
+    },
     '../api/auth': {
       ...authApi,
       login:
@@ -131,7 +138,7 @@ async function mount(store, authApi = auth, options = {}) {
       Platform: { OS: options.platform ?? 'android' },
       AppState: appState,
     },
-  });
+  }, { Date: options.Date ?? Date });
   function Screen() {
     current = useSession();
     React.useEffect(
@@ -411,8 +418,10 @@ test('el acceso biométrico del login exige una cuenta guardada y activación pr
 
 test('el acceso público del login rechaza cancelación y permite una nueva verificación tras logout', async () => {
   let cancelled = false;
+  let ahora = Date.now();
   const token = jwt();
   const app = await mount(storage('android', token), auth, {
+    Date: class extends Date { static now() { return ahora; } },
     authenticate: async () => {
       if (cancelled) throw new Error('Cancelado');
     },
@@ -422,6 +431,7 @@ test('el acceso público del login rechaza cancelación y permite una nueva veri
   });
   const login = app.session.signInWithBiometrics;
   await app.background('background');
+  ahora += 5 * 60_000;
   await app.background('active');
   cancelled = true;
   await act(async () => {
@@ -734,21 +744,49 @@ test('cancelar el diálogo conserva la sesión guardada pero nunca la desbloquea
   await app.unmount();
 });
 
-test('segundo plano bloquea, regresar no desbloquea y el diálogo no crea un bucle', async () => {
-  const app = await mount(storage('android', jwt(), 'test-user'));
+test('una salida breve conserva la sesión; cinco minutos fuera exigen huella', async () => {
+  let ahora = Date.now();
+  const reloj = class extends Date { static now() { return ahora; } };
+  const cuentas = [];
+  const app = await mount(storage('android', jwt(), 'test-user'), auth, {
+    Date: reloj, establecerCuenta: (id) => cuentas.push(id),
+  });
   await act(async () => {
     await app.lock.onUnlock();
   });
   await app.background('inactive');
+  assert.equal(app.contentMounted, true);
+  await app.background('background');
+  ahora += 60_000;
+  await app.background('active');
+  assert.equal(app.session.isAuthenticated, true);
+  assert.equal(app.lock, undefined);
+  await app.background('background');
+  ahora += 5 * 60_000;
+  await app.background('active');
   assert.equal(app.contentMounted, false);
   assert.equal(app.apiToken, null);
-  await app.background('background');
-  await app.background('active');
   assert.ok(app.lock);
+  assert.ok(!cuentas.includes(null), 'Bloquear no cancela los avisos de cumpleaños');
   await act(async () => {
     await app.lock.onUnlock();
   });
   assert.equal(app.session.isAuthenticated, true);
+  await app.unmount();
+});
+
+test('el sensor puede resolver antes del evento active sin bloquear otra vez', async () => {
+  let resolver;
+  const app = await mount(storage('android', jwt(), 'test-user'), auth, {
+    authenticate: () => new Promise((resolve) => { resolver = resolve; }),
+  });
+  let desbloquear;
+  await act(async () => { desbloquear = app.lock.onUnlock(); });
+  await app.background('background');
+  await act(async () => { resolver(); await desbloquear; });
+  assert.equal(app.session.isAuthenticated, true);
+  await app.background('active');
+  assert.equal(app.lock, undefined);
   await app.unmount();
 });
 

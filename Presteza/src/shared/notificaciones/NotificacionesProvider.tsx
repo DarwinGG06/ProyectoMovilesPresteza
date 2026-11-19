@@ -1,4 +1,3 @@
-import { Href, router } from 'expo-router';
 import {
   createContext,
   useCallback,
@@ -23,10 +22,15 @@ import { useSession } from '@/session/context';
 import {
   escucharPushRecibido,
   escucharToquePush,
-  leerToqueInicial,
   obtenerExpoPushToken,
   type PayloadPush,
 } from './push';
+import { avisarCambioCumpleanios } from './cumpleanios';
+import { useAvisoCumpleanios } from './useAvisoCumpleanios';
+import { useNavegacionAvisos } from './useNavegacionAvisos';
+
+// Activar cuando el backend tenga las rutas /notifications.
+const API_NOTIFICACIONES_HABILITADA = false;
 
 type Api = {
   items: Notificacion[];
@@ -44,6 +48,8 @@ type Api = {
 const Ctx = createContext<Api | null>(null);
 
 export function NotificacionesProvider({ children }: { children: ReactNode }) {
+  useAvisoCumpleanios();
+  useNavegacionAvisos();
   const { token, isAuthenticated } = useSession();
   const [items, setItems] = useState<Notificacion[]>([]);
   const [unread, setUnread] = useState(0);
@@ -54,13 +60,11 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
   const pushEnviado = useRef<string | null>(null);
   // Con qué sesión quedó registrado el push token, para soltarlo al cerrar sesión.
   const pushRegistrado = useRef<{ jwt: string; pushToken: string } | null>(null);
-  // Destino de un push tocado sin sesión: se abre apenas el usuario entre.
-  const destinoPendiente = useRef<string | null>(null);
-  const sesion = useRef({ token, isAuthenticated });
-  sesion.current = { token, isAuthenticated };
+  const sesion = useRef({ token });
+  sesion.current = { token };
 
   const refrescar = useCallback(async () => {
-    if (!token || !isAuthenticated) {
+    if (!API_NOTIFICACIONES_HABILITADA || !token || !isAuthenticated) {
       setItems([]);
       setUnread(0);
       return;
@@ -92,8 +96,10 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
   }, [refrescar]);
 
   useEffect(() => {
-    if (!isAuthenticated || !token) return;
+    if (!API_NOTIFICACIONES_HABILITADA || !isAuthenticated || !token) return;
+
     const timer = setInterval(() => void refrescar(), 8000);
+
     return () => clearInterval(timer);
   }, [isAuthenticated, refrescar, token]);
 
@@ -108,6 +114,8 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
     let vivo = true;
     (async () => {
       const pushToken = await obtenerExpoPushToken();
+      if (vivo) avisarCambioCumpleanios();
+      if (!API_NOTIFICACIONES_HABILITADA) return;
       if (!vivo || !pushToken || pushEnviado.current === pushToken) return;
       try {
         await registrarPushToken(token, pushToken);
@@ -135,67 +143,41 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
   }, [token]);
 
   /**
-   * Deep link de un push: marca el aviso como leído y abre su pantalla
-   * (`/seguimiento?id=...` en los pedidos). Sin sesión, espera al login.
+   * Toque en un push: aquí solo se marca el aviso como leído.
+   * La navegación (deep link a `/seguimiento?id=...`, incluso con la app
+   * cerrada o sin sesión) la hace `useNavegacionAvisos`, en un solo lugar.
    */
-  const abrirDestino = useCallback(
+  const marcarTocado = useCallback(
     (payload: PayloadPush) => {
-      const { token: jwt, isAuthenticated: dentro } = sesion.current;
-      if (payload.id && jwt) {
-        vistos.current.add(payload.id);
-        void marcarNotificacionLeida(jwt, payload.id)
-          .then(() => refrescar())
-          .catch(() => undefined);
-      } else {
-        void refrescar();
-      }
-      if (!payload.href) return;
-      if (!dentro) {
-        destinoPendiente.current = payload.href;
-        return;
-      }
-      router.push(payload.href as Href);
+      const jwt = sesion.current.token;
+      if (!API_NOTIFICACIONES_HABILITADA || !payload.id || !jwt) return;
+      vistos.current.add(payload.id);
+      void marcarNotificacionLeida(jwt, payload.id)
+        .then(() => refrescar())
+        .catch(() => undefined);
     },
     [refrescar],
   );
-
-  useEffect(() => {
-    if (!isAuthenticated || !destinoPendiente.current) return;
-    const destino = destinoPendiente.current;
-    destinoPendiente.current = null;
-    router.push(destino as Href);
-  }, [isAuthenticated]);
-
-  // App cerrada + toque en el push: el listener de abajo llega tarde, así que
-  // se pregunta por el último toque al montar.
-  const abrirRef = useRef(abrirDestino);
-  abrirRef.current = abrirDestino;
-  useEffect(() => {
-    // Una sola vez al montar; usa siempre la versión más reciente de abrirDestino.
-    void leerToqueInicial().then((payload) => {
-      if (payload) abrirRef.current(payload);
-    });
-  }, []);
 
   useEffect(() => {
     const recibido = escucharPushRecibido((payload) => {
       if (payload.id) vistos.current.add(payload.id);
       void refrescar();
     });
-    const toque = escucharToquePush(abrirDestino);
+    const toque = escucharToquePush(marcarTocado);
     return () => {
       recibido.remove();
       toque.remove();
     };
-  }, [abrirDestino, refrescar]);
+  }, [marcarTocado, refrescar]);
 
   const leer = useCallback(
     async (id: string) => {
-      if (!token) return;
+      if (!API_NOTIFICACIONES_HABILITADA || !token) return;
       setItems((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, readAt: item.readAt || new Date().toISOString() } : item,
-        ),
+          item.id === id ? { ...item, readAt: item.readAt || new Date().toISOString() } : item
+        )
       );
       setUnread((prev) => Math.max(0, prev - 1));
       try {
@@ -204,13 +186,13 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
         void refrescar();
       }
     },
-    [refrescar, token],
+    [refrescar, token]
   );
 
   const leerTodas = useCallback(async () => {
-    if (!token) return;
+    if (!API_NOTIFICACIONES_HABILITADA || !token) return;
     setItems((prev) =>
-      prev.map((item) => ({ ...item, readAt: item.readAt || new Date().toISOString() })),
+      prev.map((item) => ({ ...item, readAt: item.readAt || new Date().toISOString() }))
     );
     setUnread(0);
     try {
@@ -236,7 +218,7 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
       leerTodas,
       cerrarToast: () => setToast(null),
     }),
-    [abierta, items, leer, leerTodas, refrescar, toast, unread],
+    [abierta, items, leer, leerTodas, refrescar, toast, unread]
   );
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;

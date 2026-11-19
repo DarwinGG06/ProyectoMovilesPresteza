@@ -1,9 +1,8 @@
-import * as Notifications from 'expo-notifications';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
+import { getNotifications } from './cargarNotificaciones';
 import { planCumpleanios, type PerfilCumpleanios } from './fechasCumpleanios';
-import { isRunningInExpoGo } from 'expo';
 
 const CANAL = 'presteza';
 
@@ -25,18 +24,19 @@ export async function programarAvisoCumpleanios({
   fin,
 }: DatosAvisoCumpleanios): Promise<string | null> {
   if (Platform.OS === 'web') return null;
+  const Notifications = getNotifications();
+  if (!Notifications) return null;
 
   if (!usuarioId || !periodo) {
     throw new Error('Falta identificar el usuario o el periodo de cumpleaños.');
   }
 
   const instante = fechaAviso.getTime();
-
   if (!Number.isFinite(instante) || instante <= Date.now()) {
     throw new Error('La fecha del aviso debe ser válida y estar en el futuro.');
   }
 
-  if (Platform.OS === 'android' && !isRunningInExpoGo()) {
+  if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync(CANAL, {
       name: 'Presteza',
       importance: Notifications.AndroidImportance.HIGH,
@@ -46,14 +46,10 @@ export async function programarAvisoCumpleanios({
     });
   }
 
-  // El permiso se solicita desde el flujo compartido.
   const permiso = await Notifications.getPermissionsAsync();
-
   if (!permiso.granted) return null;
 
   const identificador = identificarAviso(usuarioId, periodo);
-
-  // Reemplaza un aviso pendiente del mismo periodo.
   await Notifications.cancelScheduledNotificationAsync(identificador);
 
   return Notifications.scheduleNotificationAsync({
@@ -75,7 +71,7 @@ export async function programarAvisoCumpleanios({
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
       date: fechaAviso,
-      ...(Platform.OS === 'android' && !isRunningInExpoGo() ? { channelId: CANAL } : {}),
+      ...(Platform.OS === 'android' ? { channelId: CANAL } : {}),
     },
   });
 }
@@ -86,7 +82,6 @@ let cuentaActual: string | null = null;
 let entregarAlEntrar = false;
 let cola: Promise<unknown> = Promise.resolve();
 
-/** El próximo sincronizado de esta cuenta vuelve a mostrar el aviso, si la semana sigue vigente. */
 export function pedirAvisoCumpleaniosAlEntrar() {
   entregarAlEntrar = true;
 }
@@ -102,18 +97,19 @@ async function leerRegistros(): Promise<Record<string, Registro>> {
   return texto ? JSON.parse(texto) : {};
 }
 
-/** Cancela únicamente los avisos locales de cumpleaños, nunca pedidos/reservas. */
 async function limpiarAvisos(conservar: (id: string, usuarioId: unknown, fin: unknown) => boolean) {
+  const Notifications = getNotifications();
+  if (!Notifications) return;
   const pendientes = await Notifications.getAllScheduledNotificationsAsync();
   const visibles = await Notifications.getPresentedNotificationsAsync();
   for (const aviso of pendientes) {
-    const datos = aviso.content.data;
+    const datos = aviso.content.data as Record<string, unknown> | undefined;
     if (datos?.tipo === 'cumpleanios' && !conservar(aviso.identifier, datos.usuarioId, datos.fin)) {
       await Notifications.cancelScheduledNotificationAsync(aviso.identifier);
     }
   }
   for (const aviso of visibles) {
-    const datos = aviso.request.content.data;
+    const datos = aviso.request.content.data as Record<string, unknown> | undefined;
     if (
       datos?.tipo === 'cumpleanios' &&
       !conservar(aviso.request.identifier, datos.usuarioId, datos.fin)
@@ -123,7 +119,6 @@ async function limpiarAvisos(conservar: (id: string, usuarioId: unknown, fin: un
   }
 }
 
-/** Se llama en login/logout reales; bloquear con huella no cierra esta cuenta. */
 export function establecerCuentaCumpleanios(usuarioId: string | null) {
   cuentaActual = usuarioId;
   if (Platform.OS === 'web') return;
@@ -133,8 +128,6 @@ export function establecerCuentaCumpleanios(usuarioId: string | null) {
       (_id, titular, fin) => titular === cuentaActual && typeof fin === 'number' && fin > Date.now()
     );
     for (const [id, registro] of Object.entries(registros)) {
-      // Permite reprogramar un aviso futuro cancelado al salir; conserva el
-      // historial de los ya vencidos para no repetirlos en el próximo login.
       if (registro.usuarioId !== cuentaActual && registro.fecha > Date.now()) delete registros[id];
     }
     await SecureStore.setItemAsync(CLAVE_REGISTROS, JSON.stringify(registros));
@@ -144,6 +137,8 @@ export function establecerCuentaCumpleanios(usuarioId: string | null) {
 export function sincronizarAvisoCumpleanios(perfil: PerfilCumpleanios) {
   if (Platform.OS === 'web') return Promise.resolve();
   return enCola(async () => {
+    const Notifications = getNotifications();
+    if (!Notifications) return;
     if (cuentaActual !== perfil.id) return;
     const repetirAlEntrar = entregarAlEntrar;
     entregarAlEntrar = false;
@@ -161,7 +156,6 @@ export function sincronizarAvisoCumpleanios(perfil: PerfilCumpleanios) {
       plan.fechaAviso = new Date(Date.now() + 8_000);
     } else {
       const pendientes = await Notifications.getAllScheduledNotificationsAsync();
-      // Conserva el historial para no repetir avisos al volver a abrir la app.
       if (registros[id]?.fecha <= Date.now() || pendientes.some((aviso) => aviso.identifier === id))
         return;
     }
@@ -191,12 +185,9 @@ export function escucharCambioCumpleanios(escuchar: () => void) {
 
 export async function cancelarAvisoCumpleanios(usuarioId: string, periodo: string): Promise<void> {
   if (Platform.OS === 'web') return;
-
+  const Notifications = getNotifications();
+  if (!Notifications) return;
   const identificador = identificarAviso(usuarioId, periodo);
-
-  // Cancela el aviso pendiente.
   await Notifications.cancelScheduledNotificationAsync(identificador);
-
-  // Retira el aviso si ya estaba visible.
   await Notifications.dismissNotificationAsync(identificador);
 }

@@ -12,6 +12,7 @@ import { useCart } from '@/services/cart/CartContext';
 import { useSession } from '@/session/context';
 import { esAdmin } from '@/session/roles';
 import { useAviso } from '@/shared/components/aviso';
+import { avisarCambioCumpleanios } from '@/shared/notificaciones/cumpleanios';
 
 const METODOS = [
   { value: 'cash', label: 'Efectivo' },
@@ -237,6 +238,7 @@ export function usePago() {
         })),
       });
       const pedido = entidad(creado, 'order', 'pedido');
+      avisarCambioCumpleanios();
       const id = idDe(pedido);
       clearCart();
       router.replace(id ? `/seguimiento?id=${id}` : '/seguimiento');
@@ -245,8 +247,6 @@ export function usePago() {
         'Recibimos tu pedido y vaciamos tu bandeja. Puedes consultar su estado en esta pantalla de seguimiento.'
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo crear el pedido.');
-    } finally {
       const mensaje = err instanceof Error ? err.message : 'No se pudo crear el pedido.';
       if (/no autorizado/i.test(mensaje)) {
         setError('Tu sesión venció. Entra de nuevo y confirma el pedido.');
@@ -254,6 +254,8 @@ export function usePago() {
       } else {
         setError(mensaje);
       }
+    } finally {
+      setEnviando(false);
     }
   };
 

@@ -1,6 +1,10 @@
 import { router, type Href } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, View } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import * as SecureStore from 'expo-secure-store';
+import { isRunningInExpoGo } from 'expo';
+import { planCumpleanios } from '@/shared/notificaciones/fechasCumpleanios';
 
 import Button from '@/components/Button';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
@@ -107,6 +111,75 @@ export function PerfilScreen() {
           )}
 
           <View className="px-6 pb-12 pt-2">
+            {__DEV__ && Platform.OS === 'android' ? (
+              <Button
+                text="PROBAR NOTIFICACION"
+                variant="gold"
+                className="mb-4"
+                onPress={async () => {
+                  try {
+                    if (!isRunningInExpoGo()) {
+                      await Notifications.setNotificationChannelAsync('presteza', {
+                        name: 'Presteza',
+                        importance: Notifications.AndroidImportance.HIGH,
+                        sound: 'default',
+                      });
+                    }
+                    let permiso = await Notifications.getPermissionsAsync();
+                    if (!permiso.granted && permiso.canAskAgain) {
+                      permiso = await Notifications.requestPermissionsAsync();
+                    }
+                    if (!permiso.granted) {
+                      Alert.alert(
+                        'Notificaciones desactivadas',
+                        'Actívalas en Ajustes del celular → Aplicaciones → Expo Go → Notificaciones.'
+                      );
+                      return;
+                    }
+                    const plan = planCumpleanios(perfil);
+                    const textoRegistros = await SecureStore.getItemAsync('presteza.cumpleanios.registros');
+                    const registros = JSON.parse(textoRegistros || '{}');
+                    const idAutomatico = plan ? `cumpleanios-${perfil.id}-${plan.periodo}` : null;
+                    const registroAnterior = idAutomatico ? registros[idAutomatico] : null;
+                    const pendientes = await Notifications.getAllScheduledNotificationsAsync();
+                    const avisoPendiente = pendientes.some((aviso) => aviso.identifier === idAutomatico);
+
+                    // La prueba es independiente del beneficio y del historial automático.
+                    await Notifications.scheduleNotificationAsync({
+                      content: {
+                        title: '¡Celebra tu cumpleaños en Presteza!',
+                        body:
+                          'Tu beneficio de cumpleaños está disponible: ' +
+                          '15 % de descuento, una vez al año y sin combinar con puntos.',
+                        sound: 'default',
+                        data: {
+                          tipo: 'prueba_cumpleanios',
+                          href: '/perfil?pestana=puntos',
+                        },
+                      },
+                      trigger: {
+                        type: Notifications.SchedulableTriggerInputTypes.DATE,
+                        date: new Date(Date.now() + 15_000),
+                        ...(!isRunningInExpoGo() ? { channelId: 'presteza' } : {}),
+                      },
+                    });
+                    const diagnostico = [
+                      `Rol: ${user.role}`,
+                      `Nacimiento: ${perfil.birthDate ?? 'Sin fecha'}`,
+                      `Beneficio disponible: ${String(perfil.birthdayEligible)}`,
+                      `Año usado: ${perfil.birthdayBenefitYear ?? 'Ninguno'}`,
+                      `Aviso automático: ${plan ? plan.fechaAviso.toLocaleString() : 'Sin fecha'}`,
+                      `Pendiente en Android: ${avisoPendiente ? 'Sí' : 'No'}`,
+                      `Registro anterior: ${registroAnterior ? new Date(registroAnterior.fecha).toLocaleString() : 'Ninguno'}`,
+                    ].join('\n');
+                    console.log('[Diagnostico cumpleanios]', diagnostico);
+                    Alert.alert('Prueba programada para dentro de 15 segundos', diagnostico);
+                  } catch (error) {
+                    Alert.alert('No se pudo programar la prueba', error instanceof Error ? error.message : String(error));
+                  }
+                }}
+              />
+            ) : null}
             {error ? <Text className="mb-4 font-roboto text-sm text-crema">{error}</Text> : null}
 
             {enMesa ? (

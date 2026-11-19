@@ -1,4 +1,3 @@
-import { Href, router } from 'expo-router';
 import {
   createContext,
   useCallback,
@@ -19,11 +18,13 @@ import {
 } from '@/api/notificaciones';
 import { useSession } from '@/session/context';
 
-import {
-  escucharPushRecibido,
-  escucharToquePush,
-  obtenerExpoPushToken,
-} from './push';
+import { escucharPushRecibido, obtenerExpoPushToken } from './push';
+import { avisarCambioCumpleanios } from './cumpleanios';
+import { useAvisoCumpleanios } from './useAvisoCumpleanios';
+import { useNavegacionAvisos } from './useNavegacionAvisos';
+
+// Activar cuando el backend tenga las rutas /notifications.
+const API_NOTIFICACIONES_HABILITADA = false;
 
 type Api = {
   items: Notificacion[];
@@ -41,6 +42,8 @@ type Api = {
 const Ctx = createContext<Api | null>(null);
 
 export function NotificacionesProvider({ children }: { children: ReactNode }) {
+  useAvisoCumpleanios();
+  useNavegacionAvisos();
   const { token, isAuthenticated } = useSession();
   const [items, setItems] = useState<Notificacion[]>([]);
   const [unread, setUnread] = useState(0);
@@ -51,7 +54,7 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
   const pushEnviado = useRef<string | null>(null);
 
   const refrescar = useCallback(async () => {
-    if (!token || !isAuthenticated) {
+    if (!API_NOTIFICACIONES_HABILITADA || !token || !isAuthenticated) {
       setItems([]);
       setUnread(0);
       return;
@@ -83,8 +86,10 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
   }, [refrescar]);
 
   useEffect(() => {
-    if (!isAuthenticated || !token) return;
+    if (!API_NOTIFICACIONES_HABILITADA || !isAuthenticated || !token) return;
+
     const timer = setInterval(() => void refrescar(), 8000);
+
     return () => clearInterval(timer);
   }, [isAuthenticated, refrescar, token]);
 
@@ -99,6 +104,8 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
     let vivo = true;
     (async () => {
       const pushToken = await obtenerExpoPushToken();
+      if (vivo) avisarCambioCumpleanios();
+      if (!API_NOTIFICACIONES_HABILITADA) return;
       if (!vivo || !pushToken || pushEnviado.current === pushToken) return;
       try {
         await registrarPushToken(token, pushToken);
@@ -117,23 +124,18 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
       if (payload.id) vistos.current.add(payload.id);
       void refrescar();
     });
-    const toque = escucharToquePush((href) => {
-      void refrescar();
-      if (href) router.push(href as Href);
-    });
     return () => {
       recibido.remove();
-      toque.remove();
     };
   }, [refrescar]);
 
   const leer = useCallback(
     async (id: string) => {
-      if (!token) return;
+      if (!API_NOTIFICACIONES_HABILITADA || !token) return;
       setItems((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, readAt: item.readAt || new Date().toISOString() } : item,
-        ),
+          item.id === id ? { ...item, readAt: item.readAt || new Date().toISOString() } : item
+        )
       );
       setUnread((prev) => Math.max(0, prev - 1));
       try {
@@ -142,13 +144,13 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
         void refrescar();
       }
     },
-    [refrescar, token],
+    [refrescar, token]
   );
 
   const leerTodas = useCallback(async () => {
-    if (!token) return;
+    if (!API_NOTIFICACIONES_HABILITADA || !token) return;
     setItems((prev) =>
-      prev.map((item) => ({ ...item, readAt: item.readAt || new Date().toISOString() })),
+      prev.map((item) => ({ ...item, readAt: item.readAt || new Date().toISOString() }))
     );
     setUnread(0);
     try {
@@ -174,7 +176,7 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
       leerTodas,
       cerrarToast: () => setToast(null),
     }),
-    [abierta, items, leer, leerTodas, refrescar, toast, unread],
+    [abierta, items, leer, leerTodas, refrescar, toast, unread]
   );
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;

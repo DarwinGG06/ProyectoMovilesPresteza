@@ -43,10 +43,11 @@ export function BiometricSettings() {
           <Text className="font-roboto-light text-sm leading-6 text-tinta">
             {biometricEnabled
               ? 'Activado. Puedes volver a ingresar con biometría después de cerrar sesión. Para quitar el acceso guardado de este teléfono, desactívalo aquí.'
-              : 'Protege el acceso a tu cuenta al abrir la app o volver del segundo plano. También puedes usar el código del teléfono o tu contraseña de Presteza.'}
+              : 'Protege tu cuenta al abrir la app desde cero o después de cinco minutos en segundo plano. También puedes usar el código del teléfono o tu contraseña de Presteza.'}
           </Text>
           <Text className="font-roboto text-xs leading-5 text-madera">
             Tu huella permanece en el teléfono. Presteza no la recibe ni la guarda.
+            {' '}Puedes salir un momento y regresar antes de cinco minutos sin verificarte de nuevo.
           </Text>
           {!biometricSupport.available ? (
             <Text className="font-roboto text-sm leading-5 text-marca">

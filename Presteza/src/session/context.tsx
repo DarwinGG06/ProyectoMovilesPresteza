@@ -13,6 +13,7 @@ import * as api from '../api/auth';
 import { setOnUnauthorized, setToken } from '../api/client';
 import { logError, logInfo } from '../api/logger';
 import type { User } from '../types';
+import { establecerCuentaCumpleanios } from '../shared/notificaciones/cumpleanios';
 import { authenticateDevice, getBiometricSupport, type BiometricSupport } from './biometrics';
 import { SessionLockScreen } from './SessionLockScreen';
 import {
@@ -47,6 +48,7 @@ interface Session {
 }
 
 const SessionContext = createContext<Session | null>(null);
+const MARGEN_BIOMETRIA_MS = 5 * 60 * 1000;
 
 /** Atajo para leer la sesión desde cualquier pantalla: `const { user } = useSession()`. */
 export function useSession(): Session {
@@ -76,19 +78,45 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const version = useRef(0);
   const mounted = useRef(true);
   const appState = useRef(AppState.currentState);
+  const segundoPlanoDesde = useRef<number | null>(null);
+  const temporizadorBloqueo = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const limpiarEspera = () => {
+    if (temporizadorBloqueo.current !== null) clearTimeout(temporizadorBloqueo.current);
+    temporizadorBloqueo.current = null;
+    segundoPlanoDesde.current = null;
+  };
+
+  const bloquear = () => {
+    if (!mounted.current || busyRef.current || !enabledRef.current || !savedSession.current) return;
+    setToken(null);
+    setTokenState(null);
+    setUser(null);
+    setBiometricError(null);
+    setLocked(true);
+  };
+
+  const esperarBloqueo = () => {
+    if (segundoPlanoDesde.current !== null) return;
+    segundoPlanoDesde.current = Date.now();
+    temporizadorBloqueo.current = setTimeout(() => {
+      if (appState.current !== 'active') bloquear();
+    }, MARGEN_BIOMETRIA_MS);
+  };
 
   const publishSession = (session: { user: User; token: string }, protect: boolean) => {
+    limpiarEspera();
+    establecerCuentaCumpleanios(session.user.id);
     savedSession.current = session;
     setSessionEmail(session.user.email);
     enabledRef.current = protect;
     setBiometricEnabledState(protect);
-    const inBackground =
-      Platform.OS === 'android' && appState.current && appState.current !== 'active';
-    setLocked(Boolean(protect && inBackground));
-    setToken(protect && inBackground ? null : session.token);
-    setTokenState(protect && inBackground ? null : session.token);
-    setUser(protect && inBackground ? null : session.user);
+    setLocked(false);
+    setToken(session.token);
+    setTokenState(session.token);
+    setUser(session.user);
     setBiometricError(null);
+    if (protect && appState.current === 'background') esperarBloqueo();
   };
 
   useEffect(() => {
@@ -108,6 +136,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       });
     return () => {
       mounted.current = false;
+      limpiarEspera();
     };
   }, []);
 
@@ -122,13 +151,17 @@ export function SessionProvider({ children }: PropsWithChildren) {
         if (!activo || operation !== version.current) return;
         // La preferencia sobrevive al logout, pero no inicia una sesión por sí sola.
         setBiometricEnabledState(Platform.OS === 'android' && Boolean(protectedUser));
-        if (!guardado) return;
+        if (!guardado) {
+          establecerCuentaCumpleanios(null);
+          return;
+        }
 
         let usuario: User;
         try {
           usuario = api.decodificarToken(guardado);
         } catch {
           await writeSessionToken(null);
+          establecerCuentaCumpleanios(null);
           logInfo('auth', 'Sesión guardada vencida o inválida; se requiere iniciar sesión');
           return;
         }
@@ -140,6 +173,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
           if (!activo || operation !== version.current) return;
         }
         savedSession.current = { user: usuario, token: guardado };
+        establecerCuentaCumpleanios(usuario.id);
         setSessionEmail(usuario.email);
         enabledRef.current = protect;
         setBiometricEnabledState(protect);
@@ -170,13 +204,19 @@ export function SessionProvider({ children }: PropsWithChildren) {
     if (Platform.OS !== 'android') return;
     const subscription = AppState.addEventListener('change', (next) => {
       appState.current = next;
-      if (next === 'active' || busyRef.current || !enabledRef.current || !savedSession.current)
+      if (next === 'inactive') return;
+      if (busyRef.current || !enabledRef.current || !savedSession.current) {
+        limpiarEspera();
         return;
-      setToken(null);
-      setTokenState(null);
-      setUser(null);
-      setBiometricError(null);
-      setLocked(true);
+      }
+      if (next === 'background') {
+        esperarBloqueo();
+      } else if (next === 'active') {
+        // También comprueba el reloj si Android suspendió el temporizador.
+        if (segundoPlanoDesde.current !== null &&
+            Date.now() - segundoPlanoDesde.current >= MARGEN_BIOMETRIA_MS) bloquear();
+        limpiarEspera();
+      }
     });
     return () => subscription.remove();
   }, []);
@@ -192,6 +232,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
     setUser((prev) => (prev ? { ...prev, ...parcial } : prev));
   }, []);
   const salir = () => {
+    limpiarEspera();
+    establecerCuentaCumpleanios(null);
     const session = savedSession.current;
     const preserveBiometric = Platform.OS === 'android' && enabledRef.current && Boolean(session);
     version.current++;
@@ -362,12 +404,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
       busyRef.current = false;
       if (mounted.current) {
         setBiometricBusy(false);
-        if (enabledRef.current && savedSession.current && appState.current !== 'active') {
-          setToken(null);
-          setTokenState(null);
-          setUser(null);
-          setLocked(true);
-        }
+        if (enabledRef.current && savedSession.current && appState.current === 'background')
+          esperarBloqueo();
       }
     }
   };

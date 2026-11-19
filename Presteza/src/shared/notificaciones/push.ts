@@ -2,6 +2,7 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { isRunningInExpoGo } from 'expo';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -26,7 +27,7 @@ export async function obtenerExpoPushToken(): Promise<string | null> {
   if (Platform.OS === 'web') return null;
 
   try {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' && !isRunningInExpoGo()) {
       await Notifications.setNotificationChannelAsync('presteza', {
         name: 'Presteza',
         importance: Notifications.AndroidImportance.HIGH,
@@ -43,6 +44,9 @@ export async function obtenerExpoPushToken(): Promise<string | null> {
       estado = pedido.status;
     }
     if (estado !== 'granted') return null;
+    // Los permisos anteriores también sirven para notificaciones locales.
+    // Expo Go en Android no permite obtener el token push remoto.
+    if (Platform.OS === 'android' && isRunningInExpoGo()) return null;
 
     // Emulador Android a veces sirve; iOS necesita dispositivo real.
     if (Platform.OS === 'ios' && !Device.isDevice) return null;
@@ -58,7 +62,7 @@ export async function obtenerExpoPushToken(): Promise<string | null> {
 }
 
 export function escucharPushRecibido(
-  onRecibido: (payload: { id?: string; href?: string; title?: string; body?: string }) => void,
+  onRecibido: (payload: { id?: string; href?: string; title?: string; body?: string }) => void
 ) {
   return Notifications.addNotificationReceivedListener((aviso) => {
     const data = (aviso.request.content.data || {}) as Record<string, unknown>;

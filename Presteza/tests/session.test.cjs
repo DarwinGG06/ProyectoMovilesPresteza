@@ -109,6 +109,7 @@ async function mount(store, authApi = auth, options = {}) {
   const { SessionProvider, useSession } = load('src/session/context.tsx', {
     '../shared/notificaciones/cumpleanios': {
       establecerCuentaCumpleanios: options.establecerCuenta ?? (() => {}),
+      pedirAvisoCumpleaniosAlEntrar: () => {},
     },
     '../api/auth': {
       ...authApi,

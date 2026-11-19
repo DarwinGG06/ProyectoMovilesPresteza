@@ -13,7 +13,10 @@ import * as api from '../api/auth';
 import { setOnUnauthorized, setToken } from '../api/client';
 import { logError, logInfo } from '../api/logger';
 import type { User } from '../types';
-import { establecerCuentaCumpleanios } from '../shared/notificaciones/cumpleanios';
+import {
+  establecerCuentaCumpleanios,
+  pedirAvisoCumpleaniosAlEntrar,
+} from '../shared/notificaciones/cumpleanios';
 import { authenticateDevice, getBiometricSupport, type BiometricSupport } from './biometrics';
 import { SessionLockScreen } from './SessionLockScreen';
 import {
@@ -297,6 +300,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
     if (!mounted.current || operation !== version.current) {
       throw new Error('La sesión cambió. Inténtalo de nuevo.');
     }
+    if (session.user.role === 'client') pedirAvisoCumpleaniosAlEntrar();
     publishSession(session, Platform.OS === 'android' && protectedUser === session.user.id);
     logInfo('auth', 'login OK', {
       id: session.user.id,
@@ -354,6 +358,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       if (!mounted.current || operation !== version.current) {
         throw new Error('La sesión cambió durante la verificación. Inténtalo de nuevo.');
       }
+      if (session.user.role === 'client') pedirAvisoCumpleaniosAlEntrar();
       publishSession(session, true);
       return session.user;
     } catch (error) {

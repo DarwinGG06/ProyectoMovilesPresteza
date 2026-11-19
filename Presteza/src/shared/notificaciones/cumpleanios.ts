@@ -83,7 +83,13 @@ export async function programarAvisoCumpleanios({
 type Registro = { usuarioId: string; fecha: number; fin: number };
 const CLAVE_REGISTROS = 'presteza.cumpleanios.registros';
 let cuentaActual: string | null = null;
+let entregarAlEntrar = false;
 let cola: Promise<unknown> = Promise.resolve();
+
+/** El próximo sincronizado de esta cuenta vuelve a mostrar el aviso, si la semana sigue vigente. */
+export function pedirAvisoCumpleaniosAlEntrar() {
+  entregarAlEntrar = true;
+}
 
 function enCola<T>(operacion: () => Promise<T>): Promise<T> {
   const siguiente = cola.then(operacion);
@@ -139,6 +145,8 @@ export function sincronizarAvisoCumpleanios(perfil: PerfilCumpleanios) {
   if (Platform.OS === 'web') return Promise.resolve();
   return enCola(async () => {
     if (cuentaActual !== perfil.id) return;
+    const repetirAlEntrar = entregarAlEntrar;
+    entregarAlEntrar = false;
     const plan = planCumpleanios(perfil);
     const id = plan ? identificarAviso(perfil.id, plan.periodo) : null;
     const registros = await leerRegistros();
@@ -147,9 +155,16 @@ export function sincronizarAvisoCumpleanios(perfil: PerfilCumpleanios) {
 
     const permiso = await Notifications.getPermissionsAsync();
     if (!permiso.granted) return;
-    const pendientes = await Notifications.getAllScheduledNotificationsAsync();
-    // Conserva el historial para no repetir avisos al volver a abrir la app.
-    if (registros[id]?.fecha <= Date.now() || pendientes.some((aviso) => aviso.identifier === id)) return;
+    const enSemana = plan.fechaAviso.getTime() - Date.now() <= 20_000;
+    if (repetirAlEntrar && enSemana) {
+      await Notifications.dismissNotificationAsync(id);
+      plan.fechaAviso = new Date(Date.now() + 8_000);
+    } else {
+      const pendientes = await Notifications.getAllScheduledNotificationsAsync();
+      // Conserva el historial para no repetir avisos al volver a abrir la app.
+      if (registros[id]?.fecha <= Date.now() || pendientes.some((aviso) => aviso.identifier === id))
+        return;
+    }
     if (cuentaActual !== perfil.id) return;
     const creado = await programarAvisoCumpleanios({ usuarioId: perfil.id, ...plan });
     if (!creado) return;

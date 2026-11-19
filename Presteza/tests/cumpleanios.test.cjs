@@ -173,6 +173,33 @@ test('logout cancela pendientes y un login nuevo permite reprogramar uno no entr
   assert.equal(e.pendientes.size, 1);
 });
 
+test('un inicio de sesión dentro de la semana vuelve a programar el aviso', async () => {
+  const e = entorno();
+  e.servicio.establecerCuentaCumpleanios(perfil.id);
+  await e.servicio.sincronizarAvisoCumpleanios(perfil);
+  e.avanzar(11_000);
+  e.pendientes.clear();
+  await e.servicio.sincronizarAvisoCumpleanios(perfil);
+  assert.equal(e.programados, 1);
+  e.servicio.pedirAvisoCumpleaniosAlEntrar();
+  await e.servicio.sincronizarAvisoCumpleanios(perfil);
+  assert.equal(e.programados, 2);
+  assert.equal(e.pendientes.size, 1);
+});
+
+test('un inicio de sesión fuera de la semana no adelanta el aviso', async () => {
+  const e = entorno();
+  const lejos = { ...perfil, birthDate: '2000-03-01' };
+  e.servicio.establecerCuentaCumpleanios(lejos.id);
+  e.servicio.pedirAvisoCumpleaniosAlEntrar();
+  await e.servicio.sincronizarAvisoCumpleanios(lejos);
+  const aviso = [...e.pendientes.values()][0];
+  assert.equal(new Date(aviso.trigger.date).toISOString(), '2027-02-26T14:00:00.000Z');
+  e.servicio.pedirAvisoCumpleaniosAlEntrar();
+  await e.servicio.sincronizarAvisoCumpleanios(lejos);
+  assert.equal(e.programados, 1);
+});
+
 test('una respuesta de otra cuenta no programa avisos y negar permiso no rompe el flujo', async () => {
   const e = entorno();
   e.servicio.establecerCuentaCumpleanios('otra');

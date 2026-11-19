@@ -11,6 +11,7 @@ import {
 } from 'react';
 
 import {
+  borrarPushToken,
   listarNotificaciones,
   marcarNotificacionLeida,
   marcarTodasNotificacionesLeidas,
@@ -22,7 +23,9 @@ import { useSession } from '@/session/context';
 import {
   escucharPushRecibido,
   escucharToquePush,
+  leerToqueInicial,
   obtenerExpoPushToken,
+  type PayloadPush,
 } from './push';
 
 type Api = {
@@ -49,6 +52,12 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
   const vistos = useRef<Set<string>>(new Set());
   const listo = useRef(false);
   const pushEnviado = useRef<string | null>(null);
+  // Con qué sesión quedó registrado el push token, para soltarlo al cerrar sesión.
+  const pushRegistrado = useRef<{ jwt: string; pushToken: string } | null>(null);
+  // Destino de un push tocado sin sesión: se abre apenas el usuario entre.
+  const destinoPendiente = useRef<string | null>(null);
+  const sesion = useRef({ token, isAuthenticated });
+  sesion.current = { token, isAuthenticated };
 
   const refrescar = useCallback(async () => {
     if (!token || !isAuthenticated) {
@@ -103,6 +112,7 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
       try {
         await registrarPushToken(token, pushToken);
         pushEnviado.current = pushToken;
+        pushRegistrado.current = { jwt: token, pushToken };
       } catch {
         // Sin columna/endpoint aún: la campanita en app sigue.
       }
@@ -112,20 +122,72 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
     };
   }, [isAuthenticated, token]);
 
+  // Al cerrar sesión, el celular deja de recibir los push de esa cuenta.
+  // Si no, quien entre después en el mismo celular vería los pedidos del anterior.
+  useEffect(() => {
+    if (token) return;
+    const registrado = pushRegistrado.current;
+    if (!registrado) return;
+    pushRegistrado.current = null;
+    void borrarPushToken(registrado.jwt).catch(() => {
+      // Si falla, el backend igual mueve el token cuando otra cuenta lo registre.
+    });
+  }, [token]);
+
+  /**
+   * Deep link de un push: marca el aviso como leído y abre su pantalla
+   * (`/seguimiento?id=...` en los pedidos). Sin sesión, espera al login.
+   */
+  const abrirDestino = useCallback(
+    (payload: PayloadPush) => {
+      const { token: jwt, isAuthenticated: dentro } = sesion.current;
+      if (payload.id && jwt) {
+        vistos.current.add(payload.id);
+        void marcarNotificacionLeida(jwt, payload.id)
+          .then(() => refrescar())
+          .catch(() => undefined);
+      } else {
+        void refrescar();
+      }
+      if (!payload.href) return;
+      if (!dentro) {
+        destinoPendiente.current = payload.href;
+        return;
+      }
+      router.push(payload.href as Href);
+    },
+    [refrescar],
+  );
+
+  useEffect(() => {
+    if (!isAuthenticated || !destinoPendiente.current) return;
+    const destino = destinoPendiente.current;
+    destinoPendiente.current = null;
+    router.push(destino as Href);
+  }, [isAuthenticated]);
+
+  // App cerrada + toque en el push: el listener de abajo llega tarde, así que
+  // se pregunta por el último toque al montar.
+  const abrirRef = useRef(abrirDestino);
+  abrirRef.current = abrirDestino;
+  useEffect(() => {
+    // Una sola vez al montar; usa siempre la versión más reciente de abrirDestino.
+    void leerToqueInicial().then((payload) => {
+      if (payload) abrirRef.current(payload);
+    });
+  }, []);
+
   useEffect(() => {
     const recibido = escucharPushRecibido((payload) => {
       if (payload.id) vistos.current.add(payload.id);
       void refrescar();
     });
-    const toque = escucharToquePush((href) => {
-      void refrescar();
-      if (href) router.push(href as Href);
-    });
+    const toque = escucharToquePush(abrirDestino);
     return () => {
       recibido.remove();
       toque.remove();
     };
-  }, [refrescar]);
+  }, [abrirDestino, refrescar]);
 
   const leer = useCallback(
     async (id: string) => {

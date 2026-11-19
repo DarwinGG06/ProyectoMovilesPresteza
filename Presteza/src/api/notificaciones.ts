@@ -60,3 +60,11 @@ export async function registrarPushToken(jwt: string, token: string) {
     body: { token },
   });
 }
+
+/** Suelta el push token de la cuenta (al cerrar sesión). */
+export async function borrarPushToken(jwt: string) {
+  return request('/notifications/push-token', {
+    method: 'DELETE',
+    token: jwt,
+  });
+}

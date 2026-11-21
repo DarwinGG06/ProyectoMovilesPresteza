@@ -177,32 +177,40 @@ export function ModalAdmin({
   titulo,
   onCerrar,
   children,
+  compacto,
 }: {
   visible: boolean;
   titulo: string;
   onCerrar: () => void;
   children: ReactNode;
+  /** Altura según contenido (fichas/detalle). Formularios largos siguen en 88%. */
+  compacto?: boolean;
 }) {
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onCerrar}>
       <EvitarTeclado offset={0}>
         <View className="flex-1 justify-end bg-marca-oscura/55">
-          <View className="h-[88%]">
-            <Pergamino fill>
-              <View className="flex-1 px-6 pt-6">
-                <View className="mb-6 flex-row items-end justify-between">
-                  <Text className="flex-1 font-serif-light text-[26px] text-tinta">{titulo}</Text>
+          {compacto ? <Pressable className="flex-1" onPress={onCerrar} accessibilityLabel="Cerrar" /> : null}
+          <View className={compacto ? 'max-h-[88%]' : 'h-[88%]'}>
+            <Pergamino fill={!compacto}>
+              <View className={`${compacto ? '' : 'flex-1'} px-6 pt-5`}>
+                <View className={`${compacto ? 'mb-4' : 'mb-6'} flex-row items-end justify-between`}>
+                  <Text
+                    className={`flex-1 font-serif-light text-tinta ${compacto ? 'text-[22px]' : 'text-[26px]'}`}>
+                    {titulo}
+                  </Text>
                   <Pressable onPress={onCerrar} hitSlop={8} className="pb-1">
                     <IconoNav name="close" size={18} className="text-texto/70" />
                   </Pressable>
                 </View>
                 <ScrollView
-                  style={{ flex: 1 }}
-                  contentContainerStyle={{ paddingBottom: 48 }}
+                  style={compacto ? undefined : { flex: 1 }}
+                  contentContainerStyle={{ paddingBottom: compacto ? 32 : 48 }}
                   keyboardShouldPersistTaps="handled"
                   keyboardDismissMode="on-drag"
                   showsVerticalScrollIndicator={false}
-                  showsHorizontalScrollIndicator={false}>
+                  showsHorizontalScrollIndicator={false}
+                  bounces={!compacto}>
                   {children}
                 </ScrollView>
               </View>

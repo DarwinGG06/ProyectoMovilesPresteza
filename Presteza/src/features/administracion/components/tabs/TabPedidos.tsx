@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
+import Button from '@/components/Button';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
 
@@ -171,62 +172,107 @@ export function TabPedidos({
       </ModalAdmin>
 
       <ModalAdmin
+        compacto
         visible={Boolean(detalle)}
         titulo={detalle ? `#${idDe(detalle).slice(-8).toUpperCase()}` : 'Pedido'}
         onCerrar={tab.cerrarDetalle}>
         {detalle ? (
-          <View className="gap-3">
-            <Text className="font-roboto text-sm text-tinta/70">
-              {detalle.user_name || 'Cliente'}
-            </Text>
-            {textoEntrega(detalle) ? (
-              <Text className="font-roboto text-sm text-tinta/70">{textoEntrega(detalle)}</Text>
-            ) : null}
-            <Text className="font-roboto text-sm text-tinta/70">
-              {formatoFechaHora(detalle.createdAt)}
-            </Text>
-            {(detalle.products ?? []).map((producto, index) => (
-              <Text
-                key={`${producto.dishId}-${index}`}
-                className="font-roboto text-base text-tinta">
-                {producto.quantity} × {producto.name}
+          <View>
+            <View className="self-start rounded-full bg-marca/10 px-3.5 py-1.5">
+              <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
+                {textoEstadoPedido(detalle.status).toUpperCase()}
               </Text>
-            ))}
-            <Text className="font-roboto text-lg text-marca">{formatCOP(detalle.total || 0)}</Text>
+            </View>
 
-            <Text className="mt-2 font-roboto text-[12px] tracking-[2px] text-marca">ESTADO</Text>
-            <Text className="font-roboto text-sm text-tinta">
-              {textoEstadoPedido(detalle.status)}
-            </Text>
-            <AccionesAdmin>
-              {siguientesEstadosPedido(
-                detalle.status,
-                detalle.tipo === 'domicilio' || detalle.deliveryAddress ? 'domicilio' : detalle.tipo,
-              ).map((estado) => (
-                <EnlaceAdmin
+            <View className="mt-4 gap-1">
+              <Text className="font-roboto text-[15px] text-tinta">
+                {detalle.user_name || 'Cliente'}
+              </Text>
+              {textoEntrega(detalle) ? (
+                <Text className="font-roboto text-[13px] text-tinta/70">{textoEntrega(detalle)}</Text>
+              ) : null}
+              <Text className="font-roboto text-[13px] text-tinta/55">
+                {formatoFechaHora(detalle.createdAt)}
+              </Text>
+            </View>
+
+            <View className="my-4 h-px bg-madera/20" />
+
+            <View className="gap-2.5">
+              {(detalle.products ?? []).map((producto, index) => (
+                <View
+                  key={`${producto.dishId}-${index}`}
+                  className="flex-row items-start justify-between gap-3">
+                  <Text className="flex-1 font-roboto text-[15px] text-tinta">
+                    <Text className="font-roboto text-marca">{producto.quantity} × </Text>
+                    {producto.name}
+                  </Text>
+                </View>
+              ))}
+            </View>
+
+            <View className="mt-4 flex-row items-baseline justify-between border-t border-madera/20 pt-3">
+              <Text className="font-roboto text-[12px] tracking-[2px] text-marca">TOTAL</Text>
+              <Text className="font-serif-light text-[26px] text-marca">
+                {formatCOP(detalle.total || 0)}
+              </Text>
+            </View>
+
+            {siguientesEstadosPedido(
+              detalle.status,
+              detalle.tipo === 'domicilio' || detalle.deliveryAddress ? 'domicilio' : detalle.tipo,
+            ).map((estado) =>
+              estado.peligro ? (
+                <Pressable
                   key={estado.id}
-                  etiqueta={estado.etiqueta}
-                  peligro={estado.peligro}
+                  onPress={() => {
+                    onCambiarEstado(detalle, estado.id);
+                    tab.cerrarDetalle();
+                  }}
+                  accessibilityRole="button"
+                  className="mt-4 min-h-12 items-center justify-center border border-red-600/45">
+                  <Text className="font-roboto text-[13px] tracking-[2px] text-red-700">
+                    {estado.etiqueta}
+                  </Text>
+                </Pressable>
+              ) : (
+                <Button
+                  key={estado.id}
+                  text={estado.etiqueta}
+                  variant="gold"
+                  compact
+                  className="mt-4 w-full"
                   onPress={() => {
                     onCambiarEstado(detalle, estado.id);
                     tab.cerrarDetalle();
                   }}
                 />
-              ))}
-            </AccionesAdmin>
+              ),
+            )}
 
             {pedidoEditable(detalle) ? null : (
-              <Text className="font-roboto text-xs text-tinta/60">
+              <Text className="mt-3 font-roboto text-[13px] text-tinta/55">
                 Pedido entregado: solo se puede ver.
               </Text>
             )}
 
-            <AccionesAdmin>
+            <View className="mt-3 flex-row gap-2">
               {pedidoEditable(detalle) ? (
-                <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
+                <Button
+                  text="EDITAR"
+                  variant="secondary"
+                  compact
+                  className="flex-1"
+                  onPress={tab.editarDesdeDetalle}
+                />
               ) : null}
-              <EnlaceAdmin etiqueta="ELIMINAR" peligro onPress={() => onEliminar(detalle)} />
-            </AccionesAdmin>
+              <Pressable
+                onPress={() => onEliminar(detalle)}
+                accessibilityRole="button"
+                className="min-h-12 flex-1 items-center justify-center border border-red-600/45">
+                <Text className="font-roboto text-[13px] tracking-[2px] text-red-700">ELIMINAR</Text>
+              </Pressable>
+            </View>
           </View>
         ) : null}
       </ModalAdmin>

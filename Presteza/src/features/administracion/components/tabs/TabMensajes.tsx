@@ -1,5 +1,6 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
+import Button from '@/components/Button';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 
 import { useTabMensajes } from '../../hooks/useTabMensajes';
@@ -113,30 +114,37 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
       </ModalAdmin>
 
       <ModalAdmin
+        compacto
         visible={Boolean(tab.detalle)}
         titulo={tab.detalle?.subject || 'Mensaje'}
         onCerrar={tab.cerrarDetalle}>
         {tab.detalle ? (
-          <View className="gap-3">
-            <Text className="font-roboto text-base text-marca-oscura">{tab.detalle.name}</Text>
-            <Text className="font-roboto text-sm text-texto/70">{tab.detalle.email}</Text>
+          <View>
+            <Text className="font-roboto text-[15px] text-tinta">{tab.detalle.name}</Text>
+            <Text className="mt-1 font-roboto text-[13px] text-tinta/70">{tab.detalle.email}</Text>
             {tab.detalle.phone ? (
-              <Text className="font-roboto text-sm text-texto/70">{tab.detalle.phone}</Text>
+              <Text className="mt-0.5 font-roboto text-[13px] text-tinta/70">{tab.detalle.phone}</Text>
             ) : null}
-            <Text className="font-roboto text-sm text-texto/70">
+            <Text className="mt-1 font-roboto text-[13px] text-tinta/55">
               {formatoFechaHora(tab.detalle.createdAt)}
             </Text>
-            <Text className="mt-2 font-roboto text-base leading-6 text-marca-oscura">
-              {tab.detalle.message}
-            </Text>
-            <AccionesAdmin>
-              <EnlaceAdmin etiqueta="EDITAR" onPress={tab.editarDesdeDetalle} />
-              <EnlaceAdmin
-                etiqueta="ELIMINAR"
-                peligro
-                onPress={() => tab.detalle && onEliminar(tab.detalle)}
+            <View className="my-4 h-px bg-madera/20" />
+            <Text className="font-roboto text-[15px] leading-6 text-tinta">{tab.detalle.message}</Text>
+            <View className="mt-5 flex-row gap-2">
+              <Button
+                text="EDITAR"
+                variant="secondary"
+                compact
+                className="flex-1"
+                onPress={tab.editarDesdeDetalle}
               />
-            </AccionesAdmin>
+              <Pressable
+                onPress={() => tab.detalle && onEliminar(tab.detalle)}
+                accessibilityRole="button"
+                className="min-h-12 flex-1 items-center justify-center border border-red-600/45">
+                <Text className="font-roboto text-[13px] tracking-[2px] text-red-700">ELIMINAR</Text>
+              </Pressable>
+            </View>
           </View>
         ) : null}
       </ModalAdmin>

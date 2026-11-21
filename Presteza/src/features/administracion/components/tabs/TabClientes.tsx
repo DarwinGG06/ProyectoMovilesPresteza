@@ -167,38 +167,53 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
       </ModalAdmin>
 
       <ModalAdmin
+        compacto
         visible={Boolean(tab.detalle)}
         titulo={tab.detalle?.name || 'Cliente'}
         onCerrar={() => tab.setDetalle(null)}>
         {tab.detalle ? (
-          <View className="gap-3">
-            <Text className="font-roboto text-sm text-texto/70">
-              {tab.detalle.email || 'Sin correo'}
-            </Text>
-            <Text className="font-roboto text-sm text-texto/70">
-              {tab.detalle.phone || 'Sin teléfono'}
-            </Text>
-            <Text className="font-roboto text-sm text-texto/70">
-              Nacimiento: {tab.detalle.birthDate || 'Sin fecha'}
-            </Text>
-            <Text className="font-roboto text-sm text-texto/70">
-              Cumpleaños:{' '}
-              {tab.detalle.birthdayEligible
-                ? 'Beneficio activo esta semana'
-                : tab.detalle.birthdayInWindow
-                  ? 'Ya usado este año'
-                  : 'Fuera de la semana de cumpleaños'}
-            </Text>
-            <Text className="font-roboto text-base text-marca-oscura">
-              {tab.detalle.totalOrders ?? 0} pedidos
-            </Text>
-            <Text className="font-roboto text-base text-marca-oscura">
-              {tab.detalle.totalReservations ?? 0} reservas
-            </Text>
-            {tab.detalle.totalSpent ? (
-              <Text className="font-roboto text-lg text-marca">
-                {formatCOP(tab.detalle.totalSpent)}
+          <View>
+            <View className="gap-1">
+              <Text className="font-roboto text-[14px] text-tinta/70">
+                {tab.detalle.email || 'Sin correo'}
               </Text>
+              <Text className="font-roboto text-[14px] text-tinta/70">
+                {tab.detalle.phone || 'Sin teléfono'}
+              </Text>
+              <Text className="font-roboto text-[13px] text-tinta/55">
+                Nacimiento: {tab.detalle.birthDate || 'Sin fecha'}
+              </Text>
+              <Text className="font-roboto text-[13px] text-tinta/55">
+                Cumpleaños:{' '}
+                {tab.detalle.birthdayEligible
+                  ? 'Beneficio activo esta semana'
+                  : tab.detalle.birthdayInWindow
+                    ? 'Ya usado este año'
+                    : 'Fuera de la semana de cumpleaños'}
+              </Text>
+            </View>
+            <View className="my-4 h-px bg-madera/20" />
+            <View className="flex-row gap-6">
+              <View>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">PEDIDOS</Text>
+                <Text className="mt-1 font-serif-light text-[24px] text-tinta">
+                  {tab.detalle.totalOrders ?? 0}
+                </Text>
+              </View>
+              <View>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">RESERVAS</Text>
+                <Text className="mt-1 font-serif-light text-[24px] text-tinta">
+                  {tab.detalle.totalReservations ?? 0}
+                </Text>
+              </View>
+            </View>
+            {tab.detalle.totalSpent ? (
+              <View className="mt-4 flex-row items-baseline justify-between border-t border-madera/20 pt-3">
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">GASTADO</Text>
+                <Text className="font-serif-light text-[24px] text-marca">
+                  {formatCOP(tab.detalle.totalSpent)}
+                </Text>
+              </View>
             ) : null}
           </View>
         ) : null}

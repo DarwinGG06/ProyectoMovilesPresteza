@@ -95,7 +95,7 @@ export function useRepartidor() {
 
   const cerrarSesion = useCallback(() => {
     logout();
-    router.replace('/home');
+    router.replace('/iniciar-sesion');
   }, [logout]);
 
   return {

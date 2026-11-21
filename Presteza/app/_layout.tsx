@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ControlDrawerHomeProvider } from '@/features/inicio/context/ControlDrawerHome';
+import { GuardiaRepartidor } from '@/features/repartidor/components/GuardiaRepartidor';
 import { CartProvider } from '@/services/cart/CartContext';
 import { SessionProvider, useSession } from '@/session/context';
 import { esAdmin } from '@/session/roles';
@@ -58,15 +59,17 @@ export default function RootLayout() {
             <NotificacionesProvider>
               <AvisoProvider>
                 <ControlDrawerHomeProvider>
-                  <View className="flex-1 bg-pergamino">
-                    <NavBar />
-                    <View className="flex-1">
-                      <Rutas />
+                  <GuardiaRepartidor>
+                    <View className="flex-1 bg-pergamino">
+                      <NavBar />
+                      <View className="flex-1">
+                        <Rutas />
+                      </View>
+                      <WhatsAppFloat />
+                      <ToastNotificacion />
+                      <StatusBar style="dark" />
                     </View>
-                    <WhatsAppFloat />
-                    <ToastNotificacion />
-                    <StatusBar style="dark" />
-                  </View>
+                  </GuardiaRepartidor>
                 </ControlDrawerHomeProvider>
               </AvisoProvider>
             </NotificacionesProvider>

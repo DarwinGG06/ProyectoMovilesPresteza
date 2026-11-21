@@ -63,7 +63,7 @@ export function UserMenu({ visible, onClose }: UserMenuProps) {
               onPress={() => {
                 logout();
                 onClose();
-                router.replace('/home');
+                router.replace(esRepartidor(user) ? '/iniciar-sesion' : '/home');
               }}
               className="mx-4 mb-5 mt-2 flex-row items-center justify-center gap-2 py-4">
               <IconoNav name="log-out-outline" size={18} className="text-marca" />

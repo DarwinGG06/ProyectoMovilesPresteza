@@ -22,7 +22,7 @@ export function NavBar() {
           <Pressable onPress={nav.irAlInicio} className="flex-1">
             <Text className="font-serif text-[18px] tracking-[6px] text-tinta">PRESTEZA</Text>
             <Text className="mt-0.5 font-roboto text-[9px] tracking-[2px] text-marca">
-              MANIZALES
+              {nav.soloEntregas ? 'REPARTO' : 'MANIZALES'}
             </Text>
           </Pressable>
 
@@ -60,7 +60,7 @@ export function NavBar() {
               inicial={nav.inicial}
               onPress={nav.abrirCuenta}
             />
-            {nav.esAdmin ? null : (
+            {nav.esAdmin || nav.soloEntregas ? null : (
               <View>
                 <BotonBarra icono="bag-handle-outline" etiqueta="Bandeja" onPress={nav.abrirCarrito} />
                 {nav.totalItems > 0 ? (
@@ -72,7 +72,9 @@ export function NavBar() {
                 ) : null}
               </View>
             )}
-            <BotonBarra icono="menu" etiqueta="Menú" onPress={nav.alternarDrawer} />
+            {nav.soloEntregas ? null : (
+              <BotonBarra icono="menu" etiqueta="Menú" onPress={nav.alternarDrawer} />
+            )}
           </View>
         </View>
         <View className="h-px bg-madera/15" />
@@ -80,8 +82,12 @@ export function NavBar() {
 
       <LoginModal visible={nav.loginAbierto} onClose={nav.cerrarLogin} />
       <UserMenu visible={nav.usuarioAbierto} onClose={nav.cerrarUsuario} />
-      <CartSheet visible={nav.carritoAbierto} onClose={nav.cerrarCarrito} />
-      <MenuDrawer visible={nav.menuAbierto} onClose={nav.cerrarMenu} />
+      {nav.soloEntregas ? null : (
+        <>
+          <CartSheet visible={nav.carritoAbierto} onClose={nav.cerrarCarrito} />
+          <MenuDrawer visible={nav.menuAbierto} onClose={nav.cerrarMenu} />
+        </>
+      )}
       <PanelNotificaciones />
     </View>
   );

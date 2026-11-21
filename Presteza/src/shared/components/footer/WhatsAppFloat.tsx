@@ -1,17 +1,23 @@
 import { usePathname } from 'expo-router';
 import { Linking, Pressable } from 'react-native';
 
+import { useSession } from '@/session/context';
+import { esRepartidor } from '@/session/roles';
+
 import { Icono } from './Icono';
 
 const TELEFONO_WHATSAPP = '573104941839';
 
 export function WhatsAppFloat() {
   const ruta = usePathname();
+  const { user } = useSession();
   if (
+    esRepartidor(user) ||
     ruta.includes('perfil') ||
     ruta.includes('admin') ||
     ruta.includes('plato') ||
-    ruta.includes('seguimiento')
+    ruta.includes('seguimiento') ||
+    ruta.includes('repartidor')
   ) {
     return null;
   }

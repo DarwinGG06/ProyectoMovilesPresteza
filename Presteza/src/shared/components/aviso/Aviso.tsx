@@ -33,18 +33,21 @@ function BotonAviso({
   onPress,
   variante,
   disabled,
+  ancho,
 }: {
   etiqueta: string;
   onPress: () => void;
   variante: 'oro' | 'outline' | 'peligro';
   disabled?: boolean;
+  /** 'fila' reparte el ancho; 'bloque' ocupa todo (solo un botón). */
+  ancho: 'fila' | 'bloque';
 }) {
-  const caja =
+  const marco =
     variante === 'oro'
-      ? styles.botonOro
+      ? styles.marcoOro
       : variante === 'peligro'
-        ? styles.botonPeligro
-        : styles.botonOutline;
+        ? styles.marcoPeligro
+        : styles.marcoOutline;
   const texto =
     variante === 'oro'
       ? styles.textoOro
@@ -52,23 +55,29 @@ function BotonAviso({
         ? styles.textoPeligro
         : styles.textoOutline;
 
+  // Caja View de altura fija: PlacaOro a height 100% + flex stretch explotaba en Android.
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: Boolean(disabled) }}
-      style={({ pressed }) => [
-        styles.boton,
-        caja,
-        disabled ? styles.apagado : pressed ? styles.presionado : null,
+    <View
+      style={[
+        styles.marco,
+        marco,
+        ancho === 'fila' ? styles.botonFila : styles.botonBloque,
+        disabled ? styles.apagado : null,
       ]}>
-      <Text
-        style={[styles.botonEtiqueta, texto, disabled ? styles.textoApagado : null]}
-        className="font-roboto">
-        {etiqueta}
-      </Text>
-    </Pressable>
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: Boolean(disabled) }}
+        style={({ pressed }) => [styles.botonToque, pressed && !disabled ? styles.presionado : null]}>
+        <Text
+          style={[styles.botonEtiqueta, texto, disabled ? styles.textoApagado : null]}
+          className="font-roboto"
+          numberOfLines={1}>
+          {etiqueta}
+        </Text>
+      </Pressable>
+    </View>
   );
 }
 
@@ -124,21 +133,25 @@ function AvisoModal({
               {aviso?.texto}
             </Text>
 
-            <View style={styles.acciones}>
-              <BotonAviso
-                etiqueta={cargando ? 'ESPERA...' : etiquetaConfirmar}
-                onPress={onAceptar}
-                variante={aviso?.peligro && tieneCancelar ? 'peligro' : 'oro'}
-                disabled={cargando}
-              />
+            <View style={[styles.acciones, tieneCancelar ? styles.accionesFila : null]}>
               {tieneCancelar ? (
                 <BotonAviso
                   etiqueta={aviso?.cancelar ?? 'CANCELAR'}
                   onPress={onCerrar}
-                  variante="outline"
+                  variante="oro"
                   disabled={cargando}
+                  ancho="fila"
                 />
               ) : null}
+              <BotonAviso
+                etiqueta={cargando ? 'ESPERA...' : etiquetaConfirmar}
+                onPress={onAceptar}
+                variante={
+                  aviso?.peligro && tieneCancelar ? 'peligro' : tieneCancelar ? 'outline' : 'oro'
+                }
+                disabled={cargando}
+                ancho={tieneCancelar ? 'fila' : 'bloque'}
+              />
             </View>
           </View>
         </View>
@@ -255,9 +268,8 @@ const styles = StyleSheet.create({
   },
   caja: {
     width: '100%',
-    overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(212, 175, 119, 0.4)',
+    borderColor: 'rgba(212, 175, 119, 0.55)',
     backgroundColor: '#3a0c20',
   },
   linea: {
@@ -305,25 +317,43 @@ const styles = StyleSheet.create({
     color: colores.crema,
   },
   acciones: {
-    marginTop: 24,
-    gap: 8,
+    marginTop: 28,
   },
-  boton: {
-    minHeight: 48,
+  accionesFila: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  botonFila: {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
+    marginHorizontal: 5,
+  },
+  botonBloque: {
+    alignSelf: 'stretch',
+  },
+  marco: {
+    height: 52,
+    borderWidth: 2,
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
   },
-  botonOro: {
+  marcoOro: {
+    borderColor: '#d4af77',
     backgroundColor: '#d4af77',
   },
-  botonPeligro: {
-    borderWidth: 1,
-    borderColor: 'rgba(252, 165, 165, 0.55)',
+  marcoPeligro: {
+    borderColor: '#f0a8a8',
+    backgroundColor: '#4a1528',
   },
-  botonOutline: {
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 119, 0.45)',
+  marcoOutline: {
+    borderColor: '#d4af77',
+    backgroundColor: '#2a0a18',
+  },
+  botonToque: {
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
   },
   botonEtiqueta: {
     textAlign: 'center',
@@ -334,21 +364,20 @@ const styles = StyleSheet.create({
     color: '#3a0c20',
   },
   textoPeligro: {
-    color: '#fca5a5',
+    color: '#fecaca',
   },
   textoOutline: {
-    color: '#d4af77',
+    color: '#e8d4a4',
   },
   apagado: {
     backgroundColor: colores['pergamino-oscuro'],
     borderColor: colores.madera,
-    borderWidth: 1,
     borderStyle: 'dashed',
   },
   textoApagado: {
     color: colores.tinta,
   },
   presionado: {
-    transform: [{ scale: 0.97 }],
+    opacity: 0.84,
   },
 });

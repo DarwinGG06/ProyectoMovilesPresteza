@@ -38,17 +38,17 @@ export function ProductosInicio() {
             onPress={irALaCarta}
             className="flex-row items-baseline justify-between border-b border-oro/20 py-3">
             <View className="flex-1 pr-3">
-              <Text className="font-roboto text-[10px] text-oro/70">{producto.badge}</Text>
+              <Text className="font-roboto text-[12px] text-oro/70">{producto.badge}</Text>
               <Text className="font-serif text-lg text-crema">{producto.name}</Text>
             </View>
             <Text className="font-roboto text-oro">{formatCOP(producto.price)}</Text>
-            <Text className="ml-3 font-roboto text-[10px] text-crema/70">0{index + 1}</Text>
+            <Text className="ml-3 font-roboto text-[12px] text-crema/70">0{index + 1}</Text>
           </Pressable>
         ))}
       </View>
 
       <Pressable onPress={() => router.push('/home/menu')} className="mt-6 self-start">
-        <Text className="font-roboto text-[11px] tracking-[3px] text-oro">
+        <Text className="font-roboto text-[13px] tracking-[3px] text-oro">
           VER EL MENÚ COMPLETO →
         </Text>
       </Pressable>

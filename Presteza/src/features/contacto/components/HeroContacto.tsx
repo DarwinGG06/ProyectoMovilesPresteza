@@ -16,7 +16,7 @@ export function HeroContacto() {
       />
       <View className="flex-1 justify-end px-6 pb-10 pt-16">
         <Animated.View style={entrada}>
-          <Text className="font-roboto text-[10px] tracking-[4px] text-oro">
+          <Text className="font-roboto text-[12px] tracking-[4px] text-oro">
             PRESTEZA · MILÁN · MANIZALES
           </Text>
           <Text className="mt-3 font-serif-light text-[42px] leading-[46px] text-crema">

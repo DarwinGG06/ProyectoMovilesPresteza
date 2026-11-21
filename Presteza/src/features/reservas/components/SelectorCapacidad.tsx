@@ -9,7 +9,7 @@ type SelectorCapacidadProps = {
 export function SelectorCapacidad({ valor, onCambiar, detalle }: SelectorCapacidadProps) {
   return (
     <View className="mt-6 border-y border-madera/15 py-5">
-      <Text className="font-roboto text-[10px] tracking-[3px] text-marca">NÚMERO DE PERSONAS</Text>
+      <Text className="font-roboto text-[12px] tracking-[3px] text-marca">NÚMERO DE PERSONAS</Text>
       <Text className="mt-1 font-serif-light text-2xl text-tinta">¿Cuántos vienen?</Text>
 
       <View className="mt-5 flex-row items-center justify-between">

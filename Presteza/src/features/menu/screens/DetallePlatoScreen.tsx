@@ -37,7 +37,7 @@ export function DetallePlatoScreen() {
           onPress={plato.volver}
           accessibilityRole="button"
           className="mt-6 min-h-12 justify-center">
-          <Text className="font-roboto text-[11px] tracking-[2px] text-marca">VOLVER A LA CARTA</Text>
+          <Text className="font-roboto text-[13px] tracking-[2px] text-marca">VOLVER A LA CARTA</Text>
         </Pressable>
       </View>
     );
@@ -62,7 +62,7 @@ export function DetallePlatoScreen() {
               accessibilityRole="button"
               accessibilityLabel="Volver a la carta"
               className="absolute left-5 top-5 min-h-12 justify-center bg-pergamino/90 px-3 active:opacity-80">
-              <Text className="font-roboto text-[11px] tracking-[2px] text-marca">← CARTA</Text>
+              <Text className="font-roboto text-[13px] tracking-[2px] text-marca">← CARTA</Text>
             </Pressable>
             {plato.tieneModelo ? (
               <Pressable
@@ -70,13 +70,13 @@ export function DetallePlatoScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={`Ver ${producto.name} en 3D`}
                 className="absolute right-5 top-5 min-h-12 justify-center bg-marca-oscura px-3 active:opacity-80">
-                <Text className="font-roboto text-[11px] tracking-[2px] text-oro">VER 3D</Text>
+                <Text className="font-roboto text-[13px] tracking-[2px] text-oro">VER 3D</Text>
               </Pressable>
             ) : null}
           </View>
 
           <View className="px-6 pb-16 pt-7">
-            <Text className="font-roboto text-[10px] tracking-[4px] text-marca">
+            <Text className="font-roboto text-[12px] tracking-[4px] text-marca">
               {plato.categoria ? plato.categoria.toUpperCase() : 'EL PLATO'}
             </Text>
             <Text className="mt-2 font-serif-light text-[40px] leading-[44px] text-tinta">
@@ -90,7 +90,7 @@ export function DetallePlatoScreen() {
 
             {plato.extras.length > 0 ? (
               <View className="mt-8">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">ADICIONES</Text>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">ADICIONES</Text>
                 {plato.extras.map((extra) => {
                   const activo = plato.extraActivo(extra);
                   return (
@@ -119,13 +119,13 @@ export function DetallePlatoScreen() {
                   onPress={() => admin.abrirEditar(producto)}
                   accessibilityRole="button"
                   className="mr-6 min-h-12 justify-center">
-                  <Text className="font-roboto text-[11px] tracking-[1.6px] text-marca">EDITAR</Text>
+                  <Text className="font-roboto text-[13px] tracking-[1.6px] text-marca">EDITAR</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => admin.eliminar(producto)}
                   accessibilityRole="button"
                   className="min-h-12 justify-center">
-                  <Text className="font-roboto text-[11px] tracking-[1.6px] text-red-700">ELIMINAR</Text>
+                  <Text className="font-roboto text-[13px] tracking-[1.6px] text-red-700">ELIMINAR</Text>
                 </Pressable>
               </View>
             ) : null}
@@ -134,7 +134,7 @@ export function DetallePlatoScreen() {
             <>
             <View className="mt-10 flex-row items-end justify-between">
               <View>
-                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">CANTIDAD</Text>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">CANTIDAD</Text>
                 <View className="mt-3 flex-row items-center">
                   <Pressable
                     onPress={plato.restar}
@@ -157,7 +157,7 @@ export function DetallePlatoScreen() {
                 </View>
               </View>
               <View className="items-end">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">TOTAL</Text>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">TOTAL</Text>
                 <Text className="mt-2 font-serif-light text-[32px] leading-9 text-marca">{plato.total}</Text>
               </View>
             </View>

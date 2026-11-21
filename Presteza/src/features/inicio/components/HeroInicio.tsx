@@ -33,7 +33,7 @@ export function HeroInicio() {
         </View>
 
         <View className="flex-1 pr-1">
-          <Text className="font-roboto text-[10px] tracking-[3px] text-oro">
+          <Text className="font-roboto text-[12px] tracking-[3px] text-oro">
             RESTAURANTE · MILÁN · MANIZALES
           </Text>
           <Text className="mt-2 font-serif-light text-[42px] leading-[46px] text-crema">
@@ -74,7 +74,7 @@ export function HeroInicio() {
         <View className="absolute bottom-5 left-5 w-[248px] overflow-hidden">
           <Pergamino>
             <View className="px-5 py-5">
-              <Text className="font-roboto text-[10px] tracking-[3px] text-marca">LA CASA</Text>
+              <Text className="font-roboto text-[12px] tracking-[3px] text-marca">LA CASA</Text>
               <Text className="mt-1 font-serif text-xl text-tinta">
                 La carta de la casa, servida en mesa.
               </Text>

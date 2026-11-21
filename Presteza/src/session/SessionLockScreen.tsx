@@ -64,7 +64,7 @@ export function SessionLockScreen({ email, busy, error, onUnlock, onPassword, on
             keyboardShouldPersistTaps="handled">
             <View className="w-full max-w-md">
               <View className="mb-8 items-center">
-                <Text className="font-roboto text-[10px] tracking-[4px] text-marca">PRESTEZA</Text>
+                <Text className="font-roboto text-[12px] tracking-[4px] text-marca">PRESTEZA</Text>
                 <View className="my-7">
                   {busy || passwordBusy ? (
                     <ActivityIndicator size="large" color="#6b1d3d" />
@@ -93,7 +93,7 @@ export function SessionLockScreen({ email, busy, error, onUnlock, onPassword, on
                 <View className="gap-5">
                   <Text className="font-roboto text-sm text-madera">{email}</Text>
                   <View>
-                    <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                    <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
                       CONTRASEÑA
                     </Text>
                     <TextInput

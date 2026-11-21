@@ -50,7 +50,7 @@ export function LoginModal({ visible, onClose }: LoginModalProps) {
 
                   <View className="mb-8 items-center pt-4">
                     <SelloP size="md" />
-                    <Text className="mt-5 font-roboto text-[10px] tracking-[4px] text-marca">
+                    <Text className="mt-5 font-roboto text-[12px] tracking-[4px] text-marca">
                       INICIAR SESIÓN
                     </Text>
                     <Text className="mt-2 font-serif-light text-3xl text-tinta">Bienvenido</Text>

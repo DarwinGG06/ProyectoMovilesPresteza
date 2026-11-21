@@ -94,7 +94,7 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
                   </Text>
                   {cliente.email ? (
                     <Text
-                      className="mt-0.5 font-roboto text-[11px] text-tinta/70"
+                      className="mt-0.5 font-roboto text-[13px] text-tinta/70"
                       numberOfLines={1}>
                       {cliente.email}
                     </Text>
@@ -129,7 +129,7 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
                   {cliente.name}
                 </Text>
                 {cliente.email ? (
-                  <Text className="mt-1 font-roboto text-[11px] text-tinta/70" numberOfLines={1}>
+                  <Text className="mt-1 font-roboto text-[13px] text-tinta/70" numberOfLines={1}>
                     {cliente.email}
                   </Text>
                 ) : null}

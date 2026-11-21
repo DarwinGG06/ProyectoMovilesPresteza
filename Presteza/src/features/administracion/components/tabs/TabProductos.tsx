@@ -109,7 +109,7 @@ export function TabProductos({
                         {formatCOP(producto.price || 0)}
                       </Text>
                     </View>
-                    <Text className="mt-1 font-roboto text-[10px] tracking-[1.4px] text-tinta/70">
+                    <Text className="mt-1 font-roboto text-[12px] tracking-[1.4px] text-tinta/70">
                       {tab.nombreCategoria(producto.categoryId).toUpperCase()}
                       {'  ·  '}
                       {producto.available === false ? 'OCULTO' : 'EN CARTA'}
@@ -140,7 +140,7 @@ export function TabProductos({
                 }}>
                 <FotoCarta uri={producto.imageUrl} alto={132} ancha />
                 <View className="px-3 py-3">
-                  <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
+                  <Text className="font-roboto text-[12px] tracking-[1px] text-marca">
                     {tab.nombreCategoria(producto.categoryId).toUpperCase()}
                   </Text>
                   <Text className="mt-1 font-roboto-light text-base text-tinta" numberOfLines={2}>
@@ -149,7 +149,7 @@ export function TabProductos({
                   <Text className="mt-2 font-roboto text-lg text-marca">
                     {formatCOP(producto.price || 0)}
                   </Text>
-                  <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70">
+                  <Text className="mt-1 font-roboto text-[12px] tracking-[1px] text-tinta/70">
                     {producto.available === false ? 'OCULTO' : 'EN CARTA'}
                   </Text>
                   <AccionesCarta

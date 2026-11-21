@@ -41,7 +41,7 @@ export function PagoScreen() {
               onPress={pago.irAlMenu}
               accessibilityRole="button"
               className="mt-2 min-h-12 justify-center self-start">
-              <Text className="font-roboto text-[11px] tracking-[2px] text-marca">
+              <Text className="font-roboto text-[13px] tracking-[2px] text-marca">
                 IR AL MENÚ →
               </Text>
             </Pressable>
@@ -130,7 +130,7 @@ export function PagoScreen() {
                       accessibilityRole="button"
                       accessibilityState={{ disabled: pago.cotizando || pago.enviando }}
                       className={`mt-1 min-h-12 items-center justify-center border px-4 ${!pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
-                      <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
+                      <Text className="text-center font-roboto text-[13px] tracking-[2px] text-marca-oscura">
                         15% CUMPLEAÑOS
                       </Text>
                     </Pressable>
@@ -152,7 +152,7 @@ export function PagoScreen() {
                       accessibilityRole="button"
                       accessibilityState={{ disabled: pago.cotizando || pago.enviando }}
                       className={`mt-1 min-h-12 items-center justify-center border px-4 ${pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
-                      <Text className="text-center font-roboto text-[11px] tracking-[2px] text-marca-oscura">
+                      <Text className="text-center font-roboto text-[13px] tracking-[2px] text-marca-oscura">
                         {pago.canjear
                           ? `CANJEAR ${cotizacion?.pointsRedeemed ?? 0} PUNTOS`
                           : `USAR PUNTOS (máx. ${cotizacion?.maxRedeemable ?? 0})`}
@@ -227,7 +227,7 @@ export function PagoScreen() {
                           onPress={() => pago.elegirGuardada(i)}
                           className="border-b border-madera/15 py-3">
                           <Text
-                            className={`font-roboto text-[10px] tracking-[1.5px] ${
+                            className={`font-roboto text-[12px] tracking-[1.5px] ${
                               pago.indice === i ? 'text-marca' : 'text-tinta/70'
                             }`}>
                             {(dir.name || 'Dirección').toUpperCase()}
@@ -257,7 +257,7 @@ export function PagoScreen() {
                         onPress={pago.nuevaDireccion}
                         accessibilityRole="button"
                         className="min-h-12 justify-center py-3">
-                        <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                        <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
                           NUEVA DIRECCIÓN
                         </Text>
                       </Pressable>
@@ -315,7 +315,7 @@ export function PagoScreen() {
                       accessibilityRole="button"
                       accessibilityState={{ selected: activo, disabled: pago.enviando }}
                       className={`min-h-12 items-center justify-center border px-4 ${activo ? 'border-oro bg-oro/15' : 'border-oro/35'}`}>
-                      <Text className="font-roboto text-[11px] tracking-[1px] text-marca-oscura">
+                      <Text className="font-roboto text-[13px] tracking-[1px] text-marca-oscura">
                         {opcion.label.toUpperCase()}
                       </Text>
                     </Pressable>
@@ -325,7 +325,7 @@ export function PagoScreen() {
             </Tarjeta>
 
             <View className="mt-8 flex-row items-end justify-between">
-              <Text className="font-roboto text-[11px] tracking-[2px] text-marca">A PAGAR</Text>
+              <Text className="font-roboto text-[13px] tracking-[2px] text-marca">A PAGAR</Text>
               <Text className="font-serif-light text-3xl text-marca-oscura">
                 {formatCOP(totalAPagar)}
               </Text>

@@ -28,7 +28,7 @@ export function StatsInicio() {
 
             return (
               <View key={stat.etiqueta} className="flex-1 border border-oro/25 px-3 py-4">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-oro/70">
+                <Text className="font-roboto text-[12px] tracking-[2px] text-oro/70">
                   0{index + 1}
                 </Text>
                 <Text className="mt-2 font-roboto-light text-3xl text-oro">

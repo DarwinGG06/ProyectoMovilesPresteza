@@ -32,7 +32,7 @@ export function BiometricSettings() {
       <Pergamino>
         <View className="gap-4 px-5 py-5">
           <View className="gap-2">
-            <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+            <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
               {biometricEnabled ? 'ACCESO PROTEGIDO' : 'SEGURIDAD DEL DISPOSITIVO'}
             </Text>
             <Text accessibilityRole="header" className="font-serif-light text-[30px] text-tinta">

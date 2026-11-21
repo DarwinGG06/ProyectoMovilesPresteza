@@ -25,7 +25,7 @@ export default function Button({
   className,
 }: Props) {
   const tono: Variant = variant ?? (secondary ? 'secondary' : 'primary');
-  const letra = compact ? 'text-[10px] tracking-[1.2px]' : 'text-[11px] tracking-[3px]';
+  const letra = compact ? 'text-[12px] tracking-[1.2px]' : 'text-[13px] tracking-[3px]';
   const alto = compact ? 48 : 54;
 
   if (disabled) {

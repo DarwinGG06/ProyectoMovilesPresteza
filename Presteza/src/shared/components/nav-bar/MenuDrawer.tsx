@@ -57,7 +57,7 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
           </View>
 
           <View className="mb-8 mt-6 px-6">
-            <Text className="font-roboto text-[11px] tracking-[4px] text-oro">
+            <Text className="font-roboto text-[13px] tracking-[4px] text-oro">
               CARTA DE NAVEGACIÓN
             </Text>
             <Text className="mt-1 font-serif-light text-4xl tracking-[6px] text-crema">
@@ -92,7 +92,7 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
             ))}
           </View>
 
-          <Text className="mt-auto px-6 pb-8 text-center font-roboto text-[11px] tracking-[3px] text-oro/70">
+          <Text className="mt-auto px-6 pb-8 text-center font-roboto text-[13px] tracking-[3px] text-oro/70">
             COMIDA PARA TODOS · MANIZALES
           </Text>
         </SafeAreaView>

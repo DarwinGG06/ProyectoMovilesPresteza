@@ -34,7 +34,7 @@ export function TarjetaPlato({
       accessibilityRole="button"
       accessibilityLabel={`Ver ${producto.name}`}
       className="flex-row items-start border-b border-madera/20 py-5 active:opacity-80">
-      <Text className="mt-1 w-8 font-roboto text-[10px] tracking-[1px] text-marca">
+      <Text className="mt-1 w-8 font-roboto text-[12px] tracking-[1px] text-marca">
         {String(indice + 1).padStart(2, '0')}
       </Text>
 
@@ -86,7 +86,7 @@ export function TarjetaPlato({
                 accessibilityRole="button"
                 accessibilityLabel={`Editar ${producto.name}`}
                 className="mr-4 min-h-12 justify-center">
-                <Text className="font-roboto text-[11px] tracking-[1.6px] text-marca">EDITAR</Text>
+                <Text className="font-roboto text-[13px] tracking-[1.6px] text-marca">EDITAR</Text>
               </Pressable>
             ) : null}
             {onEliminar ? (
@@ -98,7 +98,7 @@ export function TarjetaPlato({
                 accessibilityRole="button"
                 accessibilityLabel={`Eliminar ${producto.name}`}
                 className="min-h-12 justify-center">
-                <Text className="font-roboto text-[11px] tracking-[1.6px] text-red-700">ELIMINAR</Text>
+                <Text className="font-roboto text-[13px] tracking-[1.6px] text-red-700">ELIMINAR</Text>
               </Pressable>
             ) : null}
           </View>

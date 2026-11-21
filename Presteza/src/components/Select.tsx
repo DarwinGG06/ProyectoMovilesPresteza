@@ -80,7 +80,7 @@ export default function Select<T extends FieldValues>({
 
         return (
           <View className="gap-1.5">
-            <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
+            <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
             {variante === 'fila' ? (
               <ScrollView
                 horizontal
@@ -127,7 +127,7 @@ export default function Select<T extends FieldValues>({
                         numberOfLines={1}
                         className={
                           variante === 'barra'
-                            ? `font-roboto text-[11px] ${active ? 'text-marca-oscura' : 'text-texto/70'}`
+                            ? `font-roboto text-[13px] ${active ? 'text-marca-oscura' : 'text-texto/70'}`
                             : `font-roboto text-[12px] ${active ? 'text-crema' : 'text-marca-oscura'}`
                         }>
                         {etiquetaDe(option)}

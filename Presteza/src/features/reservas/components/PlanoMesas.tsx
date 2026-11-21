@@ -31,7 +31,7 @@ export function PlanoMesas({
   return (
     <View className="overflow-hidden border border-madera/20 bg-marca-oscura">
       <View className="px-4 pb-2 pt-5">
-        <Text className="text-center font-roboto text-[10px] tracking-[4px] text-oro">
+        <Text className="text-center font-roboto text-[12px] tracking-[4px] text-oro">
           SALÓN PRESTEZA
         </Text>
         <Text className="mt-1 text-center font-serif-light text-2xl text-crema">Elige tu mesa</Text>
@@ -48,7 +48,7 @@ export function PlanoMesas({
         <View className="px-2 pb-2 pt-4">
           {grupos.map((grupo) => (
             <View key={grupo.capacity} className="mb-4">
-              <Text className="mb-2 text-center font-roboto text-[10px] tracking-[3px] text-marca">
+              <Text className="mb-2 text-center font-roboto text-[12px] tracking-[3px] text-marca">
                 {etiquetaCapacidad(grupo.capacity)}
               </Text>
               <View className="flex-row flex-wrap">
@@ -69,13 +69,13 @@ export function PlanoMesas({
       </LinearGradient>
 
       <View className="px-4 py-5">
-        <Text className="mb-3 font-roboto text-[11px] tracking-[3px] text-oro">OTRAS OPCIONES</Text>
+        <Text className="mb-3 font-roboto text-[13px] tracking-[3px] text-oro">OTRAS OPCIONES</Text>
         <View className="flex-row gap-3">
           <Pressable
             onPress={onBarra}
             className={`flex-1 border px-3 py-4 ${barra ? 'border-oro bg-oro' : 'border-oro/35 bg-pergamino'}`}>
             <IconoNav name="wine-outline" size={22} className="text-marca-oscura" />
-            <Text className="mt-2 font-roboto text-[11px] tracking-[2px] text-marca-oscura">
+            <Text className="mt-2 font-roboto text-[13px] tracking-[2px] text-marca-oscura">
               BARRA
             </Text>
             <Text className="mt-1 font-roboto text-xs text-texto/70">1 o más personas</Text>
@@ -84,7 +84,7 @@ export function PlanoMesas({
             onPress={onPersonalizada}
             className={`flex-1 border px-3 py-4 ${personalizada ? 'border-oro bg-oro' : 'border-oro/35 bg-pergamino'}`}>
             <IconoNav name="sparkles-outline" size={22} className="text-marca-oscura" />
-            <Text className="mt-2 font-roboto text-[11px] tracking-[2px] text-marca-oscura">
+            <Text className="mt-2 font-roboto text-[13px] tracking-[2px] text-marca-oscura">
               A TU MEDIDA
             </Text>
             <Text className="mt-1 font-roboto text-xs text-texto/70">Grupo grande</Text>

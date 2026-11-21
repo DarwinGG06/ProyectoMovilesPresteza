@@ -16,7 +16,7 @@ export function EncabezadoSeccion({
   return (
     <View className="mb-7">
       <Text
-        className={`font-roboto text-[10px] tracking-[4px] ${claro ? 'text-oro' : 'text-marca'}`}>
+        className={`font-roboto text-[12px] tracking-[4px] ${claro ? 'text-oro' : 'text-marca'}`}>
         {badge}
       </Text>
       <Text

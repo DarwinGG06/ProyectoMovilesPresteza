@@ -275,14 +275,14 @@ const estilos = StyleSheet.create({
   },
   numero: {
     color: '#2a0818',
-    fontSize: 11,
+    fontSize: 13,
     fontFamily: 'Roboto_800ExtraBold',
     letterSpacing: 0.4,
     marginTop: 8,
   },
   capacidad: {
     color: 'rgba(42,8,24,0.7)',
-    fontSize: 8,
+    fontSize: 12,
     fontFamily: 'Roboto_700Bold',
   },
   silla: {

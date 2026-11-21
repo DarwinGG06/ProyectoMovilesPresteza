@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   },
   sello: {
     marginTop: 16,
-    fontSize: 10,
+    fontSize: 12,
     letterSpacing: 4,
     color: '#d4af77',
   },
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   },
   botonEtiqueta: {
     textAlign: 'center',
-    fontSize: 11,
+    fontSize: 13,
     letterSpacing: 2,
   },
   textoOro: {

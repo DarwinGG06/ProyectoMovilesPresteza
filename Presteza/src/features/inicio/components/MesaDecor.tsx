@@ -50,7 +50,7 @@ export function PuntosTicket() {
 export function MarcaCurso({ numero, nombre }: { numero: string; nombre: string }) {
   return (
     <View className="mb-8 flex-row items-center">
-      <Text className="font-roboto text-[10px] tracking-[3px] text-oro">
+      <Text className="font-roboto text-[12px] tracking-[3px] text-oro">
         {numero}  ·  {nombre}
       </Text>
       <View className="ml-4 h-px flex-1 bg-oro/20" />

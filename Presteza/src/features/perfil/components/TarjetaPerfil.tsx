@@ -36,7 +36,7 @@ export function TarjetaPerfil({ titulo, accion, compacto, children }: TarjetaPer
         <Text className="min-w-0 flex-1 font-serif-light text-[28px] text-crema">{titulo}</Text>
         {accion ? (
           <Pressable onPress={accion.onPress} className="pb-1">
-            <Text className="font-roboto text-[11px] tracking-[2px] text-oro">
+            <Text className="font-roboto text-[13px] tracking-[2px] text-oro">
               {accion.etiqueta}
             </Text>
           </Pressable>

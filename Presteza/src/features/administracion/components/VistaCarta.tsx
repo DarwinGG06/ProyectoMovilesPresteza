@@ -133,7 +133,7 @@ export function EncabezadoTabla({ columnas }: { columnas: ColumnaTabla[] }) {
         <Text
           key={columna.texto}
           style={estiloColumna(columna)}
-          className={`font-roboto text-[10px] tracking-[2px] text-tinta/70 ${columna.derecha ? 'text-right' : ''}`}>
+          className={`font-roboto text-[12px] tracking-[2px] text-tinta/70 ${columna.derecha ? 'text-right' : ''}`}>
           {columna.texto}
         </Text>
       ))}

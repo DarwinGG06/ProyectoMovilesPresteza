@@ -105,7 +105,7 @@ export function TabCategorias({
                 <View className="relative">
                   <FotoCarta uri={categoria.imageUrl} alto={168} ancha />
                   <View className="absolute bottom-0 left-0 right-0 bg-marca-oscura/80 px-3 py-3">
-                    <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                    <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
                       SECCIÓN
                     </Text>
                     <Text className="mt-1 font-roboto-light text-xl text-crema">

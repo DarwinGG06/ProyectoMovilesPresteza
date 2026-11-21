@@ -19,7 +19,7 @@ export function FormularioSede() {
 
       <Pergamino>
         <View className="px-6 py-8">
-          <Text className="font-roboto text-[10px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
+          <Text className="font-roboto text-[12px] tracking-[4px] text-marca">RESERVA TU MESA</Text>
           <Text className="mt-3 font-serif-light text-3xl text-tinta">¿Vienes a Milán?</Text>
           <Text className="mt-2 font-serif-italic text-base text-tinta/70">
             Te esperamos en Torre Plaza 70.

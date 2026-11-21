@@ -37,7 +37,7 @@ export function FormularioNuevaReserva({
   return (
     <View className="mt-8">
       <View className="mb-3 h-px w-10 bg-marca/40" />
-      <Text className="font-roboto text-[10px] tracking-[4px] text-marca">NUEVA RESERVA</Text>
+      <Text className="font-roboto text-[12px] tracking-[4px] text-marca">NUEVA RESERVA</Text>
       <Text className="mt-2 font-serif-light text-3xl text-tinta">Completa tu reserva</Text>
       <Text className="mt-2 font-roboto text-sm text-tinta/70">{subtitulo}</Text>
 

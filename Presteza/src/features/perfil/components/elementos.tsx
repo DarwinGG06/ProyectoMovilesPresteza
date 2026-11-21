@@ -87,7 +87,7 @@ export function FilaDato({
 }) {
   return (
     <View className="flex-row items-baseline py-3.5">
-      <Text className="w-[92px] font-roboto text-[10px] tracking-[2px] text-marca">{etiqueta}</Text>
+      <Text className="w-[92px] font-roboto text-[12px] tracking-[2px] text-marca">{etiqueta}</Text>
       <View className="mx-2 mb-1 h-px flex-1 bg-madera/20" />
       <Text className="max-w-[58%] text-right font-roboto text-[16px] text-tinta">{valor}</Text>
     </View>
@@ -123,7 +123,7 @@ export function LineaCuenta({
       <View className="flex-row items-baseline justify-between gap-3">
         <Text className="flex-1 font-serif text-xl text-tinta">{titulo}</Text>
         {sello ? (
-          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{sello}</Text>
+          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{sello}</Text>
         ) : null}
       </View>
       {children}
@@ -146,7 +146,7 @@ export function EnlaceAccion({
       accessibilityRole="button"
       className="min-h-12 justify-center py-1 pr-4">
       <Text
-        className={`font-roboto text-[11px] tracking-[2px] ${peligro ? 'text-red-700' : 'text-marca'}`}>
+        className={`font-roboto text-[13px] tracking-[2px] ${peligro ? 'text-red-700' : 'text-marca'}`}>
         {etiqueta}
       </Text>
     </Pressable>

@@ -71,7 +71,7 @@ export function RepartidorScreen() {
         <View className="bg-crema">
           <View className="flex-row items-center justify-between px-5 pb-3 pt-8">
             <View>
-              <Text className="font-roboto text-[10px] tracking-[3px] text-marca">REPARTO</Text>
+              <Text className="font-roboto text-[12px] tracking-[3px] text-marca">REPARTO</Text>
               <Text className="mt-1 font-serif-light text-[28px] leading-8 text-tinta">
                 {ubicacion.conectado ? 'Estás conectado' : 'Estás desconectado'}
               </Text>
@@ -106,7 +106,7 @@ export function RepartidorScreen() {
         <View className="px-6 pb-4 pt-6">
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="font-roboto text-[10px] tracking-[4px] text-marca">REPARTO</Text>
+              <Text className="font-roboto text-[12px] tracking-[4px] text-marca">REPARTO</Text>
               <Text className="mt-2 font-serif-light text-[34px] leading-[38px] text-tinta">
                 Mis pedidos
               </Text>
@@ -120,14 +120,14 @@ export function RepartidorScreen() {
             <Pressable
               onPress={() => void tab.recargar()}
               className="border border-oro px-4 py-3 active:opacity-80">
-              <Text className="font-roboto text-[10px] tracking-[2px] text-marca-oscura">
+              <Text className="font-roboto text-[12px] tracking-[2px] text-marca-oscura">
                 ACTUALIZAR
               </Text>
             </Pressable>
             <Pressable
               onPress={tab.cerrarSesion}
               className="border border-madera/30 px-4 py-3 active:opacity-80">
-              <Text className="font-roboto text-[10px] tracking-[2px] text-tinta/70">
+              <Text className="font-roboto text-[12px] tracking-[2px] text-tinta/70">
                 CERRAR SESIÓN
               </Text>
             </Pressable>
@@ -164,7 +164,7 @@ export function RepartidorScreen() {
 
             return (
               <View key={id || pedido.createdAt} className="border border-linea bg-white px-4 py-4">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
                   {textoEstadoPedido(pedido.status).toUpperCase()}
                 </Text>
                 <Text className="mt-2 font-serif-light text-2xl text-tinta">
@@ -186,7 +186,7 @@ export function RepartidorScreen() {
                     </Text>
                   ))}
                   <View className="mt-3 flex-row items-end justify-between">
-                    <Text className="font-roboto text-[10px] tracking-[2px] text-marca">TOTAL</Text>
+                    <Text className="font-roboto text-[12px] tracking-[2px] text-marca">TOTAL</Text>
                     <Text className="font-serif-light text-2xl text-tinta">
                       {formatCOP(pedido.total || 0)}
                     </Text>

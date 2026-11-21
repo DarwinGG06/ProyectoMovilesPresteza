@@ -149,7 +149,7 @@ function EncabezadoCarta({
   return (
     <View>
       <View className="items-center px-8 pb-8 pt-14">
-        <Text className="font-roboto text-[10px] tracking-[4px] text-marca">PRESTEZA · MILÁN</Text>
+        <Text className="font-roboto text-[12px] tracking-[4px] text-marca">PRESTEZA · MILÁN</Text>
         <Text className="mt-3 font-serif-light text-[44px] leading-[46px] text-tinta">
           La carta
         </Text>
@@ -172,7 +172,7 @@ function EncabezadoCarta({
             }}
             accessibilityRole="button"
             className="mb-4 min-h-12 justify-center self-start">
-            <Text className="font-roboto text-[11px] tracking-[2px] text-marca">← CATEGORÍAS</Text>
+            <Text className="font-roboto text-[13px] tracking-[2px] text-marca">← CATEGORÍAS</Text>
           </Pressable>
         ) : null}
 

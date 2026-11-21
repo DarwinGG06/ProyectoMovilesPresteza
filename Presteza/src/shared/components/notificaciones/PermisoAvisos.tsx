@@ -20,7 +20,7 @@ export function PermisoAvisos({ visible, onActivar, onOmitir }: Props) {
             <View className="mb-4 h-14 w-14 items-center justify-center border border-oro bg-marca-oscura">
               <IconoNav name="notifications-outline" size={26} color={colores.oro} />
             </View>
-            <Text className="font-roboto text-[10px] tracking-[3px] text-marca">PRESTEZA · AVISOS</Text>
+            <Text className="font-roboto text-[12px] tracking-[3px] text-marca">PRESTEZA · AVISOS</Text>
             <Text className="mt-2 text-center font-serif text-[26px] leading-8 text-tinta">
               ¿Te avisamos del pedido?
             </Text>

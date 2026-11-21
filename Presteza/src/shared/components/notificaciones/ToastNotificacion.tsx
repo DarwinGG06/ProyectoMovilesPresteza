@@ -72,7 +72,7 @@ export function ToastNotificacion() {
               <IconoNav name={iconoDeKind(aviso.kind)} size={20} color={colores.oro} />
             </View>
             <View className="flex-1">
-              <Text className="font-roboto text-[10px] tracking-[3px] text-oro">
+              <Text className="font-roboto text-[12px] tracking-[3px] text-oro">
                 PRESTEZA · {selloDeKind(aviso.kind)}
               </Text>
               <Text className="mt-1 font-serif text-[19px] leading-6 text-crema" numberOfLines={1}>

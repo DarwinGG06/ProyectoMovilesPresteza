@@ -23,12 +23,12 @@ export function Footer() {
         <Text className="mt-5 font-serif-light text-[28px] tracking-[8px] text-crema">
           PRESTEZA
         </Text>
-        <Text className="mt-1 font-roboto text-[11px] tracking-[3px] text-oro">
+        <Text className="mt-1 font-roboto text-[13px] tracking-[3px] text-oro">
           COMIDA PARA TODOS
         </Text>
         <View className="my-6 h-px w-16 bg-oro/40" />
 
-        <Text className="mb-3 font-roboto text-[10px] tracking-[3px] text-oro">ACCESO RÁPIDO</Text>
+        <Text className="mb-3 font-roboto text-[12px] tracking-[3px] text-oro">ACCESO RÁPIDO</Text>
         <View className="mb-8 flex-row flex-wrap justify-center gap-x-5 gap-y-2">
           {ENLACES_RAPIDOS.map((enlace) => (
             <Enlace key={enlace.ruta} onPress={() => router.push(enlace.ruta as Href)}>
@@ -37,7 +37,7 @@ export function Footer() {
           ))}
         </View>
 
-        <Text className="mb-2 font-roboto text-[10px] tracking-[3px] text-oro">VISÍTANOS</Text>
+        <Text className="mb-2 font-roboto text-[12px] tracking-[3px] text-oro">VISÍTANOS</Text>
         <Enlace onPress={() => router.push('/home/sede')}>Sede Manizales – Milán</Enlace>
       </View>
     </View>

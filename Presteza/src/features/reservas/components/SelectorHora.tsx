@@ -20,7 +20,7 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
 
   return (
     <View className="bg-marca-oscura px-4 py-4">
-      <Text className="font-roboto text-[10px] tracking-[2px] text-oro">HORA</Text>
+      <Text className="font-roboto text-[12px] tracking-[2px] text-oro">HORA</Text>
       <Text className="mt-1 font-roboto text-xs text-crema/70">
         {etiquetaDias} · {etiquetaHorario}
       </Text>
@@ -36,7 +36,7 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
 
         <View className="items-center px-2">
           <Text className="font-serif-light text-3xl text-crema">{hora || '--:--'}</Text>
-          <Text className="mt-1 font-roboto text-[10px] tracking-[1px] text-oro">
+          <Text className="mt-1 font-roboto text-[12px] tracking-[1px] text-oro">
             {hora ? 'DENTRO DEL HORARIO' : 'ELIGE CON LAS FLECHAS'}
           </Text>
         </View>
@@ -61,7 +61,7 @@ export function SelectorHora({ fecha, hora, onHora, error }: SelectorHoraProps) 
               accessibilityState={{ selected: activa }}
               className={`min-h-12 min-w-12 items-center justify-center px-2.5 ${activa ? 'bg-oro' : 'border border-oro/25'}`}>
               <Text
-                className={`font-roboto text-[10px] ${activa ? 'text-marca-oscura' : 'text-crema/80'}`}>
+                className={`font-roboto text-[12px] ${activa ? 'text-marca-oscura' : 'text-crema/80'}`}>
                 {item}
               </Text>
             </Pressable>

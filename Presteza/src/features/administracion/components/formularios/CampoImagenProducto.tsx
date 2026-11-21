@@ -17,7 +17,7 @@ function BotonFuente({
       onPress={onPress}
       disabled={disabled}
       className="min-w-[30%] flex-1 border border-oro py-3 active:opacity-80 disabled:opacity-50">
-      <Text className="text-center text-[10px] tracking-[2px] text-marca-oscura">{etiqueta}</Text>
+      <Text className="text-center text-[12px] tracking-[2px] text-marca-oscura">{etiqueta}</Text>
     </Pressable>
   );
 }
@@ -48,7 +48,7 @@ export function CampoImagenProducto({
           fallback={
             <View className="flex-1 items-center justify-center gap-2">
               <IconoNav name="camera-outline" size={28} className="text-marca" />
-              <Text className="text-[10px] tracking-[2px] text-texto/70">SIN FOTO</Text>
+              <Text className="text-[12px] tracking-[2px] text-texto/70">SIN FOTO</Text>
             </View>
           }
         />

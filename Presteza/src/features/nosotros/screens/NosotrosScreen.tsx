@@ -23,7 +23,7 @@ export function NosotrosScreen() {
               style={StyleSheet.absoluteFill}
             />
             <View className="flex-1 justify-end px-6 pb-10 pt-16">
-              <Text className="font-roboto text-[10px] tracking-[4px] text-oro">
+              <Text className="font-roboto text-[12px] tracking-[4px] text-oro">
                 PRESTEZA · LA CASA
               </Text>
               <Text className="mt-3 font-serif-light text-[42px] leading-[46px] text-crema">
@@ -42,7 +42,7 @@ export function NosotrosScreen() {
               <View className="overflow-hidden">
                 <Image source={{ uri: HISTORIA.foto }} className="h-52 w-full" resizeMode="cover" />
                 <View className="px-5 py-6">
-                  <Text className="font-roboto text-[10px] tracking-[3px] text-marca">
+                  <Text className="font-roboto text-[12px] tracking-[3px] text-marca">
                     {HISTORIA.year}
                   </Text>
                   <Text className="mt-2 font-serif-light text-[28px] leading-8 text-tinta">
@@ -91,7 +91,7 @@ export function NosotrosScreen() {
                     <Text className="font-serif-light text-[24px] text-crema">
                       {persona.nombre}
                     </Text>
-                    <Text className="mt-1 font-roboto text-[11px] tracking-[1.4px] text-oro">
+                    <Text className="mt-1 font-roboto text-[13px] tracking-[1.4px] text-oro">
                       {persona.rol.toUpperCase()}
                     </Text>
                   </View>
@@ -104,12 +104,12 @@ export function NosotrosScreen() {
             <MarcaCurso numero="IV" nombre="CASA" />
             <Pergamino>
               <View className="px-5 py-6">
-                <Text className="font-roboto text-[10px] tracking-[3px] text-marca">MISIÓN</Text>
+                <Text className="font-roboto text-[12px] tracking-[3px] text-marca">MISIÓN</Text>
                 <Text className="mt-3 font-roboto text-[15px] leading-6 text-tinta/70">
                   {MISION}
                 </Text>
                 <View className="my-6 h-px bg-madera/20" />
-                <Text className="font-roboto text-[10px] tracking-[3px] text-marca">VISIÓN</Text>
+                <Text className="font-roboto text-[12px] tracking-[3px] text-marca">VISIÓN</Text>
                 <Text className="mt-3 font-roboto text-[15px] leading-6 text-tinta/70">
                   {VISION}
                 </Text>

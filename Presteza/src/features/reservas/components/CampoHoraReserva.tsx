@@ -46,7 +46,7 @@ export function CampoHoraReserva<T extends FieldValues>({
 
         return (
           <View className="gap-1.5">
-            <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
+            <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
             <AjustarHora fecha={fecha} hora={hora} horas={horas} onChange={onChange} />
             <SelectorHoraModal
               valor={mostrada}
@@ -58,9 +58,9 @@ export function CampoHoraReserva<T extends FieldValues>({
             {error ? (
               <Text className="font-roboto text-xs text-red-600">{error.message}</Text>
             ) : fechaValida ? (
-              <Text className="font-roboto text-[11px] text-tinta/70">{horario.etiqueta}</Text>
+              <Text className="font-roboto text-[13px] text-tinta/70">{horario.etiqueta}</Text>
             ) : (
-              <Text className="font-roboto text-[11px] text-tinta/70">Elige primero la fecha</Text>
+              <Text className="font-roboto text-[13px] text-tinta/70">Elige primero la fecha</Text>
             )}
           </View>
         );
@@ -128,7 +128,7 @@ function SelectorHoraModal({
           <Pressable onPress={(evento) => evento.stopPropagation()}>
             <Pergamino>
               <View className="px-6 pb-10 pt-6">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">RESERVA</Text>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">RESERVA</Text>
                 <Text className="mt-2 font-roboto text-2xl text-tinta">Elige la hora</Text>
                 <ScrollView className="mt-4 max-h-72" showsVerticalScrollIndicator={false}>
                   {horas.map((hora) => {

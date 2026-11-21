@@ -15,7 +15,7 @@ export function AccionesForm({
       onPress={onGuardar}
       disabled={guardando}
       className="mt-8 items-center py-2 active:opacity-60 disabled:opacity-40">
-      <Text className="font-roboto text-[11px] tracking-[4px] text-marca-oscura">
+      <Text className="font-roboto text-[13px] tracking-[4px] text-marca-oscura">
         {guardando ? 'GUARDANDO' : etiqueta}
       </Text>
       <View className="mt-2 h-px w-12 bg-oro" />

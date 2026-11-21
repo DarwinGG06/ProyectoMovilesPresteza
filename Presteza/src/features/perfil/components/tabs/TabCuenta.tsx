@@ -69,7 +69,7 @@ export function TabCuenta({ userId, perfil, favoritos, onActualizado }: TabCuent
               <View
                 key={plato.id || plato._id}
                 className="flex-row items-baseline border-b border-madera/15 py-3.5">
-                <Text className="w-7 font-roboto text-[10px] text-marca">
+                <Text className="w-7 font-roboto text-[12px] text-marca">
                   {String(index + 1).padStart(2, '0')}
                 </Text>
                 <Text className="font-serif text-lg text-tinta">{plato.name}</Text>

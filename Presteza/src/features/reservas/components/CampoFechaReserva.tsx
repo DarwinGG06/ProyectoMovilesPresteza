@@ -63,7 +63,7 @@ export function CampoFechaReserva<T extends FieldValues>({
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <View className="gap-1.5">
-          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
+          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
           <SelectorFecha valor={String(value || '')} error={Boolean(error)} onChange={onChange} />
           {error ? <Text className="font-roboto text-xs text-red-600">{error.message}</Text> : null}
         </View>
@@ -134,7 +134,7 @@ function SelectorFecha({
           <Pressable onPress={(evento) => evento.stopPropagation()}>
             <Pergamino>
               <View className="px-6 pb-10 pt-6">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">RESERVA</Text>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">RESERVA</Text>
                 <Text className="mt-2 font-roboto text-2xl text-tinta">Elige el día</Text>
                 <View className="mt-5 h-44 flex-row">
                   <Columna

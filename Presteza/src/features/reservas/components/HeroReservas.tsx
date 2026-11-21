@@ -19,11 +19,11 @@ export function HeroReservas({ onVolver }: { onVolver?: () => void }) {
           accessibilityRole="button"
           accessibilityLabel="Volver a mis reservas"
           className="absolute left-6 top-6 z-10 min-h-12 justify-center">
-          <Text className="font-roboto text-[10px] tracking-[3px] text-oro">←  MIS RESERVAS</Text>
+          <Text className="font-roboto text-[12px] tracking-[3px] text-oro">←  MIS RESERVAS</Text>
         </Pressable>
       ) : null}
       <View className="items-center px-6">
-        <Text className="font-roboto text-[10px] tracking-[4px] text-oro">PRESTEZA · MILÁN</Text>
+        <Text className="font-roboto text-[12px] tracking-[4px] text-oro">PRESTEZA · MILÁN</Text>
         <Text className="mt-3 text-center font-serif-light text-5xl text-white">Reservas</Text>
         <View className="mt-3 h-px w-12 bg-oro/70" />
         <Text className="mt-3 text-center font-serif-italic text-base text-white">

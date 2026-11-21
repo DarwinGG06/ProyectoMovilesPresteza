@@ -36,7 +36,7 @@ export function TarjetaCategoria({
       <Text className="mt-3 font-serif-semibold text-[20px] leading-6 text-tinta" numberOfLines={2}>
         {portada.name}
       </Text>
-      <Text className="mt-1 font-roboto text-[10px] tracking-[2px] text-marca">
+      <Text className="mt-1 font-roboto text-[12px] tracking-[2px] text-marca">
         {platos.toUpperCase()}
       </Text>
       <View className="mt-2 h-px w-8 bg-marca/40" />

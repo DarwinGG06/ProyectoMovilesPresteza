@@ -55,7 +55,7 @@ export function FormularioPedido({
     <View>
       {bloquearCliente ? (
         <View className="mb-2">
-          <Text className="mb-1 font-roboto text-[10px] tracking-[2px] text-marca">Cliente</Text>
+          <Text className="mb-1 font-roboto text-[12px] tracking-[2px] text-marca">Cliente</Text>
           <Text className="font-roboto text-base text-tinta">{clienteFijo?.name || 'Cliente'}</Text>
         </View>
       ) : clientes.length > 0 ? (
@@ -134,7 +134,7 @@ export function FormularioPedido({
       </View>
 
       <View className="mt-8">
-        <Text className="mb-1 font-roboto text-[10px] tracking-[2px] text-marca">Carta</Text>
+        <Text className="mb-1 font-roboto text-[12px] tracking-[2px] text-marca">Carta</Text>
         {productos.length === 0 ? (
           <Text className="py-3 font-roboto text-sm text-texto/70">No hay platos en la carta.</Text>
         ) : (
@@ -147,7 +147,7 @@ export function FormularioPedido({
                   <Text className="font-roboto-light text-base text-marca-oscura">
                     {producto.name}
                   </Text>
-                  <Text className="font-roboto text-[11px] text-texto/70">
+                  <Text className="font-roboto text-[13px] text-texto/70">
                     {formatCOP(producto.price || 0)}
                   </Text>
                 </Pressable>
@@ -170,7 +170,7 @@ export function FormularioPedido({
           })
         )}
         <View className="mt-4 flex-row items-baseline justify-between">
-          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">Total</Text>
+          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">Total</Text>
           <Text className="font-roboto-light text-2xl text-marca-oscura">{formatCOP(total)}</Text>
         </View>
       </View>

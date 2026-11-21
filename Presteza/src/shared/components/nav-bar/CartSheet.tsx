@@ -29,7 +29,7 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
 
             <View className="flex-row items-end justify-between px-6 pb-2 pt-4">
               <View>
-                <Text className="font-roboto text-[10px] tracking-[3px] text-marca">TU PEDIDO</Text>
+                <Text className="font-roboto text-[12px] tracking-[3px] text-marca">TU PEDIDO</Text>
                 <Text className="mt-1 font-serif-light text-[34px] leading-9 text-tinta">
                   La bandeja
                 </Text>
@@ -39,7 +39,7 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                 accessibilityRole="button"
                 accessibilityLabel="Cerrar bandeja"
                 className="min-h-12 min-w-12 items-center justify-center">
-                <Text className="font-roboto text-[11px] tracking-[2px] text-marca">CERRAR</Text>
+                <Text className="font-roboto text-[13px] tracking-[2px] text-marca">CERRAR</Text>
               </Pressable>
             </View>
             <View className="mx-6 mb-2 h-px w-10 bg-marca/35" />
@@ -69,7 +69,7 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                   {items.map((item, index) => (
                     <View key={item.id} className="border-b border-madera/20 py-4">
                       <View className="flex-row items-baseline">
-                        <Text className="w-8 font-roboto text-[10px] tracking-[1px] text-marca">
+                        <Text className="w-8 font-roboto text-[12px] tracking-[1px] text-marca">
                           {String(index + 1).padStart(2, '0')}
                         </Text>
                         <Text className="flex-1 font-serif-semibold text-[22px] leading-6 text-tinta">
@@ -106,7 +106,7 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
                           accessibilityRole="button"
                           accessibilityLabel={`Quitar ${item.productName}`}
                           className="ml-auto min-h-12 justify-center px-2">
-                          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">QUITAR</Text>
+                          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">QUITAR</Text>
                         </Pressable>
                       </View>
                     </View>
@@ -115,7 +115,7 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
 
                 <View className="px-6 pt-5" style={{ paddingBottom: Math.max(insets.bottom, 20) }}>
                   <View className="mb-4 flex-row items-end justify-between">
-                    <Text className="font-roboto text-[10px] tracking-[3px] text-marca">TOTAL</Text>
+                    <Text className="font-roboto text-[12px] tracking-[3px] text-marca">TOTAL</Text>
                     <Text className="font-serif-light text-[32px] leading-9 text-tinta">
                       {formatCOP(totalPrice)}
                     </Text>

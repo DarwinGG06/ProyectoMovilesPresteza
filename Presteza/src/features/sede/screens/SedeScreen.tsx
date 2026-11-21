@@ -23,7 +23,7 @@ export function SedeScreen() {
           keyboardDismissMode="on-drag">
           <ImageBackground source={{ uri: sede.foto }} style={{ height: 360 }} resizeMode="cover">
             <View className="flex-1 justify-end bg-marca-oscura/70 px-5 pb-8 pt-10">
-              <Text className="font-roboto text-[10px] tracking-[3px] text-oro">
+              <Text className="font-roboto text-[12px] tracking-[3px] text-oro">
                 SEDE · MILÁN · MANIZALES
               </Text>
               <Text className="mt-2 font-serif-light text-[38px] leading-[42px] text-crema">
@@ -47,7 +47,7 @@ export function SedeScreen() {
             <MarcaCurso numero="I" nombre="UBICACIÓN" />
             <Pergamino>
               <View className="px-5 py-6">
-                <Text className="font-roboto text-[10px] tracking-[3px] text-marca">
+                <Text className="font-roboto text-[12px] tracking-[3px] text-marca">
                   SEDE PRINCIPAL
                 </Text>
                 <Text className="mt-2 font-serif-light text-2xl text-tinta">{sede.direccion}</Text>
@@ -63,12 +63,12 @@ export function SedeScreen() {
             <MarcaCurso numero="II" nombre="HORARIOS" />
             <View className="flex-row gap-3">
               <View className="flex-1 border border-oro/25 px-4 py-5">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-oro">01 · SEMANA</Text>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-oro">01 · SEMANA</Text>
                 <Text className="mt-3 font-serif-light text-3xl text-oro">11–22</Text>
                 <Text className="mt-2 font-roboto text-sm text-crema/80">Lunes a viernes</Text>
               </View>
               <View className="flex-1 border border-oro/25 px-4 py-5">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-oro">02 · FINDE</Text>
+                <Text className="font-roboto text-[12px] tracking-[2px] text-oro">02 · FINDE</Text>
                 <Text className="mt-3 font-serif-light text-3xl text-oro">12–23</Text>
                 <Text className="mt-2 font-roboto text-sm text-crema/80">Sábado y domingo</Text>
               </View>

@@ -59,7 +59,7 @@ export function CampoStepper<T extends FieldValues>({
       name={name}
       render={({ field: { value, onChange } }) => (
         <View className="flex-row items-center justify-between border-b border-marca/15 py-2">
-          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
+          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
           <Paso
             valor={Number(value) || 0}
             onCambio={(n) => onChange(String(n))}

@@ -45,7 +45,7 @@ export function HeroAdmin({ stats, pedidos, onPress }: HeroAdminProps) {
       className="overflow-hidden rounded-[28px] bg-marca-oscura px-5 py-6">
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
-          <Text className="font-roboto text-[10px] tracking-[2px] text-crema/70">
+          <Text className="font-roboto text-[12px] tracking-[2px] text-crema/70">
             INGRESOS DEL MES
           </Text>
           <Text className="mt-2 font-serif-light text-[34px] leading-[38px] text-crema">

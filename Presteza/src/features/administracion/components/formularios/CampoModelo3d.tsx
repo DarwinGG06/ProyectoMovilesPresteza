@@ -21,7 +21,7 @@ function BotonModelo({
         peligro ? 'border-red-600/60' : 'border-oro'
       }`}>
       <Text
-        className={`text-center font-roboto text-[10px] tracking-[2px] ${
+        className={`text-center font-roboto text-[12px] tracking-[2px] ${
           peligro ? 'text-red-600' : 'text-marca-oscura'
         }`}>
         {etiqueta}
@@ -65,12 +65,12 @@ export function CampoModelo3d({
               <Text className="font-roboto text-sm text-marca-oscura" numberOfLines={1}>
                 {nombre}
               </Text>
-              <Text className="mt-0.5 font-roboto text-[10px] tracking-[1px] text-texto/70">
+              <Text className="mt-0.5 font-roboto text-[12px] tracking-[1px] text-texto/70">
                 {pendiente ? 'SE SUBIRÁ AL GUARDAR' : 'GUARDADO'}
               </Text>
             </>
           ) : (
-            <Text className="font-roboto text-[10px] tracking-[2px] text-texto/70">SIN MODELO</Text>
+            <Text className="font-roboto text-[12px] tracking-[2px] text-texto/70">SIN MODELO</Text>
           )}
         </View>
       </View>

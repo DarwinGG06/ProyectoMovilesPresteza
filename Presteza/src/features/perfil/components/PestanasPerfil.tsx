@@ -59,7 +59,7 @@ export function PestanasPerfil({ onChange, contadores }: IndiceMesaProps) {
                     <IconoNav name={item.icono} size={20} className="text-marca" />
                     {conNumero ? (
                       <View className="min-w-[22px] items-center rounded-full bg-marca px-1.5 py-0.5">
-                        <Text className="font-roboto text-[11px] text-crema">{cuenta}</Text>
+                        <Text className="font-roboto text-[13px] text-crema">{cuenta}</Text>
                       </View>
                     ) : (
                       <IconoNav name="chevron-forward" size={16} className="text-marca/40" />
@@ -101,7 +101,7 @@ export function EncabezadoSeccion({
         accessibilityRole="button"
         accessibilityLabel="Volver a la cuenta"
         className="min-h-12 justify-center self-start">
-        <Text className="font-roboto text-[10px] tracking-[3px] text-oro">← CUENTA</Text>
+        <Text className="font-roboto text-[12px] tracking-[3px] text-oro">← CUENTA</Text>
       </Pressable>
       <View className="mt-2 flex-row items-end justify-between gap-3">
         <View className="min-w-0 flex-1 flex-row items-center">
@@ -121,7 +121,7 @@ export function EncabezadoSeccion({
             <View className="h-10 w-10 items-center justify-center rounded-full bg-crema">
               <IconoNav name="add" size={20} className="text-marca" />
             </View>
-            <Text className="ml-2 font-roboto text-[11px] tracking-[1.2px] text-oro">
+            <Text className="ml-2 font-roboto text-[13px] tracking-[1.2px] text-oro">
               {accion.etiqueta}
             </Text>
           </Pressable>

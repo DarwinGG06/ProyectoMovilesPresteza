@@ -90,7 +90,7 @@ export function TabAdicionales({
                     {adicional.name}
                   </Text>
                   <Text
-                    className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70"
+                    className="mt-1 font-roboto text-[12px] tracking-[1px] text-tinta/70"
                     numberOfLines={1}>
                     {tab.nombresCategoria(adicional.categoryIds)}
                   </Text>
@@ -108,7 +108,7 @@ export function TabAdicionales({
                   </AccionesAdmin>
                 </CeldaTabla>
                 <CeldaTabla ancho={78}>
-                  <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
+                  <Text className="font-roboto text-[12px] tracking-[1px] text-marca">
                     {adicional.available === false ? 'OCULTO' : 'ACTIVO'}
                   </Text>
                 </CeldaTabla>
@@ -124,14 +124,14 @@ export function TabAdicionales({
           <GrillaAdmin>
             {tab.lista.map((adicional) => (
               <CajaCuadricula key={idDe(adicional)}>
-                <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
+                <Text className="font-roboto text-[12px] tracking-[1px] text-marca">
                   {adicional.available === false ? 'OCULTO' : 'DISPONIBLE'}
                 </Text>
                 <Text className="mt-1 font-roboto-light text-base text-tinta" numberOfLines={2}>
                   {adicional.name}
                 </Text>
                 <Text
-                  className="mt-1 font-roboto text-[10px] tracking-[1px] text-tinta/70"
+                  className="mt-1 font-roboto text-[12px] tracking-[1px] text-tinta/70"
                   numberOfLines={2}>
                   {tab.nombresCategoria(adicional.categoryIds)}
                 </Text>

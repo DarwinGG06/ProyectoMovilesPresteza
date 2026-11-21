@@ -22,7 +22,7 @@ export function HeroPerfil({ nombre, email, puntos, nivel, onAjustes }: HeroPerf
 
   return (
     <View className="px-6 pt-8">
-      <Text className="font-roboto text-[10px] tracking-[4px] text-oro">MI CUENTA</Text>
+      <Text className="font-roboto text-[12px] tracking-[4px] text-oro">MI CUENTA</Text>
       <View className="mt-2 h-px w-10 bg-oro" />
 
       <Animated.View style={estilo} className="mt-6 overflow-hidden rounded-[32px]">
@@ -45,7 +45,7 @@ export function HeroPerfil({ nombre, email, puntos, nivel, onAjustes }: HeroPerf
               </Text>
               <Text className="mt-2 font-roboto text-sm text-tinta/70">{email}</Text>
               <View className="mt-5 rounded-full bg-marca-oscura px-5 py-2">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-oro">
+                <Text className="font-roboto text-[12px] tracking-[2px] text-oro">
                   {(nivel || 'Bronce').toUpperCase()} · {saldo} PTS
                 </Text>
               </View>

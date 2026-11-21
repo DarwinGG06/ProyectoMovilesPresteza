@@ -39,7 +39,7 @@ export function PanelNotificaciones() {
                 <View className="flex-row items-center gap-3">
                   <SelloP size="sm" />
                   <View>
-                    <Text className="font-roboto text-[10px] tracking-[3px] text-oro">
+                    <Text className="font-roboto text-[12px] tracking-[3px] text-oro">
                       CASA PRESTEZA
                     </Text>
                     <Text className="mt-1 font-serif-light text-[30px] leading-9 text-crema">
@@ -61,12 +61,12 @@ export function PanelNotificaciones() {
             </View>
 
             <View className="flex-row items-center justify-between border-b border-madera/15 px-6 py-3.5">
-              <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+              <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
                 {tab.unread > 0 ? `${tab.unread} SIN LEER` : 'TODO AL DÍA'}
               </Text>
               {tab.unread > 0 ? (
                 <Pressable onPress={() => void tab.leerTodas()} hitSlop={8}>
-                  <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                  <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
                     MARCAR TODAS
                   </Text>
                 </Pressable>
@@ -112,7 +112,7 @@ export function PanelNotificaciones() {
                           />
                         </View>
                         <View className="flex-1">
-                          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
                             {selloDeKind(item.kind)}
                             {formatoHoraAviso(item.createdAt)
                               ? ` · ${formatoHoraAviso(item.createdAt)}`

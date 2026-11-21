@@ -114,7 +114,7 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
       </View>
 
       <View className="mb-3 mt-8 flex-row items-center">
-        <Text className="font-roboto text-[10px] tracking-[2px] text-tinta/70">
+        <Text className="font-roboto text-[12px] tracking-[2px] text-tinta/70">
           RESUMEN GENERAL
         </Text>
         <View className="ml-3 h-px flex-1 bg-tinta/10" />

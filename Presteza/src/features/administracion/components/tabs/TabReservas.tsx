@@ -96,7 +96,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
                 <View className="flex-1">
                   <View className="flex-row items-start justify-between gap-2">
                     <View className="flex-1">
-                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-marca">
+                      <Text className="font-roboto text-[12px] tracking-[1.4px] text-marca">
                         {reservas.textoEstado(reserva.status).toUpperCase()}
                       </Text>
                       <Text className="mt-1 font-roboto-light text-xl text-tinta">
@@ -108,7 +108,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
                       <Text className="mt-1 font-roboto text-sm text-tinta/70">
                         {reserva.date} · {reserva.time}
                       </Text>
-                      <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70">
+                      <Text className="mt-0.5 font-roboto text-[13px] text-tinta/70">
                         {reserva.numberOfPeople} personas
                       </Text>
                     </View>
@@ -122,7 +122,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
           <GrillaAdmin>
             {reservas.lista.map((reserva) => (
               <CajaCuadricula key={reservas.idDe(reserva)}>
-                <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
+                <Text className="font-roboto text-[12px] tracking-[1px] text-marca">
                   {reservas.textoEstado(reserva.status).toUpperCase()}
                 </Text>
                 <Text className="mt-1 font-roboto-light text-xl text-tinta">

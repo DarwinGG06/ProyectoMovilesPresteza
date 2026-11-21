@@ -11,7 +11,7 @@ export default function Pantalla({ titulo, children }: { titulo: string; childre
       <Pergamino fill>
         <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
           <View className="px-7 pb-16 pt-10">
-            <Text className="font-roboto text-[10px] tracking-[4px] text-marca">PRESTEZA</Text>
+            <Text className="font-roboto text-[12px] tracking-[4px] text-marca">PRESTEZA</Text>
             <Text className="mt-2 font-serif-light text-[40px] leading-tight text-tinta">
               {titulo}
             </Text>

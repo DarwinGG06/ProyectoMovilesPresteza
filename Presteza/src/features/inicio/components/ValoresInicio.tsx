@@ -17,7 +17,7 @@ export function ValoresInicio() {
         <View key={valor.titulo} className="mb-4 overflow-hidden">
           <Pergamino>
             <View className="px-5 py-5">
-              <Text className="font-roboto text-[10px] tracking-[3px] text-marca">
+              <Text className="font-roboto text-[12px] tracking-[3px] text-marca">
                 0{index + 1}
               </Text>
               <Text className="mt-2 font-serif-light text-2xl text-tinta">{valor.titulo}</Text>

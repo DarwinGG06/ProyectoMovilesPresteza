@@ -10,7 +10,7 @@ type NombreIcono = ComponentProps<typeof IconoNav>['name'];
 export function FilaStat({ etiqueta, valor }: { etiqueta: string; valor: string }) {
   return (
     <View className="flex-row items-baseline border-b border-white/10 py-4">
-      <Text className="w-[140px] font-roboto text-[10px] tracking-[2px] text-crema">
+      <Text className="w-[140px] font-roboto text-[12px] tracking-[2px] text-crema">
         {etiqueta}
       </Text>
       <View className="mx-2 mb-1 h-px flex-1 bg-oro" />
@@ -35,7 +35,7 @@ export function ChipFiltro({
       accessibilityState={{ selected: activo }}
       className={`mb-2 mr-2 min-h-12 items-center justify-center rounded-full px-3.5 ${activo ? 'bg-marca' : 'border border-madera/20'}`}>
       <Text
-        className={`font-roboto text-[10px] tracking-[1px] ${activo ? 'text-crema' : 'text-tinta/70'}`}>
+        className={`font-roboto text-[12px] tracking-[1px] ${activo ? 'text-crema' : 'text-tinta/70'}`}>
         {etiqueta}
       </Text>
     </Pressable>
@@ -61,7 +61,7 @@ export function EnlaceAdmin({
         activo ? 'bg-marca' : peligro ? 'border border-red-600/50' : 'border border-marca/35'
       }`}>
       <Text
-        className={`font-roboto text-[11px] tracking-[1.4px] ${
+        className={`font-roboto text-[13px] tracking-[1.4px] ${
           activo ? 'text-crema' : peligro ? 'text-red-700' : 'text-marca'
         }`}>
         {etiqueta}
@@ -86,7 +86,7 @@ export function BotonAgregarAdmin({
       onPress={onPress}
       accessibilityRole="button"
       className="mb-4 min-h-12 items-center justify-center self-start rounded-full bg-marca px-5">
-      <Text className="font-roboto text-[11px] tracking-[1.6px] text-crema">{etiqueta}</Text>
+      <Text className="font-roboto text-[13px] tracking-[1.6px] text-crema">{etiqueta}</Text>
     </Pressable>
   );
 }
@@ -97,7 +97,7 @@ export function MarcaSeleccion({ marcada }: { marcada: boolean }) {
       className={`mr-3 h-6 w-6 items-center justify-center rounded-full ${
         marcada ? 'bg-marca' : 'border border-madera/30'
       }`}>
-      {marcada ? <Text className="font-roboto text-[11px] text-crema">✓</Text> : null}
+      {marcada ? <Text className="font-roboto text-[13px] text-crema">✓</Text> : null}
     </View>
   );
 }
@@ -120,7 +120,7 @@ export function BarraSeleccionAdmin({
       <Pressable
         onPress={onActivar}
         className="mb-4 self-start rounded-full border border-marca/35 px-5 py-2.5">
-        <Text className="font-roboto text-[11px] tracking-[1.6px] text-marca">SELECCIONAR</Text>
+        <Text className="font-roboto text-[13px] tracking-[1.6px] text-marca">SELECCIONAR</Text>
       </Pressable>
     );
   }
@@ -134,12 +134,12 @@ export function BarraSeleccionAdmin({
         onPress={onEliminar}
         disabled={cuenta === 0}
         className={`mb-2 mr-2 rounded-full px-5 py-2.5 ${cuenta === 0 ? 'bg-marca/30' : 'bg-red-700'}`}>
-        <Text className="font-roboto text-[11px] tracking-[1.6px] text-crema">ELIMINAR</Text>
+        <Text className="font-roboto text-[13px] tracking-[1.6px] text-crema">ELIMINAR</Text>
       </Pressable>
       <Pressable
         onPress={onCancelar}
         className="mb-2 rounded-full border border-madera/30 px-5 py-2.5">
-        <Text className="font-roboto text-[11px] tracking-[1.6px] text-tinta/70">CANCELAR</Text>
+        <Text className="font-roboto text-[13px] tracking-[1.6px] text-tinta/70">CANCELAR</Text>
       </Pressable>
     </View>
   );

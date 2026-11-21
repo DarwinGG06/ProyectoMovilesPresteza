@@ -69,7 +69,7 @@ export function MenuAdmin({ activa, onChange, contadores, children }: MenuAdminP
         accessibilityLabel="Abrir menú de administración"
         className="min-h-12 justify-center">
         {children ?? (
-          <Text className="font-roboto text-[10px] tracking-[3px] text-tinta/70">ADMINISTRACIÓN</Text>
+          <Text className="font-roboto text-[12px] tracking-[3px] text-tinta/70">ADMINISTRACIÓN</Text>
         )}
       </Pressable>
 
@@ -84,7 +84,7 @@ export function MenuAdmin({ activa, onChange, contadores, children }: MenuAdminP
                 <ScrollView style={{ maxHeight: 420 }} keyboardShouldPersistTaps="handled">
                   {GRUPOS.map((grupo, grupoIndex) => (
                     <View key={grupo.titulo} className={grupoIndex > 0 ? 'mt-5' : undefined}>
-                      <Text className="mb-1 font-roboto text-[10px] tracking-[3px] text-marca">
+                      <Text className="mb-1 font-roboto text-[12px] tracking-[3px] text-marca">
                         {grupo.titulo}
                       </Text>
                       {grupo.items.map((item) => {
@@ -141,7 +141,7 @@ export function EncabezadoSeccionAdmin({
         accessibilityRole="button"
         accessibilityLabel="Volver a administración"
         className="min-h-12 justify-center self-start">
-        <Text className="font-roboto text-[10px] tracking-[3px] text-tinta/70">←  ADMINISTRACIÓN</Text>
+        <Text className="font-roboto text-[12px] tracking-[3px] text-tinta/70">←  ADMINISTRACIÓN</Text>
       </Pressable>
       <View className="mt-2">
         <MenuAdmin activa={pestana} onChange={onChange} contadores={contadores}>

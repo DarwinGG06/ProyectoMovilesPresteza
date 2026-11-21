@@ -46,7 +46,7 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
       <TarjetaPerfil numero="I" badge="PUNTOS" titulo="Fidelidad">
         <Mensaje texto={error || 'No se pudo cargar el programa.'} error />
         <Pressable onPress={() => void recargar()} className="self-start">
-          <Text className="font-roboto text-[11px] tracking-[2px] text-oro">REINTENTAR</Text>
+          <Text className="font-roboto text-[13px] tracking-[2px] text-oro">REINTENTAR</Text>
         </Pressable>
       </TarjetaPerfil>
     );
@@ -98,7 +98,7 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
           <Text className="font-roboto text-sm leading-5 text-tinta/70">
             {textoCumpleanos(perfil)}
           </Text>
-          <Text className="mt-4 font-roboto text-[10px] tracking-[2px] text-marca">
+          <Text className="mt-4 font-roboto text-[12px] tracking-[2px] text-marca">
             FECHA DE NACIMIENTO
           </Text>
           <Text className="mt-1 font-roboto text-base text-tinta">
@@ -106,7 +106,7 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
               ? formatearFechaLarga(perfil.birthDate) || perfil.birthDate
               : 'Quedó fijada en el registro'}
           </Text>
-          <Text className="mt-4 font-roboto text-[11px] leading-5 text-tinta/70">
+          <Text className="mt-4 font-roboto text-[13px] leading-5 text-tinta/70">
             No se puede editar. El 15% se activa en la semana de tu cumpleaños, una vez al año.
           </Text>
         </TarjetaFolio>
@@ -116,11 +116,11 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
         <TarjetaFolio>
           {programa.tier.benefits.map((beneficio) => (
             <View key={beneficio} className="flex-row items-start border-b border-madera/15 py-3.5">
-              <Text className="mr-3 font-roboto text-[10px] text-marca">●</Text>
+              <Text className="mr-3 font-roboto text-[12px] text-marca">●</Text>
               <Text className="flex-1 font-roboto text-sm leading-5 text-tinta">{beneficio}</Text>
             </View>
           ))}
-          <Text className="mt-5 font-roboto text-[11px] leading-5 text-tinta/70">
+          <Text className="mt-5 font-roboto text-[13px] leading-5 text-tinta/70">
             1 punto por cada {formatCOP(programa.rules.pointCopUnit)} pagados. Canje mínimo:{' '}
             {programa.rules.minRedeemPoints} puntos. Máximo {programa.rules.maxRedeemPercent}% del
             pedido. En la semana del cumpleaños hay 15% extra, una vez al año.
@@ -142,7 +142,7 @@ export function TabPuntos({ userId, token, perfil }: TabPuntosProps) {
                 key={item.id || `${item.createdAt}-${index}`}
                 className="border-b border-madera/15 py-4">
                 <View className="flex-row items-baseline">
-                  <Text className="w-7 font-roboto text-[10px] text-marca">
+                  <Text className="w-7 font-roboto text-[12px] text-marca">
                     {String(index + 1).padStart(2, '0')}
                   </Text>
                   <Text className="font-roboto text-lg text-tinta">{item.etiqueta}</Text>

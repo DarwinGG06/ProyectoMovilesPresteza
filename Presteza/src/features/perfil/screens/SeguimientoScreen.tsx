@@ -41,7 +41,7 @@ export function SeguimientoScreen() {
           Entra a tu cuenta para ver el pedido.
         </Text>
         <Pressable onPress={seguimiento.irAlPerfil} className="mt-6">
-          <Text className="font-roboto text-[11px] tracking-[2px] text-marca">IR AL PERFIL</Text>
+          <Text className="font-roboto text-[13px] tracking-[2px] text-marca">IR AL PERFIL</Text>
         </Pressable>
       </View>
     );
@@ -63,7 +63,7 @@ export function SeguimientoScreen() {
       <Pergamino fill>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className="px-6 pb-16 pt-10">
-            <Text className="font-roboto text-[10px] tracking-[4px] text-marca">EN COCINA</Text>
+            <Text className="font-roboto text-[12px] tracking-[4px] text-marca">EN COCINA</Text>
             <Text className="mt-2 font-serif-light text-[36px] leading-[40px] text-tinta">
               Seguimiento
             </Text>
@@ -82,7 +82,7 @@ export function SeguimientoScreen() {
               </View>
             ) : (
               <View className="mt-8">
-                <Text className="font-roboto text-[10px] tracking-[2px] text-marca">
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
                   #{idPedido(pedido).slice(-8).toUpperCase()}
                 </Text>
                 <Text className="mt-2 font-serif-light text-2xl text-tinta">
@@ -134,7 +134,7 @@ export function SeguimientoScreen() {
                     </View>
                   ))}
                   <View className="mt-4 flex-row items-end justify-between">
-                    <Text className="font-roboto text-[10px] tracking-[2px] text-marca">TOTAL</Text>
+                    <Text className="font-roboto text-[12px] tracking-[2px] text-marca">TOTAL</Text>
                     <Text className="font-serif-light text-3xl text-tinta">
                       {formatCOP(pedido.total || 0)}
                     </Text>

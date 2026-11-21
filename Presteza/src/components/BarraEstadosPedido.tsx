@@ -117,7 +117,7 @@ export function BarraEstadosPedido({
                 />
               </View>
               <Text
-                className={`mt-2 text-center font-roboto ${amplia ? 'text-[11px]' : 'text-[10px]'} ${
+                className={`mt-2 text-center font-roboto ${amplia ? 'text-[13px]' : 'text-[12px]'} ${
                   actual ? 'text-tinta' : 'text-tinta/70'
                 }`}>
                 {nombre}

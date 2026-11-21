@@ -11,8 +11,8 @@ type Props = {
 export default function Badge({ text, variant = 'pill', className }: Props) {
   const clases =
     variant === 'sello'
-      ? 'font-roboto-semibold text-[11px] tracking-[3px] text-marca'
-      : 'self-start rounded-full bg-marca/10 px-3 py-1 font-roboto-semibold text-[11px] tracking-[2px] text-marca';
+      ? 'font-roboto-semibold text-[13px] tracking-[3px] text-marca'
+      : 'self-start rounded-full bg-marca/10 px-3 py-1 font-roboto-semibold text-[13px] tracking-[2px] text-marca';
 
   return <Text className={`${clases} ${className ?? ''}`}>{text}</Text>;
 }

@@ -105,7 +105,7 @@ export function TabPedidos({
                 <View className="flex-1">
                   <View className="flex-row items-start justify-between gap-2">
                     <View className="flex-1">
-                      <Text className="font-roboto text-[10px] tracking-[1.4px] text-marca">
+                      <Text className="font-roboto text-[12px] tracking-[1.4px] text-marca">
                         {textoEstadoPedido(pedido.status).toUpperCase()}
                       </Text>
                       <Text className="mt-1 font-serif text-[20px] text-tinta">
@@ -115,7 +115,7 @@ export function TabPedidos({
                         {pedido.user_name || 'Cliente'}
                         {textoEntrega(pedido) ? ` · ${textoEntrega(pedido)}` : ''}
                       </Text>
-                      <Text className="mt-0.5 font-roboto text-[11px] text-tinta/70">
+                      <Text className="mt-0.5 font-roboto text-[13px] text-tinta/70">
                         {formatoFechaHora(pedido.createdAt)}
                       </Text>
                     </View>
@@ -132,7 +132,7 @@ export function TabPedidos({
           <GrillaAdmin>
             {tab.lista.map((pedido) => (
               <CajaCuadricula key={idDe(pedido)}>
-                <Text className="font-roboto text-[10px] tracking-[1px] text-marca">
+                <Text className="font-roboto text-[12px] tracking-[1px] text-marca">
                   {textoEstadoPedido(pedido.status).toUpperCase()}
                 </Text>
                 <Text className="mt-1 font-serif text-[18px] text-tinta">
@@ -141,7 +141,7 @@ export function TabPedidos({
                 <Text className="mt-1 font-roboto text-sm text-tinta/70" numberOfLines={1}>
                   {pedido.user_name || 'Cliente'}
                 </Text>
-                <Text className="mt-1 font-roboto text-[11px] text-tinta/70">
+                <Text className="mt-1 font-roboto text-[13px] text-tinta/70">
                   {formatoFechaHora(pedido.createdAt)}
                 </Text>
                 <Text className="mt-2 font-roboto text-lg text-marca">
@@ -194,7 +194,7 @@ export function TabPedidos({
             ))}
             <Text className="font-roboto text-lg text-marca">{formatCOP(detalle.total || 0)}</Text>
 
-            <Text className="mt-2 font-roboto text-[10px] tracking-[2px] text-marca">ESTADO</Text>
+            <Text className="mt-2 font-roboto text-[12px] tracking-[2px] text-marca">ESTADO</Text>
             <Text className="font-roboto text-sm text-tinta">
               {textoEstadoPedido(detalle.status)}
             </Text>

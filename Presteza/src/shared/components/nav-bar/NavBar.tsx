@@ -21,7 +21,7 @@ export function NavBar() {
         <View className="flex-row items-center px-6 pb-3 pt-1">
           <Pressable onPress={nav.irAlInicio} className="flex-1">
             <Text className="font-serif text-[18px] tracking-[6px] text-tinta">PRESTEZA</Text>
-            <Text className="mt-0.5 font-roboto text-[9px] tracking-[2px] text-marca">
+            <Text className="mt-0.5 font-roboto text-[12px] tracking-[2px] text-marca">
               {nav.soloEntregas ? 'REPARTO' : 'MANIZALES'}
             </Text>
           </Pressable>
@@ -47,7 +47,7 @@ export function NavBar() {
                 </Pressable>
                 {avisos.unread > 0 ? (
                   <View className="absolute right-0 top-1 h-[18px] min-w-[18px] items-center justify-center rounded-full bg-marca px-1">
-                    <Text className="text-center font-roboto text-[10px] leading-[12px] text-crema">
+                    <Text className="text-center font-roboto text-[12px] leading-[16px] text-crema">
                       {avisos.unread > 9 ? '9+' : avisos.unread}
                     </Text>
                   </View>
@@ -65,7 +65,7 @@ export function NavBar() {
                 <BotonBarra icono="bag-handle-outline" etiqueta="Bandeja" onPress={nav.abrirCarrito} />
                 {nav.totalItems > 0 ? (
                   <View className="absolute right-0 top-1 h-[18px] min-w-[18px] items-center justify-center rounded-full bg-marca px-1">
-                    <Text className="text-center font-roboto text-[10px] leading-[12px] text-crema">
+                    <Text className="text-center font-roboto text-[12px] leading-[16px] text-crema">
                       {nav.totalItems > 9 ? '9+' : nav.totalItems}
                     </Text>
                   </View>

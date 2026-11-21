@@ -22,7 +22,7 @@ export function FormularioContacto({
   return (
     <Pergamino>
       <View className="px-7 pb-16 pt-12">
-        <Text className="font-roboto text-[10px] tracking-[4px] text-marca">CORRESPONDENCIA</Text>
+        <Text className="font-roboto text-[12px] tracking-[4px] text-marca">CORRESPONDENCIA</Text>
         <Text className="mt-3 font-serif-light text-[34px] leading-9 text-tinta">
           Envíanos un mensaje
         </Text>

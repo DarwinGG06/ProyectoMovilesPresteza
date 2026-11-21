@@ -75,7 +75,7 @@ export default function Field<T extends FieldValues>({
       rules={rules}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
         <View className={linea ? 'gap-0.5' : 'gap-1.5'}>
-          <Text className="font-roboto text-[10px] tracking-[2px] text-marca">{label}</Text>
+          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
           <View className="relative justify-center">
             <TextInput
               ref={inputRef}

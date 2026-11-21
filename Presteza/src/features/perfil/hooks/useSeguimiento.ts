@@ -1,10 +1,12 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 
 import { cancelarPedido, idPedido, obtenerPedidos } from '@/api/perfil';
 import { useSession } from '@/session/context';
 import { esAdmin, esRepartidor } from '@/session/roles';
 import { useAviso } from '@/shared/components/aviso';
+import { EVENTO_PEDIDO } from '@/shared/realtime/eventos';
 
 import type { Pedido } from '../types';
 
@@ -56,11 +58,13 @@ export function useSeguimiento() {
 
   useEffect(() => {
     if (!isAuthenticated || !user?.id) return;
-    const enCamino = String(pedido?.status || '').toLowerCase() === 'en_camino';
-    // En camino: cada 3 s. El resto: cada 10 s.
-    const timer = setInterval(() => void recargar(true), enCamino ? 3000 : 10000);
-    return () => clearInterval(timer);
-  }, [isAuthenticated, pedido?.status, recargar, user?.id]);
+    const timer = setInterval(() => void recargar(true), 3000);
+    const sub = DeviceEventEmitter.addListener(EVENTO_PEDIDO, () => void recargar(true));
+    return () => {
+      clearInterval(timer);
+      sub.remove();
+    };
+  }, [isAuthenticated, recargar, user?.id]);
 
   const cancelar = useCallback(() => {
     if (!token || !pedido) return;

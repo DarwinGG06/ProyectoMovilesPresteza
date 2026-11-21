@@ -15,6 +15,7 @@ import { NavBar } from '@/shared/components/nav-bar';
 import { ToastNotificacion } from '@/shared/components/notificaciones/ToastNotificacion';
 import { useFuentes } from '@/shared/hooks/useFuentes';
 import { NotificacionesProvider } from '@/shared/notificaciones/NotificacionesProvider';
+import { RealtimeProvider } from '@/shared/realtime/RealtimeProvider';
 
 import '../global.css';
 
@@ -56,23 +57,25 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <CartProvider>
           <SessionProvider>
-            <NotificacionesProvider>
-              <AvisoProvider>
-                <ControlDrawerHomeProvider>
-                  <GuardiaRepartidor>
-                    <View className="flex-1 bg-pergamino">
-                      <NavBar />
-                      <View className="flex-1">
-                        <Rutas />
+            <RealtimeProvider>
+              <NotificacionesProvider>
+                <AvisoProvider>
+                  <ControlDrawerHomeProvider>
+                    <GuardiaRepartidor>
+                      <View className="flex-1 bg-pergamino">
+                        <NavBar />
+                        <View className="flex-1">
+                          <Rutas />
+                        </View>
+                        <WhatsAppFloat />
+                        <ToastNotificacion />
+                        <StatusBar style="dark" />
                       </View>
-                      <WhatsAppFloat />
-                      <ToastNotificacion />
-                      <StatusBar style="dark" />
-                    </View>
-                  </GuardiaRepartidor>
-                </ControlDrawerHomeProvider>
-              </AvisoProvider>
-            </NotificacionesProvider>
+                    </GuardiaRepartidor>
+                  </ControlDrawerHomeProvider>
+                </AvisoProvider>
+              </NotificacionesProvider>
+            </RealtimeProvider>
           </SessionProvider>
         </CartProvider>
       </SafeAreaProvider>

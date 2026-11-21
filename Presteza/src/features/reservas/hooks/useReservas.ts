@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useSession } from '@/session/context';
 import { useAviso } from '@/shared/components/aviso';
+import { usePedidosActualizados } from '@/shared/hooks/usePedidosActualizados';
 
 import {
   actualizarReserva,
@@ -84,6 +85,24 @@ export function useReservas({ alcance = 'mias', onCambio }: UseReservasOpciones 
   useEffect(() => {
     void recargar();
   }, [recargar]);
+
+  const consultarReservas = useCallback(async () => {
+    if (!token || (alcance === 'todas' && user?.role !== 'admin')) return [];
+    return listarReservas(token, alcance);
+  }, [alcance, token, user?.role]);
+
+  const recibirReservas = useCallback(
+    (items: Reserva[]) => {
+      aplicar(() => items);
+    },
+    [aplicar],
+  );
+
+  usePedidosActualizados(
+    consultarReservas,
+    recibirReservas,
+    Boolean(token) && isAuthenticated && !guardando,
+  );
 
   const lista = useMemo(() => {
     const ordenadas = ordenarReservas(reservas);

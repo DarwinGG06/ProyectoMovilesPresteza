@@ -1,13 +1,31 @@
 import { useCallback } from 'react';
 
 import { actualizarMensaje, crearMensaje, eliminarMensaje, listarMensajes } from '@/api/admin';
+import { usePedidosActualizados } from '@/shared/hooks/usePedidosActualizados';
+
 import type { MensajeAdmin, MensajeForm } from '../types';
 import { idDe } from '../utils';
 import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
 
 export function useAdminMensajes() {
-  const { lista: mensajes, setLista, cargando, guardando, setGuardando, error, recargar, aviso, conToken } =
-    useListaAdmin(listarMensajes);
+  const {
+    lista: mensajes,
+    setLista,
+    cargando,
+    guardando,
+    setGuardando,
+    error,
+    recargar,
+    aviso,
+    conToken,
+    token,
+  } = useListaAdmin(listarMensajes);
+
+  const consultarMensajes = useCallback(
+    () => (token ? listarMensajes(token) : Promise.resolve([])),
+    [token],
+  );
+  usePedidosActualizados(consultarMensajes, setLista, Boolean(token) && !guardando);
 
   const guardar = useCallback(
     async (datos: MensajeForm, editando?: MensajeAdmin | null) => {

@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 
 import {
   borrarPushToken,
@@ -20,6 +21,7 @@ import {
 } from '@/api/notificaciones';
 import { PermisoAvisos } from '@/shared/components/notificaciones/PermisoAvisos';
 import { useSession } from '@/session/context';
+import { EVENTO_AVISO, EVENTO_PEDIDO, EVENTO_RESERVA } from '@/shared/realtime/eventos';
 
 import { avisarCambioCumpleanios } from './cumpleanios';
 import {
@@ -117,9 +119,15 @@ export function NotificacionesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!API_NOTIFICACIONES_HABILITADA || !isAuthenticated || !token) return;
 
-    const timer = setInterval(() => void refrescar(), 8000);
+    const timer = setInterval(() => void refrescar(), 3000);
+    const subs = [EVENTO_AVISO, EVENTO_PEDIDO, EVENTO_RESERVA].map((nombre) =>
+      DeviceEventEmitter.addListener(nombre, () => void refrescar()),
+    );
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      subs.forEach((sub) => sub.remove());
+    };
   }, [isAuthenticated, refrescar, token]);
 
   useEffect(() => {

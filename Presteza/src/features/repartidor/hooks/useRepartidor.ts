@@ -11,6 +11,7 @@ import type { PedidoAdmin } from '@/features/administracion/types';
 import { useSession } from '@/session/context';
 import { esRepartidor } from '@/session/roles';
 import { useAviso } from '@/shared/components/aviso';
+import { usePedidosActualizados } from '@/shared/hooks/usePedidosActualizados';
 
 function estadoClave(status?: string) {
   return String(status || '').trim().toLowerCase();
@@ -52,6 +53,13 @@ export function useRepartidor() {
     }
     void recargar();
   }, [isAuthenticated, recargar, user]);
+
+  const consultarPedidos = useCallback(async () => {
+    if (!token || !esRepartidor(user)) return [];
+    return listarPedidosEntrega(token);
+  }, [token, user]);
+
+  usePedidosActualizados(consultarPedidos, setPedidos, autorizado && !ocupadoId);
 
   const salirAEntregar = useCallback(
     async (pedido: PedidoAdmin) => {

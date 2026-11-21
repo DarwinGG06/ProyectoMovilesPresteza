@@ -42,11 +42,16 @@ export function htmlMapaRuta(destinoInicial?: PuntoMapa | null) {
       const sede = [${lng}, ${lat}];
       const destino0 = ${dLat && dLng ? `[${dLng}, ${dLat}]` : 'null'};
       let destino = destino0;
+      // Solo perímetro urbano de Manizales (no se sale de la ciudad).
+      const manizales = [[-75.545, 5.035], [-75.465, 5.085]];
       const mapa = new maplibregl.Map({
         container: 'mapa',
         style: 'https://tiles.openfreemap.org/styles/positron',
         center: destino0 || sede,
         zoom: 15.2,
+        minZoom: 12.5,
+        maxZoom: 18,
+        maxBounds: manizales,
         pitch: 58,
         bearing: -18,
         attributionControl: true,

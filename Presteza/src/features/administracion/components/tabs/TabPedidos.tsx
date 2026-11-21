@@ -198,15 +198,38 @@ export function TabPedidos({
 
             <View className="my-4 h-px bg-madera/20" />
 
-            <View className="gap-2.5">
+            <View className="gap-3">
               {(detalle.products ?? []).map((producto, index) => (
-                <View
-                  key={`${producto.dishId}-${index}`}
-                  className="flex-row items-start justify-between gap-3">
-                  <Text className="flex-1 font-roboto text-[15px] text-tinta">
-                    <Text className="font-roboto text-marca">{producto.quantity} × </Text>
-                    {producto.name}
-                  </Text>
+                <View key={`${producto.dishId}-${index}`}>
+                  <View className="flex-row items-start justify-between gap-3">
+                    <Text className="flex-1 font-roboto text-[15px] text-tinta">
+                      <Text className="font-roboto text-marca">{producto.quantity} × </Text>
+                      {producto.name}
+                    </Text>
+                    {producto.unit_price != null ? (
+                      <Text className="font-roboto text-[14px] text-marca">
+                        {formatCOP((producto.unit_price || 0) * (producto.quantity || 1))}
+                      </Text>
+                    ) : null}
+                  </View>
+                  {(producto.adds ?? []).length > 0 ? (
+                    <View className="mt-1.5 gap-1 border-l border-oro/40 pl-3">
+                      {(producto.adds ?? []).map((extra, i) => (
+                        <View
+                          key={`${extra.name}-${i}`}
+                          className="flex-row items-baseline justify-between gap-2">
+                          <Text className="flex-1 font-roboto text-[13px] text-tinta/70">
+                            + {extra.name}
+                          </Text>
+                          {extra.price != null ? (
+                            <Text className="font-roboto text-[12px] text-tinta/55">
+                              {formatCOP(extra.price)}
+                            </Text>
+                          ) : null}
+                        </View>
+                      ))}
+                    </View>
+                  ) : null}
                 </View>
               ))}
             </View>

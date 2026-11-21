@@ -1,10 +1,13 @@
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
 import { idDe } from '@/api/helpers';
 import { formatCOP } from '@/services/cart/CartContext';
 import { formatoFechaHora, textoEntrega, textoEstadoPedido } from '@/features/administracion/utils';
+import { geocodeDestino } from '@/shared/components/mapa/geocodeDestino';
 import { MapaRuta } from '@/shared/components/mapa/MapaRuta';
+import type { PuntoMapa } from '@/shared/components/mapa/htmlMapaRuta';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
@@ -23,6 +26,34 @@ export function RepartidorScreen() {
     .filter((id): id is string => Boolean(id));
   const ubicacion = useUbicacionRepartidor(idsEnCamino);
   const enRuta = idsEnCamino.length > 0;
+  const [destino, setDestino] = useState<PuntoMapa | null>(null);
+
+  const direccionActiva = useMemo(() => {
+    const orden = [...tab.pedidos].sort((a, b) => {
+      const peso = (s?: string) => {
+        const k = claveEstado(s);
+        if (k === 'en_camino') return 0;
+        if (k === 'listo') return 1;
+        return 2;
+      };
+      return peso(a.status) - peso(b.status);
+    });
+    return orden.find((p) => p.deliveryAddress)?.deliveryAddress ?? null;
+  }, [tab.pedidos]);
+
+  useEffect(() => {
+    if (!direccionActiva) {
+      setDestino(null);
+      return;
+    }
+    let vivo = true;
+    void geocodeDestino(direccionActiva).then((p) => {
+      if (vivo) setDestino(p);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [direccionActiva]);
 
   if (!tab.autorizado) {
     return (
@@ -54,14 +85,16 @@ export function RepartidorScreen() {
             />
           </View>
 
-          <MapaRuta alto={340} repartidor={ubicacion.punto} />
+          <MapaRuta alto={340} repartidor={ubicacion.punto} destino={destino} />
 
           <View className="mx-4 -mt-5 mb-2 border border-linea bg-white px-4 py-3">
             <Text className="text-center font-roboto text-sm text-tinta">
               {ubicacion.conectado
                 ? enRuta
-                  ? 'El cliente ve este mapa mientras vas en camino.'
-                  : 'Conectado. Al salir a entregar, el cliente verá el punto.'
+                  ? 'La moto eres tú, la casita el destino y la P la sede.'
+                  : destino
+                    ? 'La casita es el destino del pedido. Al salir, el cliente ve tu moto.'
+                    : 'Conectado. Al salir a entregar, el cliente verá el punto.'
                 : 'Activa el interruptor para compartir la ruta.'}
             </Text>
             {ubicacion.aviso ? (

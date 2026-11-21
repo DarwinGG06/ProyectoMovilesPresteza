@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { BarraEstadosPedido } from '@/components/BarraEstadosPedido';
@@ -5,7 +6,9 @@ import Button from '@/components/Button';
 import { idPedido } from '@/api/perfil';
 import { formatCOP } from '@/services/cart/CartContext';
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
+import { geocodeDestino } from '@/shared/components/mapa/geocodeDestino';
 import { MapaRuta } from '@/shared/components/mapa/MapaRuta';
+import type { PuntoMapa } from '@/shared/components/mapa/htmlMapaRuta';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
 import { SelloP } from '@/shared/components/nav-bar/SelloP';
 
@@ -14,6 +17,22 @@ import { useSeguimiento } from '../hooks/useSeguimiento';
 
 export function SeguimientoScreen() {
   const seguimiento = useSeguimiento();
+  const [destino, setDestino] = useState<PuntoMapa | null>(null);
+
+  useEffect(() => {
+    const dir = seguimiento.pedido?.deliveryAddress;
+    if (!dir) {
+      setDestino(null);
+      return;
+    }
+    let vivo = true;
+    void geocodeDestino(dir).then((p) => {
+      if (vivo) setDestino(p);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [seguimiento.pedido?.deliveryAddress]);
 
   if (!seguimiento.isAuthenticated) {
     return (
@@ -82,6 +101,7 @@ export function SeguimientoScreen() {
                   <View className="mt-6 overflow-hidden border border-linea bg-white">
                     <MapaRuta
                       alto={280}
+                      destino={destino}
                       repartidor={
                         pedido.courierLat != null && pedido.courierLng != null
                           ? { lat: pedido.courierLat, lng: pedido.courierLng }
@@ -89,9 +109,11 @@ export function SeguimientoScreen() {
                       }
                     />
                     <Text className="px-4 py-3 text-center font-roboto text-sm text-tinta">
-                      {pedido.courierLat != null
-                        ? 'El repartidor va en camino. El punto dorado es él y el vino es la sede.'
-                        : 'El punto vino es Presteza. El dorado aparece cuando el pedido está en camino.'}
+                      {!destino
+                        ? 'Buscando tu dirección en el mapa…'
+                        : pedido.courierLat != null
+                          ? 'La moto es el repartidor, la casita tu dirección y la P la sede.'
+                          : 'La casita es tu dirección y la P es Presteza. La moto aparece en camino.'}
                     </Text>
                   </View>
                 ) : null}

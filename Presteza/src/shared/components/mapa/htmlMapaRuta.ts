@@ -6,10 +6,14 @@ function numero(valor: number) {
   return Number.isFinite(valor) ? String(valor) : '0';
 }
 
-/** Mapa inclinado con edificios. La sede queda fija; el repartidor se mueve con `ponerRepartidor`. */
-export function htmlMapaRuta() {
+/** P = sede; casita = destino; moto = repartidor. */
+export function htmlMapaRuta(destinoInicial?: PuntoMapa | null) {
   const lat = numero(COORDENADAS_SEDE.lat);
   const lng = numero(COORDENADAS_SEDE.lng);
+  const dLat =
+    destinoInicial && Number.isFinite(destinoInicial.lat) ? numero(destinoInicial.lat) : '';
+  const dLng =
+    destinoInicial && Number.isFinite(destinoInicial.lng) ? numero(destinoInicial.lng) : '';
 
   return `<!DOCTYPE html>
 <html>
@@ -26,35 +30,55 @@ export function htmlMapaRuta() {
         box-shadow: 0 8px 18px rgba(30, 40, 50, 0.28);
         display: flex; align-items: center; justify-content: center;
       }
+      .marca.sede { background: #6b1d3d; color: #d4af77; font: 700 16px/1 serif; }
       .marca.casa { background: #ffffff; }
-      .marca.persona { background: #e07a3d; }
+      .marca.moto { background: #e07a3d; }
     </style>
   </head>
   <body>
     <div id="mapa"></div>
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
     <script>
-      const casa = [${lng}, ${lat}];
+      const sede = [${lng}, ${lat}];
+      const destino0 = ${dLat && dLng ? `[${dLng}, ${dLat}]` : 'null'};
+      let destino = destino0;
       const mapa = new maplibregl.Map({
         container: 'mapa',
         style: 'https://tiles.openfreemap.org/styles/positron',
-        center: casa,
-        zoom: 16.4,
+        center: destino0 || sede,
+        zoom: 15.2,
         pitch: 58,
         bearing: -18,
         attributionControl: true,
       });
       mapa.dragRotate.enable();
       mapa.touchZoomRotate.enable();
+      function nodo(html) {
+        const w = document.createElement('div');
+        w.innerHTML = html;
+        return w.firstElementChild;
+      }
+      const htmlSede = '<div class="marca sede">P</div>';
       const htmlCasa = '<div class="marca casa"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5" stroke="#2c333a" stroke-width="2" stroke-linejoin="round"/><path d="M7 10.5V20h10v-9.5" stroke="#2c333a" stroke-width="2"/></svg></div>';
-      const htmlPersona = '<div class="marca persona"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="4.5" r="2.6"/><path d="M8 21v-1.4c0-2.4 1.7-3.8 4-3.8s4 1.4 4 3.8V21H8z"/><path d="M9.2 12.2 12 9.6l2.8 2.6-1.1 1.2V16H10.3v-2.6l-1.1-1.2z"/></svg></div>';
-      const elCasa = document.createElement('div');
-      elCasa.innerHTML = htmlCasa;
-      const marcaCasa = new maplibregl.Marker({ element: elCasa.firstChild, anchor: 'center' })
-        .setLngLat(casa)
-        .addTo(mapa);
-      let marca = null;
+      const htmlMoto = '<div class="marca moto"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="6.5" cy="16.5" r="2.6" stroke="#fff" stroke-width="1.8"/><circle cx="17.5" cy="16.5" r="2.6" stroke="#fff" stroke-width="1.8"/><path d="M9.2 16.2h5.2L16 12.2h2.4l1.2 2.2M4.2 16.2H3l1.4-3.4h3.2L9.2 16.2z" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M12.2 12.2 10.6 8.4H8.4" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></div>';
+      new maplibregl.Marker({ element: nodo(htmlSede), anchor: 'center' }).setLngLat(sede).addTo(mapa);
+      let marcaCasa = null;
+      let marcaMoto = null;
       let ajustado = false;
+      function listo(fn) {
+        if (mapa.isStyleLoaded()) fn();
+        else {
+          mapa.once('load', fn);
+          setTimeout(function () { try { fn(); } catch (e) {} }, 1800);
+        }
+      }
+      function encuadrar(extra) {
+        const b = new maplibregl.LngLatBounds(sede, sede);
+        if (destino) b.extend(destino);
+        if (extra) b.extend(extra);
+        mapa.fitBounds(b, { padding: 64, maxZoom: 16.2, pitch: 58, bearing: -18, duration: ajustado ? 700 : 0 });
+        ajustado = true;
+      }
       function pintar() {
         if (mapa.getLayer('building')) mapa.setLayoutProperty('building', 'visibility', 'none');
         ['park', 'landcover_wood'].forEach(function (id) {
@@ -63,51 +87,40 @@ export function htmlMapaRuta() {
         if (mapa.getLayer('water')) mapa.setPaintProperty('water', 'fill-color', '#b9dff5');
         if (mapa.getLayer('background')) mapa.setPaintProperty('background', 'background-color', '#eef2f5');
         if (mapa.getLayer('edificios-3d')) return;
-        const simbolo = mapa.getStyle().layers.find(function (capa) { return capa.type === 'symbol'; });
+        const simbolo = mapa.getStyle().layers.find(function (c) { return c.type === 'symbol'; });
         mapa.addLayer({
-          id: 'edificios-3d',
-          type: 'fill-extrusion',
-          source: 'openmaptiles',
-          'source-layer': 'building',
-          minzoom: 14,
+          id: 'edificios-3d', type: 'fill-extrusion', source: 'openmaptiles', 'source-layer': 'building', minzoom: 14,
           paint: {
-            'fill-extrusion-color': '#f7f7f5',
-            'fill-extrusion-opacity': 0.96,
+            'fill-extrusion-color': '#f7f7f5', 'fill-extrusion-opacity': 0.96,
             'fill-extrusion-base': ['coalesce', ['to-number', ['get', 'render_min_height']], 0],
-            'fill-extrusion-height': [
-              'interpolate', ['linear'], ['zoom'],
-              14, 0,
-              16, ['max', ['coalesce', ['to-number', ['get', 'render_height']], 0], 16]
-            ]
+            'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 14, 0, 16, ['max', ['coalesce', ['to-number', ['get', 'render_height']], 0], 16]]
           }
         }, simbolo && simbolo.id);
       }
       mapa.on('load', pintar);
-      window.ponerRepartidor = function (lat, lng) {
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-        const mover = function () {
-          const punto = [lng, lat];
-          if (!marca) {
-            const el = document.createElement('div');
-            el.innerHTML = htmlPersona;
-            marca = new maplibregl.Marker({ element: el.firstChild, anchor: 'center' })
-              .setLngLat(punto)
-              .addTo(mapa);
-          } else {
-            marca.setLngLat(punto);
-          }
-          if (!ajustado) {
-            const bounds = new maplibregl.LngLatBounds(casa, casa);
-            bounds.extend(punto);
-            mapa.fitBounds(bounds, { padding: 72, maxZoom: 16.6, pitch: 58, bearing: -18, duration: 0 });
-            ajustado = true;
-          } else {
-            mapa.easeTo({ center: punto, pitch: 58, duration: 900 });
-          }
-        };
-        if (mapa.isStyleLoaded()) mover();
-        else mapa.once('load', mover);
+      window.ponerDestino = function (la, ln) {
+        if (!Number.isFinite(la) || !Number.isFinite(ln)) return;
+        listo(function () {
+          destino = [ln, la];
+          if (!marcaCasa) marcaCasa = new maplibregl.Marker({ element: nodo(htmlCasa), anchor: 'center' }).setLngLat(destino).addTo(mapa);
+          else marcaCasa.setLngLat(destino);
+          encuadrar(marcaMoto ? marcaMoto.getLngLat() : null);
+        });
       };
+      window.ponerRepartidor = function (la, ln) {
+        if (!Number.isFinite(la) || !Number.isFinite(ln)) return;
+        listo(function () {
+          const p = [ln, la];
+          if (!marcaMoto) {
+            marcaMoto = new maplibregl.Marker({ element: nodo(htmlMoto), anchor: 'center' }).setLngLat(p).addTo(mapa);
+            encuadrar(p);
+          } else {
+            marcaMoto.setLngLat(p);
+            mapa.easeTo({ center: p, pitch: 58, duration: 900 });
+          }
+        });
+      };
+      if (destino0) listo(function () { window.ponerDestino(destino0[1], destino0[0]); });
       window.mapaListo = true;
     </script>
   </body>

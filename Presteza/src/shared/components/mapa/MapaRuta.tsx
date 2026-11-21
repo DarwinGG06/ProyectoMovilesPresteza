@@ -4,56 +4,49 @@ import { WebView } from 'react-native-webview';
 
 import { htmlMapaRuta, type PuntoMapa } from './htmlMapaRuta';
 
-function scriptPunto(punto?: PuntoMapa | null) {
-  if (!punto || !Number.isFinite(punto.lat) || !Number.isFinite(punto.lng)) return '';
-  return `window.ponerRepartidor && window.ponerRepartidor(${punto.lat}, ${punto.lng}); true;`;
+function scriptMoto(repartidor?: PuntoMapa | null) {
+  if (!repartidor || !Number.isFinite(repartidor.lat) || !Number.isFinite(repartidor.lng)) return '';
+  return `window.ponerRepartidor && window.ponerRepartidor(${repartidor.lat}, ${repartidor.lng}); true;`;
 }
 
 export function MapaRuta({
   alto = 340,
   repartidor,
+  destino,
 }: {
   alto?: number;
   repartidor?: PuntoMapa | null;
+  destino?: PuntoMapa | null;
 }) {
-  const html = useMemo(() => htmlMapaRuta(), []);
+  const html = useMemo(() => htmlMapaRuta(destino ?? null), [destino?.lat, destino?.lng]);
   const web = useRef<WebView>(null);
   const marco = useRef<HTMLIFrameElement | null>(null);
-  const lat = repartidor?.lat;
-  const lng = repartidor?.lng;
+  const js = scriptMoto(repartidor);
+  const clave = `d:${destino?.lat ?? 'x'}:${destino?.lng ?? 'x'}`;
 
   useEffect(() => {
-    const js = scriptPunto(
-      lat != null && lng != null ? { lat, lng } : null,
-    );
     if (!js) return;
-
     if (Platform.OS === 'web') {
-      const ventana = marco.current?.contentWindow as (Window & { eval?: (code: string) => unknown }) | null;
       try {
-        ventana?.eval?.(js);
+        (marco.current?.contentWindow as (Window & { eval?: (c: string) => unknown }) | null)?.eval?.(js);
       } catch {
-        // El iframe aún no cargó.
+        // iframe aún no listo
       }
       return;
     }
-
     web.current?.injectJavaScript(js);
-  }, [lat, lng]);
+  }, [js, clave]);
 
   if (Platform.OS === 'web') {
-    const conPunto =
-      lat != null && lng != null
-        ? html.replace(
-            'window.mapaListo = true;',
-            `window.mapaListo = true; window.ponerRepartidor(${lat}, ${lng});`,
-          )
-        : html;
+    const src = js
+      ? html.replace('window.mapaListo = true;', `window.mapaListo = true; ${js}`)
+      : html;
     return (
       <View style={{ height: alto, overflow: 'hidden' }}>
         <iframe
+          key={clave}
           ref={marco as never}
-          srcDoc={conPunto}
+          srcDoc={src}
           title="Ruta del domicilio"
           width="100%"
           height={alto}
@@ -67,6 +60,7 @@ export function MapaRuta({
   return (
     <View style={{ height: alto }}>
       <WebView
+        key={clave}
         ref={web}
         source={{ html, baseUrl: 'https://unpkg.com/' }}
         style={{ flex: 1, backgroundColor: '#eef2f5' }}
@@ -77,7 +71,6 @@ export function MapaRuta({
         setSupportMultipleWindows={false}
         nestedScrollEnabled
         onLoadEnd={() => {
-          const js = scriptPunto(lat != null && lng != null ? { lat, lng } : null);
           if (js) web.current?.injectJavaScript(js);
         }}
       />

@@ -77,15 +77,16 @@ export function MenuDrawer({ visible, onClose }: MenuDrawerProps) {
                 icono={enlace.icono}
                 onPress={() => {
                   onClose();
+                  // navigate evita apilar la misma ruta (p. ej. ya estás en Menú).
                   if (enlace.ruta === '/home/reservas') {
-                    router.push('/home/reservas?desde=menu' as Href);
+                    router.navigate('/home/reservas?desde=menu' as Href);
                     return;
                   }
                   if (enlace.ruta === '/home/admin') {
                     router.navigate('/home/admin' as Href);
                     return;
                   }
-                  router.push(enlace.ruta);
+                  router.navigate(enlace.ruta);
                 }}
               />
             ))}

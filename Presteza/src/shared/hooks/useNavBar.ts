@@ -9,7 +9,8 @@ import { esAdmin } from '@/session/roles';
 export function useNavBar() {
   const { user, isAuthenticated } = useSession();
   const { totalItems } = useCart();
-  const { alternar: alternarDrawerNativo, disponible: drawerListo } = useControlDrawerHome();
+  // El NavBar vive fuera del Drawer de /home; el modal MenuDrawer cubre toda la app.
+  const { cerrar: cerrarDrawerNativo, disponible: drawerListo } = useControlDrawerHome();
   const [loginAbierto, setLoginAbierto] = useState(false);
   const [usuarioAbierto, setUsuarioAbierto] = useState(false);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
@@ -30,12 +31,18 @@ export function useNavBar() {
     inicial: isAuthenticated && user?.name ? user.name.trim().charAt(0).toUpperCase() : undefined,
     totalItems: esAdmin(user) ? 0 : totalItems,
     irAlInicio: () => router.push('/home'),
+    /** Siempre el MenuDrawer modal: funciona en Menú, perfil, pago, etc. */
     alternarDrawer: () => {
-      if (drawerListo) {
-        alternarDrawerNativo();
-        return;
-      }
-      setMenuAbierto((abierto) => !abierto);
+      setMenuAbierto((abierto) => {
+        const abrir = !abierto;
+        if (abrir) {
+          setCarritoAbierto(false);
+          setUsuarioAbierto(false);
+          setLoginAbierto(false);
+          if (drawerListo) cerrarDrawerNativo();
+        }
+        return abrir;
+      });
     },
     menuAbierto,
     cerrarMenu: () => setMenuAbierto(false),

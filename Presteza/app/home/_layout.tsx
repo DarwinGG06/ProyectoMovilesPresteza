@@ -10,8 +10,9 @@ export default function HomeLayout() {
         headerShown: false,
         drawerType: 'front',
         overlayColor: 'rgba(26, 21, 16, 0.55)',
-        swipeEnabled: true,
-        swipeEdgeWidth: 48,
+        // El menú de las tres líneas es el MenuDrawer del NavBar (modal global).
+        // Sin swipe para no pelear con listas (carta) ni abrir un segundo panel.
+        swipeEnabled: false,
         drawerStyle: {
           width: '86%',
           backgroundColor: 'transparent',

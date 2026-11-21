@@ -85,7 +85,7 @@ export default function Select<T extends FieldValues>({
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerClassName="flex-row">
+                contentContainerClassName="flex-row items-center pr-2">
                 {options.map((option) => {
                   const opcion = valorDe(option);
                   const active = multiple ? elegidos.includes(String(opcion)) : opcion === value;
@@ -93,10 +93,14 @@ export default function Select<T extends FieldValues>({
                     <Pressable
                       key={claveDe(opcion)}
                       onPress={() => marcar(opcion)}
-                      className={`mr-5 py-2 ${active ? 'border-b border-oro' : ''}`}>
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: active }}
+                      className={`mr-2 min-h-11 items-center justify-center border px-3 ${
+                        active ? 'border-oro bg-marca-oscura' : 'border-marca/25'
+                      }`}>
                       <Text
-                        className={`font-roboto text-[13px] ${
-                          active ? 'text-marca-oscura' : 'text-texto/70'
+                        className={`font-roboto text-[12px] ${
+                          active ? 'text-crema' : 'text-marca-oscura'
                         }`}>
                         {etiquetaDe(option)}
                       </Text>

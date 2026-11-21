@@ -1,12 +1,12 @@
 import { View } from 'react-native';
 
+import Button from '@/components/Button';
 import Field from '@/components/Field';
 import Select from '@/components/Select';
 import { CampoFechaReserva } from '@/features/reservas/components/CampoFechaReserva';
 import { CampoHoraReserva } from '@/features/reservas/components/CampoHoraReserva';
 import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { MesaAdmin, ReservaFormAdmin } from '../../types';
-import { AccionesForm } from './AccionesForm';
 import { CampoStepper } from './CampoStepper';
 
 export function FormularioReservaAdmin({
@@ -26,16 +26,16 @@ export function FormularioReservaAdmin({
   const mesasActivas = mesas.filter((item) => item.active !== false);
 
   return (
-    <View className="gap-5">
+    <View className="gap-3 pb-1">
       {mesasActivas.length > 0 ? (
         <Select
           control={control}
           name="tableNumber"
           label="Mesa"
-          variante="fila"
+          variante="chips"
           options={mesasActivas.map((item) => ({
             value: item.number,
-            label: `${item.number} · ${item.capacity}`,
+            label: `${item.number} · ${item.capacity}p`,
           }))}
           rules={{ required: 'Elige la mesa' }}
         />
@@ -60,7 +60,14 @@ export function FormularioReservaAdmin({
         autoCapitalize="sentences"
         variante="linea"
       />
-      <AccionesForm onGuardar={guardar} guardando={guardando} />
+      <Button
+        text={guardando ? 'GUARDANDO' : 'LISTO'}
+        variant="gold"
+        compact
+        disabled={guardando}
+        className="mt-3 w-full"
+        onPress={guardar}
+      />
     </View>
   );
 }

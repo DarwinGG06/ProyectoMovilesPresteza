@@ -145,6 +145,7 @@ export function TabReservas({ reservas }: TabReservasProps) {
       </TarjetaPerfil>
 
       <ModalAdmin
+        compacto
         visible={tab.abierto}
         titulo={tab.editando ? 'Editar reserva' : 'Nueva reserva'}
         onCerrar={tab.cerrar}>

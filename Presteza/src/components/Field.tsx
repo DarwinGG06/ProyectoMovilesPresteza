@@ -15,7 +15,15 @@ import {
   type Path,
   type RegisterOptions,
 } from 'react-hook-form';
-import { Platform, Pressable, Text, TextInput, View, type TextInputProps } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+  type TextInputInstance,
+  type TextInputProps,
+} from 'react-native';
 
 import { useVerContrasena } from '@/shared/hooks/useVerContrasena';
 import { colores } from '@/theme/tokens';
@@ -57,7 +65,7 @@ export default function Field<T extends FieldValues>({
   // arriba (el correo). Por eso, si estaba enfocado, se le devuelve el foco al
   // input nuevo y el cursor se pone al final del texto.
   const remonta = Platform.OS === 'android' && contrasena.esContrasena;
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const reenfocar = useRef<number | null>(null); // largo del texto, o null si no hay que reenfocar
 
   useEffect(() => {

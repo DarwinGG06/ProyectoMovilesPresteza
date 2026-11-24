@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useState } from 'react';
 
 import { useControlDrawerHome } from '@/features/inicio/context/ControlDrawerHome';
@@ -34,7 +34,8 @@ export function useNavBar() {
     conSesion: Boolean(isAuthenticated && user),
     inicial: isAuthenticated && user?.name ? user.name.trim().charAt(0).toUpperCase() : undefined,
     totalItems: admin || repartidor ? 0 : totalItems,
-    irAlInicio: () => router.push(repartidor ? '/home/repartidor' : '/home'),
+    irAlInicio: () =>
+      router.push((repartidor ? '/home/repartidor' : '/home') as Href),
     alternarDrawer: () => {
       if (repartidor) return;
       setMenuAbierto((abierto) => {

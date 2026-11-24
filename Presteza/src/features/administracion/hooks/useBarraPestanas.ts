@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, type ScrollViewInstance } from 'react-native';
 
 import type { PestanaAdmin } from '../types';
 
@@ -8,7 +8,7 @@ import type { PestanaAdmin } from '../types';
  * y evita que el scroll vuelva al inicio al cambiar de ruta.
  */
 export function useBarraPestanas(activa: PestanaAdmin) {
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const posiciones = useRef<Partial<Record<PestanaAdmin, number>>>({});
 
   const registrar = (id: PestanaAdmin, x: number) => {

@@ -7,11 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "fromzero",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#4d000a"
-    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -21,7 +16,6 @@
       }
     },
     "android": {
-      "usesCleartextTraffic": true,
       "permissions": [
         "CAMERA",
         "READ_MEDIA_IMAGES",
@@ -45,13 +39,19 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash.png",
-          "backgroundColor": "#4d000a"
+          "backgroundColor": "#4d000a",
+          "resizeMode": "contain"
         }
       ],
       "expo-status-bar",
       "expo-router",
       "expo-asset",
-      ["expo-secure-store", { "faceIDPermission": false }],
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": false
+        }
+      ],
       [
         "expo-local-authentication",
         {
@@ -73,6 +73,15 @@
           "color": "#6b1d3d",
           "defaultChannel": "presteza",
           "sounds": []
+        }
+      ],
+      "expo-image",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
         }
       ]
     ],

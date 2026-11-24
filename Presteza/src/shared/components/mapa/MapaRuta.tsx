@@ -1,8 +1,20 @@
-import { useEffect, useMemo, useRef } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  type ComponentRef,
+  type ComponentType,
+  type Ref,
+} from 'react';
 import { Platform, View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { WebView, type WebViewProps } from 'react-native-webview';
 
 import { htmlMapaRuta, type PuntoMapa } from './htmlMapaRuta';
+
+/** Tipado de WebView 14 + Strict API de RN 0.88 aún pelean; se fuerza el contrato conocido. */
+const VistaWeb = WebView as unknown as ComponentType<
+  WebViewProps & { ref?: Ref<ComponentRef<typeof WebView>> }
+>;
 
 function scriptMoto(repartidor?: PuntoMapa | null) {
   if (!repartidor || !Number.isFinite(repartidor.lat) || !Number.isFinite(repartidor.lng)) return '';
@@ -19,7 +31,7 @@ export function MapaRuta({
   destino?: PuntoMapa | null;
 }) {
   const html = useMemo(() => htmlMapaRuta(destino ?? null), [destino?.lat, destino?.lng]);
-  const web = useRef<WebView>(null);
+  const web = useRef<ComponentRef<typeof WebView>>(null);
   const marco = useRef<HTMLIFrameElement | null>(null);
   const js = scriptMoto(repartidor);
   const clave = `d:${destino?.lat ?? 'x'}:${destino?.lng ?? 'x'}`;
@@ -59,7 +71,7 @@ export function MapaRuta({
 
   return (
     <View style={{ height: alto }}>
-      <WebView
+      <VistaWeb
         key={clave}
         ref={web}
         source={{ html, baseUrl: 'https://unpkg.com/' }}

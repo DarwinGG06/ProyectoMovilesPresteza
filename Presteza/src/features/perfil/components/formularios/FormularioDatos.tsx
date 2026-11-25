@@ -2,6 +2,7 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import { useFormulario } from '@/shared/hooks/useFormulario';
+import { reglasTelefono } from '@/shared/validacion';
 import type { PerfilForm } from '../../types';
 import { AccionesFormulario } from '../elementos';
 
@@ -45,10 +46,8 @@ export function FormularioDatos({ valores, onCancelar, onGuardar, guardando }: F
         label="Teléfono"
         placeholder="3104941839"
         keyboardType="phone-pad"
-        rules={{
-          required: 'Escribe tu teléfono',
-          pattern: { value: /^[0-9]{10}$/, message: 'Deben ser 10 dígitos' },
-        }}
+        maxLength={10}
+        rules={reglasTelefono}
       />
       <AccionesFormulario
         onCancelar={onCancelar}

@@ -25,7 +25,6 @@ const ESTADOS_COCINA = [
 export function FormularioPedido({
   valores,
   clientes,
-  repartidores = [],
   productos,
   onCancelar: _onCancelar,
   onGuardar,
@@ -34,7 +33,6 @@ export function FormularioPedido({
 }: {
   valores: PedidoForm;
   clientes: ClienteAdmin[];
-  repartidores?: ClienteAdmin[];
   productos: ProductoAdmin[];
   onCancelar: () => void;
   onGuardar: (datos: PedidoForm) => Promise<void>;
@@ -102,30 +100,9 @@ export function FormularioPedido({
           />
         </View>
       ) : (
-        <View className="mt-4">
-          <Text className="mb-4 font-roboto text-sm text-texto/70">
-            Se usa la dirección principal del cliente.
-          </Text>
-          {repartidores.length > 0 ? (
-            <Select
-              control={control}
-              name="courierId"
-              label="Repartidor"
-              variante="fila"
-              options={[
-                { value: '', label: 'Sin asignar' },
-                ...repartidores.map((repartidor) => ({
-                  value: repartidor.id,
-                  label: repartidor.name,
-                })),
-              ]}
-            />
-          ) : (
-            <Text className="font-roboto text-sm text-texto/70">
-              No hay repartidores registrados. Crea uno en usuarios o con la semilla.
-            </Text>
-          )}
-        </View>
+        <Text className="mt-4 font-roboto text-sm text-texto/70">
+          Se usa la dirección principal del cliente.
+        </Text>
       )}
 
       <View className="mt-6">

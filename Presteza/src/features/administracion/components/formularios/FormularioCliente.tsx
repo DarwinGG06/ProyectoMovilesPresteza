@@ -2,6 +2,7 @@ import { View } from 'react-native';
 
 import CampoFecha from '@/components/CampoFecha';
 import Field from '@/components/Field';
+import { reglasTelefono } from '@/shared/validacion';
 import { useFormularioCliente } from '../../hooks/useFormularioCliente';
 import type { ClienteForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
@@ -54,11 +55,8 @@ export function FormularioCliente({
         label="Teléfono"
         keyboardType="phone-pad"
         variante="linea"
-        maxLength={20}
-        rules={{
-          required: 'Escribe el teléfono',
-          maxLength: { value: 20, message: 'Máximo 20 caracteres' },
-        }}
+        maxLength={10}
+        rules={reglasTelefono}
       />
       {editando ? null : (
         <CampoFecha

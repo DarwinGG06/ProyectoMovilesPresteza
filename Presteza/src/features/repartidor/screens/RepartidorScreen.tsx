@@ -149,8 +149,7 @@ export function RepartidorScreen() {
           <View className="mx-6 mt-10 border border-dashed border-madera/30 px-5 py-10">
             <Text className="font-serif-light text-2xl text-tinta">Sin pedidos</Text>
             <Text className="mt-2 font-roboto text-sm leading-6 text-tinta/60">
-              Cuando el admin te asigne un domicilio y quede Listo, aparecerá aquí para salir a
-              entregar.
+              Cuando un domicilio quede en estado Listo, aparecerá aquí para salir a entregar.
             </Text>
           </View>
         ) : null}

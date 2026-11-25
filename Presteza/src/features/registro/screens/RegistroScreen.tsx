@@ -7,6 +7,7 @@ import CampoFecha from '@/components/CampoFecha';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
 import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
+import { reglasTelefono } from '@/shared/validacion';
 
 import { useRegistro } from '../hooks/useRegistro';
 
@@ -53,11 +54,8 @@ export function RegistroScreen() {
           label="Teléfono"
           keyboardType="phone-pad"
           placeholder="3104941839"
-          maxLength={20}
-          rules={{
-            required: 'El teléfono es obligatorio',
-            maxLength: { value: 20, message: 'Máximo 20 caracteres' },
-          }}
+          maxLength={10}
+          rules={reglasTelefono}
         />
         <CampoFecha control={control} name="birthDate" label="Fecha de nacimiento" />
         <Field

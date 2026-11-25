@@ -32,11 +32,6 @@ export function useAdmin() {
     [pedidos.pedidos, reservas.reservas, usuarios.usuarios]
   );
 
-  const repartidores = useMemo(
-    () => usuarios.usuarios.filter((usuario) => usuario.role === 'repartidor'),
-    [usuarios.usuarios]
-  );
-
   const stats = useMemo(
     () =>
       calcularStats({
@@ -157,7 +152,6 @@ export function useAdmin() {
     adicionales: adicionales.adicionales,
     mensajes: mensajes.mensajes,
     clientes,
-    repartidores,
     guardarProducto: async (datos: ProductoForm, editando?: ProductoAdmin | null) => {
       const id = await productos.guardar(datos, editando);
       if (!id) return false;

@@ -4,6 +4,7 @@ import Button from '@/components/Button';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
+import { reglasTelefono } from '@/shared/validacion';
 
 import type { useContacto } from '../hooks/useContacto';
 
@@ -72,10 +73,7 @@ export function FormularioContacto({
             keyboardType="phone-pad"
             placeholder="3104941839"
             maxLength={10}
-            rules={{
-              required: 'El teléfono es obligatorio',
-              pattern: { value: /^[0-9]{10}$/, message: 'Usa 10 dígitos' },
-            }}
+            rules={reglasTelefono}
           />
           <Field
             control={control}

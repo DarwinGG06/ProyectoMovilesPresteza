@@ -13,8 +13,6 @@ function normalizarPedido(crudo: Record<string, unknown>): PedidoAdmin {
     tipo: texto(crudo.tipo) === 'domicilio' ? 'domicilio' : texto(crudo.tipo) === 'mesa' ? 'mesa' : null,
     tableNumber: texto(crudo.tableNumber) || texto(crudo.table_number) || null,
     deliveryAddress: texto(crudo.deliveryAddress) || texto(crudo.delivery_address) || null,
-    courierId: texto(crudo.courierId) || texto(crudo.courier_id) || null,
-    courierName: texto(crudo.courierName) || texto(crudo.courier_name) || null,
     products: Array.isArray(crudo.products) ? (crudo.products as PedidoAdmin['products']) : [],
     status: texto(crudo.status),
     user_name: texto(crudo.user_name) || texto(crudo.userName),

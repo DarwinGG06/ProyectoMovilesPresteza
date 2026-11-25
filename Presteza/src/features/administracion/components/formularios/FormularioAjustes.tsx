@@ -2,6 +2,7 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import { useFormulario } from '@/shared/hooks/useFormulario';
+import { reglasTelefono } from '@/shared/validacion';
 import type { AjustesForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -40,7 +41,8 @@ export function FormularioAjustes({
         label="Teléfono"
         keyboardType="phone-pad"
         variante="linea"
-        rules={{ required: 'Escribe el teléfono' }}
+        maxLength={10}
+        rules={reglasTelefono}
       />
       <AccionesForm onGuardar={guardar} guardando={guardando} />
     </View>

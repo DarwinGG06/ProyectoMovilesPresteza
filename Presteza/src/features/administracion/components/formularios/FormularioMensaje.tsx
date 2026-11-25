@@ -2,6 +2,7 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import { useFormulario } from '@/shared/hooks/useFormulario';
+import { reglasTelefono } from '@/shared/validacion';
 import type { MensajeForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -41,7 +42,8 @@ export function FormularioMensaje({
         label="Teléfono"
         keyboardType="phone-pad"
         variante="linea"
-        rules={{ required: 'Escribe el teléfono' }}
+        maxLength={10}
+        rules={reglasTelefono}
       />
       <Field
         control={control}

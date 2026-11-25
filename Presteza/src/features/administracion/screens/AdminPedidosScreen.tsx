@@ -10,6 +10,7 @@ export function AdminPedidosScreen() {
       <TabPedidos
         pedidos={admin.pedidos}
         clientes={admin.clientes}
+        repartidores={admin.repartidores}
         productos={admin.productos}
         guardando={admin.guardando}
         onGuardar={admin.guardarPedido}

@@ -23,6 +23,8 @@ export type PedidoAdmin = {
   tipo?: 'mesa' | 'domicilio' | null;
   tableNumber?: string | null;
   deliveryAddress?: string | null;
+  courierId?: string | null;
+  courierName?: string | null;
   products?: {
     dishId?: string;
     name?: string;
@@ -124,6 +126,7 @@ export type PedidoForm = {
   status: string;
   tipo: 'mesa' | 'domicilio';
   tableNumber: string;
+  courierId: string;
   lineas: LineaPedido[];
 };
 

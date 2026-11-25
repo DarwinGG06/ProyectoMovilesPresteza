@@ -21,6 +21,7 @@ function valoresDe(pedido?: PedidoAdmin | null, clienteId = ''): PedidoForm {
     status: estadoPedidoBackend(pedido?.status || 'pendiente'),
     tipo: pedido?.tipo === 'domicilio' ? 'domicilio' : 'mesa',
     tableNumber: pedido?.tableNumber || '',
+    courierId: pedido?.courierId || '',
     lineas: (pedido?.products ?? []).map((producto) => ({
       dishId: producto.dishId || producto.name || '',
       name: producto.name || 'Plato',

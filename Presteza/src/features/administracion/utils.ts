@@ -147,7 +147,7 @@ export function enriquecerClientes(
   reservas: { userEmail?: string; userName?: string }[],
 ): ClienteAdmin[] {
   return usuarios
-    .filter((usuario) => usuario.role !== 'admin')
+    .filter((usuario) => usuario.role !== 'admin' && usuario.role !== 'repartidor')
     .map((cliente) => {
       const susPedidos = pedidos.filter(
         (pedido) =>
@@ -176,6 +176,12 @@ export function textoEntrega(pedido: {
 }) {
   if (pedido.tipo === 'domicilio') return pedido.deliveryAddress || 'Domicilio';
   if (pedido.tipo === 'mesa') return pedido.tableNumber ? `Mesa ${pedido.tableNumber}` : 'En mesa';
+  return '';
+}
+
+export function textoRepartidor(pedido: { courierName?: string | null; courierId?: string | null }) {
+  if (pedido.courierName) return pedido.courierName;
+  if (pedido.courierId) return 'Repartidor asignado';
   return '';
 }
 

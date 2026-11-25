@@ -55,6 +55,7 @@ export function useAdminPedidos() {
         status: estadoPedidoBackend(datos.status),
         tipo: datos.tipo,
         tableNumber: datos.tipo === 'mesa' ? datos.tableNumber : undefined,
+        courierId: datos.tipo === 'domicilio' ? datos.courierId || '' : undefined,
         products: datos.lineas.map((linea) => ({
           dishId: linea.dishId,
           quantity: linea.quantity,

@@ -15,6 +15,7 @@ import {
   siguientesEstadosPedido,
   textoEntrega,
   textoEstadoPedido,
+  textoRepartidor,
 } from '../../utils';
 import {
   AccionesAdmin,
@@ -36,6 +37,7 @@ import {
 type TabPedidosProps = {
   pedidos: PedidoAdmin[];
   clientes: ClienteAdmin[];
+  repartidores?: ClienteAdmin[];
   productos: ProductoAdmin[];
   guardando?: boolean;
   onGuardar: (datos: PedidoForm, editando?: PedidoAdmin | null) => Promise<boolean>;
@@ -46,6 +48,7 @@ type TabPedidosProps = {
 export function TabPedidos({
   pedidos,
   clientes,
+  repartidores = [],
   productos,
   guardando,
   onGuardar,
@@ -116,6 +119,11 @@ export function TabPedidos({
                         {pedido.user_name || 'Cliente'}
                         {textoEntrega(pedido) ? ` · ${textoEntrega(pedido)}` : ''}
                       </Text>
+                      {textoRepartidor(pedido) ? (
+                        <Text className="mt-0.5 font-roboto text-[13px] text-marca" numberOfLines={1}>
+                          Reparto: {textoRepartidor(pedido)}
+                        </Text>
+                      ) : null}
                       <Text className="mt-0.5 font-roboto text-[13px] text-tinta/70">
                         {formatoFechaHora(pedido.createdAt)}
                       </Text>
@@ -163,6 +171,7 @@ export function TabPedidos({
           key={tab.editando ? idDe(tab.editando) : 'nuevo'}
           valores={tab.valoresFormulario}
           clientes={clientes}
+          repartidores={repartidores}
           productos={productos}
           bloquearCliente={Boolean(tab.editando)}
           onCancelar={tab.cerrar}
@@ -190,6 +199,13 @@ export function TabPedidos({
               </Text>
               {textoEntrega(detalle) ? (
                 <Text className="font-roboto text-[13px] text-tinta/70">{textoEntrega(detalle)}</Text>
+              ) : null}
+              {detalle.tipo === 'domicilio' ? (
+                <Text className="font-roboto text-[13px] text-marca">
+                  {textoRepartidor(detalle)
+                    ? `Repartidor: ${textoRepartidor(detalle)}`
+                    : 'Sin repartidor asignado'}
+                </Text>
               ) : null}
               <Text className="font-roboto text-[13px] text-tinta/55">
                 {formatoFechaHora(detalle.createdAt)}

@@ -147,14 +147,17 @@ export function PagoScreen() {
                             }
                           : {}),
                       })}
-                      onPress={() => pago.setCanjear(true)}
+                      onPress={() => pago.setCanjear(!pago.canjear)}
                       disabled={pago.cotizando || pago.enviando}
                       accessibilityRole="button"
-                      accessibilityState={{ disabled: pago.cotizando || pago.enviando }}
+                      accessibilityState={{
+                        disabled: pago.cotizando || pago.enviando,
+                        selected: pago.canjear,
+                      }}
                       className={`mt-1 min-h-12 items-center justify-center border px-4 ${pago.canjear ? 'border-oro bg-oro/15' : 'border-oro/40'}`}>
                       <Text className="text-center font-roboto text-[13px] tracking-[2px] text-marca-oscura">
                         {pago.canjear
-                          ? `CANJEAR ${cotizacion?.pointsRedeemed ?? 0} PUNTOS`
+                          ? `QUITAR CANJE (${cotizacion?.pointsRedeemed ?? 0} pts)`
                           : `USAR PUNTOS (máx. ${cotizacion?.maxRedeemable ?? 0})`}
                       </Text>
                     </Pressable>

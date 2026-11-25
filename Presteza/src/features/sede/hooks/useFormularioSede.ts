@@ -1,7 +1,8 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { Linking } from 'react-native';
 
 import { useFormulario } from '@/shared/hooks/useFormulario';
+import { rutaReservaRapida } from '@/shared/validacion';
 
 import { SEDE } from '../data';
 
@@ -15,8 +16,8 @@ export function useFormularioSede() {
 
   return {
     control,
-    reservar: handleSubmit(() => {
-      router.push('/home/reservas');
+    reservar: handleSubmit((datos) => {
+      router.push(rutaReservaRapida(datos.nombre, datos.personas) as Href);
     }),
     verMenu: () => router.push('/home/menu'),
     llamar: () => void Linking.openURL(`tel:${SEDE.telefono}`),

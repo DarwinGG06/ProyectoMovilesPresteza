@@ -4,6 +4,7 @@ import Button from '@/components/Button';
 import Field from '@/components/Field';
 import { MarcaCurso } from '@/features/inicio/components/MesaDecor';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
+import { reglasPersonas } from '@/shared/validacion';
 
 import { useFormularioSede } from '../hooks/useFormularioSede';
 
@@ -46,7 +47,7 @@ export function FormularioSede() {
               placeholder="Ej: 2"
               keyboardType="number-pad"
               maxLength={2}
-              rules={{ required: 'Indica cuántas personas' }}
+              rules={reglasPersonas}
             />
           </View>
 

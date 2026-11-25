@@ -11,10 +11,15 @@ import type { MesaVisual, ReservaForm, SeleccionReserva } from '../types';
 import { fechaHoy } from '../utils';
 import { useReservas } from './useReservas';
 
+function textoParam(valor?: string | string[]) {
+  if (Array.isArray(valor)) return valor[0]?.trim() || '';
+  return String(valor || '').trim();
+}
+
 export function useNuevaReserva() {
   const { user } = useSession();
-  const { desde } = useLocalSearchParams<{ desde?: string }>();
-  const vinoDelPerfil = desde === 'perfil';
+  const params = useLocalSearchParams<{ desde?: string; nombre?: string; personas?: string }>();
+  const vinoDelPerfil = params.desde === 'perfil';
   const casa = useReservas({ alcance: 'mias' });
   const aviso = useAviso();
 
@@ -33,15 +38,28 @@ export function useNuevaReserva() {
   const [loginAbierto, setLoginAbierto] = useState(false);
   const [exito, setExito] = useState(false);
 
+  const nombreRapido = textoParam(params.nombre);
+  const cupoRapido = (() => {
+    const n = Number(textoParam(params.personas));
+    if (!Number.isFinite(n)) return null;
+    if (n < 1 || n > 20) return null;
+    return String(n);
+  })();
+
   const { control, handleSubmit, setValue, watch, reset } = useForm<ReservaForm>({
     defaultValues: {
       tableNumber: '',
       date: fechaHoy(),
       time: '',
-      numberOfPeople: '2',
-      specialRequests: '',
+      numberOfPeople: cupoRapido || '2',
+      specialRequests: nombreRapido ? `A nombre de ${nombreRapido}` : '',
     },
   });
+
+  useEffect(() => {
+    if (cupoRapido) setValue('numberOfPeople', cupoRapido);
+    if (nombreRapido) setValue('specialRequests', `A nombre de ${nombreRapido}`);
+  }, [cupoRapido, nombreRapido, setValue]);
 
   const date = watch('date');
   const time = watch('time');
@@ -60,7 +78,9 @@ export function useNuevaReserva() {
   const elegirMesa = (mesa: MesaVisual) => {
     setSeleccion({ tipo: 'mesa', mesa });
     setValue('tableNumber', mesa.id);
-    setValue('numberOfPeople', String(mesa.capacity));
+    // Si el cupo del CTA cabe en la mesa, se conserva; si no, baja a la capacidad real.
+    const cupo = personas >= 1 && personas <= mesa.capacity ? personas : mesa.capacity;
+    setValue('numberOfPeople', String(cupo));
   };
 
   const elegirBarra = () => {

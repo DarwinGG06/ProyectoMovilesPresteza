@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import Button from '@/components/Button';
 import Field from '@/components/Field';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
+import { reglasPersonas } from '@/shared/validacion';
 
 import { useCtaInicio } from '../hooks/useCtaInicio';
 import { MarcaCurso } from './MesaDecor';
@@ -51,7 +52,7 @@ export function CtaInicio() {
                 placeholder="Ej: 2"
                 keyboardType="number-pad"
                 maxLength={2}
-                rules={{ required: 'Indica cuántas personas' }}
+                rules={reglasPersonas}
               />
             </View>
 

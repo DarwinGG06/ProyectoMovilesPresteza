@@ -79,10 +79,13 @@ export function mesasDelSalon(mesas: Mesa[], reservas: Reserva[], date: string, 
     const api = mesas.find((item) => item.number === mesa.id);
     const inactiva = api?.active === false || api?.status === 'maintenance';
     const ocupada = Boolean(date && time && mesaOcupada(reservas, mesa.id, date, time));
+    // Capacidad real de la API (el plano fijo solo ubica mesas en pantalla).
+    const capacity =
+      typeof api?.capacity === 'number' && api.capacity > 0 ? api.capacity : mesa.capacity;
 
     return {
       ...mesa,
-      capacity: mesa.capacity,
+      capacity,
       available: !inactiva && !ocupada,
     };
   });

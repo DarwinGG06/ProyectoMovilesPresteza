@@ -1,9 +1,10 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { Linking } from 'react-native';
 
 import { useSession } from '@/session/context';
 import { esAdmin } from '@/session/roles';
+import { rutaReservaRapida } from '@/shared/validacion';
 
 export type ReservaRapida = {
   nombre: string;
@@ -16,9 +17,9 @@ export function useCtaInicio() {
     defaultValues: { nombre: '', personas: '' },
   });
 
-  const reservar = handleSubmit(() => {
+  const reservar = handleSubmit((datos) => {
     if (esAdmin(user)) return;
-    router.push('/home/reservas');
+    router.push(rutaReservaRapida(datos.nombre, datos.personas) as Href);
   });
 
   const verMenu = () => {

@@ -52,42 +52,43 @@ export function SelectorTarjetas({
           Aún no tienes tarjetas. Guarda solo los últimos 4 dígitos.
         </Text>
       ) : (
-        tarjetas.map((tarjeta, i) => {
-          const activa = indice === i;
-          return (
-            <Pressable
-              key={`${tarjeta.last_four_digits}-${i}`}
-              disabled={enviando}
-              accessibilityRole="button"
-              accessibilityState={{ selected: activa, disabled: enviando }}
-              onPress={() => onElegir(i)}
-              style={({ pressed }) => ({
-                transform: [{ scale: pressed ? 0.98 : 1 }],
-                ...(enviando
-                  ? {
-                      backgroundColor: colores['pergamino-oscuro'],
-                      borderStyle: 'dashed' as const,
-                    }
-                  : {}),
-              })}
-              className={`border-b border-madera/15 py-3 ${activa ? 'bg-oro/10' : ''}`}>
-              <Text
-                className={`font-roboto text-[12px] tracking-[1.5px] ${
-                  activa ? 'text-marca' : 'text-tinta/70'
+        <View className="gap-2">
+          {tarjetas.map((tarjeta, i) => {
+            const activa = indice === i;
+            return (
+              <Pressable
+                key={`${tarjeta.last_four_digits}-${i}`}
+                disabled={enviando}
+                accessibilityRole="button"
+                accessibilityState={{ selected: activa, disabled: enviando }}
+                onPress={() => onElegir(i)}
+                style={({ pressed }) => ({
+                  transform: [{ scale: pressed ? 0.98 : 1 }],
+                  ...(enviando
+                    ? {
+                        backgroundColor: colores['pergamino-oscuro'],
+                        borderStyle: 'dashed' as const,
+                      }
+                    : {}),
+                })}
+                className={`min-h-12 justify-center border px-4 py-3 ${
+                  activa ? 'border-oro bg-oro/15' : 'border-oro/35'
                 }`}>
-                {(tarjeta.brand || 'TARJETA').toUpperCase()}
-                {tarjeta.is_primary ? ' · PRINCIPAL' : ''}
-              </Text>
-              <Text className="mt-1 font-serif-light text-lg text-tinta">
-                •••• {tarjeta.last_four_digits}
-              </Text>
-              <Text className="mt-0.5 font-roboto text-xs text-tinta/70">
-                {tarjeta.name}
-                {tarjeta.expiry_date ? ` · ${tarjeta.expiry_date}` : ''}
-              </Text>
-            </Pressable>
-          );
-        })
+                <Text className="font-roboto text-[12px] tracking-[1.5px] text-marca-oscura">
+                  {(tarjeta.brand || 'TARJETA').toUpperCase()}
+                  {tarjeta.is_primary ? ' · PRINCIPAL' : ''}
+                </Text>
+                <Text className="mt-1 font-serif-light text-lg text-tinta">
+                  •••• {tarjeta.last_four_digits}
+                </Text>
+                <Text className="mt-0.5 font-roboto text-xs text-tinta/70">
+                  {tarjeta.name}
+                  {tarjeta.expiry_date ? ` · ${tarjeta.expiry_date}` : ''}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       )}
 
       <Pressable

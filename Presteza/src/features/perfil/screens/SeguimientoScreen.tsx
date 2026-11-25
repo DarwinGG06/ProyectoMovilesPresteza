@@ -124,13 +124,33 @@ export function SeguimientoScreen() {
 
                 <View className="mt-8 border-t border-madera/20 pt-5">
                   {(pedido.products ?? []).map((item, index) => (
-                    <View key={`${item.dishId}-${index}`} className="flex-row items-baseline py-2">
-                      <Text className="flex-1 font-roboto text-base text-tinta">
-                        {item.quantity} × {item.name}
-                      </Text>
-                      <Text className="font-roboto text-marca">
-                        {formatCOP(item.unit_price * item.quantity)}
-                      </Text>
+                    <View key={`${item.dishId}-${index}`} className="py-2">
+                      <View className="flex-row items-baseline">
+                        <Text className="flex-1 font-roboto text-base text-tinta">
+                          {item.quantity} × {item.name}
+                        </Text>
+                        <Text className="font-roboto text-marca">
+                          {formatCOP(item.unit_price * item.quantity)}
+                        </Text>
+                      </View>
+                      {(item.adds ?? []).length > 0 ? (
+                        <View className="mt-1.5 gap-1 border-l border-oro/40 pl-3">
+                          {(item.adds ?? []).map((extra, i) => (
+                            <View
+                              key={`${extra.name}-${i}`}
+                              className="flex-row items-baseline justify-between gap-2">
+                              <Text className="flex-1 font-roboto text-sm text-tinta/70">
+                                + {extra.name}
+                              </Text>
+                              {extra.price != null ? (
+                                <Text className="font-roboto text-[12px] text-tinta/55">
+                                  {formatCOP(extra.price)}
+                                </Text>
+                              ) : null}
+                            </View>
+                          ))}
+                        </View>
+                      ) : null}
                     </View>
                   ))}
                   <View className="mt-4 flex-row items-end justify-between">

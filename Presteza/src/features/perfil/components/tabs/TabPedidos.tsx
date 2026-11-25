@@ -65,15 +65,33 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
                 {abierto ? (
                   <View className="mt-3">
                     {pedido.products?.map((item, itemIndex) => (
-                      <View
-                        key={`${item.dishId}-${itemIndex}`}
-                        className="flex-row items-baseline py-1.5">
-                        <Text className="flex-1 font-roboto text-sm text-tinta/70">
-                          {item.name} × {item.quantity}
-                        </Text>
-                        <Text className="font-roboto text-sm text-marca">
-                          {formatCOP(item.unit_price * item.quantity)}
-                        </Text>
+                      <View key={`${item.dishId}-${itemIndex}`} className="py-1.5">
+                        <View className="flex-row items-baseline">
+                          <Text className="flex-1 font-roboto text-sm text-tinta/70">
+                            {item.name} × {item.quantity}
+                          </Text>
+                          <Text className="font-roboto text-sm text-marca">
+                            {formatCOP(item.unit_price * item.quantity)}
+                          </Text>
+                        </View>
+                        {(item.adds ?? []).length > 0 ? (
+                          <View className="mt-1 gap-0.5 border-l border-oro/40 pl-3">
+                            {(item.adds ?? []).map((extra, i) => (
+                              <View
+                                key={`${extra.name}-${i}`}
+                                className="flex-row items-baseline justify-between gap-2">
+                                <Text className="flex-1 font-roboto text-[12px] text-tinta/65">
+                                  + {extra.name}
+                                </Text>
+                                {extra.price != null ? (
+                                  <Text className="font-roboto text-[12px] text-tinta/50">
+                                    {formatCOP(extra.price)}
+                                  </Text>
+                                ) : null}
+                              </View>
+                            ))}
+                          </View>
+                        ) : null}
                       </View>
                     ))}
                     {textoEntrega(pedido) ? (

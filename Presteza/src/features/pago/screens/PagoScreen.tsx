@@ -10,6 +10,8 @@ import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/Cont
 import { LoginModal } from '@/shared/components/nav-bar/LoginModal';
 import { formatCOP } from '@/services/cart/CartContext';
 
+import { ConfirmandoPago } from '../components/ConfirmandoPago';
+import { SelectorTarjetas } from '../components/SelectorTarjetas';
 import { usePago } from '../hooks/usePago';
 
 export function PagoScreen() {
@@ -322,6 +324,33 @@ export function PagoScreen() {
                   );
                 })}
               </View>
+
+              {pago.metodo === 'card' ? (
+                <SelectorTarjetas
+                  tarjetas={pago.tarjetas}
+                  indice={pago.tarjetaIndice}
+                  formularioAbierto={pago.formularioTarjeta}
+                  guardando={pago.guardandoTarjeta}
+                  enviando={pago.enviando}
+                  onElegir={pago.elegirTarjeta}
+                  onAbrirFormulario={pago.abrirFormularioTarjeta}
+                  onCancelarFormulario={pago.cerrarFormularioTarjeta}
+                  onGuardar={pago.guardarTarjetaCheckout}
+                />
+              ) : null}
+
+              {pago.metodo === 'transfer' ? (
+                <Text className="mt-1 font-roboto text-sm leading-5 text-texto/70">
+                  Al confirmar, el pedido queda registrado como transferencia. El pago lo
+                  coordinas con la casa.
+                </Text>
+              ) : null}
+
+              {pago.metodo === 'cash' ? (
+                <Text className="mt-1 font-roboto text-sm leading-5 text-texto/70">
+                  Pagas en efectivo al recibir el pedido.
+                </Text>
+              ) : null}
             </Tarjeta>
 
             <View className="mt-8 flex-row items-end justify-between">
@@ -341,20 +370,23 @@ export function PagoScreen() {
             <Button
               className="mt-5"
               variant="gold"
-              disabled={pago.enviando || pago.cotizando}
+              disabled={pago.enviando || pago.cotizando || pago.guardandoTarjeta}
               onPress={() => void pago.confirmar()}
               text={
                 !pago.isAuthenticated
                   ? 'ENTRAR Y CONFIRMAR'
-                  : pago.enviando
-                    ? 'ENVIANDO...'
-                    : 'CONFIRMAR PEDIDO'
+                  : pago.confirmandoPago
+                    ? 'CONFIRMANDO PAGO…'
+                    : pago.enviando
+                      ? 'ENVIANDO…'
+                      : 'CONFIRMAR PEDIDO'
               }
             />
           </>
         )}
       </ContenedorPantalla>
       <LoginModal visible={pago.loginAbierto} onClose={pago.cerrarLogin} />
+      <ConfirmandoPago visible={pago.confirmandoPago} />
     </>
   );
 }

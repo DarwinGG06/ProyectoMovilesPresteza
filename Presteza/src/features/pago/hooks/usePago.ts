@@ -4,9 +4,19 @@ import { useEffect, useState } from 'react';
 import { setToken as fijarToken } from '@/api/client';
 import { entidad, idDe } from '@/api/helpers';
 import { cotizarPuntos, crearPedidoConPuntos } from '@/api/loyalty';
-import { agregarDireccion, actualizarDireccion, obtenerUsuario } from '@/api/perfil';
+import {
+  agregarDireccion,
+  actualizarDireccion,
+  agregarTarjeta,
+  obtenerUsuario,
+} from '@/api/perfil';
 import { listarMesas } from '@/api/reservas';
-import type { CotizacionPuntos, Direccion } from '@/features/perfil/types';
+import type {
+  CotizacionPuntos,
+  Direccion,
+  TarjetaForm,
+  TarjetaPago,
+} from '@/features/perfil/types';
 import { MESAS_SALON } from '@/features/reservas/data';
 import { useCart } from '@/services/cart/CartContext';
 import { useSession } from '@/session/context';
@@ -22,6 +32,18 @@ const METODOS = [
 
 const CANJE_MINIMO = 50;
 const CIUDAD = 'Manizales';
+/** Cobro con tarjeta quemado: siempre “aprueba” tras esta pausa. */
+const PAUSA_PAGO_TARJETA_MS = 2400;
+
+function pausa(ms: number) {
+  return new Promise<void>((resolver) => setTimeout(resolver, ms));
+}
+
+function indicePrincipal(lista: TarjetaPago[]) {
+  const principal = lista.findIndex((tarjeta) => tarjeta.is_primary);
+  if (principal >= 0) return principal;
+  return lista.length ? 0 : null;
+}
 
 export type DireccionPago = {
   name: string;
@@ -53,13 +75,18 @@ export function usePago() {
   const aviso = useAviso();
   const { items, totalPrice, clearCart } = useCart();
   const { user, token, isAuthenticated } = useSession();
-  const [metodo, setMetodo] = useState<(typeof METODOS)[number]['value']>('cash');
+  const [metodo, setMetodoEstado] = useState<(typeof METODOS)[number]['value']>('cash');
   const [tipo, setTipo] = useState<'mesa' | 'domicilio'>('mesa');
   const [mesa, setMesa] = useState<string | null>(null);
   const [mesas, setMesas] = useState<string[]>(MESAS_SALON.map((item) => item.id));
   const [guardadas, setGuardadas] = useState<Direccion[]>([]);
   const [indice, setIndice] = useState<number | null>(null);
   const [formulario, setFormulario] = useState<DireccionPago>(vacia);
+  const [tarjetas, setTarjetas] = useState<TarjetaPago[]>([]);
+  const [tarjetaIndice, setTarjetaIndice] = useState<number | null>(null);
+  const [formularioTarjeta, setFormularioTarjeta] = useState(false);
+  const [guardandoTarjeta, setGuardandoTarjeta] = useState(false);
+  const [confirmandoPago, setConfirmandoPago] = useState(false);
   const [canjear, setCanjear] = useState(false);
   const [cotizacion, setCotizacion] = useState<CotizacionPuntos | null>(null);
   const [cotizando, setCotizando] = useState(false);
@@ -67,6 +94,12 @@ export function usePago() {
   const [error, setError] = useState<string | null>(null);
   const [exito, setExito] = useState<string | null>(null);
   const [loginAbierto, setLoginAbierto] = useState(false);
+
+  const setMetodo = (valor: (typeof METODOS)[number]['value']) => {
+    setMetodoEstado(valor);
+    setError(null);
+    if (valor !== 'card') setFormularioTarjeta(false);
+  };
 
   useEffect(() => {
     if (esAdmin(user)) {
@@ -133,7 +166,9 @@ export function usePago() {
 
   useEffect(() => {
     let active = true;
-    const request = userId ? obtenerUsuario(userId) : Promise.resolve({ addresses: [] });
+    const request = userId
+      ? obtenerUsuario(userId)
+      : Promise.resolve({ addresses: [] as Direccion[], paymentCards: [] as TarjetaPago[] });
     void request
       .then((perfil) => {
         if (!active) return;
@@ -143,12 +178,17 @@ export function usePago() {
         const elegido = principal >= 0 ? principal : lista.length ? 0 : null;
         setIndice(elegido);
         setFormulario(elegido === null ? vacia() : desdeGuardada(lista[elegido]));
+        const cards = perfil.paymentCards ?? [];
+        setTarjetas(cards);
+        setTarjetaIndice(indicePrincipal(cards));
       })
       .catch(() => {
         if (!active) return;
         setGuardadas([]);
         setIndice(null);
         setFormulario(vacia());
+        setTarjetas([]);
+        setTarjetaIndice(null);
       });
     return () => {
       active = false;
@@ -169,6 +209,36 @@ export function usePago() {
 
   const cambiarCampo = (campo: keyof DireccionPago, valor: string) => {
     setFormulario((prev) => ({ ...prev, [campo]: valor }));
+  };
+
+  const guardarTarjetaCheckout = async (datos: TarjetaForm) => {
+    if (!user || !token) {
+      setLoginAbierto(true);
+      return;
+    }
+    setGuardandoTarjeta(true);
+    setError(null);
+    try {
+      fijarToken(token);
+      const actualizado = await agregarTarjeta(user.id, token, {
+        name: datos.name.trim(),
+        cardholder_name: datos.cardholder_name.trim(),
+        last_four_digits: datos.last_four_digits,
+        type: datos.type,
+        brand: datos.brand,
+        expiry_date: datos.expiry_date,
+        is_primary: datos.is_primary || tarjetas.length === 0,
+      });
+      const cards = actualizado.paymentCards ?? [];
+      setTarjetas(cards);
+      setTarjetaIndice(cards.length ? cards.length - 1 : indicePrincipal(cards));
+      setFormularioTarjeta(false);
+      aviso.ok('Tarjeta agregada', `${datos.name.trim()} quedó lista para pagar.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo guardar la tarjeta.');
+    } finally {
+      setGuardandoTarjeta(false);
+    }
   };
 
   const confirmar = async () => {
@@ -199,13 +269,30 @@ export function usePago() {
         return;
       }
     }
+    if (metodo === 'card') {
+      if (formularioTarjeta) {
+        setError('Guarda o cancela la tarjeta nueva antes de confirmar.');
+        return;
+      }
+      if (tarjetaIndice === null || !tarjetas[tarjetaIndice]) {
+        setError('Elige una tarjeta o agrega una nueva.');
+        setFormularioTarjeta(tarjetas.length === 0);
+        return;
+      }
+    }
 
     setEnviando(true);
     setError(null);
     setExito(null);
     try {
+      if (metodo === 'card') {
+        setConfirmandoPago(true);
+        await pausa(PAUSA_PAGO_TARJETA_MS);
+        setConfirmandoPago(false);
+      }
+
       if (tipo === 'domicilio') {
-    fijarToken(token);
+        fijarToken(token);
         const cuerpo: Direccion = {
           name: formulario.name.trim() || 'Casa',
           address: formulario.address.trim(),
@@ -243,10 +330,13 @@ export function usePago() {
       clearCart();
       router.replace(id ? `/seguimiento?id=${id}` : '/seguimiento');
       aviso.ok(
-        'Pedido creado',
-        'Recibimos tu pedido y vaciamos tu bandeja. Puedes consultar su estado en esta pantalla de seguimiento.'
+        metodo === 'card' ? 'Pago confirmado' : 'Pedido creado',
+        metodo === 'card'
+          ? 'El cobro se confirmó y vaciamos tu bandeja. Sigue el pedido en esta pantalla.'
+          : 'Recibimos tu pedido y vaciamos tu bandeja. Puedes consultar su estado en esta pantalla de seguimiento.',
       );
     } catch (err) {
+      setConfirmandoPago(false);
       const mensaje = err instanceof Error ? err.message : 'No se pudo crear el pedido.';
       if (/no autorizado/i.test(mensaje)) {
         setError('Tu sesión venció. Entra de nuevo y confirma el pedido.');
@@ -255,6 +345,7 @@ export function usePago() {
         setError(mensaje);
       }
     } finally {
+      setConfirmandoPago(false);
       setEnviando(false);
     }
   };
@@ -284,6 +375,22 @@ export function usePago() {
     nuevaDireccion,
     formulario,
     cambiarCampo,
+    tarjetas,
+    tarjetaIndice,
+    elegirTarjeta: setTarjetaIndice,
+    formularioTarjeta,
+    abrirFormularioTarjeta: () => {
+      if (!isAuthenticated) {
+        setLoginAbierto(true);
+        return;
+      }
+      setFormularioTarjeta(true);
+      setError(null);
+    },
+    cerrarFormularioTarjeta: () => setFormularioTarjeta(false),
+    guardarTarjetaCheckout,
+    guardandoTarjeta,
+    confirmandoPago,
     canjear,
     setCanjear: elegirCanje,
     puedeCanjear,

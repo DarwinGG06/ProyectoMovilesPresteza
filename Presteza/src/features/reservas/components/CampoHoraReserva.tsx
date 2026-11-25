@@ -33,8 +33,10 @@ export function CampoHoraReserva<T extends FieldValues>({
         required: 'Elige la hora',
         validate: (valor) => {
           if (!fechaValida) return 'Elige primero la fecha';
+          if (horas.length === 0) return 'Ya no hay horas disponibles para hoy';
           return (
-            horaEnHorario(fecha, String(valor || '')) || `Elige una hora entre ${horario.etiqueta}`
+            horaEnHorario(fecha, String(valor || '')) ||
+            'Elige una hora futura dentro del horario de apertura'
           );
         },
       }}
@@ -51,16 +53,20 @@ export function CampoHoraReserva<T extends FieldValues>({
             <SelectorHoraModal
               valor={mostrada}
               horas={horas}
-              deshabilitado={!fechaValida}
+              deshabilitado={!fechaValida || horas.length === 0}
               error={Boolean(error)}
               onChange={onChange}
             />
             {error ? (
               <Text className="font-roboto text-xs text-red-600">{error.message}</Text>
-            ) : fechaValida ? (
-              <Text className="font-roboto text-[13px] text-tinta/70">{horario.etiqueta}</Text>
-            ) : (
+            ) : !fechaValida ? (
               <Text className="font-roboto text-[13px] text-tinta/70">Elige primero la fecha</Text>
+            ) : horas.length === 0 ? (
+              <Text className="font-roboto text-[13px] text-tinta/70">
+                Ya no hay horas disponibles para hoy
+              </Text>
+            ) : (
+              <Text className="font-roboto text-[13px] text-tinta/70">{horario.etiqueta}</Text>
             )}
           </View>
         );

@@ -91,7 +91,10 @@ export function useNuevaReserva() {
 
     if (!horaEnHorario(datos.date, datos.time)) {
       const horario = horarioDelDia(datos.date);
-      aviso.error('Reserva', `No se puede. El restaurante está abierto de ${horario.etiqueta}.`);
+      aviso.error(
+        'Reserva',
+        `No se puede. Elige una hora futura; hoy el horario es ${horario.etiqueta}.`,
+      );
       return;
     }
 

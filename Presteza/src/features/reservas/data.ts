@@ -45,10 +45,25 @@ export function horarioDelDia(fecha: string) {
   return esFinDeSemana(fecha) ? HORARIO_FIN : HORARIO_SEMANA;
 }
 
+function esHoy(fecha: string) {
+  const partes = fecha.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!partes) return false;
+  const ahora = new Date();
+  return (
+    Number(partes[1]) === ahora.getDate() &&
+    Number(partes[2]) === ahora.getMonth() + 1 &&
+    Number(partes[3]) === ahora.getFullYear()
+  );
+}
+
+/** Minutos desde 00:00; si es hoy, no deja horas ya pasadas. */
 export function horasAbiertas(fecha: string) {
   const { abre, cierra } = horarioDelDia(fecha);
   const horas: string[] = [];
+  const ahora = new Date();
+  const corte = esHoy(fecha) ? ahora.getHours() * 60 + ahora.getMinutes() : -1;
   for (let minuto = abre; minuto <= cierra; minuto += 30) {
+    if (minuto <= corte) continue;
     horas.push(textoHora(minuto));
   }
   return horas;

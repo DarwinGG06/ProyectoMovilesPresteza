@@ -14,9 +14,11 @@ export type RegisterForm = {
 
 export function useRegistro() {
   const { signUp } = useSession();
-  const { control, handleSubmit, setError, getValues, formState } = useForm<RegisterForm>({
+  const { control, handleSubmit, setError, getValues, watch, formState } = useForm<RegisterForm>({
     defaultValues: { name: '', email: '', phone: '', birthDate: '', password: '', confirmation: '' },
   });
+
+  const password = watch('password');
 
   // `confirmation` no se envía: solo sirve para verificar que no hubo errata.
   const crearCuenta = handleSubmit(async ({ name, email, phone, password, birthDate }) => {
@@ -33,6 +35,7 @@ export function useRegistro() {
 
   return {
     control,
+    password,
     error: formState.errors.root?.message,
     enviando: formState.isSubmitting,
     crearCuenta,

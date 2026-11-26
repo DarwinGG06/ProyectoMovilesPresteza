@@ -7,12 +7,13 @@ import CampoFecha from '@/components/CampoFecha';
 import Field from '@/components/Field';
 import MensajeError from '@/components/MensajeError';
 import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/ContenedorPantalla';
-import { reglasTelefono } from '@/shared/validacion';
+import { reglasContrasena, reglasTelefono, requisitosContrasena } from '@/shared/validacion';
 
 import { useRegistro } from '../hooks/useRegistro';
 
 export function RegistroScreen() {
-  const { control, error, enviando, crearCuenta, validarConfirmacion } = useRegistro();
+  const { control, password, error, enviando, crearCuenta, validarConfirmacion } = useRegistro();
+  const requisitos = requisitosContrasena(password);
 
   return (
     <ContenedorPantalla titulo="Registro">
@@ -58,19 +59,27 @@ export function RegistroScreen() {
           rules={reglasTelefono}
         />
         <CampoFecha control={control} name="birthDate" label="Fecha de nacimiento" />
-        <Field
-          control={control}
-          name="password"
-          label="Contraseña"
-          secureTextEntry
-          placeholder="••••••••"
-          maxLength={72}
-          rules={{
-            required: 'La contraseña es obligatoria',
-            minLength: { value: 8, message: 'Mínimo 8 caracteres' },
-            maxLength: { value: 72, message: 'Máximo 72 caracteres' },
-          }}
-        />
+        <View>
+          <Field
+            control={control}
+            name="password"
+            label="Contraseña"
+            secureTextEntry
+            placeholder="Ej: Presteza1"
+            maxLength={72}
+            rules={reglasContrasena}
+          />
+          <View className="mt-2 gap-1">
+            {requisitos.map((r) => (
+              <Text
+                key={r.texto}
+                className={`font-roboto text-[12px] leading-5 ${r.ok ? 'text-marca' : 'text-tinta/45'}`}
+              >
+                {r.ok ? '✓' : '○'} {r.texto}
+              </Text>
+            ))}
+          </View>
+        </View>
         <Field
           control={control}
           name="confirmation"

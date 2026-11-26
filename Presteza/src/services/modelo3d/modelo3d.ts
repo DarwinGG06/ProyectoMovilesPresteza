@@ -12,8 +12,8 @@ import { subirACloudinary, type ArchivoSubida } from '../imagen/subirACloudinary
 
 export type ArchivoModelo3d = ArchivoSubida;
 
-/** Cloudinary (plan gratuito) no acepta archivos `raw` de más de 10 MB. */
-export const TAMANO_MAXIMO_MODELO_BYTES = 10 * 1024 * 1024;
+/** Límite de la app para modelos .glb. */
+export const TAMANO_MAXIMO_MODELO_BYTES = 20 * 1024 * 1024;
 
 const MIME_GLB = 'model/gltf-binary';
 
@@ -47,7 +47,7 @@ export async function elegirModelo3d(): Promise<ArchivoModelo3d | null> {
     throw new Modelo3dInvalidoError();
   }
   if (archivo.size != null && archivo.size > TAMANO_MAXIMO_MODELO_BYTES) {
-    throw new Modelo3dInvalidoError('El modelo no puede pesar más de 10 MB.');
+    throw new Modelo3dInvalidoError('El modelo no puede pesar más de 20 MB.');
   }
 
   return {

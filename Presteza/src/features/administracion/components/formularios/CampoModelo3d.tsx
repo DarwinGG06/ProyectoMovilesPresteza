@@ -86,7 +86,7 @@ export function CampoModelo3d({
         ) : null}
       </View>
       <Text className="font-roboto text-xs text-texto/70">
-        Archivo .glb. Máximo 10 MB. Es lo que se ve al tocar el cubo en el menú.
+        Archivo .glb. Máximo 20 MB. Es lo que se ve al tocar el cubo en el menú.
       </Text>
       {error ? <Text className="font-roboto text-xs text-red-600">{error}</Text> : null}
     </View>

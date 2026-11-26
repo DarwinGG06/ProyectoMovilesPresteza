@@ -51,7 +51,7 @@ function TarjetaDato({
   onPress,
 }: {
   etiqueta: string;
-  valor: number;
+  valor?: number;
   icono: NombreIcono;
   onPress: () => void;
 }) {
@@ -71,7 +71,11 @@ function TarjetaDato({
         <IconoNav name="chevron-forward" size={14} className="text-tinta/25" />
       </View>
       <Text className="mt-5 font-roboto text-[13px] text-tinta/70">{etiqueta}</Text>
-      <Text className="mt-1 font-serif-light text-[32px] leading-[36px] text-tinta">{valor}</Text>
+      {valor != null ? (
+        <Text className="mt-1 font-serif-light text-[32px] leading-[36px] text-tinta">{valor}</Text>
+      ) : (
+        <Text className="mt-1 font-serif-light text-[22px] leading-[28px] text-marca">Abrir</Text>
+      )}
     </Pressable>
   );
 }
@@ -162,6 +166,11 @@ export function TabDashboard({ stats, pedidos }: TabDashboardProps) {
           valor={stats.totalCustomers}
           icono="person-outline"
           onPress={() => irA('clientes')}
+        />
+        <TarjetaDato
+          etiqueta="Papelera"
+          icono="trash-outline"
+          onPress={() => irA('papelera')}
         />
       </View>
 

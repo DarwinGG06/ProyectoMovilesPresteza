@@ -28,6 +28,7 @@ export function PerfilScreen() {
     perfil,
     setPerfil,
     pedidos,
+    setPedidos,
     reservas,
     setReservas,
     cargando,

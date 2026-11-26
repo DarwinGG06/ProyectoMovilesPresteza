@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "fromzero",
+    "scheme": "presteza",
     "ios": {
       "supportsTablet": true,
       "infoPlist": {

@@ -8,7 +8,7 @@ import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/Cont
 import { useRecuperarContrasena } from '../hooks/useRecuperarContrasena';
 
 export function RecuperarContrasenaScreen() {
-  const { control, listo, error, enviar } = useRecuperarContrasena();
+  const { control, listo, error, enviando, enviar } = useRecuperarContrasena();
 
   return (
     <ContenedorPantalla titulo="Recuperar contraseña">
@@ -38,7 +38,11 @@ export function RecuperarContrasenaScreen() {
           </Text>
         ) : null}
 
-        <Button text="ENVIAR" onPress={enviar} />
+        <Button
+          text={enviando ? 'ENVIANDO…' : 'ENVIAR'}
+          onPress={enviar}
+          disabled={enviando}
+        />
       </View>
     </ContenedorPantalla>
   );

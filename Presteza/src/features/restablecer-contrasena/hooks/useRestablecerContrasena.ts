@@ -12,7 +12,7 @@ export type ResetForm = {
 export function useRestablecerContrasena() {
   const params = useLocalSearchParams<{ token?: string }>();
   const [error, setError] = useState<string | null>(null);
-  const { control, handleSubmit } = useForm<ResetForm>({
+  const { control, handleSubmit, formState } = useForm<ResetForm>({
     defaultValues: { token: params.token ?? '', newPassword: '' },
   });
 
@@ -26,5 +26,5 @@ export function useRestablecerContrasena() {
     }
   });
 
-  return { control, error, enviar };
+  return { control, error, enviando: formState.isSubmitting, enviar };
 }

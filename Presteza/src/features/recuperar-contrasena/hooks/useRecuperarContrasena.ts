@@ -10,7 +10,7 @@ export type RecuperarForm = {
 export function useRecuperarContrasena() {
   const [listo, setListo] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { control, handleSubmit } = useForm<RecuperarForm>({
+  const { control, handleSubmit, formState } = useForm<RecuperarForm>({
     defaultValues: { email: '' },
   });
 
@@ -25,5 +25,5 @@ export function useRecuperarContrasena() {
     }
   });
 
-  return { control, listo, error, enviar };
+  return { control, listo, error, enviando: formState.isSubmitting, enviar };
 }

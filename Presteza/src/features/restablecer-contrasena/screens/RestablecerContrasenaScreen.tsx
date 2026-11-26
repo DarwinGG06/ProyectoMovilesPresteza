@@ -8,7 +8,7 @@ import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/Cont
 import { useRestablecerContrasena } from '../hooks/useRestablecerContrasena';
 
 export function RestablecerContrasenaScreen() {
-  const { control, error, enviar } = useRestablecerContrasena();
+  const { control, error, enviando, enviar } = useRestablecerContrasena();
 
   return (
     <ContenedorPantalla titulo="Restablecer contraseña">
@@ -47,7 +47,11 @@ export function RestablecerContrasenaScreen() {
         />
 
         <MensajeError texto={error ?? undefined} />
-        <Button text="GUARDAR" onPress={enviar} />
+        <Button
+          text={enviando ? 'ENVIANDO…' : 'GUARDAR'}
+          onPress={enviar}
+          disabled={enviando}
+        />
       </View>
     </ContenedorPantalla>
   );

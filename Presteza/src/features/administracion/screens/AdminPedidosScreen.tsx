@@ -15,6 +15,7 @@ export function AdminPedidosScreen() {
         guardando={admin.guardando}
         onGuardar={admin.guardarPedido}
         onCambiarEstado={admin.cambiarEstadoPedido}
+        onAsignarRepartidor={admin.asignarRepartidor}
         onEliminar={admin.eliminarPedido}
       />
     </PantallaPestanaAdmin>

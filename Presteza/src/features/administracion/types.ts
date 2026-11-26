@@ -25,6 +25,7 @@ export type PedidoAdmin = {
   deliveryAddress?: string | null;
   deliveryLat?: number | null;
   deliveryLng?: number | null;
+  courierId?: string | null;
   products?: {
     dishId?: string;
     name?: string;

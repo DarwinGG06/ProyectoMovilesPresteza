@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
+import { ChipCategoria } from '@/components/ChipCategoria';
 import { TarjetaPerfil } from '@/features/perfil/components/TarjetaPerfil';
 import { formatCOP } from '@/services/cart/CartContext';
 
@@ -34,32 +35,53 @@ import {
   InterruptorVista,
 } from '../VistaCarta';
 
+function esDomicilio(pedido: PedidoAdmin) {
+  return pedido.tipo === 'domicilio' || Boolean(pedido.deliveryAddress);
+}
+
+function estadoClave(status?: string) {
+  return String(status || '').trim().toLowerCase();
+}
+
 type TabPedidosProps = {
   pedidos: PedidoAdmin[];
   clientes: ClienteAdmin[];
+  repartidores?: ClienteAdmin[];
   productos: ProductoAdmin[];
   guardando?: boolean;
   onGuardar: (datos: PedidoForm, editando?: PedidoAdmin | null) => Promise<boolean>;
   onCambiarEstado: (pedido: PedidoAdmin, status: string) => void;
+  onAsignarRepartidor?: (
+    pedido: PedidoAdmin,
+    courierId: string,
+    courierName?: string,
+  ) => Promise<boolean>;
   onEliminar: (pedido: PedidoAdmin) => void;
 };
 
 export function TabPedidos({
   pedidos,
   clientes,
+  repartidores = [],
   productos,
   guardando,
   onGuardar,
   onCambiarEstado,
+  onAsignarRepartidor,
   onEliminar,
 }: TabPedidosProps) {
   const tab = useTabPedidos(pedidos, clientes, onGuardar);
   const { detalle, setFiltro } = tab;
   const params = useLocalSearchParams<{ filtro?: string }>();
+  const [repartidorElegido, setRepartidorElegido] = useState<string | null>(null);
 
   useEffect(() => {
     if (params.filtro === 'pending') setFiltro('pending');
   }, [params.filtro, setFiltro]);
+
+  useEffect(() => {
+    setRepartidorElegido(detalle?.courierId ?? null);
+  }, [detalle?.courierId, detalle?.id, detalle?._id]);
 
   const accionesFila = (pedido: PedidoAdmin) => (
     <AccionesAdmin>
@@ -116,6 +138,14 @@ export function TabPedidos({
                       <Text className="mt-1 font-roboto text-sm text-tinta/70" numberOfLines={1}>
                         {pedido.user_name || 'Cliente'}
                         {textoEntrega(pedido) ? ` · ${textoEntrega(pedido)}` : ''}
+                        {pedido.courierId
+                          ? ` · ${
+                              repartidores.find((item) => item.id === pedido.courierId)?.name ||
+                              'Asignado'
+                            }`
+                          : esDomicilio(pedido) && estadoClave(pedido.status) === 'listo'
+                            ? ' · Sin repartidor'
+                            : ''}
                       </Text>
                       <Text className="mt-0.5 font-roboto text-[13px] text-tinta/70">
                         {formatoFechaHora(pedido.createdAt)} · {textoMedioPago(pedido.payment_method)}
@@ -248,9 +278,73 @@ export function TabPedidos({
               </Text>
             </View>
 
+            {esDomicilio(detalle) &&
+            (estadoClave(detalle.status) === 'listo' ||
+              estadoClave(detalle.status) === 'en_camino') ? (
+              <View className="mt-5 gap-3 border-t border-madera/20 pt-4">
+                <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
+                  REPARTIDOR
+                </Text>
+                {detalle.courierId ? (
+                  <Text className="font-roboto text-sm text-tinta/70">
+                    Asignado:{' '}
+                    {repartidores.find((item) => item.id === detalle.courierId)?.name ||
+                      'Repartidor'}
+                  </Text>
+                ) : (
+                  <Text className="font-roboto text-sm text-tinta/70">
+                    Elige un repartidor para que vea este domicilio.
+                  </Text>
+                )}
+                {repartidores.length === 0 ? (
+                  <Text className="font-roboto text-xs text-red-700">
+                    No hay cuentas con rol repartidor. Crea una en Clientes.
+                  </Text>
+                ) : (
+                  <View className="flex-row flex-wrap">
+                    {repartidores.map((item) => (
+                      <ChipCategoria
+                        key={item.id}
+                        disabled={guardando}
+                        etiqueta={item.name || 'Repartidor'}
+                        activo={repartidorElegido === item.id}
+                        onPress={() => setRepartidorElegido(item.id)}
+                      />
+                    ))}
+                  </View>
+                )}
+                {onAsignarRepartidor ? (
+                  <Button
+                    text={
+                      detalle.courierId && detalle.courierId === repartidorElegido
+                        ? 'YA ASIGNADO'
+                        : 'ASIGNAR REPARTIDOR'
+                    }
+                    variant="gold"
+                    compact
+                    disabled={
+                      guardando ||
+                      !repartidorElegido ||
+                      detalle.courierId === repartidorElegido
+                    }
+                    className="w-full"
+                    onPress={() => {
+                      if (!repartidorElegido || !onAsignarRepartidor) return;
+                      const elegido = repartidores.find((item) => item.id === repartidorElegido);
+                      void onAsignarRepartidor(detalle, repartidorElegido, elegido?.name).then(
+                        (ok) => {
+                          if (ok) tab.cerrarDetalle();
+                        },
+                      );
+                    }}
+                  />
+                ) : null}
+              </View>
+            ) : null}
+
             {siguientesEstadosPedido(
               detalle.status,
-              detalle.tipo === 'domicilio' || detalle.deliveryAddress ? 'domicilio' : detalle.tipo,
+              esDomicilio(detalle) ? 'domicilio' : detalle.tipo,
             ).map((estado) =>
               estado.peligro ? (
                 <Pressable

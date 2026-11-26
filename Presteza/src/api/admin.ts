@@ -20,6 +20,7 @@ function normalizarPedido(crudo: Record<string, unknown>): PedidoAdmin {
     deliveryAddress: texto(crudo.deliveryAddress) || texto(crudo.delivery_address) || null,
     deliveryLat: coordenada(crudo.deliveryLat ?? crudo.delivery_lat),
     deliveryLng: coordenada(crudo.deliveryLng ?? crudo.delivery_lng),
+    courierId: texto(crudo.courierId) || texto(crudo.courier_id) || null,
     products: Array.isArray(crudo.products) ? (crudo.products as PedidoAdmin['products']) : [],
     status: texto(crudo.status),
     user_name: texto(crudo.user_name) || texto(crudo.userName),
@@ -54,6 +55,15 @@ export function actualizarEstadoPedido(jwt: string, pedidoId: string, status: st
     token: jwt,
     body: { status: estadoPedidoBackend(status) },
   });
+}
+
+export async function asignarRepartidor(jwt: string, pedidoId: string, courierId: string) {
+  const respuesta = await request(`/orders/${pedidoId}/courier`, {
+    method: 'PATCH',
+    token: jwt,
+    body: { courierId },
+  });
+  return normalizarPedido(entidad(respuesta, 'order'));
 }
 
 export async function crearPedido(jwt: string, datos: Record<string, unknown>) {

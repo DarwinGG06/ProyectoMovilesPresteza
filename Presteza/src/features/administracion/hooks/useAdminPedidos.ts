@@ -4,6 +4,7 @@ import { usePedidosActualizados } from '@/shared/hooks/usePedidosActualizados';
 import {
   actualizarEstadoPedido,
   actualizarPedido,
+  asignarRepartidor,
   crearPedido,
   eliminarPedido,
   listarPedidos,
@@ -155,6 +156,36 @@ export function useAdminPedidos() {
     [aviso, conToken, setLista]
   );
 
+  const asignar = useCallback(
+    async (pedido: PedidoAdmin, courierId: string, courierName?: string) => {
+      const sesion = conToken();
+      if (!sesion) return false;
+      const id = idDe(pedido);
+      const codigo = id.slice(-8).toUpperCase();
+      setGuardando(true);
+      try {
+        const actualizado = await asignarRepartidor(sesion, id, courierId);
+        setLista((prev) =>
+          fusionar(prev, pedido, {
+            ...actualizado,
+            courierId: actualizado.courierId || courierId,
+          }),
+        );
+        aviso.ok(
+          'Repartidor asignado',
+          `El pedido #${codigo} quedó con ${courierName || 'el repartidor'}.`,
+        );
+        return true;
+      } catch (err) {
+        aviso.errorDe(err, 'No se pudo asignar el repartidor.', 'Pedido');
+        return false;
+      } finally {
+        setGuardando(false);
+      }
+    },
+    [aviso, conToken, setGuardando, setLista],
+  );
+
   return {
     pedidos,
     cargando,
@@ -163,6 +194,7 @@ export function useAdminPedidos() {
     recargar,
     guardar,
     cambiarEstado,
+    asignar,
     eliminar,
     eliminarVarios,
   };

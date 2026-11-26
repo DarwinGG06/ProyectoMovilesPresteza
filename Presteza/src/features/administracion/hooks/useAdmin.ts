@@ -31,6 +31,11 @@ export function useAdmin() {
     [pedidos.pedidos, reservas.reservas, usuarios.usuarios]
   );
 
+  const repartidores = useMemo(
+    () => clientes.filter((item) => String(item.role || '').toLowerCase() === 'repartidor'),
+    [clientes],
+  );
+
   const stats = useMemo(
     () =>
       calcularStats({
@@ -145,6 +150,7 @@ export function useAdmin() {
     adicionales: adicionales.adicionales,
     mensajes: mensajes.mensajes,
     clientes,
+    repartidores,
     guardarProducto: async (datos: ProductoForm, editando?: ProductoAdmin | null) => {
       const id = await productos.guardar(datos, editando);
       if (!id) return false;
@@ -170,6 +176,7 @@ export function useAdmin() {
     eliminarAdicionales: adicionales.eliminarVarios,
     guardarPedido,
     cambiarEstadoPedido: pedidos.cambiarEstado,
+    asignarRepartidor: pedidos.asignar,
     eliminarPedido: pedidos.eliminar,
     eliminarPedidos: pedidos.eliminarVarios,
     guardarMensaje: mensajes.guardar,

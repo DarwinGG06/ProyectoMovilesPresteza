@@ -11,10 +11,12 @@ import { esAdmin } from '@/session/roles';
 import { useAnimacionHero } from '../hooks/useAnimacionHero';
 import { Plato } from './MesaDecor';
 
-const MESA = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&q=80';
-const COPA = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80';
+type Props = {
+  /** Foto del primer plato de la carta (si hay). */
+  imagenDestacada?: string;
+};
 
-export function HeroInicio() {
+export function HeroInicio({ imagenDestacada }: Props) {
   const { user } = useSession();
   const { platoGrande, halo } = useAnimacionHero();
   const admin = esAdmin(user);
@@ -63,13 +65,28 @@ export function HeroInicio() {
           ]}
         />
 
-        <Animated.View style={[{ position: 'absolute', right: -18, top: 18 }, platoGrande]}>
-          <Plato uri={MESA} size={304} />
-        </Animated.View>
-
-        <View className="absolute bottom-16 right-8">
-          <Plato uri={COPA} size={118} />
-        </View>
+        {imagenDestacada ? (
+          <Animated.View style={[{ position: 'absolute', right: -18, top: 18 }, platoGrande]}>
+            <Plato uri={imagenDestacada} size={304} />
+          </Animated.View>
+        ) : (
+          <Animated.View
+            style={[
+              {
+                position: 'absolute',
+                right: -18,
+                top: 18,
+                width: 304,
+                height: 304,
+                borderRadius: 152,
+                borderWidth: 1,
+                borderColor: '#d4af77',
+                backgroundColor: '#2a0818',
+              },
+              platoGrande,
+            ]}
+          />
+        )}
 
         <View className="absolute bottom-5 left-5 w-[248px] overflow-hidden">
           <Pergamino>

@@ -139,6 +139,7 @@ export type PestanaId =
   | 'direcciones'
   | 'pagos'
   | 'reservas'
+  | 'papelera'
   | 'ajustes';
 
 export type DireccionForm = {

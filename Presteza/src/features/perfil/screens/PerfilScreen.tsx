@@ -13,6 +13,7 @@ import { EncabezadoSeccion, PestanasPerfil } from '../components/PestanasPerfil'
 import { TabAjustes } from '../components/tabs/TabAjustes';
 import { TabDirecciones } from '../components/tabs/TabDirecciones';
 import { TabPagos } from '../components/tabs/TabPagos';
+import { TabPapelera } from '../components/tabs/TabPapelera';
 import { TabPedidos } from '../components/tabs/TabPedidos';
 import { TabPuntos } from '../components/tabs/TabPuntos';
 import { TabReservas } from '../components/tabs/TabReservas';
@@ -132,7 +133,16 @@ export function PerfilScreen() {
                 {pestana === 'puntos' ? (
                   <TabPuntos userId={user.id} token={token} perfil={perfil} />
                 ) : null}
-                {pestana === 'pedidos' ? <TabPedidos pedidos={pedidos} /> : null}
+                {pestana === 'pedidos' ? (
+                  <TabPedidos
+                    pedidos={pedidos}
+                    onArchivado={(id) =>
+                      setPedidos((prev) =>
+                        prev.filter((pedido) => (pedido.id || pedido._id) !== id),
+                      )
+                    }
+                  />
+                ) : null}
                 {pestana === 'direcciones' ? (
                   <TabDirecciones
                     userId={user.id}
@@ -153,6 +163,7 @@ export function PerfilScreen() {
                 {pestana === 'reservas' ? (
                   <TabReservas onCambio={(lista) => setReservas(lista)} />
                 ) : null}
+                {pestana === 'papelera' ? <TabPapelera /> : null}
                 {pestana === 'ajustes' ? (
                   <TabAjustes
                     userId={user.id}

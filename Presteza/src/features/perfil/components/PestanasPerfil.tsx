@@ -24,6 +24,7 @@ const INDICE: {
     icono: 'location-outline',
   },
   { id: 'pagos', etiqueta: 'Pagos', detalle: 'Tus tarjetas', icono: 'card-outline' },
+  { id: 'papelera', etiqueta: 'Papelera', detalle: 'Recuperar', icono: 'trash-outline' },
   { id: 'ajustes', etiqueta: 'Cuenta', detalle: 'Datos y sesión', icono: 'person-outline' },
 ];
 
@@ -33,6 +34,7 @@ const TITULOS: Record<Exclude<PestanaId, 'cuenta'>, string> = {
   puntos: 'Puntos',
   direcciones: 'Direcciones',
   pagos: 'Pagos',
+  papelera: 'Papelera',
   ajustes: 'Cuenta',
 };
 

@@ -12,11 +12,12 @@ import { EstadoVacio, TarjetaPerfil } from '../TarjetaPerfil';
 
 type TabPedidosProps = {
   pedidos: Pedido[];
+  onArchivado?: (id: string) => void;
 };
 
-export function TabPedidos({ pedidos }: TabPedidosProps) {
-  const { lista, estaAbierto, alternarDetalle, repetir, irAlMenu, irASeguimiento } =
-    usePedidosPerfil(pedidos);
+export function TabPedidos({ pedidos, onArchivado }: TabPedidosProps) {
+  const { lista, estaAbierto, alternarDetalle, repetir, archivar, irAlMenu, irASeguimiento } =
+    usePedidosPerfil(pedidos, onArchivado);
 
   return (
     <TarjetaPerfil numero="I" badge="PEDIDOS" titulo="Historial" compacto>
@@ -53,13 +54,14 @@ export function TabPedidos({ pedidos }: TabPedidosProps) {
 
                 <BarraEstadosPedido status={pedido.status} />
 
-                <View className="mt-3 flex-row">
+                <View className="mt-3 flex-row flex-wrap">
                   <EnlaceAccion
                     etiqueta={abierto ? 'OCULTAR' : 'DETALLE'}
                     onPress={() => alternarDetalle(id)}
                   />
                   <EnlaceAccion etiqueta="SEGUIR" onPress={() => irASeguimiento(id)} />
                   <EnlaceAccion etiqueta="REPETIR" onPress={() => repetir(pedido)} />
+                  <EnlaceAccion etiqueta="ARCHIVAR" peligro onPress={() => archivar(pedido)} />
                 </View>
 
                 {abierto ? (

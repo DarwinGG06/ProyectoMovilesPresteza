@@ -12,6 +12,7 @@ export const PESTANA_POR_RUTA: Record<string, PestanaAdmin> = {
   adicionales: 'adicionales',
   mensajes: 'mensajes',
   clientes: 'clientes',
+  papelera: 'papelera',
   ajustes: 'ajustes',
 };
 
@@ -25,6 +26,7 @@ export const RUTA_POR_PESTANA: Record<PestanaAdmin, string> = {
   adicionales: 'adicionales',
   mensajes: 'mensajes',
   clientes: 'clientes',
+  papelera: 'papelera',
   ajustes: 'ajustes',
 };
 

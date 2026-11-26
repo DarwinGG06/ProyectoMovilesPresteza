@@ -31,6 +31,7 @@ const GRUPOS: {
     items: [
       { id: 'inventario', etiqueta: 'Inventario' },
       { id: 'clientes', etiqueta: 'Clientes' },
+      { id: 'papelera', etiqueta: 'Papelera' },
       { id: 'ajustes', etiqueta: 'Ajustes' },
     ],
   },
@@ -46,6 +47,7 @@ const TITULOS: Record<PestanaAdmin, string> = {
   adicionales: 'Adicionales',
   mensajes: 'Mensajes',
   clientes: 'Clientes',
+  papelera: 'Papelera',
   ajustes: 'Ajustes',
 };
 

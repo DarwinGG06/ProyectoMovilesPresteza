@@ -13,6 +13,7 @@ export type PestanaAdmin =
   | 'adicionales'
   | 'mensajes'
   | 'clientes'
+  | 'papelera'
   | 'ajustes';
 
 export type PedidoAdmin = {

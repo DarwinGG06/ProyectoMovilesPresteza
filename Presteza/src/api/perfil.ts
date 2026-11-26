@@ -167,6 +167,14 @@ export async function cancelarPedido(jwt: string, pedidoId: string) {
   });
 }
 
+/** Mueve el pedido a la papelera (soft-delete). */
+export async function archivarPedido(jwt: string, pedidoId: string) {
+  return request(`/orders/${pedidoId}`, {
+    method: 'DELETE',
+    token: jwt,
+  });
+}
+
 export async function obtenerPedidos(userId: string) {
   const data = await request<RespuestaPedidos>(`/orders/user/${userId}`);
   const lista = Array.isArray(data) ? data : (data.orders ?? []);

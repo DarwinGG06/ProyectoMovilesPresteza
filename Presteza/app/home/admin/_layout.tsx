@@ -24,6 +24,7 @@ export default function AdminLayout() {
             <Stack.Screen name="adicionales" options={{ title: 'Adicionales' }} />
             <Stack.Screen name="mensajes" options={{ title: 'Mensajes' }} />
             <Stack.Screen name="clientes" options={{ title: 'Clientes' }} />
+            <Stack.Screen name="papelera" options={{ title: 'Papelera' }} />
             <Stack.Screen name="ajustes" options={{ title: 'Ajustes' }} />
           </Stack>
         </MarcoAdmin>

@@ -135,18 +135,25 @@ export function EnlaceAccion({
   etiqueta,
   onPress,
   peligro,
+  activo,
 }: {
   etiqueta: string;
   onPress: () => void;
   peligro?: boolean;
+  activo?: boolean;
 }) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      className="min-h-12 justify-center py-1 pr-4">
+      accessibilityState={{ selected: Boolean(activo) }}
+      className={`mr-2 min-h-12 justify-center rounded-full px-3.5 py-1 ${
+        activo ? 'bg-marca' : ''
+      }`}>
       <Text
-        className={`font-roboto text-[13px] tracking-[2px] ${peligro ? 'text-red-700' : 'text-marca'}`}>
+        className={`font-roboto text-[13px] tracking-[2px] ${
+          activo ? 'text-crema' : peligro ? 'text-red-700' : 'text-marca'
+        }`}>
         {etiqueta}
       </Text>
     </Pressable>

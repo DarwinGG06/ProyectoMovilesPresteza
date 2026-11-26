@@ -15,6 +15,7 @@ const PESTANAS: PestanaId[] = [
   'direcciones',
   'pagos',
   'reservas',
+  'papelera',
   'ajustes',
 ];
 

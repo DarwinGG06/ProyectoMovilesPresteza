@@ -10,6 +10,7 @@ import { AccionesForm } from './AccionesForm';
 export function FormularioCliente({
   valores,
   editando,
+  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -105,7 +106,7 @@ export function FormularioCliente({
           }}
         />
       ) : null}
-      <AccionesForm onGuardar={enviar} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={enviar} guardando={guardando} />
     </View>
   );
 }

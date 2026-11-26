@@ -1,17 +1,18 @@
 import { View } from 'react-native';
 
-import Button from '@/components/Button';
 import Field from '@/components/Field';
 import Select from '@/components/Select';
 import { CampoFechaReserva } from '@/features/reservas/components/CampoFechaReserva';
 import { CampoHoraReserva } from '@/features/reservas/components/CampoHoraReserva';
 import { useFormulario } from '@/shared/hooks/useFormulario';
 import type { MesaAdmin, ReservaFormAdmin } from '../../types';
+import { AccionesForm } from './AccionesForm';
 import { CampoStepper } from './CampoStepper';
 
 export function FormularioReservaAdmin({
   valores,
   mesas,
+  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -60,14 +61,7 @@ export function FormularioReservaAdmin({
         autoCapitalize="sentences"
         variante="linea"
       />
-      <Button
-        text={guardando ? 'GUARDANDO' : 'LISTO'}
-        variant="gold"
-        compact
-        disabled={guardando}
-        className="mt-3 w-full"
-        onPress={guardar}
-      />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

@@ -12,6 +12,7 @@ import { AccionesForm } from './AccionesForm';
 export function FormularioAdicional({
   valores,
   categorias,
+  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -54,7 +55,7 @@ export function FormularioAdicional({
             (Array.isArray(valor) && valor.length > 0) || 'Elige al menos una categoría',
         }}
       />
-      <AccionesForm onGuardar={guardar} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

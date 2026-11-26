@@ -27,7 +27,7 @@ export function FormularioPedido({
   valores,
   clientes,
   productos,
-  onCancelar: _onCancelar,
+  onCancelar,
   onGuardar,
   guardando,
   bloquearCliente,
@@ -176,7 +176,7 @@ export function FormularioPedido({
         </View>
       </View>
 
-      <AccionesForm onGuardar={guardar} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

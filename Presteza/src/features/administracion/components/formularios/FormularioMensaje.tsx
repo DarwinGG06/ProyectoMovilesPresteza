@@ -8,6 +8,7 @@ import { AccionesForm } from './AccionesForm';
 
 export function FormularioMensaje({
   valores,
+  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -62,7 +63,7 @@ export function FormularioMensaje({
         variante="linea"
         rules={{ required: 'Escribe el mensaje' }}
       />
-      <AccionesForm onGuardar={guardar} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

@@ -10,6 +10,7 @@ import { CampoImagenProducto } from './CampoImagenProducto';
 
 export function FormularioCategoria({
   valores,
+  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -56,7 +57,11 @@ export function FormularioCategoria({
           />
         )}
       />
-      <AccionesForm onGuardar={formulario.guardar} guardando={formulario.ocupado} />
+      <AccionesForm
+        onCancelar={onCancelar}
+        onGuardar={formulario.guardar}
+        guardando={formulario.ocupado}
+      />
     </View>
   );
 }

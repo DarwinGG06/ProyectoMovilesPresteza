@@ -1,6 +1,9 @@
+import { View } from 'react-native';
+
 import Button from '@/components/Button';
 
 export function AccionesForm({
+  onCancelar,
   onGuardar,
   guardando,
   etiqueta = 'LISTO',
@@ -11,13 +14,25 @@ export function AccionesForm({
   etiqueta?: string;
 }) {
   return (
-    <Button
-      text={guardando ? 'GUARDANDO' : etiqueta}
-      variant="gold"
-      compact
-      disabled={guardando}
-      className="mt-3 w-full"
-      onPress={onGuardar}
-    />
+    <View className="mt-3 gap-2">
+      <Button
+        text={guardando ? 'GUARDANDO' : etiqueta}
+        variant="gold"
+        compact
+        disabled={guardando}
+        className="w-full"
+        onPress={onGuardar}
+      />
+      {onCancelar ? (
+        <Button
+          text="CANCELAR"
+          secondary
+          compact
+          disabled={guardando}
+          className="w-full"
+          onPress={onCancelar}
+        />
+      ) : null}
+    </View>
   );
 }

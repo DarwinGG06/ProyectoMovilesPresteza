@@ -26,6 +26,7 @@ export function FormularioProducto({
   valores,
   categorias,
   adicionales = [],
+  onCancelar,
   onGuardar,
   guardando,
 }: FormularioProductoProps) {
@@ -127,6 +128,7 @@ export function FormularioProducto({
         </Text>
       )}
       <AccionesForm
+        onCancelar={onCancelar}
         onGuardar={formulario.guardar}
         guardando={formulario.ocupado}
         etiqueta={formulario.subiendo ? 'SUBIENDO' : 'LISTO'}

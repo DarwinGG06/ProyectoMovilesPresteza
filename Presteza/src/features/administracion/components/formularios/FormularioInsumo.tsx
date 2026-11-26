@@ -9,7 +9,7 @@ import { CampoStepper } from './CampoStepper';
 
 export function FormularioInsumo({
   valores,
-  onCancelar: _onCancelar,
+  onCancelar,
   onGuardar,
   guardando,
 }: {
@@ -49,7 +49,7 @@ export function FormularioInsumo({
         rules={reglasPrecio}
       />
       <CampoStepper control={control} name="quantity" label="Cantidad" minimo={0} />
-      <AccionesForm onGuardar={guardar} guardando={guardando} />
+      <AccionesForm onCancelar={onCancelar} onGuardar={guardar} guardando={guardando} />
     </View>
   );
 }

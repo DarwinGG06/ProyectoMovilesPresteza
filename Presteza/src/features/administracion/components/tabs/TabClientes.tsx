@@ -6,7 +6,7 @@ import { formatCOP } from '@/services/cart/CartContext';
 
 import { useTabClientes } from '../../hooks/useTabClientes';
 import type { ClienteAdmin, ClienteForm } from '../../types';
-import { iniciales } from '../../utils';
+import { iniciales, textoRolCuenta } from '../../utils';
 import {
   AccionesAdmin,
   BotonAgregarAdmin,
@@ -60,6 +60,21 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
               onPress={() => tab.setFiltro('all')}
             />
             <ChipFiltro
+              etiqueta="CLIENTES"
+              activo={tab.filtro === 'client'}
+              onPress={() => tab.setFiltro('client')}
+            />
+            <ChipFiltro
+              etiqueta="REPARTIDORES"
+              activo={tab.filtro === 'repartidor'}
+              onPress={() => tab.setFiltro('repartidor')}
+            />
+            <ChipFiltro
+              etiqueta="ADMIN"
+              activo={tab.filtro === 'admin'}
+              onPress={() => tab.setFiltro('admin')}
+            />
+            <ChipFiltro
               etiqueta="CON PEDIDOS"
               activo={tab.filtro === 'pedidos'}
               onPress={() => tab.setFiltro('pedidos')}
@@ -89,7 +104,10 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
             {tab.lista.map((cliente) => (
               <FilaTabla key={cliente.id}>
                 <CeldaTabla flex={1.4}>
-                  <Text className="font-roboto-light text-sm text-tinta" numberOfLines={1}>
+                  <Text className="font-roboto text-[11px] tracking-[1.5px] text-marca">
+                    {textoRolCuenta(cliente.role).toUpperCase()}
+                  </Text>
+                  <Text className="mt-0.5 font-roboto-light text-sm text-tinta" numberOfLines={1}>
                     {cliente.name}
                   </Text>
                   {cliente.email ? (
@@ -122,6 +140,9 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
           <GrillaAdmin>
             {tab.lista.map((cliente) => (
               <CajaCuadricula key={cliente.id}>
+                <Text className="mb-2 font-roboto text-[11px] tracking-[1.5px] text-marca">
+                  {textoRolCuenta(cliente.role).toUpperCase()}
+                </Text>
                 <View className="mb-2 h-10 w-10 items-center justify-center border border-oro/40">
                   <Text className="font-roboto text-sm text-marca">{iniciales(cliente.name)}</Text>
                 </View>
@@ -174,6 +195,11 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
         onCerrar={() => tab.setDetalle(null)}>
         {tab.detalle ? (
           <View>
+            <View className="mb-3 self-start rounded-full bg-marca/10 px-3.5 py-1.5">
+              <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
+                {textoRolCuenta(tab.detalle.role).toUpperCase()}
+              </Text>
+            </View>
             <View className="gap-1">
               <Text className="font-roboto text-[14px] text-tinta/70">
                 {tab.detalle.email || 'Sin correo'}

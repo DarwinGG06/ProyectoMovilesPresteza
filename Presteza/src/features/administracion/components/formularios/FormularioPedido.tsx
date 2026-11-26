@@ -14,6 +14,7 @@ import { Paso } from './CampoStepper';
 const PAGOS = [
   { value: 'cash', label: 'Efectivo' },
   { value: 'card', label: 'Tarjeta' },
+  { value: 'transfer', label: 'Transferencia' },
 ];
 
 const ESTADOS_COCINA = [

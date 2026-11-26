@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { ClienteAdmin, ClienteForm } from '../types';
 
-type FiltroCliente = 'all' | 'pedidos' | 'reservas';
+type FiltroCliente = 'all' | 'pedidos' | 'reservas' | 'client' | 'repartidor' | 'admin';
 
 export function useTabClientes(
   clientes: ClienteAdmin[],
@@ -19,15 +19,22 @@ export function useTabClientes(
   const lista = useMemo(() => {
     const texto = busqueda.trim().toLowerCase();
     return clientes.filter((cliente) => {
+      const rol = (cliente.role || 'client').toLowerCase();
       const coincideTexto =
         !texto ||
-        [cliente.name, cliente.email, cliente.phone].filter(Boolean).some((campo) => campo!.toLowerCase().includes(texto));
-      const coincideActividad =
+        [cliente.name, cliente.email, cliente.phone, rol]
+          .filter(Boolean)
+          .some((campo) => campo!.toLowerCase().includes(texto));
+      const coincideFiltro =
         filtro === 'all' ||
         (filtro === 'pedidos'
           ? (cliente.totalOrders ?? 0) > 0
-          : (cliente.totalReservations ?? 0) > 0);
-      return coincideTexto && coincideActividad;
+          : filtro === 'reservas'
+            ? (cliente.totalReservations ?? 0) > 0
+            : filtro === 'client'
+              ? rol === 'client' || rol === 'cliente'
+              : rol === filtro);
+      return coincideTexto && coincideFiltro;
     });
   }, [busqueda, clientes, filtro]);
 

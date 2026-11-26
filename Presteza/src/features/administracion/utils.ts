@@ -146,9 +146,7 @@ export function enriquecerClientes(
   pedidos: PedidoAdmin[],
   reservas: { userEmail?: string; userName?: string }[],
 ): ClienteAdmin[] {
-  return usuarios
-    .filter((usuario) => usuario.role !== 'admin')
-    .map((cliente) => {
+  return usuarios.map((cliente) => {
       const susPedidos = pedidos.filter(
         (pedido) =>
           (pedido.userId && pedido.userId === cliente.id) ||
@@ -177,6 +175,27 @@ export function textoEntrega(pedido: {
   if (pedido.tipo === 'domicilio') return pedido.deliveryAddress || 'Domicilio';
   if (pedido.tipo === 'mesa') return pedido.tableNumber ? `Mesa ${pedido.tableNumber}` : 'En mesa';
   return '';
+}
+
+export function textoMedioPago(metodo?: string | null) {
+  const mapa: Record<string, string> = {
+    cash: 'Efectivo',
+    card: 'Tarjeta',
+    transfer: 'Transferencia',
+  };
+  if (!metodo) return 'Sin medio';
+  return mapa[metodo] ?? metodo;
+}
+
+export function textoRolCuenta(role?: string | null) {
+  const mapa: Record<string, string> = {
+    client: 'Cliente',
+    cliente: 'Cliente',
+    repartidor: 'Repartidor',
+    admin: 'Admin',
+  };
+  if (!role) return 'Cliente';
+  return mapa[role] ?? role;
 }
 
 export function iniciales(nombre?: string) {

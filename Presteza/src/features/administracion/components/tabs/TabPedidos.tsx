@@ -15,6 +15,7 @@ import {
   siguientesEstadosPedido,
   textoEntrega,
   textoEstadoPedido,
+  textoMedioPago,
 } from '../../utils';
 import {
   AccionesAdmin,
@@ -117,7 +118,7 @@ export function TabPedidos({
                         {textoEntrega(pedido) ? ` · ${textoEntrega(pedido)}` : ''}
                       </Text>
                       <Text className="mt-0.5 font-roboto text-[13px] text-tinta/70">
-                        {formatoFechaHora(pedido.createdAt)}
+                        {formatoFechaHora(pedido.createdAt)} · {textoMedioPago(pedido.payment_method)}
                       </Text>
                     </View>
                     <Text className="font-roboto text-base text-marca">
@@ -144,6 +145,9 @@ export function TabPedidos({
                 </Text>
                 <Text className="mt-1 font-roboto text-[13px] text-tinta/70">
                   {formatoFechaHora(pedido.createdAt)}
+                </Text>
+                <Text className="mt-1 font-roboto text-[13px] text-tinta/70">
+                  {textoMedioPago(pedido.payment_method)}
                 </Text>
                 <Text className="mt-2 font-roboto text-lg text-marca">
                   {formatCOP(pedido.total || 0)}
@@ -191,6 +195,9 @@ export function TabPedidos({
               {textoEntrega(detalle) ? (
                 <Text className="font-roboto text-[13px] text-tinta/70">{textoEntrega(detalle)}</Text>
               ) : null}
+              <Text className="font-roboto text-[13px] text-tinta/70">
+                Pago: {textoMedioPago(detalle.payment_method)}
+              </Text>
               <Text className="font-roboto text-[13px] text-tinta/55">
                 {formatoFechaHora(detalle.createdAt)}
               </Text>

@@ -2,7 +2,7 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import { useFormulario } from '@/shared/hooks/useFormulario';
-import { reglasTelefono } from '@/shared/validacion';
+import { reglasCorreo, reglasTelefono } from '@/shared/validacion';
 import type { MensajeForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -26,6 +26,7 @@ export function FormularioMensaje({
         label="Nombre"
         autoCapitalize="words"
         variante="linea"
+        maxLength={80}
         rules={{ required: 'Escribe el nombre' }}
       />
       <Field
@@ -34,7 +35,8 @@ export function FormularioMensaje({
         label="Correo"
         keyboardType="email-address"
         variante="linea"
-        rules={{ required: 'Escribe el correo' }}
+        maxLength={120}
+        rules={reglasCorreo}
       />
       <Field
         control={control}

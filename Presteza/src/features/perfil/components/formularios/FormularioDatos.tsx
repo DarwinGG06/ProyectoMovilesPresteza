@@ -2,7 +2,7 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import { useFormulario } from '@/shared/hooks/useFormulario';
-import { reglasTelefono } from '@/shared/validacion';
+import { reglasCorreo, reglasTelefono } from '@/shared/validacion';
 import type { PerfilForm } from '../../types';
 import { AccionesFormulario } from '../elementos';
 
@@ -24,9 +24,11 @@ export function FormularioDatos({ valores, onCancelar, onGuardar, guardando }: F
         label="Nombre completo"
         placeholder="Ej: Ana Pérez"
         autoCapitalize="words"
+        maxLength={80}
         rules={{
           required: 'Escribe tu nombre',
           minLength: { value: 3, message: 'Mínimo 3 caracteres' },
+          maxLength: { value: 80, message: 'Máximo 80 caracteres' },
         }}
       />
       <Field
@@ -35,10 +37,8 @@ export function FormularioDatos({ valores, onCancelar, onGuardar, guardando }: F
         label="Correo"
         placeholder="tu@email.com"
         keyboardType="email-address"
-        rules={{
-          required: 'Escribe tu correo',
-          pattern: { value: /\S+@\S+\.\S+/, message: 'Correo no válido' },
-        }}
+        maxLength={120}
+        rules={reglasCorreo}
       />
       <Field
         control={control}

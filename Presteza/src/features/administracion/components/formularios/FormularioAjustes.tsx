@@ -2,7 +2,7 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import { useFormulario } from '@/shared/hooks/useFormulario';
-import { reglasTelefono } from '@/shared/validacion';
+import { reglasCorreo, reglasTelefono } from '@/shared/validacion';
 import type { AjustesForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 
@@ -18,14 +18,19 @@ export function FormularioAjustes({
   const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
-    <View className="gap-5">
+    <View className="gap-3 pb-1">
       <Field
         control={control}
         name="name"
         label="Nombre"
         autoCapitalize="words"
         variante="linea"
-        rules={{ required: 'Escribe el nombre' }}
+        maxLength={80}
+        rules={{
+          required: 'Escribe el nombre',
+          minLength: { value: 2, message: 'Mínimo 2 caracteres' },
+          maxLength: { value: 80, message: 'Máximo 80 caracteres' },
+        }}
       />
       <Field
         control={control}
@@ -33,7 +38,8 @@ export function FormularioAjustes({
         label="Correo"
         keyboardType="email-address"
         variante="linea"
-        rules={{ required: 'Escribe el correo' }}
+        maxLength={120}
+        rules={reglasCorreo}
       />
       <Field
         control={control}

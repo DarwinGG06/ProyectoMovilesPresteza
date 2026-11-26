@@ -2,7 +2,7 @@ import { View } from 'react-native';
 
 import CampoFecha from '@/components/CampoFecha';
 import Field from '@/components/Field';
-import { reglasTelefono } from '@/shared/validacion';
+import { reglasCorreo, reglasTelefono } from '@/shared/validacion';
 import { useFormularioCliente } from '../../hooks/useFormularioCliente';
 import type { ClienteForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
@@ -43,11 +43,7 @@ export function FormularioCliente({
         keyboardType="email-address"
         variante="linea"
         maxLength={120}
-        rules={{
-          required: 'Escribe el correo',
-          pattern: { value: /^\S+@\S+\.\S+$/, message: 'Correo inválido' },
-          maxLength: { value: 120, message: 'Máximo 120 caracteres' },
-        }}
+        rules={reglasCorreo}
       />
       <Field
         control={control}

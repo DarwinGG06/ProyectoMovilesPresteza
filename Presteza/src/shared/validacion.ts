@@ -8,6 +8,14 @@ export const reglasTelefono = {
   maxLength: { value: 10, message: 'Máximo 10 dígitos' },
 } as const;
 
+export const CORREO_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export const reglasCorreo = {
+  required: 'El correo es obligatorio',
+  pattern: { value: CORREO_REGEX, message: 'Correo inválido' },
+  maxLength: { value: 120, message: 'Máximo 120 caracteres' },
+} as const;
+
 export const reglasPersonas = {
   required: 'Indica cuántas personas',
   pattern: { value: /^[1-9][0-9]?$/, message: 'Solo números' },

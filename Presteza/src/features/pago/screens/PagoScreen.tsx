@@ -10,6 +10,8 @@ import { ContenedorPantalla } from '@/shared/components/contenedor-pantalla/Cont
 import { LoginModal } from '@/shared/components/nav-bar/LoginModal';
 import { formatCOP } from '@/services/cart/CartContext';
 
+import { ConfirmandoPago } from '../components/ConfirmandoPago';
+import { SelectorTarjetas } from '../components/SelectorTarjetas';
 import { usePago } from '../hooks/usePago';
 
 export function PagoScreen() {
@@ -267,30 +269,57 @@ export function PagoScreen() {
                     </View>
                   ) : null}
 
-                  <TextInput
-                    editable={!pago.enviando}
-                    className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
-                    placeholder="Nombre (casa, trabajo…)"
-                    placeholderTextColor="rgba(42, 24, 16, 0.7)"
-                    value={pago.formulario.name}
-                    onChangeText={(valor) => pago.cambiarCampo('name', valor)}
-                  />
-                  <TextInput
-                    editable={!pago.enviando}
-                    className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
-                    placeholder="Calle y número"
-                    placeholderTextColor="rgba(42, 24, 16, 0.7)"
-                    value={pago.formulario.address}
-                    onChangeText={(valor) => pago.cambiarCampo('address', valor)}
-                  />
-                  <TextInput
-                    editable={!pago.enviando}
-                    className="border-b border-madera/30 bg-transparent py-3 font-roboto text-tinta"
-                    placeholder="Barrio"
-                    placeholderTextColor="rgba(42, 24, 16, 0.7)"
-                    value={pago.formulario.neighborhood}
-                    onChangeText={(valor) => pago.cambiarCampo('neighborhood', valor)}
-                  />
+                  <View>
+                    <TextInput
+                      editable={!pago.enviando}
+                      className={`border-b bg-transparent py-3 font-roboto text-tinta ${
+                        pago.erroresDireccion.name ? 'border-red-600' : 'border-madera/30'
+                      }`}
+                      placeholder="Nombre (casa, trabajo…)"
+                      placeholderTextColor="rgba(42, 24, 16, 0.7)"
+                      value={pago.formulario.name}
+                      onChangeText={(valor) => pago.cambiarCampo('name', valor)}
+                    />
+                    {pago.erroresDireccion.name ? (
+                      <Text className="mt-1 font-roboto text-xs text-red-700">
+                        {pago.erroresDireccion.name}
+                      </Text>
+                    ) : null}
+                  </View>
+                  <View>
+                    <TextInput
+                      editable={!pago.enviando}
+                      className={`border-b bg-transparent py-3 font-roboto text-tinta ${
+                        pago.erroresDireccion.address ? 'border-red-600' : 'border-madera/30'
+                      }`}
+                      placeholder="Calle y número"
+                      placeholderTextColor="rgba(42, 24, 16, 0.7)"
+                      value={pago.formulario.address}
+                      onChangeText={(valor) => pago.cambiarCampo('address', valor)}
+                    />
+                    {pago.erroresDireccion.address ? (
+                      <Text className="mt-1 font-roboto text-xs text-red-700">
+                        {pago.erroresDireccion.address}
+                      </Text>
+                    ) : null}
+                  </View>
+                  <View>
+                    <TextInput
+                      editable={!pago.enviando}
+                      className={`border-b bg-transparent py-3 font-roboto text-tinta ${
+                        pago.erroresDireccion.neighborhood ? 'border-red-600' : 'border-madera/30'
+                      }`}
+                      placeholder="Barrio"
+                      placeholderTextColor="rgba(42, 24, 16, 0.7)"
+                      value={pago.formulario.neighborhood}
+                      onChangeText={(valor) => pago.cambiarCampo('neighborhood', valor)}
+                    />
+                    {pago.erroresDireccion.neighborhood ? (
+                      <Text className="mt-1 font-roboto text-xs text-red-700">
+                        {pago.erroresDireccion.neighborhood}
+                      </Text>
+                    ) : null}
+                  </View>
                   <Text className="font-roboto text-xs text-texto/70">Manizales · 170001</Text>
                 </View>
               )}
@@ -325,6 +354,24 @@ export function PagoScreen() {
                   );
                 })}
               </View>
+              {pago.metodo === 'card' ? (
+                <>
+                  <SelectorTarjetas
+                    tarjetas={pago.tarjetas}
+                    indice={pago.indiceTarjeta}
+                    formularioAbierto={pago.formularioTarjeta}
+                    guardando={pago.guardandoTarjeta}
+                    enviando={pago.enviando}
+                    onElegir={pago.setIndiceTarjeta}
+                    onAbrirFormulario={pago.abrirFormularioTarjeta}
+                    onCancelarFormulario={pago.cancelarFormularioTarjeta}
+                    onGuardar={pago.guardarTarjeta}
+                  />
+                  {pago.errorTarjeta ? (
+                    <Text className="font-roboto text-sm text-red-700">{pago.errorTarjeta}</Text>
+                  ) : null}
+                </>
+              ) : null}
             </Tarjeta>
 
             <View className="mt-8 flex-row items-end justify-between">
@@ -358,6 +405,7 @@ export function PagoScreen() {
         )}
       </ContenedorPantalla>
       <LoginModal visible={pago.loginAbierto} onClose={pago.cerrarLogin} />
+      <ConfirmandoPago visible={pago.enviando && pago.metodo === 'card'} />
     </>
   );
 }

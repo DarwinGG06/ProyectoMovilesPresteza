@@ -4,9 +4,15 @@ import { useEffect, useState } from 'react';
 import { setToken as fijarToken } from '@/api/client';
 import { entidad, idDe } from '@/api/helpers';
 import { cotizarPuntos, crearPedidoConPuntos } from '@/api/loyalty';
-import { agregarDireccion, actualizarDireccion, obtenerUsuario } from '@/api/perfil';
+import {
+  agregarDireccion,
+  actualizarDireccion,
+  agregarTarjeta,
+  obtenerTarjetas,
+  obtenerUsuario,
+} from '@/api/perfil';
 import { listarMesas } from '@/api/reservas';
-import type { CotizacionPuntos, Direccion } from '@/features/perfil/types';
+import type { CotizacionPuntos, Direccion, TarjetaForm, TarjetaPago } from '@/features/perfil/types';
 import { MESAS_SALON } from '@/features/reservas/data';
 import { useCart } from '@/services/cart/CartContext';
 import { useSession } from '@/session/context';
@@ -28,6 +34,8 @@ export type DireccionPago = {
   address: string;
   neighborhood: string;
 };
+
+export type ErroresDireccionPago = Partial<Record<keyof DireccionPago, string>>;
 
 function vacia(): DireccionPago {
   return { name: '', address: '', neighborhood: '' };
@@ -60,6 +68,12 @@ export function usePago() {
   const [guardadas, setGuardadas] = useState<Direccion[]>([]);
   const [indice, setIndice] = useState<number | null>(null);
   const [formulario, setFormulario] = useState<DireccionPago>(vacia);
+  const [erroresDireccion, setErroresDireccion] = useState<ErroresDireccionPago>({});
+  const [tarjetas, setTarjetas] = useState<TarjetaPago[]>([]);
+  const [indiceTarjeta, setIndiceTarjeta] = useState<number | null>(null);
+  const [formularioTarjeta, setFormularioTarjeta] = useState(false);
+  const [guardandoTarjeta, setGuardandoTarjeta] = useState(false);
+  const [errorTarjeta, setErrorTarjeta] = useState<string | null>(null);
   const [canjear, setCanjear] = useState(false);
   const [cotizacion, setCotizacion] = useState<CotizacionPuntos | null>(null);
   const [cotizando, setCotizando] = useState(false);
@@ -143,32 +157,102 @@ export function usePago() {
         const elegido = principal >= 0 ? principal : lista.length ? 0 : null;
         setIndice(elegido);
         setFormulario(elegido === null ? vacia() : desdeGuardada(lista[elegido]));
+        setErroresDireccion({});
       })
       .catch(() => {
         if (!active) return;
         setGuardadas([]);
         setIndice(null);
         setFormulario(vacia());
+        setErroresDireccion({});
       });
     return () => {
       active = false;
     };
   }, [userId, isAuthenticated]);
 
+  useEffect(() => {
+    let active = true;
+    if (!userId || !token) {
+      setTarjetas([]);
+      setIndiceTarjeta(null);
+      return;
+    }
+    void obtenerTarjetas(userId, token)
+      .then((lista) => {
+        if (!active) return;
+        setTarjetas(lista);
+        const principal = lista.findIndex((item) => item.is_primary);
+        setIndiceTarjeta(principal >= 0 ? principal : lista.length ? 0 : null);
+      })
+      .catch(() => {
+        if (!active) return;
+        setTarjetas([]);
+        setIndiceTarjeta(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [token, userId, isAuthenticated]);
+
   const elegirGuardada = (i: number) => {
     const dir = guardadas[i];
     if (!dir) return;
     setIndice(i);
     setFormulario(desdeGuardada(dir));
+    setErroresDireccion({});
   };
 
   const nuevaDireccion = () => {
     setIndice(null);
     setFormulario(vacia());
+    setErroresDireccion({});
   };
 
   const cambiarCampo = (campo: keyof DireccionPago, valor: string) => {
     setFormulario((prev) => ({ ...prev, [campo]: valor }));
+    setErroresDireccion((prev) => {
+      if (!prev[campo]) return prev;
+      const siguiente = { ...prev };
+      delete siguiente[campo];
+      return siguiente;
+    });
+  };
+
+  const setMetodoPago = (valor: (typeof METODOS)[number]['value']) => {
+    setMetodo(valor);
+    setErrorTarjeta(null);
+    setFormularioTarjeta(false);
+  };
+
+  const guardarTarjeta = async (datos: TarjetaForm) => {
+    if (!userId || !token) {
+      setLoginAbierto(true);
+      return;
+    }
+    setGuardandoTarjeta(true);
+    setErrorTarjeta(null);
+    try {
+      const cuerpo: TarjetaPago = {
+        name: datos.name.trim(),
+        cardholder_name: datos.cardholder_name.trim(),
+        last_four_digits: datos.last_four_digits,
+        type: datos.type,
+        brand: datos.brand,
+        expiry_date: datos.expiry_date,
+        is_primary: datos.is_primary,
+      };
+      const actualizado = await agregarTarjeta(userId, token, cuerpo);
+      const lista = actualizado.paymentCards ?? [];
+      setTarjetas(lista);
+      setIndiceTarjeta(lista.length ? lista.length - 1 : null);
+      setFormularioTarjeta(false);
+      aviso.ok('Tarjeta creada', `${cuerpo.name} quedó lista para pagar.`);
+    } catch (err) {
+      setErrorTarjeta(err instanceof Error ? err.message : 'No se pudo guardar la tarjeta.');
+    } finally {
+      setGuardandoTarjeta(false);
+    }
   };
 
   const confirmar = async () => {
@@ -194,14 +278,27 @@ export function usePago() {
     }
     const entrega = textoDireccion(formulario);
     if (tipo === 'domicilio') {
-      if (!formulario.address.trim() || !formulario.neighborhood.trim()) {
-        setError('Escribe la dirección y el barrio.');
+      const errores: ErroresDireccionPago = {};
+      if (!formulario.address.trim()) errores.address = 'Escribe la dirección';
+      if (!formulario.neighborhood.trim()) errores.neighborhood = 'Escribe el barrio';
+      if (Object.keys(errores).length) {
+        setErroresDireccion(errores);
+        setError(null);
+        return;
+      }
+    }
+    if (metodo === 'card') {
+      if (indiceTarjeta === null || !tarjetas[indiceTarjeta]) {
+        setErrorTarjeta('Elige o agrega una tarjeta para pagar.');
+        setError(null);
         return;
       }
     }
 
     setEnviando(true);
     setError(null);
+    setErrorTarjeta(null);
+    setErroresDireccion({});
     setExito(null);
     try {
       if (tipo === 'domicilio') {
@@ -271,7 +368,7 @@ export function usePago() {
     items,
     totalPrice,
     metodo,
-    setMetodo,
+    setMetodo: setMetodoPago,
     metodos: METODOS,
     tipo,
     setTipo,
@@ -283,7 +380,23 @@ export function usePago() {
     elegirGuardada,
     nuevaDireccion,
     formulario,
+    erroresDireccion,
     cambiarCampo,
+    tarjetas,
+    indiceTarjeta,
+    setIndiceTarjeta: (i: number) => {
+      setIndiceTarjeta(i);
+      setErrorTarjeta(null);
+    },
+    formularioTarjeta,
+    abrirFormularioTarjeta: () => {
+      setFormularioTarjeta(true);
+      setErrorTarjeta(null);
+    },
+    cancelarFormularioTarjeta: () => setFormularioTarjeta(false),
+    guardarTarjeta,
+    guardandoTarjeta,
+    errorTarjeta,
     canjear,
     setCanjear: elegirCanje,
     puedeCanjear,

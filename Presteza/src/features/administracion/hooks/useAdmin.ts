@@ -1,5 +1,4 @@
-import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useReservas } from '@/features/reservas/hooks/useReservas';
 
@@ -55,12 +54,6 @@ export function useAdmin() {
       reservas.reservas,
     ]
   );
-
-  useEffect(() => {
-    if (isAuthenticated && user && user.role !== 'admin') {
-      router.replace('/perfil');
-    }
-  }, [isAuthenticated, user]);
 
   const recargarProductos = productos.recargar;
   const recargarCategorias = categorias.recargar;

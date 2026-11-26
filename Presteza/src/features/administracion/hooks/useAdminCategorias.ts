@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { actualizarCategoria, crearCategoria, eliminarCategoria, listarCategorias } from '@/api/categorias';
+import { urlPublicaImagen } from '@/services/imagen/formatos';
 import type { CategoriaAdmin, CategoriaForm } from '../types';
 import { cambiosDe, idDe } from '../utils';
 import { borrarVarios, fusionar, useListaAdmin } from './adminComun';
@@ -13,10 +14,15 @@ export function useAdminCategorias() {
     async (datos: CategoriaForm, editando?: CategoriaAdmin | null) => {
       const sesion = conToken();
       if (!sesion) return false;
+      const imagen = urlPublicaImagen(datos.imageUrl);
+      if (!imagen) {
+        aviso.error('Imagen', 'La foto no quedó lista. Elige la imagen otra vez y pulsa Listo.');
+        return false;
+      }
       const actual = {
         name: datos.name.trim(),
         description: datos.description.trim(),
-        imageUrl: datos.imageUrl.trim(),
+        imageUrl: imagen,
       };
 
       setGuardando(true);

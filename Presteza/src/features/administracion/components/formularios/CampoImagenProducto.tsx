@@ -29,6 +29,7 @@ export function CampoImagenProducto({
   onCamara,
   onGaleria,
   onArchivo,
+  etiqueta = 'Imagen del plato',
 }: {
   uri?: string;
   error?: string;
@@ -36,10 +37,11 @@ export function CampoImagenProducto({
   onCamara: () => void;
   onGaleria: () => void;
   onArchivo: () => void;
+  etiqueta?: string;
 }) {
   return (
     <View className="gap-1.5">
-      <Text className="font-semibold text-marca-oscura">Imagen del plato</Text>
+      <Text className="font-roboto text-[13px] tracking-[1.5px] text-marca">{etiqueta}</Text>
       <View
         className={`overflow-hidden border bg-white ${error ? 'border-red-600' : 'border-linea'}`}
         style={{ height: 168 }}>

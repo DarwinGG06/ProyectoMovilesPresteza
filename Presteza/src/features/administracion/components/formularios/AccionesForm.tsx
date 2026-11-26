@@ -16,7 +16,7 @@ export function AccionesForm({
       variant="gold"
       compact
       disabled={guardando}
-      className="mt-4 w-full"
+      className="mt-3 w-full"
       onPress={onGuardar}
     />
   );

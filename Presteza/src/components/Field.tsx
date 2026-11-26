@@ -82,8 +82,13 @@ export default function Field<T extends FieldValues>({
       name={name}
       rules={rules}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-        <View className={linea ? 'gap-0.5' : 'gap-1.5'}>
-          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
+        <View className={linea ? 'gap-1' : 'gap-1.5'}>
+          <Text
+            className={`font-roboto text-marca ${
+              linea ? 'text-[13px] tracking-[1.5px]' : 'text-[12px] tracking-[2px]'
+            }`}>
+            {label}
+          </Text>
           <View className="relative justify-center">
             <TextInput
               ref={inputRef}
@@ -94,12 +99,12 @@ export default function Field<T extends FieldValues>({
               // pasara dentro de `...input` reemplazaría estos estilos base.
               className={`${
                 linea
-                  ? `border-b bg-transparent px-0 py-3 font-roboto-light text-lg text-marca-oscura ${
-                      error ? 'border-red-600' : 'border-marca/20'
+                  ? `border-b bg-transparent px-0 py-2.5 font-roboto text-[17px] leading-6 text-tinta ${
+                      error ? 'border-red-600' : 'border-marca/25'
                     }`
                   : `border-b bg-transparent px-0 py-3 font-roboto-light text-[17px] text-tinta ${
                       error ? 'border-red-600' : 'border-madera/25'
-                    }`}
+                    }`
               } ${contrasena.esContrasena ? 'pr-12' : ''} ${className ?? ''}`}
               value={value ?? ''}
               onChangeText={(texto) => onChange(formatear ? formatear(texto) : texto)}

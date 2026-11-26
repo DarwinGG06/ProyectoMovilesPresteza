@@ -79,8 +79,8 @@ export default function Select<T extends FieldValues>({
         };
 
         return (
-          <View className="gap-1.5">
-            <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
+          <View className="gap-1">
+            <Text className="font-roboto text-[13px] tracking-[1.5px] text-marca">{label}</Text>
             {variante === 'fila' ? (
               <ScrollView
                 horizontal

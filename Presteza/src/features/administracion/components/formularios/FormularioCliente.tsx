@@ -22,7 +22,7 @@ export function FormularioCliente({
   const { control, enviar, getValues } = useFormularioCliente(valores, onGuardar);
 
   return (
-    <View className="gap-5">
+    <View className="gap-3 pb-1">
       <Field
         control={control}
         name="name"

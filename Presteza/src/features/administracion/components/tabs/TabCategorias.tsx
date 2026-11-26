@@ -129,6 +129,7 @@ export function TabCategorias({
       </TarjetaPerfil>
 
       <ModalAdmin
+        compacto
         visible={tab.abierto}
         titulo={tab.editando ? 'Editar categoría' : 'Nueva categoría'}
         onCerrar={tab.cerrar}>

@@ -19,7 +19,7 @@ export function FormularioMensaje({
   const { control, guardar } = useFormulario(valores, onGuardar);
 
   return (
-    <View className="gap-5">
+    <View className="gap-3 pb-1">
       <Field
         control={control}
         name="name"

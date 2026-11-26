@@ -101,6 +101,7 @@ export function TabMensajes({ mensajes, guardando, onGuardar, onEliminar }: TabM
       </TarjetaPerfil>
 
       <ModalAdmin
+        compacto
         visible={tab.abierto}
         titulo={tab.editando ? 'Editar mensaje' : 'Nuevo mensaje'}
         onCerrar={tab.cerrar}>

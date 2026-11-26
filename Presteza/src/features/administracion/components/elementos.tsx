@@ -1,5 +1,6 @@
 import { type ComponentProps, type ReactNode } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EvitarTeclado } from '@/shared/components/evitar-teclado/EvitarTeclado';
 import { Pergamino } from '@/shared/components/materiales/Pergamino';
@@ -186,26 +187,43 @@ export function ModalAdmin({
   /** Altura según contenido (fichas/detalle). Formularios largos siguen en 88%. */
   compacto?: boolean;
 }) {
+  const insets = useSafeAreaInsets();
+  const padAbajo = compacto ? Math.max(insets.bottom, 16) + 16 : 48;
+
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onCerrar}>
       <EvitarTeclado offset={0}>
         <View className="flex-1 justify-end bg-marca-oscura/55">
           {compacto ? <Pressable className="flex-1" onPress={onCerrar} accessibilityLabel="Cerrar" /> : null}
-          <View className={compacto ? 'max-h-[88%]' : 'h-[88%]'}>
+          <View className={`${compacto ? 'max-h-[88%] overflow-hidden border-t border-madera/20' : 'h-[88%]'}`}>
             <Pergamino fill={!compacto}>
-              <View className={`${compacto ? '' : 'flex-1'} px-6 pt-5`}>
-                <View className={`${compacto ? 'mb-4' : 'mb-6'} flex-row items-end justify-between`}>
+              {compacto ? (
+                <View className="items-center pt-3">
+                  <View className="h-1 w-10 rounded-full bg-madera/35" />
+                </View>
+              ) : null}
+              <View className={`${compacto ? '' : 'flex-1'} px-6 ${compacto ? 'pt-4' : 'pt-5'}`}>
+                <View className={`${compacto ? 'mb-5' : 'mb-6'} flex-row items-start justify-between gap-3`}>
                   <Text
-                    className={`flex-1 font-serif-light text-tinta ${compacto ? 'text-[22px]' : 'text-[26px]'}`}>
+                    className={`flex-1 text-tinta ${
+                      compacto
+                        ? 'font-serif text-[26px] leading-8'
+                        : 'font-serif-light text-[26px] leading-8'
+                    }`}>
                     {titulo}
                   </Text>
-                  <Pressable onPress={onCerrar} hitSlop={8} className="pb-1">
-                    <IconoNav name="close" size={18} className="text-texto/70" />
+                  <Pressable
+                    onPress={onCerrar}
+                    hitSlop={10}
+                    accessibilityRole="button"
+                    accessibilityLabel="Cerrar"
+                    className="mt-1 min-h-10 min-w-10 items-center justify-center">
+                    <IconoNav name="close" size={18} className="text-tinta/70" />
                   </Pressable>
                 </View>
                 <ScrollView
                   style={compacto ? undefined : { flex: 1 }}
-                  contentContainerStyle={{ paddingBottom: compacto ? 32 : 48 }}
+                  contentContainerStyle={{ paddingBottom: padAbajo }}
                   keyboardShouldPersistTaps="handled"
                   keyboardDismissMode="on-drag"
                   showsVerticalScrollIndicator={false}

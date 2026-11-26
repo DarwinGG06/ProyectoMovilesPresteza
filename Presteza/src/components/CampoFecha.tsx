@@ -80,8 +80,8 @@ export default function CampoFecha<T extends FieldValues>({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <View className="gap-1.5">
-          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
+        <View className="gap-1">
+          <Text className="font-roboto text-[13px] tracking-[1.5px] text-marca">{label}</Text>
           <SelectorNativo
             valor={String(value || '')}
             error={Boolean(error)}

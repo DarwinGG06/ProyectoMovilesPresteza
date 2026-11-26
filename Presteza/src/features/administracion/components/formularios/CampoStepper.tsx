@@ -25,16 +25,16 @@ export function Paso({
         accessibilityRole="button"
         accessibilityLabel="Quitar uno"
         className="min-h-12 min-w-12 items-center justify-center">
-        <Text className="font-roboto-light text-2xl text-marca-oscura">−</Text>
+        <Text className="font-roboto text-2xl text-tinta">−</Text>
       </Pressable>
-      <Text className="w-8 text-center font-roboto-light text-lg text-marca-oscura">{valor}</Text>
+      <Text className="w-8 text-center font-roboto text-lg text-tinta">{valor}</Text>
       <Pressable
         onPress={() => onCambio(maximo != null ? Math.min(maximo, valor + 1) : valor + 1)}
         hitSlop={8}
         accessibilityRole="button"
         accessibilityLabel="Agregar uno"
         className="min-h-12 min-w-12 items-center justify-center">
-        <Text className="font-roboto-light text-2xl text-marca-oscura">+</Text>
+        <Text className="font-roboto text-2xl text-tinta">+</Text>
       </Pressable>
     </View>
   );
@@ -59,7 +59,7 @@ export function CampoStepper<T extends FieldValues>({
       name={name}
       render={({ field: { value, onChange } }) => (
         <View className="flex-row items-center justify-between border-b border-marca/15 py-2">
-          <Text className="font-roboto text-[12px] tracking-[2px] text-marca">{label}</Text>
+          <Text className="font-roboto text-[13px] tracking-[1.5px] text-marca">{label}</Text>
           <Paso
             valor={Number(value) || 0}
             onCambio={(n) => onChange(String(n))}

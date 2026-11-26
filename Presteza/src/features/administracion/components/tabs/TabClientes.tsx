@@ -153,6 +153,7 @@ export function TabClientes({ clientes, guardando, onGuardar, onEliminar }: TabC
       </TarjetaPerfil>
 
       <ModalAdmin
+        compacto
         visible={tab.abierto}
         titulo={tab.editando ? 'Editar cliente' : 'Nuevo cliente'}
         onCerrar={tab.cerrar}>

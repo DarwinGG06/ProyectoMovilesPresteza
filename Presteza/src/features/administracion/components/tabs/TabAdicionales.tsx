@@ -151,6 +151,7 @@ export function TabAdicionales({
       </TarjetaPerfil>
 
       <ModalAdmin
+        compacto
         visible={tab.abierto}
         titulo={tab.editando ? 'Editar adicional' : 'Nuevo adicional'}
         onCerrar={tab.cerrar}>

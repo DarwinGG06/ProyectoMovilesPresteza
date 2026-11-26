@@ -128,6 +128,7 @@ export function TabInventario({ insumos, guardando, onGuardar, onEliminar }: Tab
       </TarjetaPerfil>
 
       <ModalAdmin
+        compacto
         visible={tab.abierto}
         titulo={tab.editando ? 'Editar insumo' : 'Nuevo insumo'}
         onCerrar={tab.cerrar}>

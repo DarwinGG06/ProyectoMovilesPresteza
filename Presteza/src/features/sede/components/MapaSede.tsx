@@ -1,11 +1,15 @@
+import { useState } from 'react';
 import { Platform, View } from 'react-native';
 import { WebView } from 'react-native-webview';
+
+import { MapaSinRed } from '@/shared/components/mapa/MapaSinRed';
 
 import { SEDE } from '../data';
 import { htmlMapaSede } from '../mapa';
 
 export function MapaSede({ alto = 320 }: { alto?: number }) {
   const html = htmlMapaSede(SEDE.lat, SEDE.lng);
+  const [errorNativo, setErrorNativo] = useState(false);
 
   if (Platform.OS === 'web') {
     return (
@@ -22,6 +26,10 @@ export function MapaSede({ alto = 320 }: { alto?: number }) {
     );
   }
 
+  if (errorNativo) {
+    return <MapaSinRed alto={alto} />;
+  }
+
   return (
     <View style={{ height: alto }}>
       <WebView
@@ -32,6 +40,8 @@ export function MapaSede({ alto = 320 }: { alto?: number }) {
         originWhitelist={['*']}
         setSupportMultipleWindows={false}
         nestedScrollEnabled
+        onError={() => setErrorNativo(true)}
+        renderError={() => <MapaSinRed alto={alto} />}
       />
     </View>
   );

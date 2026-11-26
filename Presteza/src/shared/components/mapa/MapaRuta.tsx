@@ -2,6 +2,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
   type ComponentRef,
   type ComponentType,
   type Ref,
@@ -10,6 +11,7 @@ import { Platform, View } from 'react-native';
 import { WebView, type WebViewProps } from 'react-native-webview';
 
 import { htmlMapaRuta, type PuntoMapa } from './htmlMapaRuta';
+import { MapaSinRed } from './MapaSinRed';
 
 /** Tipado de WebView 14 + Strict API de RN 0.88 aún pelean; se fuerza el contrato conocido. */
 const VistaWeb = WebView as unknown as ComponentType<
@@ -35,6 +37,11 @@ export function MapaRuta({
   const marco = useRef<HTMLIFrameElement | null>(null);
   const js = scriptMoto(repartidor);
   const clave = `d:${destino?.lat ?? 'x'}:${destino?.lng ?? 'x'}`;
+  const [errorNativo, setErrorNativo] = useState(false);
+
+  useEffect(() => {
+    setErrorNativo(false);
+  }, [clave]);
 
   useEffect(() => {
     if (!js) return;
@@ -69,6 +76,10 @@ export function MapaRuta({
     );
   }
 
+  if (errorNativo) {
+    return <MapaSinRed alto={alto} />;
+  }
+
   return (
     <View style={{ height: alto }}>
       <VistaWeb
@@ -82,6 +93,8 @@ export function MapaRuta({
         originWhitelist={['*']}
         setSupportMultipleWindows={false}
         nestedScrollEnabled
+        onError={() => setErrorNativo(true)}
+        renderError={() => <MapaSinRed alto={alto} />}
         onLoadEnd={() => {
           if (js) web.current?.injectJavaScript(js);
         }}

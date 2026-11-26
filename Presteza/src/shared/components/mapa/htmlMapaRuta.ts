@@ -1,5 +1,11 @@
 import { COORDENADAS_SEDE } from '@/features/sede/mapa';
 
+import {
+  cssFallbackSinRed,
+  htmlCapaSinRed,
+  jsAntesCdnSinRed,
+} from './htmlFallbackSinRed';
+
 export type PuntoMapa = { lat: number; lng: number };
 
 function numero(valor: number) {
@@ -23,6 +29,7 @@ export function htmlMapaRuta(destinoInicial?: PuntoMapa | null) {
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
     <style>
       html, body, #mapa { margin: 0; height: 100%; width: 100%; background: #eef1f4; }
+      body { position: relative; }
       .maplibregl-ctrl-attrib { font-size: 9px; }
       .maplibregl-ctrl-logo { display: none; }
       .marca {
@@ -33,17 +40,24 @@ export function htmlMapaRuta(destinoInicial?: PuntoMapa | null) {
       .marca.sede { background: #6b1d3d; color: #d4af77; font: 700 16px/1 serif; }
       .marca.casa { background: #ffffff; }
       .marca.moto { background: #e07a3d; }
+      ${cssFallbackSinRed}
     </style>
   </head>
   <body>
     <div id="mapa"></div>
-    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    ${htmlCapaSinRed}
+    <script>${jsAntesCdnSinRed}</script>
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" onerror="window.__mapaSinRed && window.__mapaSinRed()"></script>
     <script>
+      if (typeof maplibregl === 'undefined') {
+        window.__mapaSinRed && window.__mapaSinRed();
+      } else {
       const sede = [${lng}, ${lat}];
       const destino0 = ${dLat && dLng ? `[${dLng}, ${dLat}]` : 'null'};
       let destino = destino0;
       // Solo perímetro urbano de Manizales (no se sale de la ciudad).
       const manizales = [[-75.545, 5.035], [-75.465, 5.085]];
+      let estiloListo = false;
       const mapa = new maplibregl.Map({
         container: 'mapa',
         style: 'https://tiles.openfreemap.org/styles/positron',
@@ -58,6 +72,12 @@ export function htmlMapaRuta(destinoInicial?: PuntoMapa | null) {
       });
       mapa.dragRotate.enable();
       mapa.touchZoomRotate.enable();
+      mapa.on('error', function () {
+        if (!estiloListo) window.__mapaSinRed && window.__mapaSinRed();
+      });
+      setTimeout(function () {
+        if (!estiloListo) window.__mapaSinRed && window.__mapaSinRed();
+      }, 10000);
       function nodo(html) {
         const w = document.createElement('div');
         w.innerHTML = html;
@@ -102,7 +122,12 @@ export function htmlMapaRuta(destinoInicial?: PuntoMapa | null) {
           }
         }, simbolo && simbolo.id);
       }
-      mapa.on('load', pintar);
+      mapa.on('load', function () {
+        estiloListo = true;
+        var capa = document.getElementById('sin-red');
+        if (capa) capa.style.display = 'none';
+        pintar();
+      });
       window.ponerDestino = function (la, ln) {
         if (!Number.isFinite(la) || !Number.isFinite(ln)) return;
         listo(function () {
@@ -127,6 +152,7 @@ export function htmlMapaRuta(destinoInicial?: PuntoMapa | null) {
       };
       if (destino0) listo(function () { window.ponerDestino(destino0[1], destino0[0]); });
       window.mapaListo = true;
+      }
     </script>
   </body>
 </html>`;

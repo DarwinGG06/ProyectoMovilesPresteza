@@ -130,6 +130,8 @@ export async function crearPedidoConPuntos(
     tipo: 'mesa' | 'domicilio';
     tableNumber?: string;
     deliveryAddress?: string;
+    deliveryLat?: number;
+    deliveryLng?: number;
     products: {
       dishId: string;
       quantity: number;

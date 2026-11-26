@@ -4,6 +4,11 @@ import { estadoPedidoBackend } from '@/features/administracion/utils';
 import { request } from './client';
 import { entidad, lista, seguro, texto } from './helpers';
 
+function coordenada(valor: unknown) {
+  const numero = typeof valor === 'number' ? valor : typeof valor === 'string' ? Number(valor) : NaN;
+  return Number.isFinite(numero) ? numero : null;
+}
+
 function normalizarPedido(crudo: Record<string, unknown>): PedidoAdmin {
   return {
     _id: texto(crudo._id) || undefined,
@@ -13,6 +18,8 @@ function normalizarPedido(crudo: Record<string, unknown>): PedidoAdmin {
     tipo: texto(crudo.tipo) === 'domicilio' ? 'domicilio' : texto(crudo.tipo) === 'mesa' ? 'mesa' : null,
     tableNumber: texto(crudo.tableNumber) || texto(crudo.table_number) || null,
     deliveryAddress: texto(crudo.deliveryAddress) || texto(crudo.delivery_address) || null,
+    deliveryLat: coordenada(crudo.deliveryLat ?? crudo.delivery_lat),
+    deliveryLng: coordenada(crudo.deliveryLng ?? crudo.delivery_lng),
     products: Array.isArray(crudo.products) ? (crudo.products as PedidoAdmin['products']) : [],
     status: texto(crudo.status),
     user_name: texto(crudo.user_name) || texto(crudo.userName),

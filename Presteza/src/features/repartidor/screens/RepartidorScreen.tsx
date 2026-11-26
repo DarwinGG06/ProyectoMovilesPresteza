@@ -28,7 +28,7 @@ export function RepartidorScreen() {
   const enRuta = idsEnCamino.length > 0;
   const [destino, setDestino] = useState<PuntoMapa | null>(null);
 
-  const direccionActiva = useMemo(() => {
+  const pedidoActivo = useMemo(() => {
     const orden = [...tab.pedidos].sort((a, b) => {
       const peso = (s?: string) => {
         const k = claveEstado(s);
@@ -38,22 +38,38 @@ export function RepartidorScreen() {
       };
       return peso(a.status) - peso(b.status);
     });
-    return orden.find((p) => p.deliveryAddress)?.deliveryAddress ?? null;
+    return (
+      orden.find((p) => p.deliveryLat != null && p.deliveryLng != null) ||
+      orden.find((p) => p.deliveryAddress) ||
+      null
+    );
   }, [tab.pedidos]);
 
   useEffect(() => {
-    if (!direccionActiva) {
+    const lat = pedidoActivo?.deliveryLat;
+    const lng = pedidoActivo?.deliveryLng;
+    if (lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng)) {
+      setDestino({ lat, lng });
+      return;
+    }
+
+    const dir = pedidoActivo?.deliveryAddress;
+    if (!dir) {
       setDestino(null);
       return;
     }
     let vivo = true;
-    void geocodeDestino(direccionActiva).then((p) => {
+    void geocodeDestino(dir).then((p) => {
       if (vivo) setDestino(p);
     });
     return () => {
       vivo = false;
     };
-  }, [direccionActiva]);
+  }, [
+    pedidoActivo?.deliveryAddress,
+    pedidoActivo?.deliveryLat,
+    pedidoActivo?.deliveryLng,
+  ]);
 
   if (!tab.autorizado) {
     return (

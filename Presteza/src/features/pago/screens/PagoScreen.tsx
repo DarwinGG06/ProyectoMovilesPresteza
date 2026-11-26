@@ -321,6 +321,35 @@ export function PagoScreen() {
                     ) : null}
                   </View>
                   <Text className="font-roboto text-xs text-texto/70">Manizales · 170001</Text>
+
+                  <Pressable
+                    style={({ pressed }) => ({
+                      transform: [{ scale: pressed ? 0.98 : 1 }],
+                      opacity: pago.enviando || pago.pidiendoUbicacion ? 0.6 : 1,
+                    })}
+                    disabled={pago.enviando || pago.pidiendoUbicacion}
+                    accessibilityRole="button"
+                    accessibilityState={{
+                      disabled: pago.enviando || pago.pidiendoUbicacion,
+                    }}
+                    onPress={pago.pedirUbicacion}
+                    className="min-h-12 justify-center border border-madera/25 px-3 py-3">
+                    <Text className="font-roboto text-[12px] tracking-[2px] text-marca">
+                      {pago.pidiendoUbicacion
+                        ? 'LEYENDO UBICACIÓN…'
+                        : pago.puntoEntrega
+                          ? 'UBICACIÓN LISTA · ACTUALIZAR'
+                          : 'USAR MI UBICACIÓN'}
+                    </Text>
+                  </Pressable>
+                  {pago.puntoEntrega ? (
+                    <Text className="font-roboto text-xs text-tinta/70">
+                      El repartidor verá este punto exacto en el mapa.
+                    </Text>
+                  ) : null}
+                  {pago.errorUbicacion ? (
+                    <Text className="font-roboto text-xs text-red-700">{pago.errorUbicacion}</Text>
+                  ) : null}
                 </View>
               )}
             </Tarjeta>

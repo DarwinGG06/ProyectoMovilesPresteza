@@ -12,7 +12,7 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Presteza usa la cámara para fotografiar el plato de la carta.",
         "NSPhotoLibraryUsageDescription": "Presteza usa la galería para elegir la foto del plato.",
-        "NSLocationWhenInUseUsageDescription": "Presteza usa tu ubicación para que el cliente vea el domicilio en camino."
+        "NSLocationWhenInUseUsageDescription": "Presteza usa tu ubicación para marcar el domicilio exacto y para que el cliente vea la ruta en camino."
       }
     },
     "android": {
@@ -20,6 +20,8 @@
         "CAMERA",
         "READ_MEDIA_IMAGES",
         "READ_EXTERNAL_STORAGE",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
         "POST_NOTIFICATIONS",
         "RECEIVE_BOOT_COMPLETED",
         "VIBRATE"
@@ -67,6 +69,12 @@
         }
       ],
       "expo-document-picker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Presteza usa tu ubicación para marcar con exactitud la dirección del domicilio."
+        }
+      ],
       [
         "expo-notifications",
         {

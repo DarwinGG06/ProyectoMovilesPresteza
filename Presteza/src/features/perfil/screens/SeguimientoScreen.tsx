@@ -20,7 +20,15 @@ export function SeguimientoScreen() {
   const [destino, setDestino] = useState<PuntoMapa | null>(null);
 
   useEffect(() => {
-    const dir = seguimiento.pedido?.deliveryAddress;
+    const pedido = seguimiento.pedido;
+    const lat = pedido?.deliveryLat;
+    const lng = pedido?.deliveryLng;
+    if (lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng)) {
+      setDestino({ lat, lng });
+      return;
+    }
+
+    const dir = pedido?.deliveryAddress;
     if (!dir) {
       setDestino(null);
       return;
@@ -32,7 +40,11 @@ export function SeguimientoScreen() {
     return () => {
       vivo = false;
     };
-  }, [seguimiento.pedido?.deliveryAddress]);
+  }, [
+    seguimiento.pedido?.deliveryAddress,
+    seguimiento.pedido?.deliveryLat,
+    seguimiento.pedido?.deliveryLng,
+  ]);
 
   if (!seguimiento.isAuthenticated) {
     return (

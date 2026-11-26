@@ -140,6 +140,8 @@ function normalizarPedido(crudo: Pedido): Pedido {
   const extra = crudo as Pedido & {
     table_number?: string;
     delivery_address?: string;
+    delivery_lat?: number | string | null;
+    delivery_lng?: number | string | null;
     fulfillment_type?: string;
     courier_lat?: number | string | null;
     courier_lng?: number | string | null;
@@ -150,6 +152,8 @@ function normalizarPedido(crudo: Pedido): Pedido {
     tipo: tipoCrudo === 'domicilio' ? 'domicilio' : tipoCrudo === 'mesa' ? 'mesa' : crudo.tipo,
     tableNumber: extra.tableNumber || extra.table_number || null,
     deliveryAddress: extra.deliveryAddress || extra.delivery_address || null,
+    deliveryLat: coordenada(extra.deliveryLat ?? extra.delivery_lat),
+    deliveryLng: coordenada(extra.deliveryLng ?? extra.delivery_lng),
     courierLat: coordenada(extra.courierLat ?? extra.courier_lat),
     courierLng: coordenada(extra.courierLng ?? extra.courier_lng),
   };

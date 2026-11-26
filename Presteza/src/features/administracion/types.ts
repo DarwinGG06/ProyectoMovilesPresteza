@@ -23,6 +23,8 @@ export type PedidoAdmin = {
   tipo?: 'mesa' | 'domicilio' | null;
   tableNumber?: string | null;
   deliveryAddress?: string | null;
+  deliveryLat?: number | null;
+  deliveryLng?: number | null;
   products?: {
     dishId?: string;
     name?: string;

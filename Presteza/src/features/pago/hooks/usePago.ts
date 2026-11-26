@@ -18,7 +18,9 @@ import { useCart } from '@/services/cart/CartContext';
 import { useSession } from '@/session/context';
 import { esAdmin } from '@/session/roles';
 import { useAviso } from '@/shared/components/aviso';
+import type { PuntoMapa } from '@/shared/components/mapa/htmlMapaRuta';
 import { avisarCambioCumpleanios } from '@/shared/notificaciones/cumpleanios';
+import { leerUbicacionCliente } from '@/shared/ubicacion/ubicacionCliente';
 
 const METODOS = [
   { value: 'cash', label: 'Efectivo' },
@@ -69,6 +71,9 @@ export function usePago() {
   const [indice, setIndice] = useState<number | null>(null);
   const [formulario, setFormulario] = useState<DireccionPago>(vacia);
   const [erroresDireccion, setErroresDireccion] = useState<ErroresDireccionPago>({});
+  const [puntoEntrega, setPuntoEntrega] = useState<PuntoMapa | null>(null);
+  const [pidiendoUbicacion, setPidiendoUbicacion] = useState(false);
+  const [errorUbicacion, setErrorUbicacion] = useState<string | null>(null);
   const [tarjetas, setTarjetas] = useState<TarjetaPago[]>([]);
   const [indiceTarjeta, setIndiceTarjeta] = useState<number | null>(null);
   const [formularioTarjeta, setFormularioTarjeta] = useState(false);
@@ -225,6 +230,34 @@ export function usePago() {
     setFormularioTarjeta(false);
   };
 
+  const pedirUbicacion = async () => {
+    setPidiendoUbicacion(true);
+    setErrorUbicacion(null);
+    try {
+      const punto = await leerUbicacionCliente();
+      setPuntoEntrega(punto);
+    } catch (err) {
+      setPuntoEntrega(null);
+      setErrorUbicacion(
+        err instanceof Error ? err.message : 'No se pudo leer tu ubicación.',
+      );
+    } finally {
+      setPidiendoUbicacion(false);
+    }
+  };
+
+  const elegirTipo = (siguiente: 'mesa' | 'domicilio') => {
+    setTipo(siguiente);
+    setError(null);
+    if (siguiente === 'mesa') {
+      setPuntoEntrega(null);
+      setErrorUbicacion(null);
+      setPidiendoUbicacion(false);
+      return;
+    }
+    void pedirUbicacion();
+  };
+
   const guardarTarjeta = async (datos: TarjetaForm) => {
     if (!userId || !token) {
       setLoginAbierto(true);
@@ -277,6 +310,7 @@ export function usePago() {
       return;
     }
     const entrega = textoDireccion(formulario);
+    let puntoGps: PuntoMapa | null = puntoEntrega;
     if (tipo === 'domicilio') {
       const errores: ErroresDireccionPago = {};
       if (!formulario.address.trim()) errores.address = 'Escribe la dirección';
@@ -285,6 +319,26 @@ export function usePago() {
         setErroresDireccion(errores);
         setError(null);
         return;
+      }
+      if (!puntoGps) {
+        setPidiendoUbicacion(true);
+        setErrorUbicacion(null);
+        try {
+          puntoGps = await leerUbicacionCliente();
+          setPuntoEntrega(puntoGps);
+        } catch (err) {
+          setPuntoEntrega(null);
+          const mensaje =
+            err instanceof Error
+              ? err.message
+              : 'Activa la ubicación para el domicilio.';
+          setErrorUbicacion(mensaje);
+          setError(mensaje);
+          setPidiendoUbicacion(false);
+          return;
+        } finally {
+          setPidiendoUbicacion(false);
+        }
       }
     }
     if (metodo === 'card') {
@@ -325,6 +379,8 @@ export function usePago() {
         tipo,
         tableNumber: tipo === 'mesa' ? (mesa ?? undefined) : undefined,
         deliveryAddress: tipo === 'domicilio' ? entrega : undefined,
+        deliveryLat: tipo === 'domicilio' ? (puntoGps?.lat ?? undefined) : undefined,
+        deliveryLng: tipo === 'domicilio' ? (puntoGps?.lng ?? undefined) : undefined,
         pointsToRedeem: puntos,
         products: items.map((item) => ({
           dishId: item.dishId || item.id,
@@ -371,7 +427,7 @@ export function usePago() {
     setMetodo: setMetodoPago,
     metodos: METODOS,
     tipo,
-    setTipo,
+    setTipo: elegirTipo,
     mesa,
     setMesa,
     mesas,
@@ -382,6 +438,10 @@ export function usePago() {
     formulario,
     erroresDireccion,
     cambiarCampo,
+    puntoEntrega,
+    pidiendoUbicacion,
+    errorUbicacion,
+    pedirUbicacion,
     tarjetas,
     indiceTarjeta,
     setIndiceTarjeta: (i: number) => {

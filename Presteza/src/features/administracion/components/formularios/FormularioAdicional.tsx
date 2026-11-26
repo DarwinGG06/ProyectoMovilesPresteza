@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import Field from '@/components/Field';
 import Select from '@/components/Select';
 import { useFormulario } from '@/shared/hooks/useFormulario';
+import { reglasPrecio } from '@/shared/validacion';
 
 import type { AdicionalForm, CategoriaAdmin } from '../../types';
 import { idDe } from '../../utils';
@@ -40,7 +41,7 @@ export function FormularioAdicional({
         placeholder="0"
         keyboardType="numeric"
         variante="linea"
-        rules={{ required: 'Escribe el precio' }}
+        rules={reglasPrecio}
       />
       <Select
         control={control}

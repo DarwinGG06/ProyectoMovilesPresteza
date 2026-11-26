@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import Field from '@/components/Field';
 import Select from '@/components/Select';
 import { ModelViewerModal } from '@/features/menu/components/ModelViewerModal';
+import { reglasPrecio } from '@/shared/validacion';
 
 import { useFormularioProducto } from '../../hooks/useFormularioProducto';
 import type { AdicionalAdmin, CategoriaAdmin, ProductoForm } from '../../types';
@@ -65,7 +66,7 @@ export function FormularioProducto({
         placeholder="0"
         keyboardType="numeric"
         variante="linea"
-        rules={{ required: 'Escribe el precio' }}
+        rules={reglasPrecio}
       />
       <Controller
         control={formulario.control}

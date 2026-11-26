@@ -19,6 +19,17 @@ export const reglasPersonas = {
   },
 } as const;
 
+/** Precio admin: número finito y no negativo (producto, adicional, insumo). */
+export const reglasPrecio = {
+  required: 'Escribe el precio',
+  validate: (valor: string) => {
+    const n = Number(valor);
+    if (!Number.isFinite(n)) return 'Precio inválido';
+    if (n < 0) return 'El precio no puede ser negativo';
+    return true;
+  },
+} as const;
+
 /** Misma fuerza que restablecer/perfil y @IsStrongPassword del back. */
 export const CONTRASENA_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
 

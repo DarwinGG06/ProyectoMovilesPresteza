@@ -2,6 +2,7 @@ import { View } from 'react-native';
 
 import Field from '@/components/Field';
 import { useFormulario } from '@/shared/hooks/useFormulario';
+import { reglasPrecio } from '@/shared/validacion';
 import type { InsumoForm } from '../../types';
 import { AccionesForm } from './AccionesForm';
 import { CampoStepper } from './CampoStepper';
@@ -45,7 +46,7 @@ export function FormularioInsumo({
         placeholder="0"
         keyboardType="numeric"
         variante="linea"
-        rules={{ required: 'Escribe el precio' }}
+        rules={reglasPrecio}
       />
       <CampoStepper control={control} name="quantity" label="Cantidad" minimo={0} />
       <AccionesForm onGuardar={guardar} guardando={guardando} />
